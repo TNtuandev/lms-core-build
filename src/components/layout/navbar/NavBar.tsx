@@ -195,7 +195,7 @@ function Navbar() {
                   alignOffset={-10}
                   className="grid grid-cols-3 grid-rows-3 bg-white border-none"
                 >
-                  {[1, 2, 2, 3].map((_) => (
+                  {[1, 2, 4, 3].map((_) => (
                     <DropdownMenuItem key={_} className="block">
                       <Button
                         variant="ghost"

@@ -50,7 +50,7 @@ function CourseCard({
         <img
           src={imageUrl}
           alt={title}
-          className={`object-cover ${gridNUmber === 3 ? "h-64" : "h-48 w-full"}`}
+          className={`object-cover w-full ${gridNUmber === 3 ? "h-64" : "h-48"}`}
           style={{ aspectRatio: "16/9" }}
         />
 

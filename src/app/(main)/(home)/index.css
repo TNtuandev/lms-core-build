@@ -1,0 +1,7 @@
+.home-selection {
+    background-image: url("/images/home/img.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+}

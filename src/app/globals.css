@@ -38,6 +38,8 @@
     /*Primary*/
     --primary-contrast: #FFFFFF;
     --teruary-main: #D14EA8;
+    --primary: var(--primary-500);
+
     --infor: #03A9F4;
     --success: #4CAF50;
     /*Text*/
@@ -74,6 +76,8 @@
     --color-shadow-color-tertiary-color: rgba(209, 78, 168, 0.24);
     --color-infor: var(--infor);
     --color-success: var(--success);
+    --color-error-main: #F44336;
+    --color-info-main: #03A9F4;
 }
 
 .dark {

@@ -77,7 +77,7 @@
     --color-infor: var(--infor);
     --color-success: var(--success);
     --color-error-main: #F44336;
-    --color-info-main: #03A9F4;
+    --color-info-main: var(--infor);
 }
 
 .dark {

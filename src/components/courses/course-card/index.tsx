@@ -43,7 +43,7 @@ function CourseCard({
   };
 
   return (
-    <div className="flex flex-col rounded-lg overflow-hidden shadow-md">
+    <div className="p-2 bg-white flex flex-col rounded-lg overflow-hidden shadow-md">
       {/* Card Header with Image */}
       <div className="relative rounded-lg overflow-hidden">
         {/* Course image */}

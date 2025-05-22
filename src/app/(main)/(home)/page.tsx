@@ -1,13 +1,42 @@
 import React from "react";
-import Image  from "next/image";
+import "./index.css";
+import Image from "next/image";
+import { CourseTab } from "@/components/courses/course-tab";
+import { Banner } from "@/components/home/Banner";
+import { CourseIntro } from "@/components/home/CourseIntro";
+import { Explore } from "@/components/home/Explore";
+import { WhyUsSection } from "@/components/home/WhyUsSection";
+import { StatsSection } from "@/components/home/StatsSection";
+import {Feedback} from "@/components/home/Feedback";
+import NewsletterSection from "@/components/abouts/NewsLetterSection";
 
 function HomePage() {
-  return <div>
-    <Image src="/images/home/img.png" width={0}
-           height={0}
-           style={{ width: '100%', height: 'auto' }}
-           sizes="100vw" alt="Image"/>
-  </div>;
+  return (
+    <div>
+      <Banner />
+      <Image
+        className="w-full"
+        src="/images/home/img_5.png"
+        alt="banner"
+        height={120}
+        width={2200}
+      />
+      <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center gap-20 px-6">
+        <CourseIntro />
+        <CourseTab />
+        <Explore />
+        <div className="pt-32">
+          <WhyUsSection />
+        </div>
+        <StatsSection />
+        <Feedback />
+      </div>
+      <div className="pt-32">
+        <NewsletterSection />
+      </div>
+
+    </div>
+  );
 }
 
 export default HomePage;

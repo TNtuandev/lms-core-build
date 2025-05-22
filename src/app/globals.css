@@ -38,15 +38,21 @@
     /*Primary*/
     --primary-contrast: #FFFFFF;
     --teruary-main: #D14EA8;
-
+    --primary: var(--primary-500);
+    --infor: #03A9F4;
+    --success: #4CAF50;
+    --error-main: #F44336;
+    --warning-dark: #F57C00;
     /*Text*/
     --text-secondary: #637381;
     --text-primary: #212B36;
+
 }
 
 @theme inline {
     --color-primary-contrastText: rgba(0, 0, 0, 0.87);
     --color-primary-lighter: var(--primary-100);
+    --color-secondary: var(--text-secondary);
     --color-secondary-contrastText: rgba(0, 0, 0, 0.87);
     --color-secondary-lighter: var(--secondary-100);
     --color-secondary-light: var(--secondary-300);
@@ -69,10 +75,19 @@
     --color-shadow-color-primary-color: rgba(47, 87, 239, 0.24);
     --color-shadow-color-secondary-color: rgba(255, 177, 69, 0.24);
     --color-shadow-color-tertiary-color: rgba(209, 78, 168, 0.24);
+    --color-infor: var(--infor);
+    --color-success: var(--success);
+    --color-error-main: var(--error-main);
+    --color-info-main: var(--infor);
+    --color-warning-dark: var(--warning-dark);
 }
 
 .dark {
 }
+
+@layer components {
+}
+
 
 @layer base {
     * {

@@ -41,7 +41,7 @@ function AboutPage() {
         </div>
       </div>
 
-      <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full">
+      <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col gap-[120px]">
         <div id="section-2" className="flex gap-16">
           <div className="flex flex-col justify-center relative w-1/2">
             <Image

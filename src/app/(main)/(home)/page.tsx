@@ -7,6 +7,8 @@ import { CourseIntro } from "@/components/home/CourseIntro";
 import { Explore } from "@/components/home/Explore";
 import { WhyUsSection } from "@/components/home/WhyUsSection";
 import { StatsSection } from "@/components/home/StatsSection";
+import {Feedback} from "@/components/home/Feedback";
+import NewsletterSection from "@/components/abouts/NewsLetterSection";
 
 function HomePage() {
   return (
@@ -27,7 +29,12 @@ function HomePage() {
           <WhyUsSection />
         </div>
         <StatsSection />
+        <Feedback />
       </div>
+      <div className="pt-32">
+        <NewsletterSection />
+      </div>
+
     </div>
   );
 }

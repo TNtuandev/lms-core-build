@@ -6,6 +6,7 @@ import { Banner } from "@/components/home/Banner";
 import { CourseIntro } from "@/components/home/CourseIntro";
 import { Explore } from "@/components/home/Explore";
 import { WhyUsSection } from "@/components/home/WhyUsSection";
+import { StatsSection } from "@/components/home/StatsSection";
 
 function HomePage() {
   return (
@@ -22,7 +23,10 @@ function HomePage() {
         <CourseIntro />
         <CourseTab />
         <Explore />
-        <WhyUsSection />
+        <div className="pt-32">
+          <WhyUsSection />
+        </div>
+        <StatsSection />
       </div>
     </div>
   );

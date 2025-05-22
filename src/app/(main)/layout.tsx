@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 function MainLayout({ children }: PropsWithChildren) {
   return <>
     <Navbar />
-    <main className="flex-1">{children}</main>
+      <main className="flex-1">{children}</main>
     <Footer />
   </>;
 }

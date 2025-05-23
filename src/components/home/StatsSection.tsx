@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import {Header} from "@/components/common/Header";
+import {Title} from "@/components/common/Title";
 
 const stats = [
   {
@@ -40,7 +40,7 @@ const stats = [
 export function StatsSection() {
   return (
    <div className="flex flex-col items-center">
-     <Header
+     <Title
        label="Tại sao chọn chúng tôi"
        title="Tạo ra cộng đồng người học suốt đời"
        subTitle="Subtitle"

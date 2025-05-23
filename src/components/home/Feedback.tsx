@@ -1,6 +1,6 @@
 "use client"
 
-import {Header} from "@/components/common/Header";
+import {Title} from "@/components/common/Title";
 import Image from "next/image";
 import {Rating, RoundedStar} from '@smastrom/react-rating'
 
@@ -14,7 +14,7 @@ export function Feedback() {
 
   return (
     <div className="flex flex-col items-center bg-feedback">
-      <Header
+      <Title
         label="Nhận xét và đánh giá"
         title="Học viên nói gì về khóa học của chúng tôi"
         subTitle="Nhận xét của học viên về khóa học họ đã học cùng chúng tôi. Từ dùng thử đến đăng ký"

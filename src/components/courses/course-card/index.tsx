@@ -44,7 +44,7 @@ function CourseCard({
 
   return (
     <div className="p-2 bg-white flex flex-col rounded-lg overflow-hidden shadow-md">
-      {/* Card Header with Image */}
+      {/* Card Title with Image */}
       <div className="relative rounded-lg overflow-hidden">
         {/* Course image */}
         <img

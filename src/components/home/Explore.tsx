@@ -1,4 +1,4 @@
-import { Header } from "@/components/common/Header";
+import { Title } from "@/components/common/Title";
 import { ArrowRight, Designtools } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
@@ -7,7 +7,7 @@ import { EXPLORE } from "@/contants/home";
 export function Explore() {
   return (
     <div className="flex flex-col items-center">
-      <Header
+      <Title
         label="Khám Phá"
         title="Học cùng chúng tôi ở bất cứ đâu"
         subTitle="Giáo dục trực tuyến đã giúp giáo dục chất lượng dễ tiếp cận hơn với nhiều đối tượng học viên hơn. Nó xóa bỏ các rào cản như giới hạn địa lý."

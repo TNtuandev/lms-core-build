@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Header } from "@/components/common/Header";
+import { Title } from "@/components/common/Title";
 import { CONTACT } from "@/contants/contact";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -53,7 +53,7 @@ function ContactPage() {
     <div className="">
       <div className="bg-gradient-to-b from-primary-lighter  to-white h-[600px]">
         <div className="px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
-          <Header
+          <Title
             label="Tầm nhìn của chúng tôi"
             title="Chúng tôi hình dung một thế giới mà bất kỳ ai, ở bất kỳ đâu cũng có khả năng thay đổi cuộc sống của mình thông qua việc học."
             subTitle=""

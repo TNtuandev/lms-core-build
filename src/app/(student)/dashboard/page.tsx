@@ -17,35 +17,40 @@ import {
 
 function DashboardPage() {
   return (
-    <div className="bg-white">
+    <div className="mb-20">
       {/* Colorful Banner/Header */}
-      <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full h-[300px] relative">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "url('/images/home/img.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        ></div>
-      </div>
+      <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full h-[300px] relative"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[100px] relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[160px] relative z-10">
         {/* Profile Info Section */}
-        <div className="flex flex-col items-center">
-          <div className="relative">
-            <Image
-              src="/images/avatar-author.png"
-              alt="Chris Hemsworth"
-              width={120}
-              height={120}
-              className="rounded-full border-4 border-white"
-            />
-          </div>
-          <h1 className="text-2xl font-bold mt-4">Chris Hemsworth</h1>
-          <div className="flex items-center mt-2 text-gray-600">
-            <Book className="w-4 h-4 mr-1" />
-            <span className="text-sm">30 Khóa học đã đăng ký</span>
+        <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/dashboard/banner-profile.png"
+            alt="djd"
+            className="h-full w-max"
+          />
+          <div className="absolute bottom-10 left-10 text-center">
+            <div className="flex items-center gap-4">
+              <Image
+                src="/images/banner-sign-in.png"
+                alt="Chris Hemsworth"
+                width={120}
+                height={120}
+                className="rounded-full border-4 border-white"
+              />
+              <div>
+                <h1 className="text-2xl font-bold mt-4 text-white">
+                  Chris Hemsworth
+                </h1>
+                <div className="flex items-center mt-2 text-white">
+                  <Book className="w-4 h-4 mr-1" color="white" />
+                  <span className="text-sm text-white">
+                    30 Khóa học đã đăng ký
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -133,7 +138,7 @@ function DashboardPage() {
           </div>
 
           {/* Main Content */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 bg-white shadow h-max p-4 rounded-2xl">
             <h2 className="text-2xl font-semibold mb-6">Tổng quan</h2>
 
             {/* Statistics Cards */}

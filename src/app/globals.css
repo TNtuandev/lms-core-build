@@ -43,6 +43,8 @@
     --success: #4CAF50;
     --error-main: #F44336;
     --warning-dark: #F57C00;
+    --neutral: #F4F6F8;
+
     /*Text*/
     --text-secondary: #637381;
     --text-primary: #212B36;
@@ -80,6 +82,7 @@
     --color-error-main: var(--error-main);
     --color-info-main: var(--infor);
     --color-warning-dark: var(--warning-dark);
+    --color-background-neutral: var(--neutral);
 }
 
 .dark {

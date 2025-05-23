@@ -1,22 +1,17 @@
 import React from "react";
-import { ArrowRight2 } from "iconsax-react";
 import Image from "next/image";
 import { TEACHER_LIST } from "@/contants/instructor";
 import { clsx } from "clsx";
+import { HeaderSection } from "@/components/common/HeaderSection";
 
 function InstructorListPage() {
   return (
     <div>
-      <div className="bg-gradient-to-tr from-primary-main/16  to-secondary-main/16 h-[300px]">
-        <div className="px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
-          <div className="font-bold text-5xl leading-16">Giảng viên</div>
-          <div className="mt-2 text-sm flex items-center justify-between gap-2">
-            <span>Trang chủ</span>
-            <ArrowRight2 size="14" color="#212B36" />
-            <span className="text-secondary">Giảng viên</span>
-          </div>
-        </div>
-      </div>
+      <HeaderSection
+        title="Giảng viên"
+        label="Trang chủ"
+        subLabel="Giảng viên"
+      />
       <div className="bg-gradient-to-br from-primary-light  to-primary-main">
         <div className="py-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
           <div className="font-semibold text-white text-lg">

@@ -169,8 +169,8 @@ function Navbar() {
             : "bg-transparent"
         }`}
       >
-        <div className="w-full py-2">
-          <div className="flex justify-between items-center mx-auto md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl">
+        <div className="w-full py-2 px-10">
+          <div className="flex justify-between items-center">
             {/* Nav Routes */}
             <div className="flex items-center space-x-8">
               <Image

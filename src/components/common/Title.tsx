@@ -1,12 +1,15 @@
+import clsx from "clsx";
+
 interface ITitleProps {
   label: string;
   title: string;
   subTitle: string;
+  containerClass?: string;
 }
 
-export function Title({ label, title, subTitle }: ITitleProps) {
+export function Title({ label, title, subTitle, containerClass }: ITitleProps) {
   return (
-    <div className="flex flex-col gap-2 items-center w-[60%]">
+    <div className={clsx('flex flex-col gap-2 items-center w-[60%]', containerClass)}>
       <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
         {label}
       </div>

@@ -15,7 +15,7 @@ function AboutPage() {
 
   return (
     <div className="flex flex-col gap-[120px]">
-      <div className="relative w-full mt-[72px]">
+      <div className="relative w-full">
         <img
           src="/images/about/banner.png"
           alt="Hero Image"

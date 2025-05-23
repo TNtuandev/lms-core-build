@@ -50,7 +50,7 @@ function ContactPage() {
   }
 
   return (
-    <div className="mt-[72px]">
+    <div className="">
       <div className="bg-gradient-to-b from-primary-lighter  to-white h-[600px]">
         <div className="px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
           <Title
@@ -102,10 +102,10 @@ function ContactPage() {
               <FormField
                 control={form.control}
                 name="name"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Họ và tên" {...field} />
+                      <Input invalid={fieldState.invalid} placeholder="Họ và tên" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -114,10 +114,10 @@ function ContactPage() {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Email" {...field} />
+                      <Input invalid={fieldState.invalid} placeholder="Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -126,10 +126,10 @@ function ContactPage() {
               <FormField
                 control={form.control}
                 name="topic"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Chủ đề" {...field} />
+                      <Input invalid={fieldState.invalid} placeholder="Chủ đề" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,10 +138,10 @@ function ContactPage() {
               <FormField
                 control={form.control}
                 name="message"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea placeholder="Tin nhắn" {...field} />
+                      <Textarea invalid={fieldState.invalid} placeholder="Tin nhắn" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

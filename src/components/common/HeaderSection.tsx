@@ -13,9 +13,9 @@ export function HeaderSection({title, subLabel, label}: HeaderSectionProps) {
       <div className="px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
         <div className="font-bold text-5xl leading-16">{title}</div>
         <div className="mt-2 text-sm flex items-center justify-between gap-2">
-          <span>{subLabel}</span>
+          <span>{label}</span>
           <ArrowRight2 size="14" color="#212B36" />
-          <span className="text-secondary">{label}</span>
+          <span className="text-secondary">{subLabel}</span>
         </div>
       </div>
     </div>

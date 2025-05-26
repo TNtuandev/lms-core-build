@@ -64,6 +64,7 @@ function ReviewsPage() {
                 ? "fill-yellow-400 text-yellow-400"
                 : "fill-gray-200 text-gray-200"
             }`}
+            color={star <= rating ? "#fbbf24" : "#e5e7eb"}
           />
         ))}
       </div>
@@ -89,7 +90,7 @@ function ReviewsPage() {
           </thead>
           <tbody>
             {reviews.map((review) => (
-              <tr key={review.id} className="border-b border-gray-100">
+              <tr key={review.id} className="border-b border-dashed border-gray-100">
                 <td className="py-6 px-2">
                   <div className="text-gray-900 font-medium">
                     {review.courseName}
@@ -107,14 +108,14 @@ function ReviewsPage() {
                   </div>
                 </td>
                 <td className="py-6 px-2">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEdit(review.id)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-4 h-4" color="#155dfc" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -122,7 +123,7 @@ function ReviewsPage() {
                       onClick={() => handleDelete(review.id)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" color="red" />
                     </Button>
                   </div>
                 </td>
@@ -142,4 +143,4 @@ function ReviewsPage() {
   );
 }
 
-export default ReviewsPage; 
+export default ReviewsPage;

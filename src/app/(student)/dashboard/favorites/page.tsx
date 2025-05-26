@@ -12,7 +12,7 @@ function FavoritesPage() {
   const favoriteCourses = [
     {
       id: 1,
-      imageUrl: "/images/course-spoken-english.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -23,7 +23,7 @@ function FavoritesPage() {
     },
     {
       id: 2,
-      imageUrl: "/images/course-education.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -34,7 +34,7 @@ function FavoritesPage() {
     },
     {
       id: 3,
-      imageUrl: "/images/course-revelation.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -45,7 +45,7 @@ function FavoritesPage() {
     },
     {
       id: 4,
-      imageUrl: "/images/course-vue-jquery.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -56,7 +56,7 @@ function FavoritesPage() {
     },
     {
       id: 5,
-      imageUrl: "/images/course-education-2.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -67,7 +67,7 @@ function FavoritesPage() {
     },
     {
       id: 6,
-      imageUrl: "/images/course-web-design.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -79,7 +79,7 @@ function FavoritesPage() {
     // Add more courses to demonstrate pagination
     {
       id: 7,
-      imageUrl: "/images/course-spoken-english.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -90,7 +90,7 @@ function FavoritesPage() {
     },
     {
       id: 8,
-      imageUrl: "/images/course-education.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -101,7 +101,7 @@ function FavoritesPage() {
     },
     {
       id: 9,
-      imageUrl: "/images/course-revelation.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -112,7 +112,7 @@ function FavoritesPage() {
     },
     {
       id: 10,
-      imageUrl: "/images/course-vue-jquery.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -123,7 +123,7 @@ function FavoritesPage() {
     },
     {
       id: 11,
-      imageUrl: "/images/course-education-2.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -134,7 +134,7 @@ function FavoritesPage() {
     },
     {
       id: 12,
-      imageUrl: "/images/course-web-design.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -207,4 +207,4 @@ function FavoritesPage() {
   );
 }
 
-export default FavoritesPage; 
+export default FavoritesPage;

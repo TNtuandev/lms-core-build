@@ -4,17 +4,18 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  Home, 
-  User, 
-  Book, 
-  Heart, 
-  Star, 
-  FileText, 
-  History, 
-  Settings, 
-  LogOut 
+import {
+  Home,
+  User,
+  Book,
+  Heart,
+  Star,
+  FileText,
+  History,
+  Settings,
+  LogOut
 } from "lucide-react";
+import IconBookWhite from "../../../../public/icons/IconBookWhite";
 
 export default function DashboardLayout({
   children,
@@ -22,7 +23,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
+
   const isActive = (path: string) => {
     return pathname === path;
   };
@@ -55,7 +56,8 @@ export default function DashboardLayout({
                 <h1 className="text-2xl font-bold mt-4 text-white">
                   Chris Hemsworth
                 </h1>
-                <div className="flex items-center mt-2 text-white">
+                <div className="flex items-center mt-2 gap-2 text-white">
+                  <IconBookWhite />
                   <span className="text-sm text-white">
                     30 Khóa học đã đăng ký
                   </span>
@@ -77,96 +79,136 @@ export default function DashboardLayout({
                 href="/dashboard"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Home className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard") ? "font-medium" : ""}>
+                <Home className="w-5 h-5 mr-3" color={isActive("/dashboard") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard") ? "font-medium text-blue-600" : ""
+                  }
+                >
                   Tổng quan
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/profile"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/profile")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <User className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/profile") ? "font-medium" : ""}>
+                <User className="w-5 h-5 mr-3" color={isActive("/dashboard/profile") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/profile")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Hồ sơ
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/courses"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/courses")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Book className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/courses") ? "font-medium" : ""}>
+                <Book className="w-5 h-5 mr-3" color={isActive("/dashboard/courses") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/courses")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Khóa học đã đăng ký
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/favorites"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/favorites")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Heart className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/favorites") ? "font-medium" : ""}>
+                <Heart className="w-5 h-5 mr-3" color={isActive("/dashboard/favorites") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/favorites")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Yêu thích
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/reviews"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/reviews")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Star className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/reviews") ? "font-medium" : ""}>
+                <Star className="w-5 h-5 mr-3" color={isActive("/dashboard/reviews") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/reviews")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Đánh giá
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/test-scores"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/test-scores")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <FileText className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/test-scores") ? "font-medium" : ""}>
+                <FileText className="w-5 h-5 mr-3" color={isActive("/dashboard/test-scores") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/test-scores")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Điểm kiểm tra
                 </span>
               </Link>
-              
+
               <Link
                 href="/dashboard/purchase-history"
                 className={`flex items-center px-3 py-3 ${
                   isActive("/dashboard/purchase-history")
-                    ? "text-blue-600 bg-blue-50"
+                    ? "text-blue-600 bg-[#2F57EF14]"
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <History className="w-5 h-5 mr-3" />
-                <span className={isActive("/dashboard/purchase-history") ? "font-medium" : ""}>
+                <History className="w-5 h-5 mr-3" color={isActive("/dashboard/purchase-history") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/purchase-history")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
                   Lịch sử mua hàng
                 </span>
               </Link>
@@ -182,16 +224,22 @@ export default function DashboardLayout({
                   href="/dashboard/settings"
                   className={`flex items-center px-3 py-3 ${
                     isActive("/dashboard/settings")
-                      ? "text-blue-600 bg-blue-50"
+                      ? "text-blue-600 bg-[#2F57EF14]"
                       : "text-gray-700 hover:bg-gray-50"
                   } rounded-lg`}
                 >
-                  <Settings className="w-5 h-5 mr-3" />
-                  <span className={isActive("/dashboard/settings") ? "font-medium" : ""}>
+                  <Settings className="w-5 h-5 mr-3" color={isActive("/dashboard/settings") ? "#155dfc" : "#364153"} />
+                  <span
+                    className={
+                      isActive("/dashboard/settings")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
                     Cài đặt
                   </span>
                 </Link>
-                
+
                 <Link
                   href="#"
                   className="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
@@ -204,11 +252,9 @@ export default function DashboardLayout({
           </div>
 
           {/* Page Content */}
-          <div className="md:col-span-3">
-            {children}
-          </div>
+          <div className="md:col-span-3">{children}</div>
         </div>
       </div>
     </div>
   );
-} 
+}

@@ -67,10 +67,10 @@ function TestScoresPage() {
     const isPass = result === "Đạt";
     return (
       <span
-        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+        className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${
           isPass
             ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
+            : "bg-red-100 text-red-700"
         }`}
       >
         {result}
@@ -136,14 +136,14 @@ function TestScoresPage() {
                   {renderResultBadge(test.result)}
                 </td>
                 <td className="py-6 px-2">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEdit(test.id)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-4 h-4" color="#155dfc" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -151,7 +151,7 @@ function TestScoresPage() {
                       onClick={() => handleDelete(test.id)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" color="red" />
                     </Button>
                   </div>
                 </td>
@@ -171,4 +171,4 @@ function TestScoresPage() {
   );
 }
 
-export default TestScoresPage; 
+export default TestScoresPage;

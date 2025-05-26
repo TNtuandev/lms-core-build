@@ -16,7 +16,7 @@ function EnrolledCoursesPage() {
   const enrolledCourses = [
     {
       id: 1,
-      imageUrl: "/images/course-ui-ux.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -27,7 +27,7 @@ function EnrolledCoursesPage() {
     },
     {
       id: 2,
-      imageUrl: "/images/course-ui-ux-2.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -38,7 +38,7 @@ function EnrolledCoursesPage() {
     },
     {
       id: 3,
-      imageUrl: "/images/course-ui-ux-3.jpg",
+      imageUrl: "/images/banner-sign-in.png",
       category: "Khóa học Thiết kế",
       courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
       instructor: "Anh Tuấn, Quang Anh",
@@ -51,7 +51,7 @@ function EnrolledCoursesPage() {
 
   // Current course for continue learning section
   const currentCourse = {
-    imageUrl: "/images/course-placeholder.jpg",
+    imageUrl: "/images/banner-sign-in.png",
     category: "Khóa học Thiết kế",
     courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
     progress: 30,
@@ -134,7 +134,7 @@ function EnrolledCoursesPage() {
                 <div className="flex-grow">
                   <div className="text-blue-600 text-sm mb-1">{currentCourse.category}</div>
                   <h4 className="font-semibold text-lg mb-2">{currentCourse.courseName}</h4>
-                  
+
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-gray-600">Hoàn thành: {currentCourse.progress}%</span>
                   </div>
@@ -193,4 +193,4 @@ function EnrolledCoursesPage() {
   );
 }
 
-export default EnrolledCoursesPage; 
+export default EnrolledCoursesPage;

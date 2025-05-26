@@ -63,7 +63,7 @@ function PurchaseHistoryPage() {
 
     return (
       <span
-        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusConfig[status]}`}
+        className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[status]}`}
       >
         {status}
       </span>
@@ -135,7 +135,7 @@ function PurchaseHistoryPage() {
                       onClick={() => handleEdit(order.id)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-4 h-4" color="#155dfc" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -143,7 +143,7 @@ function PurchaseHistoryPage() {
                       onClick={() => handleDelete(order.id)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" color="red" />
                     </Button>
                   </div>
                 </td>
@@ -163,4 +163,4 @@ function PurchaseHistoryPage() {
   );
 }
 
-export default PurchaseHistoryPage; 
+export default PurchaseHistoryPage;

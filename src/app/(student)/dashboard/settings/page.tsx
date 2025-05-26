@@ -12,7 +12,7 @@ type TabType = "profile" | "security";
 
 function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
-  
+
   // Profile form state
   const [profileData, setProfileData] = useState({
     firstName: "Chris",
@@ -102,7 +102,7 @@ function SettingsPage() {
                   opacity: 0.3
                 }}></div>
               </div>
-              
+
               <div className="absolute bottom-4 left-4 flex items-center gap-4">
                 <div className="relative">
                   <img
@@ -130,6 +130,7 @@ function SettingsPage() {
                 value={profileData.firstName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileChange("firstName", e.target.value)}
                 placeholder="Chris"
+                className="border border-gray-200"
               />
             </div>
 
@@ -139,6 +140,7 @@ function SettingsPage() {
                 value={profileData.lastName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileChange("lastName", e.target.value)}
                 placeholder="Hemsworth"
+                className="border border-gray-200"
               />
             </div>
 
@@ -148,6 +150,7 @@ function SettingsPage() {
                 value={profileData.username}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileChange("username", e.target.value)}
                 placeholder="chrishemsworth"
+                className="border border-gray-200"
               />
             </div>
 
@@ -157,6 +160,7 @@ function SettingsPage() {
                 value={profileData.phone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileChange("phone", e.target.value)}
                 placeholder="+84 345226268"
+                className="border border-gray-200"
               />
             </div>
 
@@ -166,16 +170,17 @@ function SettingsPage() {
                 value={profileData.skills}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileChange("skills", e.target.value)}
                 placeholder="Application Developer"
+                className="border border-gray-200"
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Hiển thị tên công khai</label>
               <Select value={profileData.displayName} onValueChange={(value) => handleProfileChange("displayName", value)}>
-                <SelectTrigger>
+                <SelectTrigger className="border border-gray-200 h-12">
                   <SelectValue placeholder="Chọn tên hiển thị" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border border-gray-200">
                   <SelectItem value="Chris Hemsworth">Chris Hemsworth</SelectItem>
                   <SelectItem value="Chris">Chris</SelectItem>
                   <SelectItem value="Hemsworth">Hemsworth</SelectItem>
@@ -187,6 +192,7 @@ function SettingsPage() {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Giới thiệu</label>
             <Textarea
+              className="border border-gray-200"
               value={profileData.bio}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleProfileChange("bio", e.target.value)}
               placeholder="Nhập giới thiệu về bản thân..."
@@ -195,7 +201,7 @@ function SettingsPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button 
+            <Button
               onClick={handleProfileSave}
               className="bg-gray-800 hover:bg-gray-700 text-white px-6"
             >
@@ -206,7 +212,7 @@ function SettingsPage() {
       )}
 
       {activeTab === "security" && (
-        <div className="space-y-6 max-w-md">
+        <div className="space-y-6">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Mật khẩu cũ</label>
             <Input
@@ -214,6 +220,7 @@ function SettingsPage() {
               value={securityData.currentPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSecurityChange("currentPassword", e.target.value)}
               placeholder="Mật khẩu cũ"
+              className="border border-gray-200"
             />
           </div>
 
@@ -224,6 +231,8 @@ function SettingsPage() {
               value={securityData.newPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSecurityChange("newPassword", e.target.value)}
               placeholder="Mật khẩu mới"
+              className="border border-gray-200"
+
             />
           </div>
 
@@ -234,11 +243,12 @@ function SettingsPage() {
               value={securityData.confirmPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSecurityChange("confirmPassword", e.target.value)}
               placeholder="Nhập lại mật khẩu mới"
+              className="border border-gray-200"
             />
           </div>
 
           <div className="flex justify-end">
-            <Button 
+            <Button
               onClick={handlePasswordUpdate}
               className="bg-gray-800 hover:bg-gray-700 text-white px-6"
             >
@@ -251,4 +261,4 @@ function SettingsPage() {
   );
 }
 
-export default SettingsPage; 
+export default SettingsPage;

@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { Routes } from "@/lib/routes/routes";
 
 function Footer() {
   return (
@@ -19,33 +21,36 @@ function Footer() {
           </div>
           <div className="flex flex-col gap-2 text-sm">
             <div className="text-xl font-semibold">Tài khoản</div>
-            <div className="md:mt-6 cursor-pointer hover:text-primary text-zinc-400">
+            <Link href={Routes.home} className="md:mt-6 cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Khám phá
-            </div>
-            <div className="cursor-pointer hover:text-primary text-zinc-400">
+            </Link>
+            <Link href={Routes.home} className="cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Giỏ hàng
-            </div>
-            <div className="cursor-pointer hover:text-primary text-zinc-400">
+            </Link>
+            <Link href={Routes.home} className="cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Yêu thích
-            </div>
+            </Link>
           </div>
           <div className="flex flex-col gap-2 text-sm">
             <div className="text-xl font-semibold">KiTE Academy</div>
-            <div className="md:mt-6 cursor-pointer hover:text-primary text-zinc-400">
+            <Link href={Routes.contact} className="md:mt-6 cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Liên hệ
-            </div>
-            <div className="cursor-pointer hover:text-primary text-zinc-400">
+            </Link>
+            <Link href={Routes.instructors} className="cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Giảng viên
-            </div>
-            <div className="cursor-pointer hover:text-primary text-zinc-400">
+            </Link>
+            <Link href={Routes.faq}  className="cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               FAQs
-            </div>
+            </Link>
+            <Link href={Routes.abouts} className="cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
+              Về chúng tôi
+            </Link>
           </div>
           <div className="flex flex-col gap-2 text-sm">
             <div className="text-xl font-semibold">Liên hệ với chúng tôi</div>
             <div className="md:mt-6">
               <div className="text-xs text-zinc-400">Gọi cho chúng tôi</div>
-              <div className="text-lg font-semibold">+84 345 622 999</div>
+              <Link href="tel:+84 345 622 999" className="text-lg font-semibold">+84 345 622 999</Link>
             </div>
             <div className="flex gap-2 items-center">
               <svg
@@ -83,8 +88,8 @@ function Footer() {
         <div className="lg:flex items-center justify-between">
           <div className="text-sm">Copyright © 2025 Readify. <span className="font-semibold">KITE Academy</span>. All Rights Reserved</div>
           <div className="text-zinc-400 text-sm">
-            <label>Điều khoản & Điền kiện</label>
-            <label className="ml-8">Chính sách bảo mật</label>
+            <Link href={Routes.termOfUse} className="hover:text-primary-main hover:underline">Điều khoản & Điền kiện</Link>
+            <Link href={Routes.policy} className="ml-8 hover:text-primary-main hover:underline">Chính sách bảo mật</Link>
           </div>
         </div>
       </div>

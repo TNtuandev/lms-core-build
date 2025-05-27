@@ -81,33 +81,43 @@ function CreateCourse() {
           <h1 className="text-2xl font-bold text-gray-900 mb-8 md:w-[30%]">
             Khóa học mới
           </h1>
-          <div className="flex items-center md:justify-around justify-between mb-4 w-[70%]">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center flex-col gap-1">
-                <div
-                  className={`flex items-center justify-center w-8 h-8 flex-shrink-0 rounded-full border-2 ${
-                    currentStep >= step.id
-                      ? "bg-blue-600 border-blue-600 text-white"
-                      : "border-gray-400 bg-gray-400 text-white"
-                  }`}
-                >
-                  {currentStep > step.id ? (
-                    <Check className="w-5 h-5" color="white" />
-                  ) : (
-                    step.id
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p
-                    className={`text-sm font-medium ${
-                      currentStep >= step.id ? "" : "text-gray-400"
+          <div className="flex items-center justify-center mb-4 w-[70%] relative">
+            {/* Connecting Line Background */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-full md:max-w-[150px] max-w-[120px] h-[2px] bg-gray-300 z-0" />
+            <div
+              className={`absolute top-4 left-1/2 transform -translate-x-1/2 h-[2px] bg-blue-600 z-0 transition-all duration-300 ${
+                currentStep > 1 ? "w-full max-w-[300px]" : "w-0"
+              }`}
+            />
+
+            <div className="flex items-center justify-between w-full max-w-[300px] relative z-10">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center flex-col gap-1">
+                  <div
+                    className={`flex items-center justify-center w-8 h-8 flex-shrink-0 rounded-full border-2 ${
+                      currentStep >= step.id
+                        ? "bg-blue-600 border-blue-600 text-white"
+                        : "border-gray-400 bg-gray-400 text-white"
                     }`}
                   >
-                    {step.title}
-                  </p>
+                    {currentStep > step.id ? (
+                      <Check className="w-5 h-5" color="white" />
+                    ) : (
+                      step.id
+                    )}
+                  </div>
+                  <div className="mt-2">
+                    <p
+                      className={`text-sm font-medium ${
+                        currentStep >= step.id ? "" : "text-gray-400"
+                      }`}
+                    >
+                      {step.title}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
@@ -418,7 +428,7 @@ function CreateCourse() {
                     )}
                     <Button
                       type="submit"
-                      className="px-8 bg-blue-600 hover:bg-blue-700"
+                      className="px-8 bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       {currentStep === steps.length ? "Hoàn thành" : "Tiếp tục"}
                     </Button>

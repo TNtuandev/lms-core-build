@@ -13,14 +13,14 @@ function InstructorListPage() {
         subLabel="Giảng viên"
       />
       <div className="bg-gradient-to-br from-primary-light  to-primary-main">
-        <div className="py-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
+        <div className="py-12 lg:py-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
           <div className="font-semibold text-white text-lg">
             Giảng viên của chúng tôi
           </div>
-          <div className="mt-2 font-bold text-white text-3xl leading-12">
+          <div className="mt-2 font-bold text-center lg:text-start text-white text-2xl leading-9 lg:text-3xl lg:leading-12">
             Đội ngũ giảng viên chuyên nghiệp
           </div>
-          <div className="grid grid-cols-12 grid-rows-5 gap-8 mt-10">
+          <div className="grid grid-cols-2 lg:grid-cols-12 lg:grid-rows-5 gap-8 mt-10">
             {TEACHER_LIST.map((item, idx) => (
               <div
                 key={idx}

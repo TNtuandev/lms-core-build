@@ -40,13 +40,11 @@ type CourseFormData = Step1Data & Step2Data;
 
 function CreateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isStep2Expanded, setIsStep2Expanded] = useState(false);
   const [formData, setFormData] = useState<Partial<CourseFormData>>({});
 
   const handleStep1Complete = (data: Step1Data) => {
     setFormData((prev) => ({ ...prev, ...data }));
     setCurrentStep(2);
-    setIsStep2Expanded(true);
   };
 
   const handleStep2Complete = (data: Step2Data) => {
@@ -58,16 +56,6 @@ function CreateCourse() {
 
   const handleStep2Back = () => {
     setCurrentStep(1);
-    setIsStep2Expanded(false);
-  };
-
-  const toggleStep2 = () => {
-    if (currentStep === 1) {
-      setCurrentStep(2);
-      setIsStep2Expanded(true);
-    } else {
-      setIsStep2Expanded(!isStep2Expanded);
-    }
   };
 
   return (

@@ -13,22 +13,19 @@ export function Feedback() {
   }
 
   return (
-    <div className="flex flex-col items-center bg-feedback">
+    <div className="flex flex-col items-center">
       <Title
         label="Nhận xét và đánh giá"
         title="Học viên nói gì về khóa học của chúng tôi"
         subTitle="Nhận xét của học viên về khóa học họ đã học cùng chúng tôi. Từ dùng thử đến đăng ký"
       />
       <div className="relative">
-
-        <div
-          className="absolute top-[-40%] left-[-30%] w-[1000px] h-[600px] bg-[#D14EA8] opacity-10 rounded-full blur-[200px]"></div>
-
-        <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full relative">
-          <Image src="/images/home/img_15.png" alt="Img" width={2000} height={400} className="object-cover"/>
-          <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute top-[-40%] lg:left-[-30%] w-full lg:w-[1000px] h-full lg:h-[600px] bg-[#D14EA8] opacity-10 rounded-full blur-[200px]"></div>
+        <div className="mt-12 lg:mt-0 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full relative">
+          <Image src="/images/home/img_15.png" alt="Img" width={2000} height={400} className="lg:object-cover hidden lg:block"/>
+          <div className="relative lg:absolute inset-0 flex items-center justify-center pb-12">
             <div
-              className="max-w-[60%] flex gap-16 rounded-3xl p-12 bg-white/48 border-[1px] border-white/80 box-shadow-feedback">
+              className="lg:max-w-[60%] flex lg:flex-row flex-col gap-5 lg:gap-16 rounded-3xl p-5 lg:p-12 bg-white/48 border-[1px] border-white/80 box-shadow-feedback">
               <Image className="rounded-2xl" src="/images/home/img_16.png" alt="Girl" width={300} height={400}/>
               <div>
                 <div className="text-3xl leading-12">Lora Ochoa</div>

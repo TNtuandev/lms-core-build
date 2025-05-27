@@ -11,22 +11,20 @@ import NewsletterSection from "@/components/abouts/NewsLetterSection";
 
 function AboutPage() {
 
-
-
   return (
-    <div className="flex flex-col gap-[120px]">
-      <div className="relative w-full mt-[72px]">
+    <div className="flex flex-col gap-16 lg:gap-[120px]">
+      <div className="relative w-full">
         <img
           src="/images/about/banner.png"
           alt="Hero Image"
-          className="w-full h-auto"
+          className="w-full lg:h-auto h-[400px] object-cover"
         />
         <div className="absolute md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full inset-0 flex flex-col items-center justify-center">
-          <div className="w-3/4 flex flex-col items-center justify-center text-center px-4 text-white">
-            <div className="text-secondary-main text-center font-bold text-xl">
+          <div className="w-full lg:w-3/4 flex flex-col items-center justify-center text-center px-4 text-white">
+            <div className="text-secondary-main text-center font-bold text-base lg:text-xl">
               Tầm nhìn của chúng tôi
             </div>
-            <div className="text-white text-3xl font-bold text-center pt-4">
+            <div className="text-white text-lg lg:text-3xl font-bold text-center pt-4">
               Chúng tôi hình dung một thế giới mà bất kỳ ai, ở bất kỳ đâu cũng có
               khả năng thay đổi cuộc sống của mình thông qua việc học.
             </div>
@@ -43,7 +41,7 @@ function AboutPage() {
 
       <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col gap-[120px]">
         <div id="section-2" className="flex gap-16">
-          <div className="flex flex-col justify-center relative w-1/2">
+          <div className="flex-col justify-center relative w-1/2 hidden lg:flex">
             <Image
               src="/images/about/img.png"
               className="absolute top-0 z-0"
@@ -66,11 +64,11 @@ function AboutPage() {
               alt="Đọc sách"
             />
           </div>
-          <div className="w-1/2 flex flex-col justify-center">
+          <div className="w-full lg:w-1/2 flex flex-col justify-center">
             <div className="bg-gradient-to-r from-[#2F57EF] to-[#FFB145] bg-clip-text text-transparent w-fit text-lg font-semibold">
               Hiểu về chúng tôi
             </div>
-            <div className="text-3xl leading-12 font-bold pb-2">
+            <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
               Tìm hiểu về nền tảng học tập KiTE
             </div>
             <div className="text-secondary">
@@ -104,12 +102,12 @@ function AboutPage() {
           </div>
         </div>
 
-        <div id="selection-3" className="flex gap-16">
-          <div className="w-1/2 flex flex-col justify-center">
+        <div id="selection-3" className="flex gap-8 lg:gap-16 lg:flex-row flex-col">
+          <div className="lg:w-1/2 flex flex-col justify-center">
             <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
               Chúng tôi làm việc thế nào
             </div>
-            <div className="text-3xl leading-12 font-bold pb-2">
+            <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
               Xây dựng sự nghiệp và nâng cao cuộc sống của bạn
             </div>
             <div className="text-secondary">
@@ -128,17 +126,21 @@ function AboutPage() {
               <ArrowRight size="24" color="white" />
             </Button>
           </div>
-          <div className="w-1/2 rounded-2xl overflow-hidden">
-            <ReactPlayer url="https://youtu.be/YtLx_sfJquA?si=XrL1aUfiOoxyuxXY" />
+          <div className="w-full lg:w-1/2 rounded-2xl overflow-hidden">
+            <ReactPlayer
+              controls
+                                   width='100%'
+                                   height='300px'
+                                   url="https://youtu.be/YtLx_sfJquA?si=XrL1aUfiOoxyuxXY" />
           </div>
         </div>
 
-        <div id="selection-4" className="flex gap-10">
-          <div className="w-1/4 flex flex-col justify-center">
+        <div id="selection-4" className="flex flex-col lg:flex-row gap-5 lg:gap-10">
+          <div className="w-full lg:w-1/4 flex flex-col justify-center">
             <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
               Nhận xét và đánh giá
             </div>
-            <div className="text-3xl leading-12 font-bold pb-2">
+            <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
               Học viên nói gì về khóa học của chúng tôi
             </div>
             <div className="text-secondary">
@@ -146,7 +148,7 @@ function AboutPage() {
               dùng thử đến đăng ký
             </div>
           </div>
-          <div className="w-full grid grid-cols-2 gap-8">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
             {[1, 2, 3, 4].map((item) => (
               <div
                 key={item}
@@ -163,7 +165,7 @@ function AboutPage() {
                     <path
                       d="M30.17 39.34L38.43 20.3L31.22 19.6V0H51.94V17.29L37.87 39.34H30.17ZM0 39.34L8.12 20.3L0.98 19.6V0H21.63V17.29L7.56 39.34H0Z"
                       fill="#D14EA8"
-                      fill-opacity="0.16"
+                      fillOpacity="0.16"
                     />
                   </svg>
                 </div>

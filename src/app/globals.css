@@ -43,6 +43,8 @@
     --success: #4CAF50;
     --error-main: #F44336;
     --warning-dark: #F57C00;
+    --neutral: #F4F6F8;
+
     /*Text*/
     --text-secondary: #637381;
     --text-primary: #212B36;
@@ -80,12 +82,25 @@
     --color-error-main: var(--error-main);
     --color-info-main: var(--infor);
     --color-warning-dark: var(--warning-dark);
+    --color-background-neutral: var(--neutral);
 }
 
 .dark {
 }
 
 @layer components {
+    .box-shadow-card {
+        box-shadow: 0px 0px 2px 0px rgba(25, 158, 171, 0.20);
+    }
+
+    .box-shadow-feedback {
+        box-shadow: 0px 16px 32px 0px rgba(145, 158, 171, 0.16);
+    }
+
+    .box-shadow-component {
+        box-shadow: 0px 12px 24px -4px rgba(25, 158, 171, 0.20);
+    }
+
 }
 
 

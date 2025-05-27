@@ -28,21 +28,3 @@
         box-shadow: 0 40px 80px -8px rgba(145, 158, 171, 0.24);
     }
 }
-
-.box-shadow-card {
-    box-shadow: 0px 0px 2px 0px rgba(25, 158, 171, 0.20);
-}
-
-.box-shadow-feedback {
-    box-shadow: 0px 16px 32px 0px rgba(145, 158, 171, 0.16);
-}
-
-/*.bg-feedback {*/
-/*    background: linear-gradient(135deg,*/
-/*    rgba(145, 158, 171, 0.1) 0%,*/
-/*    rgba(145, 158, 171, 0.24) 24%,*/
-/*    rgba(3, 169, 244, 0.08) 32%,*/
-/*    rgba(209, 78, 168, 0.08) 40%,*/
-/*    transparent 50%*/
-/*    );*/
-/*}*/

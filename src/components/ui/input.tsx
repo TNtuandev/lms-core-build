@@ -6,25 +6,27 @@ import { Minus } from 'lucide-react';
 
 type InputProps = {
   helperText?: string;
+  invalid?: boolean;
 };
 
 function Input({
   className,
   type,
-  helperText,
+  helperText, invalid,
   ...props
 }: React.ComponentProps<"input"> & InputProps) {
-  return (
+    return (
     <>
       <input
         type={type}
         data-slot="input"
         className={cn(
-          "border-disabled file:text-foreground placeholder:text-disabled selection:bg-primary selection:text-primary-foreground flex h-12 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "border-disabled file:text-foreground placeholder:text-disabled selection:bg-primary selection:text-primary-foreground flex h-12 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm border-[#919EAB52]",
           "focus-visible:border-ring focus-visible:ring-ring/50",
           "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-          className,
+          className, invalid && "border-error-main/80",
         )}
+        aria-invalid={!!invalid}
         {...props}
       />
       {helperText && (

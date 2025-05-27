@@ -6,4 +6,5 @@ export class Routes {
   static instructors = "/instructors";
   static policy = "/policy";
   static termOfUse = "/term-of-use";
+  static login = "/login";
 }

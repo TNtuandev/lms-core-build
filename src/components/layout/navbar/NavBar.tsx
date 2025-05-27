@@ -23,6 +23,7 @@ import {
 import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
+import Link from "next/link";
 
 function Navbar() {
   const pathname = usePathname();
@@ -282,13 +283,13 @@ function Navbar() {
                     </span>
                   </div>
                   <Button variant="ghost" className="h-10">
-                    Đăng nhập
+                    <Link href={Routes.login}>Đăng nhập</Link>
                   </Button>
                   <Button
                     variant="default"
                     className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
                   >
-                    Bắt đầu miễn phí
+                    <Link href={Routes.login}>Bắt đầu miễn phí</Link>
                   </Button>
                 </>
               )}

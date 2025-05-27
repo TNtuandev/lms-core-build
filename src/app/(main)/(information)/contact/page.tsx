@@ -51,15 +51,15 @@ function ContactPage() {
 
   return (
     <div className="">
-      <div className="bg-gradient-to-b from-primary-lighter  to-white h-[600px]">
+      <div className="bg-gradient-to-b from-primary-lighter  to-white lg:h-[600px]">
         <div className="px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
           <Title
             label="Tầm nhìn của chúng tôi"
             title="Chúng tôi hình dung một thế giới mà bất kỳ ai, ở bất kỳ đâu cũng có khả năng thay đổi cuộc sống của mình thông qua việc học."
             subTitle=""
-            containerClass="w-[100%]"
+            containerClass="w-[100%] lg:pt-0 pt-20"
           />
-          <div className="grid grid-cols-3 gap-8 mt-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 mt-8 lg:mt-16">
             {CONTACT.map((item) => (
               <div
                 key={item.title}
@@ -77,8 +77,8 @@ function ContactPage() {
       </div>
 
       <Form {...form}>
-        <div className="pb-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex gap-8 items-stretch">
-          <div className="w-1/2">
+        <div className="pb-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex lg:flex-row flex-col gap-8 items-stretch">
+          <div className="w-full lg:w-1/2">
             <Image
               src="/images/contact/img.png"
               alt="Girl"
@@ -87,7 +87,7 @@ function ContactPage() {
               className="w-full h-full object-cover rounded-2xl"
             />
           </div>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/2 box-shadow-component rounded-2xl p-12 flex flex-col justify-between">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full lg:w-1/2 box-shadow-component rounded-2xl p-12 flex flex-col gap-6 lg:gap-0 justify-between">
             <div>
               <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
                 Giáo dục cho mọi người

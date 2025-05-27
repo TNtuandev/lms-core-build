@@ -166,8 +166,6 @@ function CreateCourse() {
                 onNext={handleStep2Complete}
                 onBack={handleStep2Back}
                 initialData={formData}
-                isExpanded={isStep2Expanded}
-                onToggleExpand={toggleStep2}
               />
             )}
           </div>

@@ -25,7 +25,6 @@ import {
 import { ChevronDown, Info, Edit, Trash2, Plus, Minus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
-
 // Schema validation for Step 2
 const step2Schema = z.object({
   shortDescription: z.string().min(1, "Mô tả ngắn không được để trống"),
@@ -47,11 +46,15 @@ const step2Schema = z.object({
   videoSource: z.string().optional(),
   videoUrl: z.string().optional(),
   // Course Builder
-  chapters: z.array(z.object({
-    id: z.string(),
-    title: z.string(),
-    isExpanded: z.boolean().optional(),
-  })).optional(),
+  chapters: z
+    .array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        isExpanded: z.boolean().optional(),
+      }),
+    )
+    .optional(),
   // Pricing
   isFree: z.boolean().optional(),
   originalPrice: z.string().optional(),
@@ -65,8 +68,6 @@ interface Step2FormProps {
   onNext: (data: Step2FormData) => void;
   onBack: () => void;
   initialData?: Partial<Step2FormData>;
-  isExpanded?: boolean;
-  onToggleExpand?: () => void;
 }
 
 interface Chapter {
@@ -79,16 +80,17 @@ export default function Step2Form({
   onNext,
   onBack,
   initialData,
-  isExpanded = true,
-  onToggleExpand
 }: Step2FormProps) {
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [newTag, setNewTag] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>(
-    initialData?.chapters?.map(c => ({ ...c, isExpanded: c.isExpanded || false })) || [
+    initialData?.chapters?.map((c) => ({
+      ...c,
+      isExpanded: c.isExpanded || false,
+    })) || [
       { id: "1", title: "Chủ đề 1", isExpanded: false },
-      { id: "2", title: "Chủ đề 2", isExpanded: false }
-    ]
+      { id: "2", title: "Chủ đề 2", isExpanded: false },
+    ],
   );
   const [studentCount, setStudentCount] = useState(100);
 
@@ -138,58 +140,64 @@ export default function Step2Form({
   };
 
   const removeTag = (tagToRemove: string) => {
-    const updatedTags = tags.filter(tag => tag !== tagToRemove);
+    const updatedTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(updatedTags);
     form.setValue("tags", updatedTags);
   };
 
   const toggleChapter = (chapterId: string) => {
-    setChapters(chapters.map(chapter =>
-      chapter.id === chapterId
-        ? { ...chapter, isExpanded: !chapter.isExpanded }
-        : chapter
-    ));
+    setChapters(
+      chapters.map((chapter) =>
+        chapter.id === chapterId
+          ? { ...chapter, isExpanded: !chapter.isExpanded }
+          : chapter,
+      ),
+    );
   };
 
   const addNewChapter = () => {
     const newChapter: Chapter = {
       id: Date.now().toString(),
       title: `Chủ đề ${chapters.length + 1}`,
-      isExpanded: false
+      isExpanded: false,
     };
     setChapters([...chapters, newChapter]);
   };
 
   const deleteChapter = (chapterId: string) => {
-    setChapters(chapters.filter(chapter => chapter.id !== chapterId));
+    setChapters(chapters.filter((chapter) => chapter.id !== chapterId));
   };
 
   const editChapterTitle = (chapterId: string, newTitle: string) => {
-    setChapters(chapters.map(chapter =>
-      chapter.id === chapterId
-        ? { ...chapter, title: newTitle }
-        : chapter
-    ));
+    setChapters(
+      chapters.map((chapter) =>
+        chapter.id === chapterId ? { ...chapter, title: newTitle } : chapter,
+      ),
+    );
   };
 
   const onSubmit = (data: Step2FormData) => {
     const formDataWithChapters = {
       ...data,
-      chapters: chapters.map(({ isExpanded, ...chapter }) => chapter)
+      chapters: chapters.map(({ isExpanded, ...chapter }) => chapter),
     };
     onNext(formDataWithChapters);
   };
 
-  const ToggleSwitch = ({ value, onChange, color = "blue" }: {
+  const ToggleSwitch = ({
+    value,
+    onChange,
+    color = "blue",
+  }: {
     value: boolean;
     onChange: (value: boolean) => void;
     color?: "blue" | "green" | "yellow" | "gray";
   }) => {
     const colorClasses = {
-      blue: value ? 'bg-blue-500' : 'bg-gray-300',
-      green: value ? 'bg-green-500' : 'bg-gray-300',
-      yellow: value ? 'bg-yellow-500' : 'bg-gray-300',
-      gray: value ? 'bg-gray-500' : 'bg-gray-300',
+      blue: value ? "bg-blue-500" : "bg-gray-300",
+      green: value ? "bg-green-500" : "bg-gray-300",
+      yellow: value ? "bg-yellow-500" : "bg-gray-300",
+      gray: value ? "bg-gray-500" : "bg-gray-300",
     };
 
     return (
@@ -199,7 +207,7 @@ export default function Step2Form({
       >
         <span
           className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            value ? 'translate-x-6' : 'translate-x-1'
+            value ? "translate-x-6" : "translate-x-1"
           }`}
         />
       </div>
@@ -210,7 +218,6 @@ export default function Step2Form({
     <div className="space-y-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
           {/* 1. Thêm thông tin Section */}
           <Card className=" bg-white py-4 shadow-sm border border-gray-200">
             <div
@@ -222,7 +229,7 @@ export default function Step2Form({
               </h3>
               <ChevronDown
                 className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                  infoExpanded ? 'rotate-180' : ''
+                  infoExpanded ? "rotate-180" : ""
                 }`}
               />
             </div>
@@ -289,7 +296,8 @@ export default function Step2Form({
                       </FormControl>
                       <p className="text-xs text-gray-500 flex items-center">
                         <Info className="w-3 h-3 mr-1" />
-                        Xác định đối tượng mục tiêu sẽ được hướng tới nhiều nhất từ khóa học.
+                        Xác định đối tượng mục tiêu sẽ được hướng tới nhiều nhất
+                        từ khóa học.
                       </p>
                       <FormMessage />
                     </FormItem>
@@ -361,8 +369,12 @@ export default function Step2Form({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="beginner">Người mới bắt đầu</SelectItem>
-                            <SelectItem value="intermediate">Trung cấp</SelectItem>
+                            <SelectItem value="beginner">
+                              Người mới bắt đầu
+                            </SelectItem>
+                            <SelectItem value="intermediate">
+                              Trung cấp
+                            </SelectItem>
                             <SelectItem value="advanced">Nâng cao</SelectItem>
                             <SelectItem value="expert">Chuyên gia</SelectItem>
                           </SelectContent>
@@ -410,7 +422,7 @@ export default function Step2Form({
                               value={newTag}
                               onChange={(e) => setNewTag(e.target.value)}
                               onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === "Enter") {
                                   e.preventDefault();
                                   addTag();
                                 }
@@ -507,7 +519,9 @@ export default function Step2Form({
                           <FormLabel className="text-sm font-medium text-gray-700">
                             Nhãn Bestseller
                           </FormLabel>
-                          <span className="text-xs text-gray-500">BESTSELLER</span>
+                          <span className="text-xs text-gray-500">
+                            BESTSELLER
+                          </span>
                         </div>
                         <FormControl>
                           <ToggleSwitch
@@ -535,7 +549,7 @@ export default function Step2Form({
               </h3>
               <ChevronDown
                 className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                  courseSettingsExpanded ? 'rotate-180' : ''
+                  courseSettingsExpanded ? "rotate-180" : ""
                 }`}
               />
             </div>
@@ -564,8 +578,12 @@ export default function Step2Form({
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="all">Tất cả cấp độ</SelectItem>
-                              <SelectItem value="beginner">Người mới bắt đầu</SelectItem>
-                              <SelectItem value="intermediate">Trung cấp</SelectItem>
+                              <SelectItem value="beginner">
+                                Người mới bắt đầu
+                              </SelectItem>
+                              <SelectItem value="intermediate">
+                                Trung cấp
+                              </SelectItem>
                               <SelectItem value="advanced">Nâng cao</SelectItem>
                               <SelectItem value="expert">Chuyên gia</SelectItem>
                             </SelectContent>
@@ -590,13 +608,17 @@ export default function Step2Form({
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => setStudentCount(Math.max(0, studentCount - 1))}
+                        onClick={() =>
+                          setStudentCount(Math.max(0, studentCount - 1))
+                        }
                         className="h-10 w-10"
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <div className="flex-1 text-center">
-                        <span className="text-xl font-semibold">{studentCount}</span>
+                        <span className="text-xl font-semibold">
+                          {studentCount}
+                        </span>
                       </div>
                       <Button
                         type="button"
@@ -689,7 +711,7 @@ export default function Step2Form({
               </h3>
               <ChevronDown
                 className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                  videoIntroExpanded ? 'rotate-180' : ''
+                  videoIntroExpanded ? "rotate-180" : ""
                 }`}
               />
             </div>
@@ -762,7 +784,7 @@ export default function Step2Form({
               </h3>
               <ChevronDown
                 className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                  courseBuilderExpanded ? 'rotate-180' : ''
+                  courseBuilderExpanded ? "rotate-180" : ""
                 }`}
               />
             </div>
@@ -785,8 +807,12 @@ export default function Step2Form({
                           size="icon"
                           onClick={(e) => {
                             e.stopPropagation();
-                            const newTitle = prompt("Nhập tên chủ đề mới:", chapter.title);
-                            if (newTitle) editChapterTitle(chapter.id, newTitle);
+                            const newTitle = prompt(
+                              "Nhập tên chủ đề mới:",
+                              chapter.title,
+                            );
+                            if (newTitle)
+                              editChapterTitle(chapter.id, newTitle);
                           }}
                           className="h-8 w-8"
                         >
@@ -806,7 +832,7 @@ export default function Step2Form({
                         </Button>
                         <ChevronDown
                           className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
-                            chapter.isExpanded ? 'rotate-180' : ''
+                            chapter.isExpanded ? "rotate-180" : ""
                           }`}
                         />
                       </div>
@@ -846,7 +872,7 @@ export default function Step2Form({
               </h3>
               <ChevronDown
                 className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                  pricingExpanded ? 'rotate-180' : ''
+                  pricingExpanded ? "rotate-180" : ""
                 }`}
               />
             </div>
@@ -883,9 +909,9 @@ export default function Step2Form({
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
-                              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                đ
-                              </span>
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                              đ
+                            </span>
                             <Input
                               placeholder="0,00"
                               className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -908,9 +934,9 @@ export default function Step2Form({
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
-                              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                đ
-                              </span>
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                              đ
+                            </span>
                             <Input
                               placeholder="0,00"
                               className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"

@@ -47,7 +47,7 @@ export function StatsSection() {
      />
      <div className="w-full flex flex-col items-center py-16 relative">
        {/* Thanh nối với các chấm tròn */}
-       <div className="relative w-full max-w-6xl flex flex-col items-center">
+       <div className="hidden lg:flex relative w-full max-w-6xl flex-col items-center">
          <div className="w-full relative flex justify-between items-start" style={{ height: 48 }}>
            {/* Thanh ngang */}
            <div className="absolute left-0 right-0 top-3 h-0.5 bg-gradient-to-r from-[#919EAB3D] via-[#fff7ed] to-[#919EAB3D] z-0" />
@@ -81,6 +81,36 @@ export function StatsSection() {
              </div>
            ))}
          </div>
+       </div>
+
+       {/*Moblie*/}
+       <div className="lg:hidden flex flex-col gap-6">
+         {stats.map((item, idx) => (
+           <div key={idx} className=" flex flex-col items-center w-full gap-1">
+             <div className="flex items-center gap-1 w-full">
+               <div className="h-0.5 bg-gradient-to-r from-[#919EAB3D] via-[#fff7ed] to-[#919EAB3D] flex-1"></div>
+               <div className="w-6 h-6 rounded-full border-4 border-[#2F57EF] bg-white flex items-center justify-center">
+                 <div className="w-3 h-3 rounded-full bg-white" />
+               </div>
+               <div className="h-0.5 bg-gradient-to-r from-[#919EAB3D] via-[#fff7ed] to-[#919EAB3D] flex-1"></div>
+             </div>
+             <div className="w-0.5 bg-gradient-to-b from-[#919EAB3D] via-[#fff7ed] to-[#919EAB3D] h-1"></div>
+             <div
+               key={idx}
+               className={`flex flex-col box-shadow-card w-[240px] h-[260px] items-center justify-end rounded-2xl border-b-4 ${item.border} bg-white shadow-md px-8 py-6 relative overflow-hidden`}
+             >
+               {/*<div className={`absolute -top-8 left-1/2 -translate-x-1/2 rounded-full ${item.bg} flex items-center justify-center w-20 h-20 shadow-md`}>*/}
+               {/*  <Image src={item.icon} alt="icon" width={48} height={48} />*/}
+               {/*</div>*/}
+               <div className="absolute top-[-30px]">
+                 <Image src={item.icon} alt="icon" width={200} height={130} />
+               </div>
+
+               <div className="mt-14 text-3xl font-bold">{item.value}</div>
+               <div className="mt-2 text-base text-gray-700 text-center">{item.label}</div>
+             </div>
+           </div>
+         ))}
        </div>
      </div>
 

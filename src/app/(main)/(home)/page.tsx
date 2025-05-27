@@ -18,20 +18,20 @@ function HomePage() {
         className="w-full"
         src="/images/home/img_5.png"
         alt="banner"
-        height={120}
+        height={1200}
         width={2200}
       />
-      <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center gap-20 px-6">
+      <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center gap-10 lg:gap-20 px-6">
         <CourseIntro />
         <CourseTab />
         <Explore />
-        <div className="pt-32">
+        <div className="lg:pt-32 pt-16">
           <WhyUsSection />
         </div>
         <StatsSection />
         <Feedback />
       </div>
-      <div className="pt-32">
+      <div className="pt-16 lg:pt-32">
         <NewsletterSection />
       </div>
 

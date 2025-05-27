@@ -2,7 +2,6 @@
 
 import React from "react";
 import IconVideo from "../../../public/icons/IconVideo";
-import IconClock from "../../../public/icons/IconClock";
 
 interface Lesson {
   id: string;
@@ -146,7 +145,7 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
                               {completedLessons.includes(lesson.id) && (
                                 <svg
                                   className="w-3 h-3 text-white"
-                                  fill="currentColor"
+                                  fill="white"
                                   viewBox="0 0 20 20"
                                 >
                                   <path

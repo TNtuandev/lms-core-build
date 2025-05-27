@@ -174,7 +174,7 @@ function LessonPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] relative mt-20">
+    <div className="flex h-[calc(100vh-64px)] relative">
       {/* Left Sidebar - conditionally shown based on isSidebarVisible */}
       <div
         className={`
@@ -218,6 +218,7 @@ function LessonPage() {
                 viewBox="0 0 24 24"
               >
                 <path
+                  stroke="#fff"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
@@ -232,6 +233,7 @@ function LessonPage() {
                 viewBox="0 0 24 24"
               >
                 <path
+                  stroke="#fff"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
@@ -240,7 +242,7 @@ function LessonPage() {
               </svg>
             )}
           </button>
-          <h1 className="text-lg font-medium truncate">{courseTitle}</h1>
+          <h1 className="text-lg font-medium truncate text-white">{courseTitle}</h1>
           <button className="ml-auto">
             <svg
               className="w-6 h-6"
@@ -249,6 +251,7 @@ function LessonPage() {
               viewBox="0 0 24 24"
             >
               <path
+                stroke="#fff"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"

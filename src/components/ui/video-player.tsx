@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { formatTime } from "@/lib/utils";
+import React, { useState, useRef } from "react";
+import ReactPlayer from "react-player";
 
 interface VideoPlayerProps {
   src: string;
@@ -10,90 +10,47 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<ReactPlayer>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [showControls, setShowControls] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(video.currentTime);
-      setProgress((video.currentTime / video.duration) * 100);
-    };
-
-    const handleLoadedMetadata = () => {
-      setDuration(video.duration);
-    };
-
-    const handleVolumeChange = () => {
-      setVolume(video.volume);
-    };
-
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
-
-    video.addEventListener("timeupdate", handleTimeUpdate);
-    video.addEventListener("loadedmetadata", handleLoadedMetadata);
-    video.addEventListener("volumechange", handleVolumeChange);
-    video.addEventListener("play", handlePlay);
-    video.addEventListener("pause", handlePause);
-    video.addEventListener("ended", handleEnded);
-
-    return () => {
-      video.removeEventListener("timeupdate", handleTimeUpdate);
-      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      video.removeEventListener("volumechange", handleVolumeChange);
-      video.removeEventListener("play", handlePlay);
-      video.removeEventListener("pause", handlePause);
-      video.removeEventListener("ended", handleEnded);
-    };
-  }, []);
-
   const togglePlay = () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
+    setIsPlaying(!isPlaying);
   };
 
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const video = videoRef.current;
-    if (!video) return;
+  const handleProgress = (state: { played: number; playedSeconds: number }) => {
+    setProgress(state.played * 100);
+  };
 
-    const newProgress = parseFloat(e.target.value);
-    setProgress(newProgress);
-    video.currentTime = (newProgress / 100) * video.duration;
+  const handleDuration = (duration: number) => {
+    setDuration(duration);
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const seekTo = parseFloat(e.target.value) / 100;
+    playerRef.current?.seekTo(seekTo);
+    setProgress(parseFloat(e.target.value));
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const video = videoRef.current;
-    if (!video) return;
-
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
-    video.volume = newVolume;
+  };
+
+  const toggleMute = () => {
+    setVolume(volume === 0 ? 1 : 0);
   };
 
   const toggleFullscreen = () => {
-    const container = videoRef.current?.parentElement;
-    if (!container) return;
-
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
-      container.requestFullscreen();
+      const container = document.querySelector('.video-container');
+      container?.requestFullscreen();
     }
   };
 
@@ -111,36 +68,61 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
     }
   };
 
+  const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return "0:00";
+    
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (hrs > 0) {
+      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div 
-      className={`relative w-full aspect-video bg-black ${className}`}
+      className={`relative w-full aspect-video bg-black video-container ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >
-      <video
-        ref={videoRef}
-        className="w-full h-full"
-        poster={poster}
-        onClick={togglePlay}
-      >
-        <source src={src} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <ReactPlayer
+        ref={playerRef}
+        url={src}
+        playing={isPlaying}
+        volume={volume}
+        width="100%"
+        height="100%"
+        onProgress={handleProgress}
+        onDuration={handleDuration}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+        light={poster}
+        config={{
+          file: {
+            attributes: {
+              poster: poster,
+            }
+          }
+        }}
+      />
 
-      {/* Video Controls */}
+      {/* Custom Controls Overlay */}
       <div 
-        className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 ${
+        className={`absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 to-transparent transition-opacity duration-300 pointer-events-none ${
           showControls ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="p-4">
+        <div className="p-4 pointer-events-auto">
           {/* Progress bar */}
           <input
             type="range"
             min="0"
             max="100"
             value={progress}
-            onChange={handleProgressChange}
+            onChange={handleSeek}
             className="w-full h-1 bg-gray-400 rounded-full appearance-none cursor-pointer"
             style={{
               background: `linear-gradient(to right, #2563eb ${progress}%, rgba(255,255,255,0.3) ${progress}%)`,
@@ -169,12 +151,7 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
               <div className="flex items-center">
                 <button 
                   className="text-white hover:text-blue-400 transition"
-                  onClick={() => {
-                    const video = videoRef.current;
-                    if (!video) return;
-                    
-                    video.volume = video.volume === 0 ? 1 : 0;
-                  }}
+                  onClick={toggleMute}
                 >
                   {volume === 0 ? (
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -206,7 +183,7 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
 
               {/* Time display */}
               <div className="text-white text-sm ml-2">
-                {formatTime(currentTime)} / {formatTime(duration)}
+                {formatTime((progress / 100) * duration)} / {formatTime(duration)}
               </div>
             </div>
 
@@ -228,10 +205,10 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
 
       {/* Play button overlay when paused */}
       {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <button
             onClick={togglePlay}
-            className="bg-blue-500/70 hover:bg-blue-600/70 text-white p-5 rounded-full transition-colors"
+            className="bg-blue-500/70 hover:bg-blue-600/70 text-white p-5 rounded-full transition-colors pointer-events-auto"
           >
             <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />

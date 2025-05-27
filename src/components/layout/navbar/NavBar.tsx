@@ -9,9 +9,10 @@ import Image from "next/image";
 import {
   ArrowDown2,
   BagHappy,
-  CloseCircle, HambergerMenu,
+  CloseCircle,
+  HambergerMenu,
   Heart,
-  SearchNormal
+  SearchNormal,
 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -22,7 +23,6 @@ import {
 import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
-import { Menu } from "lucide-react";
 
 function Navbar() {
   const pathname = usePathname();
@@ -137,7 +137,8 @@ function Navbar() {
                 Hot
               </span>
               <span className="lg:text-base text-white text-xs pl-4">
-                Nhanh tay nhận ưu đãi đến <span className="text-secondary-main">{' '}20%</span>
+                Nhanh tay nhận ưu đãi đến{" "}
+                <span className="text-secondary-main"> 20%</span>
               </span>
             </div>
             <div className="flex gap-2 items-center pl-6">
@@ -165,22 +166,18 @@ function Navbar() {
         }}
         transition={{ duration: 0.2 }}
         className={`fixed left-0 w-full z-50 transition-all bg-primary-main duration-100 ease-in-out ${
-          scrolled
-            ? "bg-white/85 backdrop-blur-sm top-0"
-            : "bg-transparent"
+          scrolled ? "bg-white/85 backdrop-blur-sm top-0" : "bg-transparent"
         }`}
       >
         <div className="w-full py-2 lg:px-10 px-4">
           <div className="flex justify-between items-center">
             {/* Nav Routes */}
             <div className="flex items-center space-x-4 md:space-x-8">
-
               <HambergerMenu
                 className="block lg:hidden"
                 size={24}
                 color="#637381"
               />
-
 
               <Image
                 src="/images/home/img_17.png"
@@ -284,8 +281,15 @@ function Navbar() {
                       ⌘K
                     </span>
                   </div>
-                  <Button variant="ghost" className="h-10">Đăng nhập</Button>
-                  <Button variant="default" className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]">Bắt đầu miễn phí</Button>
+                  <Button variant="ghost" className="h-10">
+                    Đăng nhập
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+                  >
+                    Bắt đầu miễn phí
+                  </Button>
                 </>
               )}
             </div>

@@ -150,7 +150,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
               control={form.control}
               name="fileType"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="bg-white">
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -160,7 +160,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                         <SelectValue placeholder="Loại tập tin" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-white">
                       <SelectItem value="video">Video</SelectItem>
                       <SelectItem value="audio">Audio</SelectItem>
                       <SelectItem value="document">Tài liệu</SelectItem>
@@ -317,4 +317,4 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
       </form>
     </Form>
   );
-} 
+}

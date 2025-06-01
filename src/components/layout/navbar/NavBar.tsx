@@ -273,7 +273,7 @@ function Navbar() {
                   {/*</NotificationBadge>*/}
                   <Image
                     onClick={navigateToProfile}
-                    src={"/images/avatar-author.png"} // Đường dẫn đến avatar
+                    src={"/images/banner-sign-in.png"} // Đường dẫn đến avatar
                     alt="Avatar"
                     width={40}
                     height={40}

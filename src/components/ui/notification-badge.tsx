@@ -22,7 +22,7 @@ export const NotificationBadge = ({
       {showBadge && (
         <Badge
           className={cn(
-            'absolute text-sm top-0 right-0 rounded-sm text-white',
+            'absolute text-sm bg-secondary-main top-0 right-0 rounded-sm text-primary-contrastText',
             typeof label !== 'undefined' && ('' + label).length === 0
               ? 'translate-x-1 -translate-y-1 px-1 py-1.5'
               : 'translate-x-0 -translate-y-1 px-1.5 py-0.5',

@@ -1,11 +1,21 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "iconsax-react";
 import Image from "next/image";
 import { CircleTextAnimation } from "@/components/home/CircleTextAnimation";
 import EffectCardSwiper from "@/components/home/EffectCardSwiper";
 import React from "react";
+import {useRouter} from "next/navigation";
+import {Routes} from "@/lib/routes/routes";
 
 export function Banner() {
+  const router = useRouter();
+
+  const handleNavigateToCourse = () => {
+    router.push(Routes.courses);
+  };
+
   return (
     <div className="home-selection lg:h-[900px] mt-20 lg:mt-0">
       <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full h-full flex items-end gap-16 px-4">
@@ -33,7 +43,7 @@ export function Banner() {
                 color="white"
               />
             </Button>
-            <Button variant="outline" className="h-10 border-[1px] w-fit font-bold border-primary-main px-4">
+            <Button onClick={handleNavigateToCourse} variant="outline" className="h-10 border-[1px] w-fit font-bold border-primary-main px-4">
               Xem khoá học{" "}
               <ArrowRight
                 size="16"

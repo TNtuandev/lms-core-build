@@ -16,6 +16,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  if(typeof window !== "undefined") {
+    return;
+  }
+
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">

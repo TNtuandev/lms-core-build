@@ -16,3 +16,8 @@ export function formatTime(seconds: number): string {
   
   return `${formattedMinutes}:${formattedSeconds}`;
 }
+
+export function formatCurrency(amount?: number | string): string {
+  return amount ? amount?.toLocaleString('de-DE') : '0';
+}
+

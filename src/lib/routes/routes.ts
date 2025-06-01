@@ -7,4 +7,5 @@ export class Routes {
   static policy = "/policy";
   static termOfUse = "/term-of-use";
   static login = "/login";
+  static checkout = '/checkout';
 }

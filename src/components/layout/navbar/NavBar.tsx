@@ -11,7 +11,6 @@ import {
   BagHappy,
   CloseCircle,
   HambergerMenu,
-  Heart,
   SearchNormal,
 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -24,12 +23,14 @@ import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
 import Link from "next/link";
+import {useCartStore} from "@/store/slices/cart.slice";
 
 function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated } = useAuthContext();
+  const { pushToCart } = useCartStore();
   const [timeLeft, setTimeLeft] = useState(3300);
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
@@ -90,7 +91,17 @@ function Navbar() {
 
   const navigateToFlashSale = () => {};
 
-  const navigateToCheckout = () => {};
+  const navigateToCheckout = () => {
+    pushToCart({
+      id: "1",
+      name: "Sản phẩm mẫu",
+      price: 100000,
+      salesPrice: 80000,
+      originalPrice: 120000,
+      imageUrl: "/images/banner-sign-in.png", // Thay bằng đường dẫn hình ảnh thực tế
+    })
+    router.push(Routes.checkout);
+  };
 
   const navigateToProfile = () => {};
 
@@ -241,9 +252,9 @@ function Navbar() {
                       ⌘K
                     </span>
                   </div>
-                  <Button size="lg" type="button" variant="ghost">
-                    <Heart size="24" color="#71717B" />
-                  </Button>
+                  {/*<Button size="lg" type="button" variant="ghost">*/}
+                  {/*  <Heart size="24" color="#71717B" />*/}
+                  {/*</Button>*/}
                   <NotificationBadge label={"1"}>
                     <Button
                       size="lg"

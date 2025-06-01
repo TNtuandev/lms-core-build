@@ -39,6 +39,7 @@
     "next": "15.3.2",
     "next-navigation": "^1.0.6",
     "prettier": "^3.5.3",
+    "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",

@@ -1,8 +1,27 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { bannerSignIn, logoGoogle, logoMini } from "@/contants/images";
+import {useAuthStore} from "@/store/slices/auth.slice";
+import {Routes} from "@/lib/routes/routes";
+import { useRouter } from "next/navigation";
 
 function LoginPage() {
+
+  const { setAuth } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogin = () => {
+    setAuth({
+      id: '1',
+      email: "",
+      name: "Nguyễn Văn A",
+    }, "token_example");
+    router.push(Routes.home);
+
+  }
+
   return (
     <div className="flex w-full flex-col md:flex-row">
       <Image
@@ -38,7 +57,7 @@ function LoginPage() {
         <div className="flex justify-end items-end w-full">
           <div className="underline mt-4 text-xs">Quên mật khẩu?</div>
         </div>
-        <button className="font-semibold text-white bg-[#2F57EF] rounded-xl mt-4 w-full h-12">
+        <button onClick={handleLogin} className="font-semibold text-white bg-[#2F57EF] rounded-xl mt-4 w-full h-12">
           Đăng nhập
         </button>
         <div className="text-center text-[#637381] text-sm my-5">Hoặc</div>

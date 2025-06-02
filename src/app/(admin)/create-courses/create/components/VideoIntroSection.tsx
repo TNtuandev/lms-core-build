@@ -19,8 +19,13 @@ import {
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
 
+interface VideoIntroFormValues {
+  videoSource: "youtube" | "vimeo" | "upload";
+  videoUrl: string;
+}
+
 interface VideoIntroSectionProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<VideoIntroFormValues>;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -98,4 +103,4 @@ export default function VideoIntroSection({
       )}
     </Card>
   );
-} 
+}

@@ -5,6 +5,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VideoPlayer from "@/components/ui/video-player";
 import LessonSidebar from "@/components/courses/lesson-sidebar";
 
+interface Lesson {
+  id: string;
+  title: string;
+  active?: boolean;
+  // You can add more fields here if needed, such as:
+  // content?: string;
+  // duration?: number;
+}
+
 function LessonPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
 
@@ -139,7 +148,7 @@ function LessonPage() {
     );
   };
 
-  const selectLesson = (lesson: any) => {
+  const selectLesson = (lesson: Lesson) => {
     // In a real app, this would load the lesson data from an API
     console.log("Selected lesson:", lesson);
 

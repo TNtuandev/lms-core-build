@@ -17,7 +17,8 @@ interface PageProps {
 }
 
 export default function CourseDetailPage({ params }: PageProps) {
-  // const courseId = params.id;
+  const courseId = params.id;
+  console.log("Course ID:", courseId);
   const router = useRouter();
   const { pushToCart } = useCartStore();
 
@@ -104,7 +105,7 @@ export default function CourseDetailPage({ params }: PageProps) {
     router.push(`/course/${courseId}`);
   };
 
-  const handleCheckoutCourse = (item: any) => {
+  const handleCheckoutCourse = (item: typeof courseData) => {
     pushToCart({
       id: "1",
       name: item.title,

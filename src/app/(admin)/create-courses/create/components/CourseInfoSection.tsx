@@ -23,8 +23,22 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
 
+interface CourseFormValues {
+  shortDescription: string;
+  requirements: string;
+  objectives: string;
+  duration: string;
+  lessons: string;
+  level: string;
+  instructor: string;
+  tags: string[];
+  isSale: boolean;
+  isNew: boolean;
+  isBestseller: boolean;
+}
+
 interface CourseInfoSectionProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<CourseFormValues>;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -242,6 +256,7 @@ export default function CourseInfoSection({
                   <div>
                     <div className="flex gap-2 mb-2">
                       <Input
+                        {...field}
                         placeholder="Nhập thẻ..."
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
@@ -360,4 +375,4 @@ export default function CourseInfoSection({
       )}
     </Card>
   );
-} 
+}

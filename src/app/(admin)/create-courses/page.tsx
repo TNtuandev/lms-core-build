@@ -19,7 +19,7 @@ type Step1Data = {
   content: string;
   fileType: string;
   category?: string;
-  thumbnail?: any;
+  thumbnail?: string;
 };
 
 type Step2Data = {

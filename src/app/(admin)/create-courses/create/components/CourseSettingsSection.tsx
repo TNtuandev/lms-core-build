@@ -21,8 +21,15 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown, Info, Plus, Minus } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
 
+interface CourseSettingsFormValues {
+  level: "all" | "beginner" | "intermediate" | "advanced" | "expert";
+  isPublic: boolean;
+  enableQA: boolean;
+  enableDrip: boolean;
+}
+
 interface CourseSettingsSectionProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<CourseSettingsFormValues>;
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -183,4 +190,4 @@ export default function CourseSettingsSection({
       )}
     </Card>
   );
-} 
+}

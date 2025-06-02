@@ -13,8 +13,14 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
 
+interface CoursePricingFormValues {
+  isFree: boolean;
+  originalPrice: string;
+  salePrice: string;
+}
+
 interface CoursePricingSectionProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<CoursePricingFormValues>;
   isExpanded: boolean;
   onToggle: () => void;
 }

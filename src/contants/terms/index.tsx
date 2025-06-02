@@ -5,7 +5,7 @@ export const TERMS_LIST = [
     title: '1. Giới thiệu',
     content: (
       <>
-        Chào mừng bạn đến với KiTE Academy! Bằng cách truy cập và sử dụng trang web <a href="www.kite.academy" className="underline text-primary-main cursor-pointer">www.kite.academy</a> (sau đây gọi là "Website"), bạn đồng ý với các điều khoản và điều kiện dưới đây.
+        Chào mừng bạn đến với KiTE Academy! Bằng cách truy cập và sử dụng trang web <a href="www.kite.academy" className="underline text-primary-main cursor-pointer">www.kite.academy</a> (sau đây gọi là &#34;Website&#34;), bạn đồng ý với các điều khoản và điều kiện dưới đây.
       </>
     )
   },

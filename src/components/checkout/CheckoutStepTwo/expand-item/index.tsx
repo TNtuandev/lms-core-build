@@ -9,6 +9,8 @@ export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
   const [isOpen, setIsOpen] = useState(true);
   const { qrCodeUrl } = useCartStore();
 
+  console.log("totalPrice---", totalPrice)
+
   return (
     <div className="w-full border border-[#D4D4D8] rounded-xl p-4 shadow-sm bg-[#F4F4F5]">
       <button

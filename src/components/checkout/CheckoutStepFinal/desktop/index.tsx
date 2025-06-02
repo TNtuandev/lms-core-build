@@ -11,7 +11,7 @@ interface ICheckoutStep {
 }
 
 export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
-  const { orderId, qrCodeUrl } = useCartStore();
+  const { qrCodeUrl } = useCartStore();
   const router = useRouter();
 
   const handleNavigateToHome = () => {

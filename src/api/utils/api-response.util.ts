@@ -1,7 +1,5 @@
 import { AxiosError } from "axios";
 import { NextResponse } from "next/server";
-
-import toast from "react-hot-toast";
 import {
   INextApiResponse,
   ResponseStatus,

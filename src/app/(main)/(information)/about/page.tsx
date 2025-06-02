@@ -74,7 +74,7 @@ function AboutPage() {
             <div className="text-secondary">
               KiTE Academy là nền tảng học tập trực tuyến hiện đại, mang đến
               trải nghiệm giáo dục linh hoạt và hiệu quả cho học sinh ở mọi lứa
-              tuổi. Với triết lý "học mọi lúc, mọi nơi", KiTE Academy nổi bật
+              tuổi. Với triết lý &#34;học mọi lúc, mọi nơi&#34;, KiTE Academy nổi bật
               với những tính năng sau:
             </div>
             <div className="grid grid-cols-1 w-5/6 pt-8 gap-8">

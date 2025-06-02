@@ -51,7 +51,7 @@ const step2Schema = z.object({
   isPublished: z.boolean().optional(),
 });
 
-type Step2FormData = z.infer<typeof step2Schema>;
+export type Step2FormData = z.infer<typeof step2Schema>;
 
 interface Step2FormProps {
   onNext: (data: Step2FormData) => void;
@@ -119,7 +119,7 @@ export default function Step2Form({
   const onSubmit = (data: Step2FormData) => {
     const formDataWithChapters = {
       ...data,
-      chapters: chapters.map(({ isExpanded, ...chapter }) => chapter),
+      chapters: chapters.map(({ ...chapter }) => chapter),
     };
     onNext(formDataWithChapters);
   };

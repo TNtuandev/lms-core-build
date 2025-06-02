@@ -54,7 +54,7 @@ function ProfilePage() {
             <div className="space-y-2 sm:col-span-2">
               <label className="block text-gray-500">Giới thiệu</label>
               <div className="text-gray-800">
-                I'm the Front-End Developer for #Rainbow IT in Bangladesh, OR. I
+                I&#39;m the Front-End Developer for #Rainbow IT in Bangladesh, OR. I
                 have serious passion for UI effects, animations and creating
                 intuitive, dynamic user experiences
               </div>

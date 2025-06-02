@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { PlayCircle, Book, Users } from "lucide-react";
+import { Book, Users } from "lucide-react";
 
 interface EnrolledCourseCardProps {
   imageUrl: string;

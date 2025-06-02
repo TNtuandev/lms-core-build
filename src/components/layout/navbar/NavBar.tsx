@@ -37,7 +37,7 @@ function Navbar() {
 
   useEffect(() => {
     // Hàm xử lý bắt phím
-    const handleKeyDown = (event: any) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       // Kiểm tra xem phím được bấm có phải là Command + K không
       // metaKey đại diện cho phím Command trên MacBook
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {

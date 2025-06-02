@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Edit, Trash2, Plus } from "lucide-react";
+import { Step2FormData } from "../Step2Form";
 
 interface Chapter {
   id: string;
@@ -13,7 +13,7 @@ interface Chapter {
 }
 
 interface CourseBuilderSectionProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<Step2FormData>;
   isExpanded: boolean;
   onToggle: () => void;
   chapters: Chapter[];
@@ -21,7 +21,6 @@ interface CourseBuilderSectionProps {
 }
 
 export default function CourseBuilderSection({
-  form,
   isExpanded,
   onToggle,
   chapters,

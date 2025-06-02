@@ -3,13 +3,10 @@ import { useState } from 'react';
 import CheckoutStepOne from '@/components/checkout/CheckoutStepOne';
 import CheckoutStepTwo from '@/components/checkout/CheckoutStepTwo';
 import CheckoutStepFinal from '@/components/checkout/CheckoutStepFinal';
-import { useSearchParams } from 'next/navigation';
 import { useCartStore } from "@/store/slices/cart.slice";
 
 export default function Checkout() {
   const [step, setStep] = useState(0)
-  const params = useSearchParams();
-  const slug = params.get('slug') as string;
 
   const {listCart} = useCartStore();
 

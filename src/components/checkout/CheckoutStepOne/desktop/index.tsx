@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
 import { ICart, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
@@ -17,16 +17,16 @@ export default function CheckoutStepOneDesktop({
   cartData,
 }: ICheckoutStepOneDesktopProps) {
   const { setQrCodeUrl, setOrderId, setVoucher } = useCartStore();
-  const params = useSearchParams();
-  const slug = params.get("slug") as string;
   const router = useRouter();
-  const [selectedVoucher, setSelectedVoucher] = useState<string | null>(null);
+  const [selectedVoucher] = useState<string | null>(null);
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);
   };
 
-  const handleDeleteItem = (id: string) => {};
+  const handleDeleteItem = (id: string) => {
+    console.log("Delete item with id:", id);
+  };
 
   const handleOrder = () => {
     setOrderId("1");

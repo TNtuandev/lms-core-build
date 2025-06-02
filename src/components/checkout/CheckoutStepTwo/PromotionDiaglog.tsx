@@ -9,12 +9,20 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import _ from 'lodash';
 
-export default function PromotionDialog({setSelectedVoucher, selectedVoucher, open, setOpen}: any) {
+interface PromotionDialogProps {
+  setSelectedVoucher: (voucher: string) => void;
+  selectedVoucher: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export default function PromotionDialog({setSelectedVoucher, selectedVoucher, open, setOpen}: PromotionDialogProps) {
   const [promoCode, setPromoCode] = useState("");
-  // const {data: voucherData, refetch} = usePayment().getPromotions({
-  //   code: promoCode,
-  // });
-  const [value, setValue] = useState<any>({})
+
+  console.log("selectedVoucher", selectedVoucher);
+  // Giả sử value là một đối tượng chứa thông tin voucher đã chọn
+  console.log("promoCode", promoCode);
+  const [value] = useState('')
 
   const debounceSearch = _.debounce((value: string) => {
     setPromoCode(value);
@@ -30,7 +38,7 @@ export default function PromotionDialog({setSelectedVoucher, selectedVoucher, op
   };
 
   const handleCancel = () => {
-    setSelectedVoucher(null);
+    setSelectedVoucher('');
     setPromoCode("");
     setOpen(false);
   };

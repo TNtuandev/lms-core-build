@@ -9,4 +9,5 @@ export class Routes {
   static login = "/login";
   static checkout = '/checkout';
   static courses = '/course'
+  static dashboard = "/dashboard";
 }

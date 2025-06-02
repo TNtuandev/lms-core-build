@@ -103,7 +103,9 @@ function Navbar() {
     router.push(Routes.checkout);
   };
 
-  const navigateToProfile = () => {};
+  const navigateToProfile = () => {
+    router.push(Routes.dashboard)
+  };
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);

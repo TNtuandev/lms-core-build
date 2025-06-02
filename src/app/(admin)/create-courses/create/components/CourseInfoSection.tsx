@@ -22,23 +22,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
-
-interface CourseFormValues {
-  shortDescription: string;
-  requirements: string;
-  objectives: string;
-  duration: string;
-  lessons: string;
-  level: string;
-  instructor: string;
-  tags: string[];
-  isSale: boolean;
-  isNew: boolean;
-  isBestseller: boolean;
-}
+import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
 
 interface CourseInfoSectionProps {
-  form: UseFormReturn<CourseFormValues>;
+  form: UseFormReturn<Step2FormData>;
   isExpanded: boolean;
   onToggle: () => void;
 }

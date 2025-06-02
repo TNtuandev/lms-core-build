@@ -20,16 +20,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Info, Plus, Minus } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
-
-interface CourseSettingsFormValues {
-  level: "all" | "beginner" | "intermediate" | "advanced" | "expert";
-  isPublic: boolean;
-  enableQA: boolean;
-  enableDrip: boolean;
-}
+import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
 
 interface CourseSettingsSectionProps {
-  form: UseFormReturn<CourseSettingsFormValues>;
+  form: UseFormReturn<Step2FormData>;
   isExpanded: boolean;
   onToggle: () => void;
 }

@@ -7,18 +7,16 @@ import IconUser from "../../../../../public/icons/IconUser";
 import IconVideo from "../../../../../public/icons/IconVideo";
 import CourseCard from "@/components/courses/course-card";
 import { useRouter } from "next/navigation";
-import {useCartStore} from "@/store/slices/cart.slice";
-import {Routes} from "@/lib/routes/routes";
+import { useCartStore } from "@/store/slices/cart.slice";
+import { Routes } from "@/lib/routes/routes";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+// interface PageProps {
+//   params: {
+//     id: string;
+//   };
+// }
 
-export default function CourseDetailPage({ params }: PageProps) {
-  const courseId = params.id;
-  console.log("Course ID:", courseId);
+export default function CourseDetailPage() {
   const router = useRouter();
   const { pushToCart } = useCartStore();
 
@@ -113,10 +111,10 @@ export default function CourseDetailPage({ params }: PageProps) {
       salesPrice: 80000,
       originalPrice: 120000,
       imageUrl: "/images/banner-sign-in.png", // Thay bằng đường dẫn hình ảnh thực tế
-    })
+    });
 
     router.push(Routes.checkout);
-  }
+  };
 
   return (
     <div className="bg-white">
@@ -215,7 +213,10 @@ export default function CourseDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <button onClick={() => handleCheckoutCourse(courseData)} className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer">
+          <button
+            onClick={() => handleCheckoutCourse(courseData)}
+            className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
+          >
             Đăng ký ngay
           </button>
 

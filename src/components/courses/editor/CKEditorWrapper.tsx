@@ -8,6 +8,27 @@ interface CKEditorWrapperProps {
   placeholder?: string;
 }
 
+// Type definitions for CKEditor
+interface ErrorDetails {
+  phase: string;
+  willEditorRestart: boolean;
+}
+
+interface CKEditorProps {
+  editor: any;
+  data: string;
+  config: {
+    licenseKey: string;
+    toolbar: string[];
+    placeholder: string;
+  };
+  onReady?: (editor: any) => void;
+  onChange?: (event: any, editor: { getData: () => string }) => void;
+  onError?: (error: Error, details: ErrorDetails) => void;
+}
+
+type CKEditorComponent = React.ComponentType<CKEditorProps>;
+
 // eslint-disable-next-line react/function-component-definition
 const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   value,
@@ -17,9 +38,9 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const editorRef = useRef<unknown>(null);
-  const CKEditorRef = useRef<React.ComponentType<unknown> | null>(null);
-  const ClassicEditorRef = useRef(null);
+  const editorRef = useRef<any>(null);
+  const CKEditorRef = useRef<CKEditorComponent | null>(null);
+  const ClassicEditorRef = useRef<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -42,11 +63,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
         if (!isMounted) return;
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        CKEditorRef.current = ckeditorReact.CKEditor;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        CKEditorRef.current = ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
 
         console.log("CKEditor loaded successfully");
@@ -79,11 +96,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           import("@ckeditor/ckeditor5-build-classic"),
         ]);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        CKEditorRef.current = ckeditorReact.CKEditor;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        CKEditorRef.current = ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
         setIsLoaded(true);
         setError(null);
@@ -151,7 +164,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
   const CKEditor = CKEditorRef.current;
   const ClassicEditor = ClassicEditorRef.current;
-
+  
   return (
     <div className="border border-gray-300 rounded">
       <CKEditor
@@ -177,11 +190,11 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           ],
           placeholder: placeholder,
         }}
-        onReady={(editor: unknown) => {
+        onReady={(editor: any) => {
           console.log("Editor is ready!", editor);
           editorRef.current = editor;
         }}
-        onChange={(event: unknown, editor: { getData: () => string }) => {
+        onChange={(event: any, editor: { getData: () => string }) => {
           try {
             const data = editor.getData();
             onChange(data);
@@ -189,9 +202,9 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
             console.error("Error getting editor data:", err);
           }
         }}
-        onError={(error: Error, { willEditorRestart }: { willEditorRestart: boolean }) => {
+        onError={(error: Error, details: ErrorDetails) => {
           console.error("CKEditor error:", error);
-          if (!willEditorRestart) {
+          if (!details.willEditorRestart) {
             setError("Có lỗi xảy ra với trình soạn thảo");
           }
         }}

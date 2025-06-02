@@ -12,15 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
-
-interface CoursePricingFormValues {
-  isFree: boolean;
-  originalPrice: string;
-  salePrice: string;
-}
+import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
 
 interface CoursePricingSectionProps {
-  form: UseFormReturn<CoursePricingFormValues>;
+  form: UseFormReturn<Step2FormData>;
   isExpanded: boolean;
   onToggle: () => void;
 }

@@ -1,4 +1,4 @@
-import { getServerAxios } from "@/api/api";
+import api from "@/api/api";
 import {
   handleApiError,
   handleSuccessResponse,
@@ -7,8 +7,7 @@ import {
 export async function GET() {
   try {
     // ✅ Send login request to backend (NestJS)
-    const API = await getServerAxios();
-    const res = await API.get("/users/me");
+    const res = await api.get("/users/me");
 
     return handleSuccessResponse(res.data, "User retrieved successfully");
   } catch (error: unknown) {

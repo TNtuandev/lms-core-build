@@ -18,14 +18,10 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
-
-interface VideoIntroFormValues {
-  videoSource: "youtube" | "vimeo" | "upload";
-  videoUrl: string;
-}
+import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
 
 interface VideoIntroSectionProps {
-  form: UseFormReturn<VideoIntroFormValues>;
+  form: UseFormReturn<Step2FormData>;
   isExpanded: boolean;
   onToggle: () => void;
 }

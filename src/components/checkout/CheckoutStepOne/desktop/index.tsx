@@ -53,10 +53,10 @@ export default function CheckoutStepOneDesktop({
   }, [voucher, totalPrice]);
 
   return (
-    <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto flex gap-[40px] w-full">
-      <div className="w-[75%]">
+    <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto flex lg:gap-10 w-full lg:flex-row flex-col gap-6">
+      <div className="w-full lg:w-[75%]">
         <div className="w-full">
-          <div className="rounded-lg w-full">
+          <div className="rounded-lg w-full overflow-scroll">
             <table className="w-full border-collapse rounded">
               <thead className="">
                 <tr className="bg-gray-100 text-left text-sm rounded-xl boxShadow">
@@ -72,7 +72,7 @@ export default function CheckoutStepOneDesktop({
                     key={index}
                     className={`${index === 0 ? "border-t-[8px] border-white bg-[#F4F4F5]" : "border-t bg-[#F4F4F5] border-[#E4E4E7]"}`}
                   >
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-3 px-4 text-sm min-w-[300px]">
                       <div className="flex gap-4 items-center font-semibold">
                         <img
                           className="h-12 w-16 rounded-sm"
@@ -142,12 +142,12 @@ export default function CheckoutStepOneDesktop({
           </div>
         </div>
 
-        <div className="bg-[#F4F4F5] mt-6 p-[24px] flex justify-between rounded-xl">
-            <div>
+        <div className="bg-[#F4F4F5] mt-6 p-[24px] flex justify-between rounded-xl mb-16 lg:mb-0">
+            <div className="w-full">
               <div className="text-lg font-semibold">Khuyến mại</div>
               <div className="flex gap-4 mt-2">
-                <Input className="h-10" placeholder="Mã khuyến mại"/>
-                <Button variant="default" className="h-10 rounded-xl text-white">
+                <Input className="h-10 flex-1" placeholder="Mã khuyến mại"/>
+                <Button variant="default" className="h-10 px-4 rounded-xl text-white">
                   Áp dụng
                 </Button>
               </div>

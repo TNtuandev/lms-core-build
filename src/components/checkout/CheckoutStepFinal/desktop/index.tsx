@@ -25,8 +25,8 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
   }, [cartData]);
 
   return (
-    <div className="flex gap-[40px] w-full px-[5%] mb-[100px]">
-      <div className="w-[75%] h-max">
+    <div className="flex gap-[40px] w-full px-[5%] mb-[100px] lg:flex-row flex-col">
+      <div className="w-full lg:w-[75%] h-max">
         <div className="w-full h-max mb-5">
           <div className="text-2xl font-semibold mb-[12px]">
             Thông tin khách hàng

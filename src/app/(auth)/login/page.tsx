@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Schema validation for Login
 const loginSchema = z.object({
@@ -34,6 +35,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -50,6 +53,10 @@ function LoginPage() {
   const handleGoogleLogin = () => {
     // TODO: Implement Google login
     console.log("Google login clicked");
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -70,17 +77,24 @@ function LoginPage() {
         </div>
         <div className="flex gap-2 text-sm text-[#212B36]">
           <div>Bạn chưa phải là thành viên?</div>
-          <div className="text-[#2F57EF] cursor-pointer hover:underline">
+          <div
+            className="text-[#2F57EF] cursor-pointer hover:underline"
+            onClick={() => router.push("/register")}
+          >
             Đăng ký
           </div>
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full mt-[40px] space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full mt-[40px] space-y-4"
+          >
             {/* Display API Error */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error.message || "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
+                {error.message ||
+                  "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
               </div>
             )}
 
@@ -111,13 +125,27 @@ function LoginPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
-                      disabled={isPending}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 pr-12 focus:border-blue-500 focus:ring-blue-500"
+                        disabled={isPending}
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        disabled={isPending}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,7 +176,7 @@ function LoginPage() {
         </Form>
 
         <div className="text-center text-[#637381] text-sm my-5">Hoặc</div>
-        
+
         <Button
           type="button"
           onClick={handleGoogleLogin}

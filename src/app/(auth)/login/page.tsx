@@ -2,25 +2,55 @@
 
 import React from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { bannerSignIn, logoGoogle, logoMini } from "@/contants/images";
-import {useAuthStore} from "@/store/slices/auth.slice";
-import {Routes} from "@/lib/routes/routes";
-import { useRouter } from "next/navigation";
+import { useLogin } from "@/hooks/queries/auth/useLogin";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+
+// Schema validation for Login
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email không được để trống")
+    .email("Email không hợp lệ"),
+  password: z
+    .string()
+    .min(1, "Mật khẩu không được để trống")
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 function LoginPage() {
+  const { mutate: login, isPending, error } = useLogin();
 
-  const { setAuth } = useAuthStore();
-  const router = useRouter();
-
-  const handleLogin = () => {
-    setAuth({
-      id: '1',
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
       email: "",
-      name: "Nguyễn Văn A",
-    }, "token_example");
-    router.push(Routes.home);
+      password: "",
+    },
+  });
 
-  }
+  const onSubmit = (data: LoginFormData) => {
+    login(data);
+  };
+
+  const handleGoogleLogin = () => {
+    // TODO: Implement Google login
+    console.log("Google login clicked");
+  };
 
   return (
     <div className="flex w-full flex-col md:flex-row">
@@ -40,35 +70,99 @@ function LoginPage() {
         </div>
         <div className="flex gap-2 text-sm text-[#212B36]">
           <div>Bạn chưa phải là thành viên?</div>
-          <div className="text-[#2F57EF]">Đăng ký</div>
+          <div className="text-[#2F57EF] cursor-pointer hover:underline">
+            Đăng ký
+          </div>
         </div>
-        <div className="w-full flex flex-col justify-center items-center gap-4 mt-[40px]">
-          <input
-            type="text"
-            placeholder="Email"
-            className="w-full mt-4 border border-gray-200 rounded-md px-4 py-2 h-12"
-          />
-          <input
-            type="text"
-            placeholder="Password"
-            className="w-full mt-2 border border-gray-200 rounded-md px-4 py-2 h-12"
-          />
-        </div>
-        <div className="flex justify-end items-end w-full">
-          <div className="underline mt-4 text-xs">Quên mật khẩu?</div>
-        </div>
-        <button onClick={handleLogin} className="font-semibold text-white bg-[#2F57EF] rounded-xl mt-4 w-full h-12">
-          Đăng nhập
-        </button>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full mt-[40px] space-y-4">
+            {/* Display API Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                {error.message || "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
+              </div>
+            )}
+
+            {/* Email Field */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Email"
+                      className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Password Field */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end items-end w-full">
+              <div className="underline mt-4 text-xs cursor-pointer hover:text-blue-600">
+                Quên mật khẩu?
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl mt-4 w-full h-12"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Đang đăng nhập...
+                </>
+              ) : (
+                "Đăng nhập"
+              )}
+            </Button>
+          </form>
+        </Form>
+
         <div className="text-center text-[#637381] text-sm my-5">Hoặc</div>
-        <button className="font-semibold text-white bg-[#919EAB8f] rounded-xl w-full h-12 flex justify-center items-center gap-2">
+        
+        <Button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={isPending}
+          variant="outline"
+          className="font-semibold text-white bg-[#919EAB8f] hover:bg-[#919EABa0] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-12 flex justify-center items-center gap-2 border-none"
+        >
           <Image
             src={logoGoogle}
-            alt="banner"
+            alt="Google logo"
             className="h-6 w-6 object-cover"
           />
           Đăng nhập với Google
-        </button>
+        </Button>
       </div>
     </div>
   );

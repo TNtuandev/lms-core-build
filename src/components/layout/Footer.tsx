@@ -86,7 +86,7 @@ function Footer() {
         </div>
         <div className="my-8 w-full h-[1px] bg-[#919EAB3D]"></div>
         <div className="lg:flex items-center justify-between">
-          <div className="text-sm">Copyright © 2025 Readify. <span className="font-semibold">KITE Academy</span>. All Rights Reserved</div>
+          <div className="text-sm">Copyright © 2025 <span className="font-semibold">KITE Academy</span>. All Rights Reserved</div>
           <div className="text-zinc-400 text-sm">
             <Link href={Routes.termOfUse} className="hover:text-primary-main hover:underline">Điều khoản & Điền kiện</Link>
             <Link href={Routes.policy} className="ml-8 hover:text-primary-main hover:underline">Chính sách bảo mật</Link>

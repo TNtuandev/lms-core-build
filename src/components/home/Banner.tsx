@@ -36,14 +36,14 @@ export function Banner() {
             <div className="text-secondary text-xl">Tiếp cận thế giới tri thức trong tầm tay và thay đổi hành trình học tập của bạn</div>
           </div>
           <div className="flex lg:flex-row flex-col gap-4 pt-8 lg:pt-16 items-center lg:items-start">
-            <Button variant="default" className="bg-primary-main h-10 w-fit shadow-md hover:shadow-xl font-bold hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]">
+            <Button style={{padding: '11px 22px'}} variant="default" className="bg-primary-main h-12 w-fit shadow-md hover:shadow-xl font-bold hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]">
               Tham gia miễn phí{" "}
               <ArrowRight
                 size="16"
                 color="white"
               />
             </Button>
-            <Button onClick={handleNavigateToCourse} variant="outline" className="h-10 border-[1px] w-fit font-bold border-primary-main px-4">
+            <Button style={{padding: '11px 22px'}} onClick={handleNavigateToCourse} variant="outline" className="h-12 border-[1px] w-fit font-bold border-primary-main rounded-[10px]">
               Xem khoá học{" "}
               <ArrowRight
                 size="16"
@@ -51,16 +51,16 @@ export function Banner() {
               />
             </Button>
           </div>
-          <div className="lg:pt-32 pt-8 flex justify-between">
-            <div className="lg:w-52 flex-1 text-center">
+          <div className="lg:pt-32 lg:pb-20 py-8 flex justify-between">
+            <div className="lg:w-52 flex-1 lg:text-left text-center">
               <div className="font-bold text-3xl text-primary-main">26K+</div>
               <div className="text-text-primary text-sm">Tổng khóa học</div>
             </div>
-            <div className="lg:w-52 flex-1 text-center">
+            <div className="lg:w-52 flex-1 lg:text-left text-center">
               <div className="font-bold text-3xl text-error-main">150+</div>
               <div className="text-text-primary text-sm">Giảng viên</div>
             </div>
-            <div className="lg:w-52 flex-1 text-center">
+            <div className="lg:w-52 flex-1 lg:text-left text-center">
               <div className="font-bold text-3xl text-infor">120K+</div>
               <div className="text-text-primary text-sm">Học viên đăng ký</div>
             </div>

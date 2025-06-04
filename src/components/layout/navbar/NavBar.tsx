@@ -189,15 +189,16 @@ function Navbar() {
             <div className="flex items-center space-x-4 md:space-x-8">
               <HambergerMenu
                 className="block lg:hidden"
+                variant="Broken"
                 size={24}
                 color="#637381"
               />
 
               <Image
-                src="/images/home/img_17.png"
+                src="/images/logo.png"
                 alt="Logo"
-                width={40}
-                height={40}
+                width={127}
+                height={33}
                 onClick={handleNavigateToHome}
                 className="cursor-pointer block lg:hidden"
               />
@@ -241,38 +242,48 @@ function Navbar() {
 
             {/* Buttons */}
             <div className="flex space-x-6 items-center">
-              {isAuthenticated ? (
-                <div className="flex items-center space-x-4">
-                  <div
-                    onClick={() => setOpenSearch(true)}
-                    className="cursor-pointer hidden lg:flex  bg-zinc-600/4 items-center h-10 px-2 rounded-md space-x-2"
-                  >
-                    <div>
-                      <SearchNormal size={16} color="#71717B" />
-                    </div>
-                    <span className="p-1 bg-white text-sm rounded shadow">
-                      ⌘K
-                    </span>
-                  </div>
-                  {/*<Button size="lg" type="button" variant="ghost">*/}
-                  {/*  <Heart size="24" color="#71717B" />*/}
-                  {/*</Button>*/}
-                  <NotificationBadge label={"1"}>
+
+                <div className="flex items-center gap-4">
+                  <Image src="/vietnam.svg" alt="Logo" className="m-2 lg:block hidden" width={28} height={20} />
+
+                  <div className="flex gap-2 items-center">
                     <Button
+                      style={{padding: 8}}
                       size="lg"
                       type="button"
                       variant="ghost"
-                      onClick={navigateToCheckout}
+                      onClick={() => {
+                        setOpenSearch(true)
+                      }}
                     >
-                      <BagHappy size="24" color="#71717B" />
+                      <SearchNormal size={24} color="#71717B" />
                     </Button>
-                  </NotificationBadge>
+                    {/*<span className="p-1 bg-white text-sm rounded shadow">*/}
+                    {/*  ⌘K*/}
+                    {/*</span>*/}
+                    {/*<Button size="lg" type="button" variant="ghost">*/}
+                    {/*  <Heart size="24" color="#71717B" />*/}
+                    {/*</Button>*/}
+                    <NotificationBadge label={"1"}>
+                      <Button
+                        style={{padding: 8}}
+
+                        size="lg"
+                        type="button"
+                        variant="ghost"
+                        onClick={navigateToCheckout}
+                      >
+                        <BagHappy size="24" color="#71717B" />
+                      </Button>
+                    </NotificationBadge>
+                  </div>
 
                   {/*<NotificationBadge label="0">*/}
                   {/*  <Button size="lg" type="button" variant="ghost">*/}
                   {/*    <Notification size="24" color="#71717B" />*/}
                   {/*  </Button>*/}
                   {/*</NotificationBadge>*/}
+                  {isAuthenticated ? (
                   <Image
                     onClick={navigateToProfile}
                     src={"/images/banner-sign-in.png"} // Đường dẫn đến avatar
@@ -281,20 +292,8 @@ function Navbar() {
                     height={40}
                     className="cursor-pointer rounded-full h-[40px] w-[40px]"
                   />
-                </div>
               ) : (
-                <>
-                  <div
-                    onClick={() => setOpenSearch(true)}
-                    className="hidden lg:flex cursor-pointer  bg-zinc-600/4 items-center h-10 px-2 rounded-md space-x-2"
-                  >
-                    <div>
-                      <SearchNormal size={16} color="#71717B" />
-                    </div>
-                    <span className="p-1 bg-white text-sm rounded shadow">
-                      ⌘K
-                    </span>
-                  </div>
+                <div className="lg:flex gap-2 items-center hidden">
                   <Button variant="ghost" className="h-10">
                     <Link href={Routes.login}>Đăng nhập</Link>
                   </Button>
@@ -304,8 +303,10 @@ function Navbar() {
                   >
                     <Link href={Routes.login}>Bắt đầu miễn phí</Link>
                   </Button>
-                </>
+                </div>
               )}
+
+                </div>
             </div>
           </div>
         </div>

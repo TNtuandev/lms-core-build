@@ -66,9 +66,9 @@ function RegisterPage() {
       <Image
         src={bannerSignIn}
         alt="banner"
-        className="h-screen object-cover hidden md:block"
+        className="h-screen object-cover w-full hidden md:block"
       />
-      <div className="flex flex-col justify-center items-center w-full px-6 md:px-8">
+      <div className="flex flex-col justify-center items-center w-full md:w-[30%] px-6 md:px-8 flex-shrink-0">
         <Image
           src={logoMini}
           alt="logmini"
@@ -111,7 +111,7 @@ function RegisterPage() {
                     <Input
                       type="text"
                       placeholder="Họ và tên"
-                      className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
+                      className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
                       disabled={isPending}
                       {...field}
                     />
@@ -131,7 +131,7 @@ function RegisterPage() {
                     <Input
                       type="email"
                       placeholder="Email"
-                      className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
+                      className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
                       disabled={isPending}
                       {...field}
                     />
@@ -152,7 +152,7 @@ function RegisterPage() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
-                        className="w-full border border-gray-200 rounded-md px-4 py-2 h-12 pr-12 focus:border-blue-500 focus:ring-blue-500"
+                        className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 pr-12 focus:border-blue-500 focus:ring-blue-500"
                         disabled={isPending}
                         {...field}
                       />
@@ -213,7 +213,7 @@ function RegisterPage() {
           onClick={handleGoogleRegister}
           disabled={isPending}
           variant="outline"
-          className="font-semibold text-white bg-[#919EAB8f] hover:bg-[#919EABa0] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-12 flex justify-center items-center gap-2 border-none"
+          className="font-normal text-primary bg-[#919EAB14]  disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-12 flex justify-center items-center gap-2 border-none"
         >
           <Image
             src={logoGoogle}

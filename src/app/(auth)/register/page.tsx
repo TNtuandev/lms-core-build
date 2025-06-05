@@ -64,16 +64,16 @@ function RegisterPage() {
   return (
     <div className="flex w-full flex-col md:flex-row">
       <Image
-        src={logoMini}
-        alt="logmini"
-        className="md:hidden block h-full m-4 mb-10"
-      />
-      <Image
         src={bannerSignIn}
         alt="banner"
         className="h-screen object-cover hidden md:block"
       />
       <div className="flex flex-col justify-center items-center w-full px-6 md:px-8">
+        <Image
+          src={logoMini}
+          alt="logmini"
+          className="block m-4 md:mt-10 mt-[144px] h-[56px] w-[180px]"
+        />
         <div className="text-[#212B36] font-semibold text-2xl md:text-3xl mb-3">
           Bắt đầu hoàn toàn miễn phí
         </div>

@@ -29,7 +29,7 @@ function SearchPopup({ open, setOpen }: ISearchProps) {
           <Input
             className="border-0 shadow-none"
             onChange={handleSearchChange}
-            placeholder="Nhập tên sách, tác giả,..."
+            placeholder="Nhập..."
           />
           <DialogClose className="text-[13px] text-text-primary right-4 px-2 py-1 rounded-lg bg-zinc-100">
             ESC

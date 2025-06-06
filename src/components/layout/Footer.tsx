@@ -16,7 +16,7 @@ function Footer() {
               height={48}
             />
             <div className="mt-8 text-base">
-              KiTE Academy là nền tảng học tập trực tuyến hiện đại, mang đến trải nghiệm giáo dục linh hoạt và hiệu quả cho học sinh ở mọi lứa tuổi.
+              Amerian Study là nền tảng học tập trực tuyến hiện đại, mang đến trải nghiệm giáo dục linh hoạt và hiệu quả cho học sinh ở mọi lứa tuổi.
             </div>
           </div>
           <div className="flex flex-col gap-2 text-sm">
@@ -32,7 +32,7 @@ function Footer() {
             </Link>
           </div>
           <div className="flex flex-col gap-2 text-sm">
-            <div className="text-xl font-semibold">KiTE Academy</div>
+            <div className="text-xl font-semibold">Amerian Study</div>
             <Link href={Routes.contact} className="md:mt-6 cursor-pointer hover:text-primary-main hover:underline text-zinc-400">
               Liên hệ
             </Link>
@@ -65,7 +65,7 @@ function Footer() {
                   fill="#D2A96E"
                 />
               </svg>
-              <div>demo@kiteacademy.cc</div>
+              <div>demo@amerianstudy.cc</div>
             </div>
             <div className="flex gap-2 items-center">
               <svg
@@ -86,7 +86,7 @@ function Footer() {
         </div>
         <div className="my-8 w-full h-[1px] bg-[#919EAB3D]"></div>
         <div className="lg:flex items-center justify-between">
-          <div className="text-sm">Copyright © 2025 Readify. <span className="font-semibold">KITE Academy</span>. All Rights Reserved</div>
+          <div className="text-sm">Copyright © 2025 <span className="font-semibold">Amerian Study</span>. All Rights Reserved</div>
           <div className="text-zinc-400 text-sm">
             <Link href={Routes.termOfUse} className="hover:text-primary-main hover:underline">Điều khoản & Điền kiện</Link>
             <Link href={Routes.policy} className="ml-8 hover:text-primary-main hover:underline">Chính sách bảo mật</Link>

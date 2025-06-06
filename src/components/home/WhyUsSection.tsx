@@ -1,8 +1,17 @@
+"use client";
+
 import { ArrowRight } from "iconsax-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import {useRouter} from "next/navigation";
+import {Routes} from "@/lib/routes/routes";
 
 export function WhyUsSection() {
+  const router = useRouter();
+
+  const navigateToTeacher = () => {
+    router.push(Routes.instructors);
+  };
 
   return (
     <div>
@@ -29,7 +38,7 @@ export function WhyUsSection() {
         <div className="lg:col-span-4 rounded-2xl px-10 py-8 bg-primary-main/8 flex flex-col">
           <div className="text-primary-main font-bold text-3xl">Học Từ Mọi Nơi</div>
           <div className="mt-2 flex-1">Giáo dục trực tuyến đã trở nên phổ biến và quan trọng hơn trong những năm gần đây, đặc biệt là với những tiến bộ về công nghệ và khả năng tiếp cận Internet ngày càng cao.</div>
-          <Button variant="default" className="mt-5 w-fit text-warning-dark bg-warning-dark/16 h-9 hover:bg-warning-dark/32 ">
+          <Button variant="default" className="mt-5 w-fit text-warning-dark bg-warning-dark/16 h-9 hover:bg-warning-dark/32 rounded-[10px]">
             Xem ngay <ArrowRight size={20} color="#F57C00" />
           </Button>
         </div>
@@ -46,7 +55,7 @@ export function WhyUsSection() {
             <h3 className="text-4xl font-bold leading-12 text-white">
               Giảng viên <br /> giàu kinh <br /> nghiệm
             </h3>
-            <Button className="h-9 text-white w-fit bg-white/12 hover:bg-white/20">
+            <Button onClick={navigateToTeacher} className="h-9 text-white w-fit bg-white/12 hover:bg-white/20 rounded-[10px]">
               Xem ngay <ArrowRight size={20} color="white" />
             </Button>
           </div>

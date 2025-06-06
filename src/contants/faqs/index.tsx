@@ -1,7 +1,7 @@
 export const FAQS_LIST = [
   {
-    question: "KiTE Academy là gì?",
-    answer: "KiTE Academy là nền tảng giáo dục trực tuyến cung cấp các khóa học kỹ năng và học thuật dành riêng cho trẻ em, với phương pháp học tập hiện đại, tương tác và phù hợp với từng độ tuổi.",
+    question: "Amerian Study là gì?",
+    answer: "Amerian Study là nền tảng giáo dục trực tuyến cung cấp các khóa học kỹ năng và học thuật dành riêng cho trẻ em, với phương pháp học tập hiện đại, tương tác và phù hợp với từng độ tuổi.",
   },
   {
     question: "Các khóa học phù hợp với độ tuổi nào?",

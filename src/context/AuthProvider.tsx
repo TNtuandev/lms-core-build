@@ -1,9 +1,8 @@
 "use client";
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { User } from "@/models/user.model";
 import { useMe } from "@/hooks/queries/auth/useMe";
-import { useLogout } from "@/hooks/queries/auth/useLogout";
 
 // ✅ Define AuthContext Interface
 interface AuthContextType {
@@ -27,9 +26,9 @@ export const useAuthContext = () => {
 
 // ✅ AuthProvider Component
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, logout } = useAuthStore();
   const userQuery = useMe();
-  const signOutMutation = useLogout();
+  // const signOutMutation = useLogout();
 
   return (
     <AuthContext.Provider
@@ -38,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         isLoading: userQuery.isLoading,
         signOut: () => {
-          signOutMutation.mutate();
+          logout();
         },
       }}
     >

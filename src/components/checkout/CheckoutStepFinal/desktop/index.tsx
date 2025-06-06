@@ -105,45 +105,39 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
         </Button>
       </div>
       <div>
-        <div className="bg-[#00B8DB14] p-[24px] flex justify-between rounded-xl">
-          <div className={`mt-3 text-center`}>
+        <div className="bg-[#00B8DB14] p-4 flex justify-between rounded-xl">
+          <div className={`lg:text-left text-center`}>
             <span>
               Mở ứng dụng Internet banking và chọn{" "}
               <span className="font-bold">Quét mã</span>
             </span>
             <div className="flex gap-[32px] mt-4 justify-center items-center flex-col md:flex-row">
               {            qrCodeUrl && (
-                <QRCodeSVG
-                  value={qrCodeUrl}
-                  size={128}
-                  bgColor={"#ffffff"}
-                  fgColor={"#000000"}
-                  level={"L"}
-                  minVersion={4}
-                  imageSettings={{
-                    src: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
-                    height: 24,
-                    width: 24,
-                    opacity: 1,
-                    excavate: true,
-                  }}
-                />
+                <>
+                  <QRCodeSVG
+                    value={qrCodeUrl}
+                    size={140}
+                    bgColor={"#ffffff"}
+                    fgColor={"#000000"}
+                    level={"L"}
+                    minVersion={4}
+                    imageSettings={{
+                      src: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
+                      height: 24,
+                      width: 24,
+                      opacity: 1,
+                      excavate: true,
+                    }}
+                  />
+                </>
+
               )}
-              {/*<div className="flex flex-col gap-2">*/}
-              {/*  <span>*/}
-              {/*    Tài khoản VP Bank:{" "}*/}
-              {/*    <span className="font-semibold">03363826286</span>*/}
-              {/*  </span>*/}
-              {/*  <span>*/}
-              {/*    Tên: <span className="font-semibold">Readify</span>*/}
-              {/*  </span>*/}
-              {/*  <span>*/}
-              {/*    Số tiền: <span className="font-semibold">198.000đ</span>*/}
-              {/*  </span>*/}
-              {/*  <span>*/}
-              {/*    Lời nhắn: <span className="font-semibold">YZ6GJ</span>*/}
-              {/*  </span>*/}
-              {/*</div>*/}
+              <div className="flex flex-col gap-3">
+                <span>Tài khoản VP Bank: <span className="font-semibold">03363826286</span></span>
+                <span>Tên: <span className="font-semibold">Amerian Study</span></span>
+                <span>Số tiền: <span className="font-semibold">198.000đ</span></span>
+                <span>Lời nhắn: <span className="font-semibold">YZ6GJ</span></span>
+              </div>
             </div>
           </div>
         </div>

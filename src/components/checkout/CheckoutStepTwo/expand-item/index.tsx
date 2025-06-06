@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCartStore } from "@/store/slices/cart.slice";
+import IconPaypal from "../../../../../public/icons/IconPaypal";
 
 export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -61,33 +62,58 @@ export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
           isOpen ? 'max-h-max opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className={`text-center`}>
-          <span>Mở Camera và <span className="font-bold">Quét mã</span></span>
-          <div className="flex gap-[32px] justify-center mt-4 items-center flex-col md:flex-row">
+        <div className={`text-center lg:text-left`}>
+          <span>Mở ứng dụng Internet banking và chọn <span className="font-bold">Quét mã</span></span>
+          <div className="flex gap-[32px] justify-center lg:justify-start mt-4 items-center flex-col md:flex-row">
             {qrCodeUrl && (
-              <QRCodeSVG
-                value={qrCodeUrl}
-                size={128}
-                bgColor={"#ffffff"}
-                fgColor={"#000000"}
-                level={"L"}
-                minVersion={4}
-                imageSettings={{
-                  src: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
-                  height: 24,
-                  width: 24,
-                  opacity: 1,
-                  excavate: true,
-                }}
-              />
+              <>
+                <QRCodeSVG
+                  className="hidden lg:block"
+                  value={qrCodeUrl}
+                  size={208}
+                  bgColor={"#ffffff"}
+                  fgColor={"#000000"}
+                  level={"L"}
+                  minVersion={4}
+                  imageSettings={{
+                    src: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
+                    height: 24,
+                    width: 24,
+                    opacity: 1,
+                    excavate: true,
+                  }}
+                />
+                <QRCodeSVG
+                  className="block lg:hidden"
+                  value={qrCodeUrl}
+                  size={140}
+                  bgColor={"#ffffff"}
+                  fgColor={"#000000"}
+                  level={"L"}
+                  minVersion={4}
+                  imageSettings={{
+                    src: "https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png",
+                    height: 24,
+                    width: 24,
+                    opacity: 1,
+                    excavate: true,
+                  }}
+                />
+              </>
             )}
+            <div className="flex flex-col gap-2">
+              <span>Tài khoản VP Bank: <span className="font-semibold">03363826286</span></span>
+              <span>Tên: <span className="font-semibold">Amerian Study</span></span>
+              <span>Số tiền: <span className="font-semibold">198.000đ</span></span>
+              <span>Lời nhắn: <span className="font-semibold">YZ6GJ</span></span>
+            </div>
           </div>
         </div>
       </div>
-      {/*<div className={`border border-[#D4D4D8] p-[12px] rounded-lg flex items-center cursor-pointer ${isOpen ? 'mt-6' : ''}`}>*/}
-      {/*  <IconPaypal />*/}
-      {/*  <div>Thanh toán trực tuyến qua PayPal</div>*/}
-      {/*</div>*/}
+      <div className={`border border-[#D4D4D8] p-[12px] rounded-lg flex items-center cursor-pointer ${isOpen ? 'mt-6' : ''}`}>
+        <IconPaypal />
+        <div>Thanh toán trực tuyến qua PayPal</div>
+      </div>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function EffectCardSwiper() {
       className="mySwiper"
     >
       {[1,2,3].map((item) => (
-        <SwiperSlide key={item}>
+        <SwiperSlide className="px-2" key={item}>
           <CourseCard
             badge="NEW"
             title="Difficult Things About Education."

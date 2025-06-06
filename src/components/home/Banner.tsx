@@ -16,6 +16,10 @@ export function Banner() {
     router.push(Routes.courses);
   };
 
+  const handleNavigateToLogin = () => {
+    router.push(Routes.login);
+  }
+
   return (
     <div className="home-selection lg:h-[900px] mt-20 lg:mt-0">
       <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full h-full flex items-end gap-16 px-4">
@@ -36,7 +40,7 @@ export function Banner() {
             <div className="text-secondary text-xl">Tiếp cận thế giới tri thức trong tầm tay và thay đổi hành trình học tập của bạn</div>
           </div>
           <div className="flex lg:flex-row flex-col gap-4 pt-8 lg:pt-16 items-center lg:items-start">
-            <Button style={{padding: '11px 22px'}} variant="default" className="bg-primary-main h-12 w-fit shadow-md hover:shadow-xl font-bold hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]">
+            <Button onClick={handleNavigateToLogin} style={{padding: '11px 22px'}} variant="default" className="bg-primary-main h-12 w-fit shadow-md hover:shadow-xl font-bold hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]">
               Tham gia miễn phí{" "}
               <ArrowRight
                 size="16"

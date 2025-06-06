@@ -10,4 +10,13 @@ export class Routes {
   static checkout = '/checkout';
   static courses = '/course'
   static dashboard = "/dashboard";
+  static notification = '/notification'
+  static profile = "/dashboard/profile";
+  static course = "/course";
+  static courseRegister = "/dashboard/courses"
+  static favorite = '/dashboard/favorites'
+  static rating = '/dashboard/reviews'
+  static historyPurchases = '/dashboard/purchase-history'
+  static audit = '/dashboard/test-scores'
+
 }

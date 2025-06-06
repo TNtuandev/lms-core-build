@@ -103,7 +103,7 @@ export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
             )}
             <div className="flex flex-col gap-2">
               <span>Tài khoản VP Bank: <span className="font-semibold">03363826286</span></span>
-              <span>Tên: <span className="font-semibold">KiTE Academy</span></span>
+              <span>Tên: <span className="font-semibold">Amerian Study</span></span>
               <span>Số tiền: <span className="font-semibold">198.000đ</span></span>
               <span>Lời nhắn: <span className="font-semibold">YZ6GJ</span></span>
             </div>

@@ -110,7 +110,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
               <p className="text-xs text-gray-500">
                 Xem trước:{" "}
                 <span className="text-blue-600">
-                  https://kiteacademy.com/khoa-hoc-moi
+                  https://amerianstudy.com/khoa-hoc-moi
                 </span>
               </p>
               <FormMessage />

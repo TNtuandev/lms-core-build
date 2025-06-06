@@ -10,7 +10,6 @@ import {
   ArrowDown2,
   BagHappy,
   CloseCircle,
-  HambergerMenu,
   SearchNormal,
 } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";

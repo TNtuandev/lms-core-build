@@ -24,6 +24,7 @@ import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
 import Link from "next/link";
 import {useCartStore} from "@/store/slices/cart.slice";
+import {MenuMobile} from "@/components/layout/navbar/MenuMobile";
 
 function Navbar() {
   const pathname = usePathname();
@@ -187,12 +188,7 @@ function Navbar() {
           <div className="flex justify-between items-center">
             {/* Nav Routes */}
             <div className="flex items-center space-x-4 md:space-x-8">
-              <HambergerMenu
-                className="block lg:hidden"
-                variant="Broken"
-                size={24}
-                color="#637381"
-              />
+              <MenuMobile />
 
               <Image
                 src="/images/logo.png"

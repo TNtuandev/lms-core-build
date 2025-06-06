@@ -90,7 +90,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
               </div>
             ))}
           </div>
-          <div className="flex justify-between items-center mt-3">
+          <div className="flex justify-between items-center mt-3 gap-2">
             <div className="text-sm font-medium">Tổng tiền</div>
             <div className="text-xl text-[#FF6900] font-semibold">
               {formatCurrency(totalPrice)}đ

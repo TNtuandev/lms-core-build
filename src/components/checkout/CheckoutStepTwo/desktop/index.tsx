@@ -80,19 +80,19 @@ export default function CheckoutStepTwoDesktop({
         {/*</div>*/}
         <div className="pt-4 bg-[#F4F4F5] p-[24px] rounded-xl text-sm">
           <h3 className="font-bold text-lg">Thông tin thanh toán</h3>
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4 gap-2">
             <span className="text-secondary">Thông tin thanh toán</span>
             <span>{cartData?.length} khoá học</span>
           </div>
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4 gap-2">
             <span className="text-secondary">Tổng</span>
             <span>{formatCurrency(totalPrice)}0đ</span>
           </div>
-          <div className="flex justify-between mt-4 border-b border-[#E4E4E7] pb-4">
+          <div className="flex justify-between mt-4 gap-2 border-b border-[#E4E4E7] pb-4">
             <span className="text-secondary">Giảm giá</span>
             <span>{formatCurrency(voucherSale)}đ</span>
           </div>
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4 gap-2">
             <span className="text-primary-contrastText font-semibold">Tổng cộng</span>
             <span className="text-secondary-main font-semibold">
               {formatCurrency(totalSale)}đ

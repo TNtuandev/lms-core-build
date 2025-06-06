@@ -110,7 +110,7 @@ export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
           </div>
         </div>
       </div>
-      <div className={`border border-[#D4D4D8] p-[12px] rounded-lg flex items-center cursor-pointer ${isOpen ? 'mt-6' : ''}`}>
+      <div className={`border border-[#D4D4D8] p-[12px] rounded-lg flex items-center cursor-pointer gap-2 ${isOpen ? 'mt-6' : ''}`}>
         <IconPaypal />
         <div>Thanh toán trực tuyến qua PayPal</div>
       </div>

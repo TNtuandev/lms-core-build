@@ -53,7 +53,7 @@ export default function CheckoutStepOneDesktop({
   }, [voucher, totalPrice]);
 
   return (
-    <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto flex lg:gap-10 w-full lg:flex-row flex-col gap-6">
+    <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto flex lg:gap-10 w-full lg:flex-row flex-col gap-6 px-6">
       <div className="w-full lg:w-[75%]">
         <div className="w-full">
           <div className="rounded-lg w-full overflow-scroll">
@@ -120,15 +120,15 @@ export default function CheckoutStepOneDesktop({
       <div>
         <div className="pt-4 bg-[#F4F4F5] p-[24px] rounded-xl text-sm">
           <h3 className="font-bold text-lg">Chi tiết thanh toán</h3>
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-between mt-2 gap-2">
             <span className="text-[#71717B]">Tổng</span>
             <span>{formatCurrency(totalPrice)}đ</span>
           </div>
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-between mt-2 gap-2">
             <span className="text-[#71717B]">Giảm giá</span>
             <span>{formatCurrency(voucher)}đ</span>
           </div>
-          <div className="flex justify-between mt-2">
+          <div className="flex justify-between mt-2 gap-2">
             <span className="text-[#71717B]">Tổng tiền</span>
             <span>{formatCurrency(totalSale)}đ</span>
           </div>

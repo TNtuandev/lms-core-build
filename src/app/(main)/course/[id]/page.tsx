@@ -9,6 +9,13 @@ import CourseCard from "@/components/courses/course-card";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/slices/cart.slice";
 import { Routes } from "@/lib/routes/routes";
+import {
+  ArrowDown2,
+  ArrowRight2,
+  ArrowUp2,
+  Backward5Seconds,
+} from "iconsax-react";
+import IconTickGreen from "../../../../../public/icons/IconTickGreen";
 
 // interface PageProps {
 //   params: {
@@ -33,6 +40,8 @@ export default function CourseDetailPage() {
 
   // Add state for showing more reviews
   const [showMoreReviews, setShowMoreReviews] = useState(false);
+
+  const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
   // Add refs for each section
   const overviewRef = useRef<HTMLDivElement>(null);
@@ -217,63 +226,98 @@ export default function CourseDetailPage() {
             onClick={() => handleCheckoutCourse(courseData)}
             className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
           >
-            Đăng ký ngay
+            Thêm vào giỏ hàng
           </button>
+          <button
+            onClick={() => handleCheckoutCourse(courseData)}
+            className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer"
+          >
+            Mua ngay
+          </button>
+          <div className="flex gap-2 justify-center text-secondary mt-2 text-sm items-center">
+            <Backward5Seconds size="24" color="#637381" />
+            Đảm bảo hoàn tiền trong 30 ngày
+          </div>
 
           <div className="mt-6">
-            <h3 className="font-bold mb-2">Khóa học này bao gồm:</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center text-sm">
-                <svg
-                  className="w-4 h-4 mr-2 text-[#2F57EF]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
-                </svg>
-                <span>{courseData.duration} nội dung video</span>
-              </li>
-              <li className="flex items-center text-sm">
-                <svg
-                  className="w-4 h-4 mr-2 text-[#2F57EF]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
-                </svg>
-                <span>{courseData.lessonCount} bài học</span>
-              </li>
-              <li className="flex items-center text-sm">
-                <svg
-                  className="w-4 h-4 mr-2 text-[#2F57EF]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
-                </svg>
-                <span>Truy cập trọn đời</span>
-              </li>
-              <li className="flex items-center text-sm">
-                <svg
-                  className="w-4 h-4 mr-2 text-[#2F57EF]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
-                </svg>
-                <span>Dự án thực tế</span>
-              </li>
-              <li className="flex items-center text-sm">
-                <svg
-                  className="w-4 h-4 mr-2 text-[#2F57EF]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
-                </svg>
-                <span>Chứng chỉ hoàn thành</span>
-              </li>
-            </ul>
+            <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+              <div className="text-secondary font-semibold">Thời lượng</div>
+              <div className="bg-[#919EAB29] px-2 rounded">
+                <span className="text-xs text-gray-500 font-semibold">
+                  1 giờ 12 phút
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+              <div className="text-secondary font-semibold">Đã đăng ký</div>
+              <div className="bg-[#919EAB29] px-2 rounded">
+                <span className="text-xs text-gray-500 font-semibold">100</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+              <div className="text-secondary font-semibold">Bài giảng</div>
+              <div className="bg-[#919EAB29] px-2 rounded">
+                <span className="text-xs text-gray-500 font-semibold">50</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+              <div className="text-secondary font-semibold">Cấp độ</div>
+              <div className="bg-[#919EAB29] px-2 rounded">
+                <span className="text-xs text-gray-500 font-semibold">
+                  Cơ bản
+                </span>
+              </div>
+            </div>
+
+            {showMoreCardProduct && (
+              <>
+                <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+                  <div className="text-secondary font-semibold">Ngôn ngữ</div>
+                  <div className="bg-[#919EAB29] px-2 rounded">
+                    <span className="text-xs text-gray-500 font-semibold">
+                      Tiếng Việt
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+                  <div className="text-secondary font-semibold">
+                    Bài kiểm tra
+                  </div>
+                  <div className="bg-[#919EAB29] px-2 rounded">
+                    <span className="text-xs text-gray-500 font-semibold">
+                      10
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+                  <div className="text-secondary font-semibold">Chứng chỉ</div>
+                  <div className="bg-[#919EAB29] px-2 rounded">
+                    <span className="text-xs text-gray-500 font-semibold">
+                      Có
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
+                  <div className="text-secondary font-semibold">Hoàn thành</div>
+                  <div className="bg-[#919EAB29] px-2 rounded">
+                    <span className="text-xs text-gray-500 font-semibold">
+                      95
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
+            <button
+              onClick={() => setShowMoreCardProduct(!showMoreCardProduct)}
+              className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
+            >
+              {!showMoreCardProduct ? "Hiển thị thêm" : "Ẩn bớt"}
+              {!showMoreCardProduct ? (
+                <ArrowDown2 size="20" color="#2F57EF" />
+              ) : (
+                <ArrowUp2 size="20" color="#2F57EF" />
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -328,34 +372,17 @@ export default function CourseDetailPage() {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
+
                   <p>Hiểu rõ sự khác biệt giữa UI và UX.</p>
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Nắm vững các nguyên tắc thiết kế giao diện và trải nghiệm
                     người dùng.
@@ -363,36 +390,18 @@ export default function CourseDetailPage() {
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Thiết kế các wireframe, prototype và mockup chuyên nghiệp.
                   </p>
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Sử dụng thành thạo các công cụ thiết kế phổ biến như Figma,
                     Adobe XD, Sketch.
@@ -400,55 +409,28 @@ export default function CourseDetailPage() {
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Hiểu quy trình nghiên cứu người dùng và thử nghiệm sản phẩm.
                   </p>
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Thực hành xây dựng sản phẩm thực tế từ ý tưởng đến sản phẩm
                     hoàn thiện.
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-500 mt-1 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill="#4CAF50"
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                <div className="flex items-start gap-2 flex-shink-0">
+                  <div className="flex-shrink-0">
+                    <IconTickGreen />
+                  </div>
                   <p>
                     Biết cách trình bày và giao tiếp ý tưởng thiết kế với đội
                     ngũ phát triển và khách hàng.
@@ -464,7 +446,12 @@ export default function CourseDetailPage() {
               <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>
               <div className="space-y-2">
                 {[1, 2, 3].map((_, index) => (
-                  <div className="p-4 rounded-lg bg-gray-50" key={index}>
+                  <div
+                    role="presentation"
+                    className="p-4 rounded-lg bg-gray-50 cursor-pointer"
+                    key={index}
+                    onClick={() => router.push("/lesson")}
+                  >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <h4 className="font-semibold">Giới thiệu về UI/UX</h4>
@@ -474,19 +461,7 @@ export default function CourseDetailPage() {
                           </span>
                         </div>
                       </div>
-                      <svg
-                        className="w-5 h-5 text-gray-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M19 9l-7 7-7-7"
-                        ></path>
-                      </svg>
+                      <ArrowRight2 size="24" color="black" />
                     </div>
                   </div>
                 ))}
@@ -537,19 +512,11 @@ export default function CourseDetailPage() {
                 className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
               >
                 Hiển thị thêm
-                <svg
-                  className={`w-5 h-5 transition-transform ${showFullDesc ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="#2F57EF"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
+                {!showFullDesc ? (
+                  <ArrowDown2 size="20" color="#2F57EF" />
+                ) : (
+                  <ArrowUp2 size="20" color="#2F57EF" />
+                )}
               </button>
             </div>
 
@@ -629,19 +596,11 @@ export default function CourseDetailPage() {
                   className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
                 >
                   Hiển thị thêm
-                  <svg
-                    className={`w-5 h-5 transition-transform ${showFullBio ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="#2F57EF"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 9l-7 7-7-7"
-                    ></path>
-                  </svg>
+                  {!showFullBio ? (
+                    <ArrowDown2 size="20" color="#2F57EF" />
+                  ) : (
+                    <ArrowUp2 size="20" color="#2F57EF" />
+                  )}
                 </button>
               </div>
             </div>
@@ -840,19 +799,11 @@ export default function CourseDetailPage() {
                 className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
               >
                 Hiển thị thêm
-                <svg
-                  className={`w-5 h-5 transition-transform ${showMoreReviews ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="#2F57EF"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path>
-                </svg>
+                {!showMoreReviews ? (
+                  <ArrowDown2 size="20" color="#2F57EF" />
+                ) : (
+                  <ArrowUp2 size="20" color="#2F57EF" />
+                )}
               </button>
             </div>
             <div className="flex flex-col gap-4">
@@ -865,7 +816,7 @@ export default function CourseDetailPage() {
                 </div>
                 <button
                   type="button"
-                  className="font-semibold text-xs md:text-base border rounded-lg px-2 py-1 border-gray-200"
+                  className="font-semibold cursor-pointer text-xs md:text-base border rounded-lg px-2 py-1 border-gray-200"
                 >
                   Xem tất cả
                 </button>

@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VideoPlayer from "@/components/ui/video-player";
 import LessonSidebar from "@/components/courses/lesson-sidebar";
+import IconWarning from "../../../public/icons/IconWarning";
+import { Star } from "lucide-react";
+import IconStar from "../../../public/icons/IconStar";
 
 interface Lesson {
   id: string;
@@ -54,22 +57,28 @@ function LessonPage() {
       id: "3",
       title: "Thiết kế trải nghiệm người dùng (UX Design)",
       expanded: false,
-      lessons: [],
+      lessons: [
+        {
+          id: "3.1",
+          title: "Phương pháp nghiên cứu người dùng",
+          duration: "06:23",
+          type: "video",
+        },
+        {
+          id: "3.2",
+          title: "Xây dựng chân dung người dùng (Persona)",
+          duration: "20:15",
+          type: "video",
+          active: true,
+        },
+        {
+          id: "3.3",
+          title: "Phân tích hành vi và nhu cầu",
+          duration: "08:56",
+          type: "doc",
+        },
+      ],
       progress: "0/8",
-    },
-    {
-      id: "4",
-      title: "Bài kiểm tra",
-      expanded: false,
-      lessons: [],
-      progress: "0/8",
-    },
-    {
-      id: "5",
-      title: "Bài tập",
-      expanded: false,
-      lessons: [],
-      progress: "0/3",
     },
   ]);
 
@@ -80,6 +89,37 @@ function LessonPage() {
     content: {
       overview: (
         <>
+          <p className="text-secondary mb-3">Học thiết kế web trong 1 giờ với hơn 25 quy tắc và hướng dẫn dễ sử dụng — bao gồm rất nhiều tài nguyên thiết kế web tuyệt vời!</p>
+          <div className="flex gap-2 items-center mb-3">
+            <IconWarning />
+            <div className="text-secondary">Cập nhật lần cuối: Tháng 5/2025</div>
+          </div>
+          <div className="flex gap-8 pb-6 border-b border-dashed border-b-gray-200 mb-4">
+            <div>
+              <div className="text-primary font-semibold flex items-center gap-1 text-[#FF9800]">
+                4.8
+                <IconStar />
+              </div>
+              <div className="text-secondary text-xs">43,673 Đánh giá</div>
+            </div>
+            <div>
+              <div className="text-primary font-semibold">800,664</div>
+              <div className="text-secondary text-xs">Học sinh</div>
+            </div>
+            <div>
+              <div className="text-primary font-semibold">2.5 Giờ</div>
+              <div className="text-secondary text-xs">Tổng</div>
+            </div>
+            <div>
+              <div className="text-primary font-semibold">10</div>
+              <div className="text-secondary text-xs">Bài giảng</div>
+            </div>
+            <div>
+              <div className="text-primary font-semibold">Tất cả</div>
+              <div className="text-secondary text-xs">Độ khó</div>
+            </div>
+          </div>
+          <div className="text-primary font-semibold mb-4">Mô tả</div>
           <p className="mb-4">
             Khóa học Thiết kế Giao diện và Trải nghiệm Người dùng (UI/UX) mang
             đến cho bạn một hành trình học tập thực tế từ nền tảng đến nâng cao.
@@ -278,10 +318,6 @@ function LessonPage() {
 
         {/* Lesson Content */}
         <div className="p-4 md:p-6">
-          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-            {currentLesson.title}
-          </h2>
-
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="mb-2">
               <TabsTrigger value="overview">Tổng quan</TabsTrigger>
@@ -291,6 +327,9 @@ function LessonPage() {
               value="overview"
               className="mt-4 md:mt-6 text-sm md:text-base"
             >
+              <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+                {currentLesson.title}
+              </h2>
               {currentLesson.content.overview}
             </TabsContent>
             <TabsContent

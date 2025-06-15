@@ -9,6 +9,9 @@ import CourseCard from "@/components/courses/course-card";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/slices/cart.slice";
 import { Routes } from "@/lib/routes/routes";
+import {Button} from "@/components/ui/button";
+import {Edit} from "lucide-react";
+import {ReviewDialog} from "@/components/courses/components/ReviewDialog";
 import {
   ArrowDown2,
   ArrowRight2,
@@ -40,6 +43,8 @@ export default function CourseDetailPage() {
 
   // Add state for showing more reviews
   const [showMoreReviews, setShowMoreReviews] = useState(false);
+
+  const [openReview, setOpenReview] = useState(false);
 
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
@@ -609,7 +614,21 @@ export default function CourseDetailPage() {
               ref={reviewsRef}
               className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8"
             >
-              <h3 className="text-xl font-bold mb-6">Đánh giá</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold mb-6">Đánh giá</h3>
+                <Button onClick={() => setOpenReview(true)} className="flex py-2.5 px-4 border-none bg-[#919EAB14]/8 rounded-[10px]" size="lg" variant="outline">
+                  <Edit size="20" color="#27272A"/>
+                  <div className="text-sm font-semibold">Viết đánh giá</div>
+                </Button>
+                <ReviewDialog
+                  open={openReview}
+                  onOpenChange={setOpenReview}
+                  onSubmit={(rating, comment) => {
+                    // Xử lý gửi đánh giá ở đây
+                    // handleUpdateReview(rating, comment)
+                  }}
+                />
+              </div>
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="bg-[#FFF8EE] p-6 rounded-lg text-center min-w-[200px]">
                   <div className="text-6xl font-bold text-[#212B36] mb-2">

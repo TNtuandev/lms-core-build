@@ -16,7 +16,7 @@ interface Lesson {
   id: string;
   title: string;
   active?: boolean;
-  type: string
+  type: string;
 }
 
 function LessonPage() {
@@ -111,7 +111,7 @@ function LessonPage() {
   ]);
 
   const [newNote, setNewNote] = useState("");
-  const [editingId, setEditingId] = useState<number|null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
 
   // Thêm ghi chú mới
@@ -138,7 +138,9 @@ function LessonPage() {
     setEditingContent(content);
   };
   const handleSaveEdit = (id: number) => {
-    setNotes(notes.map((n) => (n.id === id ? { ...n, content: editingContent } : n)));
+    setNotes(
+      notes.map((n) => (n.id === id ? { ...n, content: editingContent } : n)),
+    );
     setEditingId(null);
     setEditingContent("");
   };
@@ -159,10 +161,15 @@ function LessonPage() {
       case "overview":
         return (
           <>
-            <p className="text-secondary mb-3">Học thiết kế web trong 1 giờ với hơn 25 quy tắc và hướng dẫn dễ sử dụng — bao gồm rất nhiều tài nguyên thiết kế web tuyệt vời!</p>
+            <p className="text-secondary mb-3">
+              Học thiết kế web trong 1 giờ với hơn 25 quy tắc và hướng dẫn dễ sử
+              dụng — bao gồm rất nhiều tài nguyên thiết kế web tuyệt vời!
+            </p>
             <div className="flex gap-2 items-center mb-3">
               <IconWarning />
-              <div className="text-secondary">Cập nhật lần cuối: Tháng 5/2025</div>
+              <div className="text-secondary">
+                Cập nhật lần cuối: Tháng 5/2025
+              </div>
             </div>
             <div className="flex gap-8 pb-6 border-b border-dashed border-b-gray-200 mb-4">
               <div>
@@ -192,7 +199,8 @@ function LessonPage() {
             <div className="text-primary font-semibold mb-4">Mô tả</div>
             <p className="mb-4">
               Khóa học Thiết kế Giao diện và Trải nghiệm Người dùng (UI/UX) mang
-              đến cho bạn một hành trình học tập thực tế từ nền tảng đến nâng cao.
+              đến cho bạn một hành trình học tập thực tế từ nền tảng đến nâng
+              cao.
             </p>
             <p className="mb-4">
               Bạn sẽ làm chủ quy trình nghiên cứu người dùng, xây dựng tường UX
@@ -200,26 +208,26 @@ function LessonPage() {
               hoàn thiện sản phẩm số chất lượng cao.
             </p>
             <p className="mb-4">
-              Song song với lý thuyết là những bài tập thực hành thực tế, giúp bạn
-              tự tin tạo ra sản phẩm thực tiễn và xây dựng portfolio cá nhân
+              Song song với lý thuyết là những bài tập thực hành thực tế, giúp
+              bạn tự tin tạo ra sản phẩm thực tiễn và xây dựng portfolio cá nhân
               chuyên nghiệp.
             </p>
             <p>
-              Hoàn thành khóa học, bạn có thể làm việc với các vị trí Designer, UX
-              Researcher, UI/UX Specialist tại các công ty công nghệ, startup,
-              hoặc phát triển sự nghiệp tự do.
+              Hoàn thành khóa học, bạn có thể làm việc với các vị trí Designer,
+              UX Researcher, UI/UX Specialist tại các công ty công nghệ,
+              startup, hoặc phát triển sự nghiệp tự do.
             </p>
             {showMoreCardProduct && (
               <>
                 <p className="mb-4">
-                  Song song với lý thuyết là những bài tập thực hành thực tế, giúp bạn
-                  tự tin tạo ra sản phẩm thực tiễn và xây dựng portfolio cá nhân
-                  chuyên nghiệp.
+                  Song song với lý thuyết là những bài tập thực hành thực tế,
+                  giúp bạn tự tin tạo ra sản phẩm thực tiễn và xây dựng
+                  portfolio cá nhân chuyên nghiệp.
                 </p>
                 <p>
-                  Hoàn thành khóa học, bạn có thể làm việc với các vị trí Designer, UX
-                  Researcher, UI/UX Specialist tại các công ty công nghệ, startup,
-                  hoặc phát triển sự nghiệp tự do.
+                  Hoàn thành khóa học, bạn có thể làm việc với các vị trí
+                  Designer, UX Researcher, UI/UX Specialist tại các công ty công
+                  nghệ, startup, hoặc phát triển sự nghiệp tự do.
                 </p>
               </>
             )}
@@ -235,7 +243,7 @@ function LessonPage() {
               )}
             </button>
           </>
-        )
+        );
       case "notes":
         return (
           <div className="w-full">
@@ -245,8 +253,10 @@ function LessonPage() {
                 className="flex-1 px-4 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                 placeholder="Tạo mới ghi chú"
                 value={newNote}
-                onChange={e => setNewNote(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleAddNote(); }}
+                onChange={(e) => setNewNote(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddNote();
+                }}
               />
               <button
                 className="bg-[#637381] cursor-pointer absolute right-2 text-white rounded-lg p-1 flex items-center justify-center"
@@ -259,14 +269,20 @@ function LessonPage() {
             {/* Danh sách ghi chú */}
             <div className="space-y-6">
               {notes.length === 0 && (
-                <div className="text-gray-400 text-center py-8">Chưa có ghi chú nào.</div>
+                <div className="text-gray-400 text-center py-8">
+                  Chưa có ghi chú nào.
+                </div>
               )}
-              {notes.map(note => (
+              {notes.map((note) => (
                 <div key={note.id} className="bg-white rounded-xl p-4">
                   <div className="flex items-center justify-between mb-1">
                     <div>
-                      <div className="font-semibold text-base mr-2">{note.section}</div>
-                      <div className="flex-1 text-xs text-gray-500">{note.sub}</div>
+                      <div className="font-semibold text-base mr-2">
+                        {note.section}
+                      </div>
+                      <div className="flex-1 text-xs text-gray-500">
+                        {note.sub}
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -283,25 +299,28 @@ function LessonPage() {
                         <IconTrashLesson />
                       </button>
                     </div>
-
                   </div>
                   {editingId === note.id ? (
                     <div className="mt-2">
-                    <textarea
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                      value={editingContent}
-                      onChange={e => setEditingContent(e.target.value)}
-                      rows={2}
-                    />
+                      <textarea
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                        rows={2}
+                      />
                       <div className="flex gap-2">
                         <button
                           className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                           onClick={() => handleSaveEdit(note.id)}
-                        >Lưu</button>
+                        >
+                          Lưu
+                        </button>
                         <button
                           className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
                           onClick={handleCancelEdit}
-                        >Huỷ</button>
+                        >
+                          Huỷ
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -313,7 +332,7 @@ function LessonPage() {
               ))}
             </div>
           </div>
-        )
+        );
       case "download":
         return (
           <div>
@@ -322,11 +341,11 @@ function LessonPage() {
               <div className="text-[#1D7BF5]">File video.mp4</div>
             </div>
           </div>
-        )
-      default: return null
-
+        );
+      default:
+        return null;
     }
-  }
+  };
 
   const courseTitle =
     "Thiết kế giao diện người dùng và trải nghiệm người dùng (UI/UX)";
@@ -370,7 +389,6 @@ function LessonPage() {
   };
 
   const selectLesson = (lesson: Lesson) => {
-
     // Create a new sections array with the active lesson updated
     const newSections = [...sections];
 
@@ -399,20 +417,22 @@ function LessonPage() {
   };
 
   const toggleSidebar = () => {
+    console.log("Toggle sidebar visibility");
     setIsSidebarVisible(!isSidebarVisible);
   };
 
   return (
     <div className="flex relative">
-      {/* Left Sidebar - conditionally shown based on isSidebarVisible */}
-      <div
-        className={`
-          ${isMobileView ? "absolute z-10 inset-y-0 left-0 transform transition-transform duration-300 ease-in-out" : "relative"}
-          ${isSidebarVisible ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} 
-          ${isMobileView && isSidebarVisible ? "w-[85%] sm:w-[350px]" : "w-0 lg:w-[350px]"}
+      {/* Left Sidebar - luôn hiện ở desktop, toggle ở mobile */}
+      {isSidebarVisible && (
+        <div
+          className={`
+          ${isMobileView ? "fixed z-20 top-0 left-0 h-full transition-transform duration-300 ease-in-out" : "relative z-10"}
+          ${isSidebarVisible ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${isMobileView ? "w-max sm:w-[350px] bg-white shadow-xl" : "w-0 lg:w-[350px] bg-white"}
         `}
-      >
-        {isSidebarVisible && (
+          style={{ minHeight: "100vh" }}
+        >
           <LessonSidebar
             sections={sections}
             completedLessons={completedLessons}
@@ -420,13 +440,12 @@ function LessonPage() {
             onToggleSection={toggleSection}
             onSelectLesson={selectLesson}
           />
-        )}
-      </div>
-
-      {/* Overlay for mobile when sidebar is open */}
+        </div>
+      )}
+      {/* Overlay cho mobile khi sidebar mở */}
       {isMobileView && isSidebarVisible && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-0"
+          className="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"
           onClick={toggleSidebar}
         />
       )}
@@ -435,10 +454,7 @@ function LessonPage() {
       <div className="flex-1 overflow-y-auto bg-white min-w-0">
         {/* Header with back button */}
         <div className="flex items-center p-4 bg-blue-600 text-white">
-          <button
-            className="mr-3"
-            onClick={toggleSidebar}
-          >
+          <button className="mr-3" onClick={toggleSidebar}>
             {isMobileView ? (
               <svg
                 className="w-6 h-6"
@@ -471,7 +487,9 @@ function LessonPage() {
               </svg>
             )}
           </button>
-          <h1 className="text-lg font-medium truncate text-white">{currentLesson.title}</h1>
+          <h1 className="text-lg font-medium truncate text-white">
+            {currentLesson.title}
+          </h1>
           <button className="ml-auto">
             <svg
               className="w-6 h-6"

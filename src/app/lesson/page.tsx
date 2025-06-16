@@ -16,6 +16,7 @@ interface Lesson {
   id: string;
   title: string;
   active?: boolean;
+  type: string
 }
 
 function LessonPage() {
@@ -79,6 +80,12 @@ function LessonPage() {
           duration: "08:56",
           type: "doc",
         },
+        {
+          id: "3.3",
+          title: "Phân tích hành vi và nhu cầu",
+          duration: "08:56",
+          type: "quiz",
+        },
       ],
       progress: "0/8",
     },
@@ -102,6 +109,7 @@ function LessonPage() {
       content: "Đoạn này cần lưu lại",
     },
   ]);
+
   const [newNote, setNewNote] = useState("");
   const [editingId, setEditingId] = useState<number|null>(null);
   const [editingContent, setEditingContent] = useState("");
@@ -143,6 +151,7 @@ function LessonPage() {
     id: "2.2",
     title: "Xây dựng chân dung người dùng (Persona)",
     videoUrl: "/videos/lesson.mp4",
+    type: "video",
   });
 
   const renderContentTab = (value: string) => {
@@ -380,6 +389,7 @@ function LessonPage() {
       ...currentLesson,
       id: lesson.id,
       title: lesson.title,
+      type: lesson.type,
     });
 
     // Hide sidebar on mobile after selecting a lesson
@@ -393,7 +403,7 @@ function LessonPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] relative">
+    <div className="flex relative">
       {/* Left Sidebar - conditionally shown based on isSidebarVisible */}
       <div
         className={`
@@ -427,7 +437,7 @@ function LessonPage() {
         <div className="flex items-center p-4 bg-blue-600 text-white">
           <button
             className="mr-3"
-            onClick={isMobileView ? toggleSidebar : undefined}
+            onClick={toggleSidebar}
           >
             {isMobileView ? (
               <svg
@@ -461,7 +471,7 @@ function LessonPage() {
               </svg>
             )}
           </button>
-          <h1 className="text-lg font-medium truncate text-white">{courseTitle}</h1>
+          <h1 className="text-lg font-medium truncate text-white">{currentLesson.title}</h1>
           <button className="ml-auto">
             <svg
               className="w-6 h-6"
@@ -499,7 +509,7 @@ function LessonPage() {
               className="mt-4 md:mt-6 text-sm md:text-base"
             >
               <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-                {currentLesson.title}
+                {courseTitle}
               </h2>
               {renderContentTab("overview")}
             </TabsContent>

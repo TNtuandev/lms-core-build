@@ -7,6 +7,8 @@ import IconLessonQuiz from "../../../public/icons/lessson/IconLessonQuiz";
 import IconLessonVideoActive from "../../../public/icons/lessson/IconLessonVideoActive";
 import IconLessonDocActive from "../../../public/icons/lessson/IconLessonDocActive";
 import IconLessonQuizActive from "../../../public/icons/lessson/IconLessonQuizActive";
+import IconLessonExerciseActive from "../../../public/icons/lessson/IconLessonExerciseActive";
+import IconLessonExercise from "../../../public/icons/lessson/IconLessonExercise";
 
 interface Lesson {
   id: string;
@@ -46,7 +48,9 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
       case "doc":
         return active ? <IconLessonDocActive /> : <IconLessonDoc />;
       case "quiz":
-        return active ? <IconLessonQuizActive /> : <IconLessonQuiz />
+        return active ? <IconLessonQuizActive /> : <IconLessonQuiz />;
+      case "exercise":
+        return active ? <IconLessonExerciseActive /> : <IconLessonExercise />
       default:
         return null;
     }

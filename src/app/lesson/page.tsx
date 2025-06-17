@@ -7,10 +7,15 @@ import LessonSidebar from "@/components/courses/lesson-sidebar";
 import IconWarning from "../../../public/icons/IconWarning";
 import IconStar from "../../../public/icons/IconStar";
 import IconDownload from "../../../public/icons/lessson/IconDownload";
-import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+import { ArrowDown2, ArrowLeft2, ArrowUp2, ArrowRight2 } from "iconsax-react";
 import { Plus } from "lucide-react";
 import IconTrashLesson from "../../../public/icons/lessson/IconTrashLesson";
 import IconEditLesson from "../../../public/icons/lessson/IconEditLesson";
+import IconToggleSidebar from "../../../public/icons/lessson/IconToggleSidebar";
+import IconToggleSidebarActive from "../../../public/icons/lessson/IconToggleSidebarActive";
+import DocumentLesson from "@/components/lesson/DocumentLesson";
+import QuizLesson from "@/components/lesson/QuizLesson";
+import ExerciseLesson from "@/components/lesson/ExerciseLesson";
 
 interface Lesson {
   id: string;
@@ -54,6 +59,18 @@ function LessonPage() {
           duration: "08:56",
           type: "doc",
         },
+        {
+          id: "2.4",
+          title: "Phân tích hành vi và nhu cầu",
+          duration: "08:56",
+          type: "quiz",
+        },
+        {
+          id: "2.5",
+          title: "Phân tích hành vi và nhu cầu",
+          duration: "08:56",
+          type: "exercise",
+        },
       ],
     },
     {
@@ -81,7 +98,7 @@ function LessonPage() {
           type: "doc",
         },
         {
-          id: "3.3",
+          id: "3.4",
           title: "Phân tích hành vi và nhu cầu",
           duration: "08:56",
           type: "quiz",
@@ -421,6 +438,26 @@ function LessonPage() {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
+  const renderLessonBody = (type: string) => {
+    switch (type) {
+      case "video":
+        return (
+          <VideoPlayer
+            src={currentLesson.videoUrl}
+            poster="/images/lesson-thumbnail.jpg"
+          />
+        );
+      case "doc":
+        return <DocumentLesson />;
+      case "quiz":
+        return <QuizLesson />;
+      case "exercise":
+        return <ExerciseLesson />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <div className="flex relative">
       {/* Left Sidebar - luôn hiện ở desktop, toggle ở mobile */}
@@ -453,66 +490,35 @@ function LessonPage() {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto bg-white min-w-0">
         {/* Header with back button */}
-        <div className="flex items-center p-4 bg-blue-600 text-white">
-          <button className="mr-3" onClick={toggleSidebar}>
-            {isMobileView ? (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="#fff"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="#fff"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            )}
-          </button>
-          <h1 className="text-lg font-medium truncate text-white">
-            {currentLesson.title}
-          </h1>
-          <button className="ml-auto">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="#fff"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
+        <div className="items-center justify-between md:flex p-4 bg-white text-primary">
+          <div className="flex items-center gap-3">
+            <button className="mr-3 bg-[#919EAB14] h-[36px] w-[36px] flex items-center justify-center rounded" onClick={toggleSidebar}>
+              {isSidebarVisible ? <IconToggleSidebar /> : <IconToggleSidebarActive />}
+            </button>
+            <h1 className="text-lg font-medium truncate">
+              {courseTitle}
+            </h1>
+          </div>
+          <div className="flex items-center gap-6 mt-2 md:mt-0">
+            <div className="font-bold cursor-pointer flex items-center gap-1">
+              <ArrowLeft2
+                size="20"
+                color="#212B36"
               />
-            </svg>
-          </button>
+              Trước
+            </div>
+            <div className="font-bold cursor-pointer flex items-center gap-1">
+              Tiếp theo
+              <ArrowRight2
+                size="20"
+                color="#212B36"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Video Player */}
-        <VideoPlayer
-          src={currentLesson.videoUrl}
-          poster="/images/lesson-thumbnail.jpg"
-        />
+        {renderLessonBody(currentLesson.type)}
 
         {/* Lesson Content */}
         <div className="p-4 md:p-6 bg-white">

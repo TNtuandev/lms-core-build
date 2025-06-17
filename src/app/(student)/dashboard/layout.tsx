@@ -15,6 +15,7 @@ import {
   LogOut
 } from "lucide-react";
 import IconBookWhite from "../../../../public/icons/IconBookWhite";
+import {DocumentText, MessageText, NotificationBing} from "iconsax-react";
 
 export default function DashboardLayout({
   children,
@@ -215,7 +216,93 @@ export default function DashboardLayout({
 
             <div className="mt-6 pt-6 border-t border-gray-200">
               <div className="text-sm font-medium uppercase text-gray-500 mb-4">
-                CÀI NHÂN
+                GIÁO VIÊN
+              </div>
+
+              <Link
+                href="/dashboard/my-courses"
+                className={`flex items-center px-3 py-3 ${
+                  isActive("/dashboard/my-courses")
+                    ? "text-blue-600 bg-[#2F57EF14]"
+                    : "text-gray-700 hover:bg-gray-50"
+                } rounded-lg`}
+              >
+                <Book className="w-5 h-5 mr-3" color={isActive("/dashboard/my-courses") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/my-courses")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
+                    Khoá học của tôi
+                  </span>
+              </Link>
+
+              <Link
+                href="/dashboard/notification"
+                className={`flex items-center px-3 py-3 ${
+                  isActive("/dashboard/notification")
+                    ? "text-blue-600 bg-[#2F57EF14]"
+                    : "text-gray-700 hover:bg-gray-50"
+                } rounded-lg`}
+              >
+                <NotificationBing className="w-5 h-5 mr-3" color={isActive("/dashboard/notification") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/notification")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
+                    Thông báo
+                  </span>
+              </Link>
+
+              <Link
+                href="/dashboard/test"
+                className={`flex items-center px-3 py-3 ${
+                  isActive("/dashboard/test")
+                    ? "text-blue-600 bg-[#2F57EF14]"
+                    : "text-gray-700 hover:bg-gray-50"
+                } rounded-lg`}
+              >
+                <DocumentText className="w-5 h-5 mr-3" color={isActive("/dashboard/test") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/test")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
+                    Bài kiểm tra
+                  </span>
+              </Link>
+
+              <Link
+                href="/dashboard/exercise"
+                className={`flex items-center px-3 py-3 ${
+                  isActive("/dashboard/exercise")
+                    ? "text-blue-600 bg-[#2F57EF14]"
+                    : "text-gray-700 hover:bg-gray-50"
+                } rounded-lg`}
+              >
+                <MessageText className="w-5 h-5 mr-3" color={isActive("/dashboard/exercise") ? "#155dfc" : "#364153"} />
+                <span
+                  className={
+                    isActive("/dashboard/exercise")
+                      ? "font-medium text-blue-600"
+                      : ""
+                  }
+                >
+                    Bài tập
+                  </span>
+              </Link>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="text-sm font-medium uppercase text-gray-500 mb-4">
+                CÁ NHÂN
               </div>
 
               <nav className="space-y-1">

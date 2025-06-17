@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import IconVideo from "../../../public/icons/IconVideo";
+import IconLessonVideo from "../../../public/icons/lessson/IconLessonVideo";
+import IconLessonDoc from "../../../public/icons/lessson/IconLessonDoc";
+import IconLessonQuiz from "../../../public/icons/lessson/IconLessonQuiz";
+import IconLessonVideoActive from "../../../public/icons/lessson/IconLessonVideoActive";
+import IconLessonDocActive from "../../../public/icons/lessson/IconLessonDocActive";
+import IconLessonQuizActive from "../../../public/icons/lessson/IconLessonQuizActive";
+import IconLessonExerciseActive from "../../../public/icons/lessson/IconLessonExerciseActive";
+import IconLessonExercise from "../../../public/icons/lessson/IconLessonExercise";
 
 interface Lesson {
   id: string;
@@ -34,6 +41,21 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
   onToggleSection,
   onSelectLesson,
 }) => {
+  const renderIconLessonType = (type: string, active: boolean) => {
+    switch (type) {
+      case "video":
+        return active ? <IconLessonVideoActive /> : <IconLessonVideo />;
+      case "doc":
+        return active ? <IconLessonDocActive /> : <IconLessonDoc />;
+      case "quiz":
+        return active ? <IconLessonQuizActive /> : <IconLessonQuiz />;
+      case "exercise":
+        return active ? <IconLessonExerciseActive /> : <IconLessonExercise />
+      default:
+        return null;
+    }
+  }
+
   return (
     <div className="w-[350px] bg-white border-r border-gray-200 overflow-y-auto">
       <div className="p-4">
@@ -62,7 +84,10 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
 
         <div className="space-y-2">
           {sections.map((section) => (
-            <div key={section.id} className="border border-gray-100 rounded-lg overflow-hidden">
+            <div
+              key={section.id}
+              className="border border-gray-100 rounded-lg overflow-hidden"
+            >
               <div
                 className={`flex justify-between items-center p-3 cursor-pointer ${
                   section.expanded ? "bg-blue-50" : "bg-white"
@@ -108,28 +133,19 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
                     >
                       <div className="flex gap-2">
                         <div className="flex items-center gap-2">
-                          {lesson.type === "video" ? (
-                            <IconVideo className="w-4 h-4" />
-                          ) : (
-                            <svg
-                              className="w-4 h-4 text-gray-500"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
+                          {renderIconLessonType(
+                            lesson.type,
+                            lesson.active || false,
                           )}
                         </div>
-                        <p className="text-sm">{lesson.id} {lesson.title}</p>
+                        <p className={`text-sm ${lesson.active ? "text-[#2F57EF]" : ""}`}>
+                          {lesson.id} {lesson.title}
+                        </p>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500 ml-1">{lesson.duration}</span>
+                          <span className="text-xs text-gray-500 ml-1">
+                            {lesson.duration}
+                          </span>
                           <div className="mr-3 flex-shrink-0">
                             <div
                               className={`w-5 h-5 rounded-full border flex items-center justify-center cursor-pointer ${

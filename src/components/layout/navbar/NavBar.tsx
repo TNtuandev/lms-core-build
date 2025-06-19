@@ -296,7 +296,7 @@ function Navbar() {
                     variant="default"
                     className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
                   >
-                    <Link href={Routes.login}>Bắt đầu miễn phí</Link>
+                    <Link href={Routes.login} className="text-white">Bắt đầu miễn phí</Link>
                   </Button>
                 </div>
               )}

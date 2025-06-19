@@ -101,6 +101,15 @@
         box-shadow: 0px 12px 24px -4px rgba(25, 158, 171, 0.20);
     }
 
+    .box-shadow-page {
+        box-shadow:
+            /* Shadow 1: soft/color */
+                0px 12px 24px -4px rgba(153, 158, 171, 0.12),
+
+                    /* Shadow 2: hard/color */
+                0px 0px 2px 0px rgba(153, 158, 171, 0.20);
+    }
+
 }
 
 

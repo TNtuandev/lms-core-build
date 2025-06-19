@@ -1,4 +1,9 @@
-import { TickCircle, CloseCircle, Refresh } from "iconsax-react";
+import {
+  TickCircle,
+  CloseCircle,
+  Refresh,
+  ArrowRotateLeft,
+} from "iconsax-react";
 import { useState } from "react";
 
 const quizData = [
@@ -114,10 +119,10 @@ export default function QuizStep2() {
         : "border-gray-200";
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] flex flex-col items-center py-10">
+    <div className="flex flex-col items-center py-10 overflow-hidden">
       <div className="w-full max-w-2xl">
         {/* Header info */}
-        <div className="flex items-center justify-between px-8 pt-6 pb-4 border-b border-gray-200 bg-white rounded-t-2xl">
+        <div className="flex items-center justify-between px-8 pt-6 pb-4 border-b border-gray-200 border-dashed bg-white rounded-t-2xl">
           <div className="flex gap-6 text-sm text-gray-700">
             <span>
               Số câu hỏi:{" "}
@@ -132,7 +137,7 @@ export default function QuizStep2() {
           </div>
           <div className="text-sm text-gray-700 flex items-center gap-1">
             Thời gian:{" "}
-            <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-medium ml-1">
+            <span className="bg-[#03A9F429] text-[#0288D1] px-2 py-0.5 rounded font-medium ml-1">
               {timeLimit}
             </span>
           </div>
@@ -146,9 +151,9 @@ export default function QuizStep2() {
               className={`flex items-center justify-between px-6 py-4 mb-8 rounded-xl border ${scoreBorder} ${scoreBg} shadow-sm`}
             >
               <div>
-                <div className={`font-semibold text-lg ${scoreText}`}>
+                <div className={`font-semibold text-lg`}>
                   Điểm của bạn:{" "}
-                  <span className="font-bold text-2xl">
+                  <span className={`font-bold text-2xl ${scoreText}`}>
                     {score}/{total}
                   </span>
                 </div>
@@ -172,9 +177,10 @@ export default function QuizStep2() {
                 )}
                 <button
                   onClick={handleRetry}
-                  className="ml-4 flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-semibold shadow hover:bg-gray-100 transition"
+                  className="ml-4 flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer border border-gray-200 bg-[#2F57EF] text-white font-semibold transition"
                 >
-                  <Refresh size={20} /> Thử lại
+                  <ArrowRotateLeft size="20" color="white" />
+                  Thử lại
                 </button>
               </div>
             </div>
@@ -224,12 +230,6 @@ export default function QuizStep2() {
                           <span className="font-medium text-gray-900 flex-1">
                             {ans}
                           </span>
-                          {quizState === "submitted" && isCorrect && (
-                            <TickCircle size={18} className="text-green-500" />
-                          )}
-                          {quizState === "submitted" && isWrong && (
-                            <CloseCircle size={18} className="text-red-500" />
-                          )}
                         </label>
                       );
                     })}
@@ -270,29 +270,27 @@ export default function QuizStep2() {
               </div>
             ))}
           </div>
-
-          {/* Nút nộp bài */}
-          {quizState === "init" && (
-            <div className="flex justify-end mt-10">
-              <button
-                onClick={handleSubmit}
-                disabled={
-                  answers.some(
-                    (a, idx) =>
-                      quizData[idx].answers.length > 0 && a.selected === null,
-                  ) ||
-                  answers.some(
-                    (a, idx) =>
-                      quizData[idx].answers.length === 0 && !a.text.trim(),
-                  )
-                }
-                className="flex items-center gap-2 px-8 py-3 rounded-lg bg-gray-900 text-white font-semibold shadow hover:bg-gray-800 transition disabled:opacity-60"
-              >
-                Nộp bài
-              </button>
-            </div>
-          )}
         </div>
+        {quizState === "init" && (
+          <div className="flex justify-end mt-10">
+            <button
+              onClick={handleSubmit}
+              disabled={
+                answers.some(
+                  (a, idx) =>
+                    quizData[idx].answers.length > 0 && a.selected === null,
+                ) ||
+                answers.some(
+                  (a, idx) =>
+                    quizData[idx].answers.length === 0 && !a.text.trim(),
+                )
+              }
+              className="flex items-center gap-2 px-8 py-3 rounded-lg bg-gray-900 text-white font-semibold shadow hover:bg-gray-800 transition disabled:opacity-60"
+            >
+              Nộp bài
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

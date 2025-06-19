@@ -16,6 +16,7 @@ import IconToggleSidebarActive from "../../../public/icons/lessson/IconToggleSid
 import DocumentLesson from "@/components/lesson/DocumentLesson";
 import QuizLesson from "@/components/lesson/QuizLesson";
 import ExerciseLesson from "@/components/lesson/ExerciseLesson";
+import { useQuizStore } from "@/store/slices/lesson.slice";
 
 interface Lesson {
   id: string;
@@ -27,6 +28,7 @@ interface Lesson {
 function LessonPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
+  const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
 
   const [sections, setSections] = useState([
     {
@@ -456,7 +458,7 @@ function LessonPage() {
       default:
         return null;
     }
-  }
+  };
 
   return (
     <div className="flex relative">
@@ -492,27 +494,26 @@ function LessonPage() {
         {/* Header with back button */}
         <div className="items-center justify-between md:flex p-4 bg-white text-primary">
           <div className="flex items-center gap-3">
-            <button className="mr-3 bg-[#919EAB14] h-[36px] w-[36px] flex items-center justify-center rounded" onClick={toggleSidebar}>
-              {isSidebarVisible ? <IconToggleSidebar /> : <IconToggleSidebarActive />}
+            <button
+              className="mr-3 bg-[#919EAB14] h-[36px] w-[36px] flex items-center justify-center rounded"
+              onClick={toggleSidebar}
+            >
+              {isSidebarVisible ? (
+                <IconToggleSidebar />
+              ) : (
+                <IconToggleSidebarActive />
+              )}
             </button>
-            <h1 className="text-lg font-medium truncate">
-              {courseTitle}
-            </h1>
+            <h1 className="text-lg font-medium truncate">{courseTitle}</h1>
           </div>
           <div className="flex items-center gap-6 mt-2 md:mt-0">
             <div className="font-bold cursor-pointer flex items-center gap-1">
-              <ArrowLeft2
-                size="20"
-                color="#212B36"
-              />
+              <ArrowLeft2 size="20" color="#212B36" />
               Trước
             </div>
             <div className="font-bold cursor-pointer flex items-center gap-1">
               Tiếp theo
-              <ArrowRight2
-                size="20"
-                color="#212B36"
-              />
+              <ArrowRight2 size="20" color="#212B36" />
             </div>
           </div>
         </div>
@@ -521,36 +522,38 @@ function LessonPage() {
         {renderLessonBody(currentLesson.type)}
 
         {/* Lesson Content */}
-        <div className="p-4 md:p-6 bg-white">
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-2">
-              <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-              <TabsTrigger value="notes">Ghi chú</TabsTrigger>
-              <TabsTrigger value="download">Tải xuống</TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="overview"
-              className="mt-4 md:mt-6 text-sm md:text-base"
-            >
-              <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-                {courseTitle}
-              </h2>
-              {renderContentTab("overview")}
-            </TabsContent>
-            <TabsContent
-              value="notes"
-              className="mt-4 md:mt-6 text-sm md:text-base"
-            >
-              {renderContentTab("notes")}
-            </TabsContent>
-            <TabsContent
-              value="download"
-              className="mt-4 md:mt-6 text-sm md:text-base"
-            >
-              {renderContentTab("download")}
-            </TabsContent>
-          </Tabs>
-        </div>
+        {!isQuizStarted && (
+          <div className="p-4 md:p-6 bg-white">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="mb-2">
+                <TabsTrigger value="overview">Tổng quan</TabsTrigger>
+                <TabsTrigger value="notes">Ghi chú</TabsTrigger>
+                <TabsTrigger value="download">Tải xuống</TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="overview"
+                className="mt-4 md:mt-6 text-sm md:text-base"
+              >
+                <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+                  {courseTitle}
+                </h2>
+                {renderContentTab("overview")}
+              </TabsContent>
+              <TabsContent
+                value="notes"
+                className="mt-4 md:mt-6 text-sm md:text-base"
+              >
+                {renderContentTab("notes")}
+              </TabsContent>
+              <TabsContent
+                value="download"
+                className="mt-4 md:mt-6 text-sm md:text-base"
+              >
+                {renderContentTab("download")}
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
       </div>
     </div>
   );

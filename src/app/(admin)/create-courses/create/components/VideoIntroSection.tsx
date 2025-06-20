@@ -19,6 +19,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
 import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
+import { InfoCircle } from "iconsax-react";
 
 interface VideoIntroSectionProps {
   form: UseFormReturn<Step2FormData>;
@@ -88,8 +89,8 @@ export default function VideoIntroSection({
                   />
                 </FormControl>
                 <p className="text-xs text-gray-500 flex items-center">
-                  <Info className="w-3 h-3 mr-1" />
-                  Ví dụ: https://www.youtube.com/watch?v=yourvideoid
+                  <InfoCircle size={16} color="#637381" variant="Bold" className="mr-1" />
+                  Ví dụ: <a className="text-blue-500">https://www.youtube.com/watch?v=yourvideoid</a>
                 </p>
                 <FormMessage />
               </FormItem>

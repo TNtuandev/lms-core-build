@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Step2FormData } from "../Step2Form";
 import {Add, Edit, Import, ImportCurve, Menu, Trash} from "iconsax-react";
 import {ChevronDown, Upload} from "lucide-react";
+import { useState } from "react";
+import AddChapterModal from "./AddChapterModal";
 
 interface Lesson {
   id: string;
@@ -15,6 +17,7 @@ interface Lesson {
 interface Chapter {
   id: string;
   title: string;
+  summary?: string;
   isExpanded: boolean;
   lessons: Lesson[];
 }
@@ -33,6 +36,8 @@ export default function CourseBuilderSection({
   chapters,
   setChapters,
 }: CourseBuilderSectionProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const toggleChapter = (chapterId: string) => {
     setChapters(
       chapters.map((chapter) =>
@@ -43,10 +48,11 @@ export default function CourseBuilderSection({
     );
   };
 
-  const addNewChapter = () => {
+  const addNewChapter = (title: string, summary: string) => {
     const newChapter: Chapter = {
       id: Date.now().toString(),
-      title: `Chủ đề ${chapters.length + 1}`,
+      title,
+      summary,
       isExpanded: true,
       lessons: [],
     };
@@ -197,7 +203,7 @@ export default function CourseBuilderSection({
             <Button
               type="button"
               variant="ghost"
-              onClick={addNewChapter}
+              onClick={() => setIsModalOpen(true)}
               className="w-full h-11 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg"
             >
               <Add size={30} color="#212B36" className="w-4 h-4 mr-0.5" />
@@ -206,6 +212,11 @@ export default function CourseBuilderSection({
           </div>
         </div>
       )}
+      <AddChapterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddChapter={addNewChapter}
+      />
     </Card>
   );
 } 

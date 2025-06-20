@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {
   CourseInfoSection,
   CourseSettingsSection,
@@ -13,6 +13,15 @@ import {
   CourseBuilderSection,
   CoursePricingSection,
 } from "./components";
+import ToggleSwitch from "./components/ToggleSwitch";
+import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
+
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  isExpanded: boolean;
+}
 
 // Schema validation for Step 2
 const step2Schema = z.object({
@@ -44,6 +53,16 @@ const step2Schema = z.object({
       }),
     )
     .optional(),
+  faqs: z
+    .array(
+      z.object({
+        id: z.string(),
+        question: z.string(),
+        answer: z.string(),
+        isExpanded: z.boolean().optional(),
+      }),
+    )
+    .optional(),
   // Pricing
   isFree: z.boolean().optional(),
   originalPrice: z.string().optional(),
@@ -59,24 +78,37 @@ interface Step2FormProps {
   initialData?: Partial<Step2FormData>;
 }
 
-interface Chapter {
-  id: string;
-  title: string;
-  isExpanded: boolean;
-}
-
 export default function Step2Form({
   onNext,
   onBack,
   initialData,
 }: Step2FormProps) {
-  const [chapters, setChapters] = useState<Chapter[]>(
+  const [chapters, setChapters] = useState(
     initialData?.chapters?.map((c) => ({
       ...c,
       isExpanded: c.isExpanded || false,
+      lessons: (c as any).lessons || [],
     })) || [
-      { id: "1", title: "Chủ đề 1", isExpanded: false },
-      { id: "2", title: "Chủ đề 2", isExpanded: false },
+      { id: "1", title: "Chủ đề 1", isExpanded: false, lessons: [] },
+      { id: "2", title: "Chủ đề 2", isExpanded: false, lessons: [] },
+    ],
+  );
+  const [faqs, setFaqs] = useState<FAQ[]>(
+    (initialData as any)?.faqs || [
+      {
+        id: "1",
+        question: "Question 1",
+        answer:
+          "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,",
+        isExpanded: true,
+      },
+      {
+        id: "2",
+        question: "Question 2",
+        answer:
+          "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,",
+        isExpanded: false,
+      },
     ],
   );
 
@@ -85,6 +117,7 @@ export default function Step2Form({
   const [courseSettingsExpanded, setCourseSettingsExpanded] = useState(true);
   const [videoIntroExpanded, setVideoIntroExpanded] = useState(true);
   const [courseBuilderExpanded, setCourseBuilderExpanded] = useState(true);
+  const [faqExpanded, setFaqExpanded] = useState(true);
   const [pricingExpanded, setPricingExpanded] = useState(true);
 
   const form = useForm<Step2FormData>({
@@ -120,6 +153,7 @@ export default function Step2Form({
     const formDataWithChapters = {
       ...data,
       chapters: chapters.map(({ ...chapter }) => chapter),
+      faqs: faqs.map(({ ...faq }) => faq),
     };
     onNext(formDataWithChapters);
   };
@@ -158,6 +192,14 @@ export default function Step2Form({
             setChapters={setChapters}
           />
 
+          <CourseFAQ
+            form={form}
+            isExpanded={faqExpanded}
+            onToggle={() => setFaqExpanded(!faqExpanded)}
+            faqs={faqs}
+            setFaqs={setFaqs}
+          />
+
           {/* 5. Course Pricing Section */}
           <CoursePricingSection
             form={form}
@@ -166,21 +208,49 @@ export default function Step2Form({
           />
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onBack}
-              className="px-6"
-            >
-              Quay lại
-            </Button>
-            <Button
-              type="submit"
-              className="px-8 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Tạo khóa học
-            </Button>
+          <div className="flex justify-between items-center border-t border-gray-200">
+            <FormField
+              control={form.control}
+              name="isPublished"
+              render={({ field }) => (
+                <FormItem className="flex items-center gap-3 p-3 rounded-lg">
+                  <FormControl className="flex items-center">
+                    <ToggleSwitch
+                      value={field.value || false}
+                      onChange={field.onChange}
+                      color="gray"
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer mb-2">
+                    Xuất bản
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
+            <div className="flex items-center justify-end space-x-4 pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onBack}
+                className="px-6 text-primary-contrastText"
+              >
+                Quay lại
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onBack}
+                className="px-6 text-primary-contrastText"
+              >
+                Huỷ bỏ
+              </Button>
+              <Button
+                type="submit"
+                className="px-8 bg-[#212B36] hover:bg-blue-700 text-white"
+              >
+                Tạo khóa học
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

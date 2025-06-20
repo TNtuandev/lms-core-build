@@ -25,8 +25,10 @@ export default function CoursePricingSection({
   isExpanded,
   onToggle,
 }: CoursePricingSectionProps) {
+  const isFree = form.watch("isFree");
+
   return (
-    <Card className="bg-white py-4 shadow-sm border border-gray-200">
+    <Card className="bg-white shadow-sm border border-gray-200">
       <div
         className="flex items-center justify-between p-4 cursor-pointer transition-colors"
         onClick={onToggle}
@@ -45,72 +47,74 @@ export default function CoursePricingSection({
             control={form.control}
             name="isFree"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between p-3 border rounded-lg">
-                <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer">
-                  Khóa học miễn phí
-                </FormLabel>
-                <FormControl>
+              <FormItem className="flex items-center gap-3 p-3 rounded-lg">
+                <FormControl className="flex items-center">
                   <ToggleSwitch
                     value={field.value || false}
                     onChange={field.onChange}
                     color="gray"
                   />
                 </FormControl>
+                <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer mb-2">
+                  Khóa học miễn phí
+                </FormLabel>
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="originalPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Giá gốc
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                        đ
-                      </span>
-                      <Input
-                        placeholder="0,00"
-                        className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {!isFree && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="originalPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Giá gốc
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                          đ
+                        </span>
+                        <Input
+                          placeholder="0,00"
+                          className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="salePrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Giá bán
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                        đ
-                      </span>
-                      <Input
-                        placeholder="0,00"
-                        className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+              <FormField
+                control={form.control}
+                name="salePrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Giá bán
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                          đ
+                        </span>
+                        <Input
+                          placeholder="0,00"
+                          className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
         </div>
       )}
     </Card>

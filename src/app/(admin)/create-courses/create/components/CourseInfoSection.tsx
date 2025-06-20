@@ -23,6 +23,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown, Info } from "lucide-react";
 import ToggleSwitch from "./ToggleSwitch";
 import { Step2FormData } from "@/app/(admin)/create-courses/create/Step2Form";
+import {InfoCircle} from "iconsax-react";
 
 interface CourseInfoSectionProps {
   form: UseFormReturn<Step2FormData>;
@@ -36,14 +37,23 @@ export default function CourseInfoSection({
   onToggle,
 }: CourseInfoSectionProps) {
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
 
-  const addTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      const updatedTags = [...tags, newTag.trim()];
+  // TODO: Replace with your actual predefined tags
+  const predefinedTags = [
+    "Thiết kế web",
+    "Lập trình mobile",
+    "UI/UX",
+    "Marketing",
+    "Data Science",
+    "AI",
+    "Blockchain",
+  ];
+
+  const addTag = (tagToAdd: string) => {
+    if (tagToAdd && !tags.includes(tagToAdd)) {
+      const updatedTags = [...tags, tagToAdd];
       setTags(updatedTags);
       form.setValue("tags", updatedTags);
-      setNewTag("");
     }
   };
 
@@ -69,18 +79,18 @@ export default function CourseInfoSection({
 
       {isExpanded && (
         <div className="p-4 border-t border-t-gray-300 space-y-6">
-          {/* Short Description Field */}
+          {/* Description Field */}
           <FormField
             control={form.control}
             name="shortDescription"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium text-gray-700">
-                  Mô tả ngắn
+                  Mô tả
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Mô tả ngắn"
+                    placeholder="Viết gì đó..."
                     className="min-h-[80px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     {...field}
                   />
@@ -111,33 +121,33 @@ export default function CourseInfoSection({
             )}
           />
 
-          {/* Objectives Field */}
+          {/* Objectives Field (now is Kết quả đạt được) */}
           <FormField
             control={form.control}
             name="objectives"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium text-gray-700">
-                  Đối tượng mục tiêu
+                  Kết quả đạt được
                 </FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Đối tượng mục tiêu"
+                    placeholder="Kết quả đạt được"
                     className="min-h-[80px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     {...field}
                   />
                 </FormControl>
-                <p className="text-xs text-gray-500 flex items-center">
-                  <Info className="w-3 h-3 mr-1" />
-                  Xác định đối tượng mục tiêu sẽ được hướng tới nhiều nhất từ khóa học.
+                <p className="text-xs text-gray-500 flex items-center mt-1">
+                  <InfoCircle variant="Bold" size={16} color="#637381"/>
+                  <span className="ml-1">Kết quả người dùng sẽ đạt được sau khi kết thúc khóa học</span>
                 </p>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Duration and Lessons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Duration: giờ và phút */}
+          <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="duration"
@@ -153,19 +163,21 @@ export default function CourseInfoSection({
                       {...field}
                     />
                   </FormControl>
-                  <p className="text-xs text-gray-500">Giờ</p>
+                  <p className="text-xs text-gray-500 flex items-center">
+                    <InfoCircle variant="Bold" size={16} color="#637381"/>
+                    <span className="ml-1">Giờ</span>
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="lessons"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700 opacity-0">
-                    Hidden
+                    Ẩn
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -174,7 +186,10 @@ export default function CourseInfoSection({
                       {...field}
                     />
                   </FormControl>
-                  <p className="text-xs text-gray-500">Phút</p>
+                  <p className="text-xs text-gray-500 flex items-center">
+                    <InfoCircle variant="Bold" size={16} color="#637381"/>
+                    <span className="ml-1">Phút</span>
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -240,46 +255,38 @@ export default function CourseInfoSection({
                   Thẻ
                 </FormLabel>
                 <FormControl>
-                  <div>
-                    <div className="flex gap-2 mb-2">
-                      <Input
-                        {...field}
-                        placeholder="Nhập thẻ..."
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            addTag();
-                          }
-                        }}
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                      <Button
-                        type="button"
-                        onClick={addTag}
-                        className="px-4 bg-blue-600 hover:bg-blue-700 text-white"
+                  <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] border border-gray-300 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                    {tags.map((tag, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#DDEBFF] text-[#0C53B7] px-2.5 py-1 rounded-md text-sm flex items-center gap-1.5"
                       >
-                        Thêm
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {tags.map((tag, index) => (
-                        <div
-                          key={index}
-                          className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="font-bold text-[#0C53B7] hover:text-blue-800"
                         >
-                          {tag}
-                          <button
-                            type="button"
-                            onClick={() => removeTag(tag)}
-                            className="text-blue-600 hover:text-blue-800"
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <Select onValueChange={(value) => addTag(value)} value="">
+                      <SelectTrigger className="flex-1 h-8 p-0 bg-transparent border-0 shadow-none focus-visible:ring-0 focus:ring-offset-0 data-[placeholder]:text-gray-500">
+                        <SelectValue placeholder="Chọn thẻ để thêm..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        {predefinedTags.map((tag) => (
+                          <SelectItem
+                            key={tag}
+                            value={tag}
+                            disabled={tags.includes(tag)}
                           >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                            {tag}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -288,26 +295,28 @@ export default function CourseInfoSection({
           />
 
           {/* Toggle Switches */}
-          <div className="space-y-4">
+          <div className="space-y-4 pt-4">
             {/* Sale Toggle */}
             <FormField
               control={form.control}
               name="isSale"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex flex-col">
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Nhãn Sale
-                    </FormLabel>
-                    <span className="text-xs text-gray-500">SALE</span>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Nhãn Sale
+                  </FormLabel>
+                  <div className="flex items-center gap-4 mt-1">
+                    <FormControl>
+                      <ToggleSwitch
+                        value={field.value || false}
+                        onChange={field.onChange}
+                        color="green"
+                      />
+                    </FormControl>
+                    <div className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50/70">
+                      SALE
+                    </div>
                   </div>
-                  <FormControl>
-                    <ToggleSwitch
-                      value={field.value || false}
-                      onChange={field.onChange}
-                      color="green"
-                    />
-                  </FormControl>
                 </FormItem>
               )}
             />
@@ -317,20 +326,22 @@ export default function CourseInfoSection({
               control={form.control}
               name="isNew"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex flex-col">
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Nhãn New
-                    </FormLabel>
-                    <span className="text-xs text-gray-500">NEW</span>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Nhãn New
+                  </FormLabel>
+                  <div className="flex items-center gap-4 mt-1">
+                    <FormControl>
+                      <ToggleSwitch
+                        value={field.value || false}
+                        onChange={field.onChange}
+                        color="blue"
+                      />
+                    </FormControl>
+                    <div className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50/70">
+                      NEW
+                    </div>
                   </div>
-                  <FormControl>
-                    <ToggleSwitch
-                      value={field.value || false}
-                      onChange={field.onChange}
-                      color="blue"
-                    />
-                  </FormControl>
                 </FormItem>
               )}
             />
@@ -340,20 +351,22 @@ export default function CourseInfoSection({
               control={form.control}
               name="isBestseller"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex flex-col">
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Nhãn Bestseller
-                    </FormLabel>
-                    <span className="text-xs text-gray-500">BESTSELLER</span>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Nhãn Bestseller
+                  </FormLabel>
+                  <div className="flex items-center gap-4 mt-1">
+                    <FormControl>
+                      <ToggleSwitch
+                        value={field.value || false}
+                        onChange={field.onChange}
+                        color="yellow"
+                      />
+                    </FormControl>
+                    <div className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50/70">
+                      BESTSELLER
+                    </div>
                   </div>
-                  <FormControl>
-                    <ToggleSwitch
-                      value={field.value || false}
-                      onChange={field.onChange}
-                      color="yellow"
-                    />
-                  </FormControl>
                 </FormItem>
               )}
             />

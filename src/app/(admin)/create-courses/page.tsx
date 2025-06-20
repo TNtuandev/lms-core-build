@@ -16,10 +16,9 @@ type Step1Data = {
   title: string;
   slug: string;
   description: string;
-  content: string;
-  fileType: string;
-  category?: string;
-  thumbnail?: string;
+  category: string;
+  teacher: string;
+  thumbnail?: any;
 };
 
 type Step2Data = {
@@ -41,6 +40,15 @@ type CourseFormData = Step1Data & Step2Data;
 function CreateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<CourseFormData>>({});
+  const stepsList = [
+    { label: "Tạo khóa học", stepIndex: 1},
+    { label: "Thêm thông tin", stepIndex: 2},
+    { label: "Cài đặt khoá học", stepIndex: 3},
+    { label: "Video giới thiệu", stepIndex: 4},
+    { label: "Xây dựng khoá học", stepIndex: 5},
+    { label: "Giá khoá học", stepIndex: 6 },
+
+  ]
 
   const handleStep1Complete = (data: Step1Data) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -108,14 +116,12 @@ function CreateCourse() {
           <div className="lg:col-span-3">
             <Card className="p-6 bg-white shadow-sm border border-gray-200">
               <nav className="space-y-2">
-                {[
-                  { label: "Tạo khóa học", active: currentStep === 1 },
-                  { label: "Thêm thông tin", active: currentStep === 2 },
-                ].map((item, index) => (
+                {stepsList.map((item, index) => (
                   <div
+                    onClick={() => setCurrentStep(item.stepIndex)}
                     key={index}
                     className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                      item.active
+                      item.stepIndex === currentStep
                         ? "bg-blue-50 text-blue-600 border border-blue-200"
                         : "text-gray-600 hover:bg-gray-50"
                     }`}

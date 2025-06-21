@@ -26,6 +26,19 @@ import IconTickGreen from "../../../../../public/icons/IconTickGreen";
 //   };
 // }
 
+const listQuestions = [
+  {
+    id: "1",
+    title: "Giới thiệu về UI/UX",
+    description: "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,"
+  },
+  {
+    id: "2",
+    title: "Nghiên cứu người dùng",
+    description: "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,"
+  }
+]
+
 export default function CourseDetailPage() {
   const router = useRouter();
   const { pushToCart } = useCartStore();
@@ -47,6 +60,8 @@ export default function CourseDetailPage() {
   const [openReview, setOpenReview] = useState(false);
 
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
+
+  const [acticeQuestion, setActiveQuestion] = useState<string | null>(null);
 
   // Add refs for each section
   const overviewRef = useRef<HTMLDivElement>(null);
@@ -616,8 +631,13 @@ export default function CourseDetailPage() {
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold mb-6">Đánh giá</h3>
-                <Button onClick={() => setOpenReview(true)} className="flex py-2.5 px-4 border-none bg-[#919EAB14]/8 rounded-[10px]" size="lg" variant="outline">
-                  <Edit size="20" color="#27272A"/>
+                <Button
+                  onClick={() => setOpenReview(true)}
+                  className="flex py-2.5 px-4 border-none bg-[#919EAB14]/8 rounded-[10px]"
+                  size="lg"
+                  variant="outline"
+                >
+                  <Edit size="20" color="#27272A" />
                   <div className="text-sm font-semibold">Viết đánh giá</div>
                 </Button>
                 <ReviewDialog
@@ -825,6 +845,49 @@ export default function CourseDetailPage() {
                 )}
               </button>
             </div>
+
+            <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
+              <h3 className="text-xl font-bold mb-6">Câu hỏi thường gặp</h3>
+              <div className="space-y-3">
+                {listQuestions.map((it) => (
+                  <div
+                    key={it.id}
+                    role="presentation"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      if (acticeQuestion === it.id) {
+                        setActiveQuestion(null);
+                        return;
+                      }
+                      setActiveQuestion(it.id);
+                    }}
+                  >
+                    <div className="flex items-center flex-shink-0 justify-between bg-[#F4F6F8] px-3 py-2 rounded">
+                      <div className={`font-semibold ${acticeQuestion === it.id ? "text-[#2F57EF]" : ""}`}>{it.title}</div>
+                      {acticeQuestion === it.id ? (
+                        <ArrowUp2
+                          size="16"
+                          color="#212B36"
+                          className="flex-shink-0"
+                        />
+                      ) : (
+                        <ArrowDown2
+                          size="16"
+                          color="#212B36"
+                          className="flex-shink-0"
+                        />
+                      )}
+                    </div>
+                    {acticeQuestion === it.id && (
+                      <div className="mt-2 text-primary px-2">
+                        {it.description}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="md:text-3xl text-sm font-bold text-[#212B36]">

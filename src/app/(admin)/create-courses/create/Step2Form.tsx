@@ -221,7 +221,7 @@ export default function Step2Form({
                       color="gray"
                     />
                   </FormControl>
-                  <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer mb-2">
+                  <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer">
                     Xuất bản
                   </FormLabel>
                 </FormItem>

@@ -7,7 +7,13 @@ import { Step2FormData } from "../Step2Form";
 import {Add, Edit, Import, ImportCurve, Menu, Trash} from "iconsax-react";
 import {ChevronDown, Upload} from "lucide-react";
 import { useState } from "react";
-import AddChapterModal from "./AddChapterModal";
+import AddChapterModal from "./modal/AddChapterModal";
+import {CreateLessonModal} from "@/app/(admin)/create-courses/create/components/modal/CreateLessonModal";
+import {CreateQuizModal} from "@/app/(admin)/create-courses/create/components/modal/CreateQuizModal";
+import {
+  UploadArticleAssignment
+} from "@/app/(admin)/create-courses/create/components/modal/CreateAssignment/UploadArticleAssignment";
+import { UploadCodeAssignment } from "./modal/CreateAssignment/UploadCodeAssignment";
 
 interface Lesson {
   id: string;
@@ -37,6 +43,10 @@ export default function CourseBuilderSection({
   setChapters,
 }: CourseBuilderSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpenModalCreateLesson, setIsOpenModalCreateLesson] = useState(false);
+  const [isOpenModalCreateQuiz, setIsOpenModalCreateQuiz] = useState(false);
+  const [isOpenModalCreateAssignment, setIsOpenModalCreateAssignment] = useState(false);
+  const [isOpenModalCreateAssignmentCode, setIsOpenModalCreateAssignmentCode] = useState(false);
 
   const toggleChapter = (chapterId: string) => {
     setChapters(
@@ -70,6 +80,22 @@ export default function CourseBuilderSection({
       ),
     );
   };
+
+  const handleSubmitCreateAssignmentCode = (data) => {
+    console.log("Submitted assignment data code:", data);
+  }
+
+  const handleSubmitCreateAssignment = (data) => {
+    console.log("Submitted assignment data:", data);
+  }
+
+  const handleSubmitCreateLesson = (data) => {
+    console.log("Submitted lesson data:", data);
+  }
+
+  const handleSubmitCreateQuiz = (data) => {
+    console.log("Submitted quiz data:", data);
+  }
 
   return (
     <Card className="bg-white shadow-sm border border-gray-200">
@@ -176,20 +202,20 @@ export default function CourseBuilderSection({
 
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center space-x-2">
-                      <Button className="border-primary-main/48" type="button" variant="outline" size="sm">
+                      <Button onClick={() => setIsOpenModalCreateLesson(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
                         <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
                         Bài học
                       </Button>
-                      <Button className="border-primary-main/48" type="button" variant="outline" size="sm">
+                      <Button onClick={() => setIsOpenModalCreateQuiz(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
                         <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
                         Bài kiểm tra
                       </Button>
-                      <Button className="border-primary-main/48" type="button" variant="outline" size="sm">
+                      <Button onClick={() => setIsOpenModalCreateAssignmentCode(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
                         <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
                         Bài tập
                       </Button>
                     </div>
-                    <Button className="border-primary-main/48" size="sm" type="button" variant="outline">
+                    <Button onClick={() => setIsOpenModalCreateAssignment(true)} className="border-primary-main/48" size="sm" type="button" variant="outline">
                       <ImportCurve size={20} color="#2F57EF" className="w-4 h-4 mr-2" />
                       Nhập bài kiểm tra
                     </Button>
@@ -212,10 +238,28 @@ export default function CourseBuilderSection({
           </div>
         </div>
       )}
+      <UploadCodeAssignment
+        isOpen={isOpenModalCreateAssignmentCode}
+        onClose={() => setIsOpenModalCreateAssignmentCode(false)}
+        onSubmit={handleSubmitCreateAssignmentCode}
+      />
+      <UploadArticleAssignment
+        isOpen={isOpenModalCreateAssignment}
+        onClose={() => setIsOpenModalCreateAssignment(false)}
+        onSubmit={handleSubmitCreateAssignment}
+      />
+      <CreateLessonModal
+        isOpen={isOpenModalCreateLesson}
+        onClose={() => setIsOpenModalCreateLesson(false)}
+        onSubmit={handleSubmitCreateLesson} />
       <AddChapterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onAddChapter={addNewChapter}
+      />
+      <CreateQuizModal
+        isOpen={isOpenModalCreateQuiz}
+        onClose={() => setIsOpenModalCreateQuiz(false)}
       />
     </Card>
   );

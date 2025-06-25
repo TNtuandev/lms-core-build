@@ -4,7 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Step2FormData } from "../Step2Form";
-import {Add, Edit, Import, ImportCurve, Menu, Trash} from "iconsax-react";
+import {Add, Edit, ImportCurve, Menu, Trash} from "iconsax-react";
 import {ChevronDown, Upload} from "lucide-react";
 import { useState } from "react";
 import AddChapterModal from "./modal/AddChapterModal";
@@ -81,21 +81,21 @@ export default function CourseBuilderSection({
     );
   };
 
-  const handleSubmitCreateAssignmentCode = (data) => {
+  const handleSubmitCreateAssignmentCode = (data: any) => {
     console.log("Submitted assignment data code:", data);
   }
 
-  const handleSubmitCreateAssignment = (data) => {
+  const handleSubmitCreateAssignment = (data: any) => {
     console.log("Submitted assignment data:", data);
   }
 
-  const handleSubmitCreateLesson = (data) => {
+  const handleSubmitCreateLesson = (data: any) => {
     console.log("Submitted lesson data:", data);
   }
 
-  const handleSubmitCreateQuiz = (data) => {
-    console.log("Submitted quiz data:", data);
-  }
+  // const handleSubmitCreateQuiz = (data: any) => {
+  //   console.log("Submitted quiz data:", data);
+  // }
 
   return (
     <Card className="bg-white shadow-sm border border-gray-200">

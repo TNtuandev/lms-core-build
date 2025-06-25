@@ -1,6 +1,8 @@
 import React from "react";
 import IconBook from "../../../../public/icons/IconBook";
 import IconUser from "../../../../public/icons/IconUser";
+import {Edit} from "iconsax-react";
+import {Button} from "@/components/ui/button";
 
 interface CourseCardProps {
   badge?: "NEW" | "BESTSELLER" | "SALE";
@@ -90,6 +92,10 @@ function CourseCard({
             {originalPrice}₫
           </span>
         </div>
+        <Button className="mt-4 hover:bg-secondary/24 cursor-pointer flex items-center w-fit  min-w-6 h-6 gap-2 bg-secondary/16 rounded-lg px-2">
+          <Edit size={16} color="#637381"/>
+          <span className="text-secondary text-sm font-bold">Chỉnh sửa</span>
+        </Button>
       </div>
     </div>
   );

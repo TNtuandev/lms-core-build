@@ -6,7 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Table } from "antd";
 import { Trash2 } from "lucide-react";
 import "antd/dist/reset.css";
-import {Edit2} from "iconsax-react";
+import {Edit, Edit2, Trash} from "iconsax-react";
 
 const dataSource = [
   {
@@ -64,10 +64,10 @@ const columns = [
     render: () => (
       <div className="flex gap-3 justify-end">
         <button className="p-2 hover:bg-[#F4F6F8] rounded" title="Sửa">
-          <Edit2 size={20} color="#2F57EF"/>
+          <Edit size={20} color="#2F57EF"/>
         </button>
         <button className="p-2 hover:bg-[#F4F6F8] rounded" title="Xóa">
-          <Trash2 size={20} color="#F44336"/>
+          <Trash size={20} color="#F44336"/>
         </button>
       </div>
     ),
@@ -94,7 +94,7 @@ function NotificationPage() {
         {/* Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-2">
           <div className="flex-1">
-            <div className="text-sm font-semibold pb-2">Danh mục</div>
+            <div className="text-sm font-semibold pb-2">Khoá học</div>
             <Select>
               <SelectTrigger className="w-full h-[48px] border-[#E7E9ED] bg-white text-[#222] text-[15px]">
                 <SelectValue placeholder="Tất cả" />

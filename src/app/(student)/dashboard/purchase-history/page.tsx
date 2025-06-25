@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import {Edit, Trash2} from "lucide-react";
+import { Eye, Trash } from "iconsax-react";
 
 interface PurchaseOrder {
   id: string;
@@ -135,7 +136,10 @@ function PurchaseHistoryPage() {
                       onClick={() => handleEdit(order.id)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
-                      <Edit className="w-4 h-4" color="#155dfc" />
+                      <Eye
+                        size="20"
+                        color="#2F57EF"
+                      />
                     </Button>
                     <Button
                       variant="ghost"
@@ -143,7 +147,7 @@ function PurchaseHistoryPage() {
                       onClick={() => handleDelete(order.id)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="w-4 h-4" color="red" />
+                      <Trash size={20} color="#F44336"/>
                     </Button>
                   </div>
                 </td>

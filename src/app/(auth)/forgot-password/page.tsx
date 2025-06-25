@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { bannerSignIn, logoMini } from "@/contants/images";
-import { useLogin } from "@/hooks/queries/auth/useLogin";
 import {
   Form,
   FormControl,
@@ -18,30 +17,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useForgotPassword } from "@/hooks/queries/auth/useForgotPassword";
 
 // Schema validation for Login
-const loginSchema = z.object({
+const forgotSchema = z.object({
   email: z
     .string()
     .min(1, "Email không được để trống")
     .email("Email không hợp lệ"),
 });
 
-type ForgorPasswordFormData = z.infer<typeof loginSchema>;
+type ForgotPasswordFormData = z.infer<typeof forgotSchema>;
 
 function ForgotPasswordPage() {
-  const { mutate: login, isPending, error } = useLogin();
+  const { mutate: forgotPassword, isPending, error } = useForgotPassword();
   const router = useRouter();
 
-  const form = useForm<ForgorPasswordFormData>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit = (data: ForgorPasswordFormData) => {
-    console.log(data, "----");
+  const onSubmit = (data: ForgotPasswordFormData) => {
+    forgotPassword(data);
   };
 
   return (

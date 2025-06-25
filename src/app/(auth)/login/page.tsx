@@ -153,7 +153,7 @@ function LoginPage() {
             />
 
             <div className="flex justify-end items-end w-full">
-              <div className="underline mt-4 text-xs cursor-pointer hover:text-blue-600">
+              <div onClick={() => router.push("/forgot-password")} className="underline mt-4 text-xs cursor-pointer hover:text-blue-600">
                 Quên mật khẩu?
               </div>
             </div>

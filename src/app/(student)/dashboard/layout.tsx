@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Home,
@@ -12,10 +12,11 @@ import {
   FileText,
   History,
   Settings,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import IconBookWhite from "../../../../public/icons/IconBookWhite";
-import {DocumentText, MessageText, NotificationBing} from "iconsax-react";
+import { DocumentText, MessageText, NotificationBing } from "iconsax-react";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 export default function DashboardLayout({
   children,
@@ -23,6 +24,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { logout } = useAuthStore();
+  const router = useRouter();
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -83,7 +86,10 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Home className="w-5 h-5 mr-3" color={isActive("/dashboard") ? "#155dfc" : "#364153"} />
+                <Home
+                  className="w-5 h-5 mr-3"
+                  color={isActive("/dashboard") ? "#155dfc" : "#364153"}
+                />
                 <span
                   className={
                     isActive("/dashboard") ? "font-medium text-blue-600" : ""
@@ -101,7 +107,10 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <User className="w-5 h-5 mr-3" color={isActive("/dashboard/profile") ? "#155dfc" : "#364153"} />
+                <User
+                  className="w-5 h-5 mr-3"
+                  color={isActive("/dashboard/profile") ? "#155dfc" : "#364153"}
+                />
                 <span
                   className={
                     isActive("/dashboard/profile")
@@ -121,7 +130,10 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Book className="w-5 h-5 mr-3" color={isActive("/dashboard/courses") ? "#155dfc" : "#364153"} />
+                <Book
+                  className="w-5 h-5 mr-3"
+                  color={isActive("/dashboard/courses") ? "#155dfc" : "#364153"}
+                />
                 <span
                   className={
                     isActive("/dashboard/courses")
@@ -141,7 +153,12 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Heart className="w-5 h-5 mr-3" color={isActive("/dashboard/favorites") ? "#155dfc" : "#364153"} />
+                <Heart
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/favorites") ? "#155dfc" : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/favorites")
@@ -161,7 +178,10 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Star className="w-5 h-5 mr-3" color={isActive("/dashboard/reviews") ? "#155dfc" : "#364153"} />
+                <Star
+                  className="w-5 h-5 mr-3"
+                  color={isActive("/dashboard/reviews") ? "#155dfc" : "#364153"}
+                />
                 <span
                   className={
                     isActive("/dashboard/reviews")
@@ -181,7 +201,12 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <FileText className="w-5 h-5 mr-3" color={isActive("/dashboard/test-scores") ? "#155dfc" : "#364153"} />
+                <FileText
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/test-scores") ? "#155dfc" : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/test-scores")
@@ -201,7 +226,14 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <History className="w-5 h-5 mr-3" color={isActive("/dashboard/purchase-history") ? "#155dfc" : "#364153"} />
+                <History
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/purchase-history")
+                      ? "#155dfc"
+                      : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/purchase-history")
@@ -227,7 +259,12 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <Book className="w-5 h-5 mr-3" color={isActive("/dashboard/my-courses") ? "#155dfc" : "#364153"} />
+                <Book
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/my-courses") ? "#155dfc" : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/my-courses")
@@ -235,8 +272,8 @@ export default function DashboardLayout({
                       : ""
                   }
                 >
-                    Khoá học của tôi
-                  </span>
+                  Khoá học của tôi
+                </span>
               </Link>
 
               <Link
@@ -247,7 +284,12 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <NotificationBing className="w-5 h-5 mr-3" color={isActive("/dashboard/notification") ? "#155dfc" : "#364153"} />
+                <NotificationBing
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/notification") ? "#155dfc" : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/notification")
@@ -255,8 +297,8 @@ export default function DashboardLayout({
                       : ""
                   }
                 >
-                    Thông báo
-                  </span>
+                  Thông báo
+                </span>
               </Link>
 
               <Link
@@ -267,7 +309,10 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <DocumentText className="w-5 h-5 mr-3" color={isActive("/dashboard/test") ? "#155dfc" : "#364153"} />
+                <DocumentText
+                  className="w-5 h-5 mr-3"
+                  color={isActive("/dashboard/test") ? "#155dfc" : "#364153"}
+                />
                 <span
                   className={
                     isActive("/dashboard/test")
@@ -275,8 +320,8 @@ export default function DashboardLayout({
                       : ""
                   }
                 >
-                    Bài kiểm tra
-                  </span>
+                  Bài kiểm tra
+                </span>
               </Link>
 
               <Link
@@ -287,7 +332,12 @@ export default function DashboardLayout({
                     : "text-gray-700 hover:bg-gray-50"
                 } rounded-lg`}
               >
-                <MessageText className="w-5 h-5 mr-3" color={isActive("/dashboard/exercise") ? "#155dfc" : "#364153"} />
+                <MessageText
+                  className="w-5 h-5 mr-3"
+                  color={
+                    isActive("/dashboard/exercise") ? "#155dfc" : "#364153"
+                  }
+                />
                 <span
                   className={
                     isActive("/dashboard/exercise")
@@ -295,8 +345,8 @@ export default function DashboardLayout({
                       : ""
                   }
                 >
-                    Bài tập
-                  </span>
+                  Bài tập
+                </span>
               </Link>
             </div>
 
@@ -314,7 +364,12 @@ export default function DashboardLayout({
                       : "text-gray-700 hover:bg-gray-50"
                   } rounded-lg`}
                 >
-                  <Settings className="w-5 h-5 mr-3" color={isActive("/dashboard/settings") ? "#155dfc" : "#364153"} />
+                  <Settings
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/settings") ? "#155dfc" : "#364153"
+                    }
+                  />
                   <span
                     className={
                       isActive("/dashboard/settings")
@@ -326,13 +381,17 @@ export default function DashboardLayout({
                   </span>
                 </Link>
 
-                <Link
-                  href="#"
+                <div
+                  role="presentation"
+                  onClick={() => {
+                    logout();
+                    router.push("/");
+                  }}
                   className="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
                 >
                   <LogOut className="w-5 h-5 mr-3" />
                   <span>Đăng xuất</span>
-                </Link>
+                </div>
               </nav>
             </div>
           </div>

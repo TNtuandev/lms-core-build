@@ -49,7 +49,13 @@ function RegisterPage() {
   });
 
   const onSubmit = (data: RegisterFormData) => {
-    register(data);
+    const dataToRegister = {
+      fullName: data.name.trim(),
+      email: data.email.trim(),
+      password: data.password,
+      passwordConfirmation: data.password
+    }
+    register(dataToRegister);
   };
 
   const handleGoogleRegister = () => {

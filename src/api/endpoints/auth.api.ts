@@ -1,8 +1,8 @@
 import {
-  AuthResponse,
+  AuthResponse, ForgotPasswordCredentials,
   LoginCredentials,
   RegisterCredentials,
-  User,
+  User
 } from "@/api/types/auth.type";
 import api from "@/api/api";
 
@@ -14,6 +14,16 @@ export const authAPI = {
 
   register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
     const { data } = await api.post("/auth/register", credentials);
+    return data;
+  },
+
+  forgotPassword: async (credentials: ForgotPasswordCredentials): Promise<AuthResponse> => {
+    const { data } = await api.post("/auth/request-password-reset", credentials);
+    return data;
+  },
+
+  confirmResetPassword: async (credentials: ForgotPasswordCredentials): Promise<AuthResponse> => {
+    const { data } = await api.post("/auth/confirm-reset-password", credentials);
     return data;
   },
 

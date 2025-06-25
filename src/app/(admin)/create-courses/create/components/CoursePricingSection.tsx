@@ -55,7 +55,7 @@ export default function CoursePricingSection({
                     color="gray"
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer mb-2">
+                <FormLabel className="text-sm font-medium text-gray-700 cursor-pointer">
                   Khóa học miễn phí
                 </FormLabel>
               </FormItem>

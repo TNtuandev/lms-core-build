@@ -88,7 +88,7 @@ function ExcercisePage() {
         {/* Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-2">
           <div className="flex-1">
-            <div className="text-sm font-semibold pb-2">Danh mục</div>
+            <div className="text-sm font-semibold pb-2">Khoá học</div>
             <Select>
               <SelectTrigger className="w-full h-[48px] border-[#E7E9ED] bg-white text-[#222] text-[15px]">
                 <SelectValue placeholder="Tất cả" />

@@ -18,6 +18,7 @@ export default function ToggleSwitch({
 
   return (
     <div
+      style={{marginBlockEnd: 0, marginBlockStart: 0}}
       className={`relative inline-flex h-6 w-11 items-center rounded-full cursor-pointer transition-colors ${colorClasses[color]}`}
       onClick={() => onChange(!value)}
     >

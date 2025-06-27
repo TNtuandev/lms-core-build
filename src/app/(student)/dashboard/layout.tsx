@@ -387,7 +387,7 @@ export default function DashboardLayout({
                     logout();
                     router.push("/");
                   }}
-                  className="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+                  className="flex cursor-pointer items-center px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
                 >
                   <LogOut className="w-5 h-5 mr-3" />
                   <span>Đăng xuất</span>

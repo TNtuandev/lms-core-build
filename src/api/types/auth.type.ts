@@ -14,13 +14,14 @@ export interface ForgotPasswordCredentials {
 
 export interface AuthResponse {
   user: User;
-  token: string;
+  accessToken: string;
 }
 
 export interface User {
   id: string;
   email: string;
+  isEmailVerified: boolean;
   name: string;
   avatar?: string;
-  role: "student" | "instructor" | "admin";
+  type: "learner" | "instructor" | "admin";
 }

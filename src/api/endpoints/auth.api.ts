@@ -32,7 +32,7 @@ export const authAPI = {
   },
 
   me: async (): Promise<User> => {
-    const { data } = await api.get("/auth/me");
+    const { data } = await api.get("/users/me");
     return data;
   },
 };

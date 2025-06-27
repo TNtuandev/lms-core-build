@@ -28,7 +28,8 @@ export const useAuthContext = () => {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, logout } = useAuthStore();
   const userQuery = useMe();
-  // const signOutMutation = useLogout();
+
+  console.log(userQuery, "----userQuery");
 
   return (
     <AuthContext.Provider

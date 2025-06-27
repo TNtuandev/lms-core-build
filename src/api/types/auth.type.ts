@@ -12,6 +12,11 @@ export interface ForgotPasswordCredentials {
   email: string;
 }
 
+export interface VerifyEmailCredentials {
+  email: string;
+  code: string
+}
+
 export interface AuthResponse {
   user: User;
   accessToken: string;

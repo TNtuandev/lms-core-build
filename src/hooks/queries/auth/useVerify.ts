@@ -1,15 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { RegisterCredentials } from "@/api/types/auth.type";
+import { VerifyEmailCredentials } from "@/api/types/auth.type";
 import { authAPI } from "@/api/endpoints/auth.api";
 
-export const useRegister = () => {
+export const useVerify = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (credentials: RegisterCredentials) => authAPI.register(credentials),
+    mutationFn: (credentials: VerifyEmailCredentials) => authAPI.verifyEmail(credentials),
     onSuccess: () => {
-      router.push("/verify-account")
+      router.push("/login");
     },
   });
-}; 
+};

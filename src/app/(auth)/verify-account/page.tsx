@@ -6,14 +6,21 @@ import { bannerSignIn, logoMini } from "@/contants/images";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useVerify } from "@/hooks/queries/auth/useVerify";
+import { useGetOtp } from "@/hooks/queries/auth/useGetOtp";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 function VerifyAccountPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
+  const user = useAuthStore.getState().user
+  const email =  "";
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  console.log(user, "----user");
+
+  const { mutate: verify, isPending, error } = useVerify();
+  const { mutate: resendOtp, isPending: isResendingOtp } = useGetOtp();
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return; // Only allow single digit
@@ -33,39 +40,24 @@ function VerifyAccountPage() {
     }
   };
 
-  const handleVerify = async () => {
+  const handleVerify = () => {
     const verificationCode = code.join("");
     if (verificationCode.length !== 6) {
-      setError("Vui lòng nhập đầy đủ 6 chữ số");
+      return;
+    }
+    if (!user?.email) {
       return;
     }
 
-    setIsPending(true);
-    setError("");
-
-    try {
-      // TODO: Implement verification API call
-      console.log("Verification code:", verificationCode);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // On success, redirect to login or dashboard
-      router.push("/login");
-    } catch (err) {
-      console.log("Verification error:", err);
-      setError("Mã xác thực không hợp lệ. Vui lòng thử lại.");
-    } finally {
-      setIsPending(false);
-    }
+    verify({
+      email: user.email,
+      code: verificationCode,
+    });
   };
 
-  const handleResendCode = async () => {
-    try {
-      // TODO: Implement resend code API call
-      console.log("Resending verification code");
-      // Show success message
-    } catch (err) {
-      console.log("Resend code error:", err);
-      setError("Không thể gửi lại mã. Vui lòng thử lại sau.");
+  const handleResendCode = () => {
+    if (user?.email) {
+      resendOtp({ email: user.email });
     }
   };
 
@@ -95,7 +87,7 @@ function VerifyAccountPage() {
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm mb-4 w-full text-center">
-            {error}
+            {error.message || "Mã xác thực không hợp lệ. Vui lòng thử lại."}
           </div>
         )}
 
@@ -121,7 +113,7 @@ function VerifyAccountPage() {
         {/* Verify Button */}
         <Button
           onClick={handleVerify}
-          disabled={isPending || code.some((digit) => !digit)}
+          disabled={isPending || code.some((digit) => !digit) || !user?.email}
           className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-12 mb-6"
         >
           {isPending ? (
@@ -139,10 +131,10 @@ function VerifyAccountPage() {
           <span className="text-[#637381]">Bạn không nhận được mã? </span>
           <button
             onClick={handleResendCode}
-            className="text-[#2F57EF] hover:underline cursor-pointer"
-            disabled={isPending}
+            className="text-[#2F57EF] hover:underline cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed"
+            disabled={isPending || isResendingOtp || !user?.email}
           >
-            Gửi lại mã
+            {isResendingOtp ? "Đang gửi..." : "Gửi lại mã"}
           </button>
         </div>
 

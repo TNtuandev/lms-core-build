@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 // Schema validation for Register
 const registerSchema = z.object({
@@ -38,6 +39,7 @@ function RegisterPage() {
   const { mutate: register, isPending, error } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const setUserDraft = useAuthStore((state) => state.setUserDraft);
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -55,6 +57,11 @@ function RegisterPage() {
       password: data.password,
       passwordConfirmation: data.password
     }
+    setUserDraft({
+      id: "",
+      name: data.name.trim(),
+      email: data.email.trim(),
+    }, "")
     register(dataToRegister);
   };
 

@@ -6,7 +6,7 @@ import { bannerSignIn, logoMini } from "@/contants/images";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useVerify } from "@/hooks/queries/auth/useVerify";
 import { useGetOtp } from "@/hooks/queries/auth/useGetOtp";
 import { useAuthStore } from "@/store/slices/auth.slice";
@@ -15,7 +15,6 @@ function VerifyAccountPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const router = useRouter();
   const user = useAuthStore.getState().user
-  const email =  "";
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   console.log(user, "----user");
 

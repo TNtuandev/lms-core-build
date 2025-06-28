@@ -20,7 +20,6 @@ import {
 } from "iconsax-react";
 import IconTickGreen from "../../../../../public/icons/IconTickGreen";
 import { useCourseBySlug } from "@/hooks/queries/course/useCourses";
-import { CourseDetail } from "@/api/types/course.type";
 
 // interface PageProps {
 //   params: {

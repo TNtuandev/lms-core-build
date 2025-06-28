@@ -364,7 +364,7 @@ function CoursePage() {
                   <div
                     key={course.id}
                     className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    onClick={() => handleCourseClick(course.id)}
+                    onClick={() => handleCourseClick(course.slug)}
                   >
                     <CourseCard
                       gridNUmber={4}

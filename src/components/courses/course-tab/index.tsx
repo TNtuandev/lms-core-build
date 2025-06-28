@@ -111,7 +111,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
             <div
               key={course.id}
               className="cursor-pointer transition-transform hover:scale-[1.02]"
-              onClick={() => handleCourseClick(course.id)}
+              onClick={() => handleCourseClick(course.slug)}
             >
               <CourseCard
                 badge="NEW"

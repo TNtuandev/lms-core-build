@@ -46,6 +46,39 @@ export interface Course {
   enrollmentCnt: number;
 }
 
+export interface CourseDetail {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
+  type: string;
+  thumbnail: string;
+  label: string;
+  status: string;
+  regularPrice: number;
+  discountedPrice?: number;
+  ratingAvg: number;
+  ratingCnt: number;
+  enrollmentCnt: number;
+  category: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+  owner: {
+    id: string;
+    email: string;
+    fullName: string;
+  };
+  previewImg: string;
+  learningOutcomes: string;
+  previewVideo: string;
+  requirements: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CoursesResponse {
   data: Course[];
   meta: {

@@ -6,11 +6,11 @@ import IconPrize from "../../../../../public/icons/IconPrize";
 import IconUser from "../../../../../public/icons/IconUser";
 import IconVideo from "../../../../../public/icons/IconVideo";
 import CourseCard from "@/components/courses/course-card";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useCartStore } from "@/store/slices/cart.slice";
 import { Routes } from "@/lib/routes/routes";
 import {Button} from "@/components/ui/button";
-import {Edit} from "lucide-react";
+import {Edit, Loader2} from "lucide-react";
 import {ReviewDialog} from "@/components/courses/components/ReviewDialog";
 import {
   ArrowDown2,
@@ -19,6 +19,8 @@ import {
   Backward5Seconds,
 } from "iconsax-react";
 import IconTickGreen from "../../../../../public/icons/IconTickGreen";
+import { useCourseBySlug } from "@/hooks/queries/course/useCourses";
+import { CourseDetail } from "@/api/types/course.type";
 
 // interface PageProps {
 //   params: {
@@ -41,7 +43,12 @@ const listQuestions = [
 
 export default function CourseDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const slug = params?.id as string;
   const { pushToCart } = useCartStore();
+
+  // Fetch course data by slug
+  const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
 
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
@@ -100,46 +107,57 @@ export default function CourseDetailPage() {
     }
   };
 
-  // In a real application, you would fetch course details using the ID
-  const courseData = {
-    title: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
-    description:
-      "Khóa học giúp bạn nắm vững các nguyên tắc thiết kế UI/UX từ cơ bản đến nâng cao với các dự án thực tế. Bạn sẽ học cách phân tích người dùng, tạo wireframe, prototype và thiết kế giao diện đáp ứng nhu cầu người dùng.",
-    instructor: "Anh Tuấn, Quang Anh",
-    imageUrl: "/images/banner-sign-in.png",
-    category: "Khóa học Thiết kế",
-    lessonCount: 12,
-    studentCount: 768,
-    currentPrice: "529,000",
-    originalPrice: "1,769,000",
-    rating: 4.8,
-    ratingCount: 256,
-    duration: "24 giờ 30 phút",
-    level: "Trung cấp",
-    languages: ["Tiếng Việt"],
-    topics: [
-      "UI Design",
-      "UX Research",
-      "Wireframing",
-      "Prototype",
-      "Adobe XD",
-      "Figma",
-    ],
-    updatedAt: "04/2025",
-  };
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="animate-spin text-gray-400" size={48} />
+        <span className="ml-2 text-gray-500">Đang tải thông tin khóa học...</span>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải thông tin khóa học</p>
+          <p className="text-gray-500 text-sm">{error?.message || "Vui lòng thử lại sau"}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Course not found
+  if (!courseDetail) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-500 mb-2">Không tìm thấy khóa học</p>
+          <button 
+            onClick={() => router.push('/course')}
+            className="text-blue-500 hover:underline"
+          >
+            Quay lại danh sách khóa học
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleCourseClick = (courseId: number) => {
     router.push(`/course/${courseId}`);
   };
 
-  const handleCheckoutCourse = (item: typeof courseData) => {
+  const handleCheckoutCourse = () => {
     pushToCart({
-      id: "1",
-      name: item.title,
-      price: 100000,
-      salesPrice: 80000,
-      originalPrice: 120000,
-      imageUrl: "/images/banner-sign-in.png", // Thay bằng đường dẫn hình ảnh thực tế
+      id: courseDetail.id,
+      name: courseDetail.title,
+      price: courseDetail.discountedPrice || courseDetail.regularPrice,
+      salesPrice: courseDetail.discountedPrice || courseDetail.regularPrice,
+      originalPrice: courseDetail.regularPrice,
+      imageUrl: courseDetail.thumbnail,
     });
 
     router.push(Routes.checkout);
@@ -151,22 +169,22 @@ export default function CourseDetailPage() {
       <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full py-12 md:py-20 md:mt-20 h-max">
         <div className="container mx-auto px-4 py-8 h-full flex flex-col justify-end w-full">
           <div className="text-[#2F57EF] mb-2 md:w-[50%] w-full">
-            {courseData.category}
+            {courseDetail.category.title}
           </div>
           <div className="text-4xl font-bold text-[#212B36] mb-4 md:w-[50%] w-full">
-            {courseData.title}
+            {courseDetail.title}
           </div>
           <p className="text-gray-600 mb-2 md:w-[60%] w-full">
-            {courseData.description}
+            {courseDetail.description}
           </p>
           <div className="my-4 flex flex-wrap items-center gap-4">
             <div className="mt-2 w-max flex items-center gap-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
-              <IconPrize /> Bestseller
+              <IconPrize /> {courseDetail.label || 'Bestseller'}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1">
                 <span className="text-xl md:text-2xl font-medium text-[#FFB145]">
-                  {courseData.rating}
+                  {courseDetail.ratingAvg || 0}
                 </span>
                 <div className="flex">
                   {[1, 2, 3, 4].map((_, index) => (
@@ -181,23 +199,23 @@ export default function CourseDetailPage() {
                 </div>
               </div>
               <span className="text-gray-500 bg-[#F4F6F8] text-sm md:text-base px-3 py-1 rounded-md whitespace-nowrap">
-                {courseData.ratingCount.toLocaleString()} Đánh giá
+                {courseDetail.ratingCnt.toLocaleString()} Đánh giá
               </span>
             </div>
             <div className="flex items-center gap-2">
               <IconUser />
               <span className="text-sm text-gray-500">
-                {courseData.studentCount} Người học
+                {courseDetail.enrollmentCnt} Người học
               </span>
             </div>
           </div>
           <div className="text-gray-600 text-sm mb-2">
-            Giáo viên: {courseData.instructor}
+            Giáo viên: {courseDetail.owner.fullName}
           </div>
           <div className="flex items-center gap-2">
             <IconClock />
             <div className="text-gray-600 text-sm">
-              Cập nhật lần cuối {courseData.updatedAt}
+              Cập nhật lần cuối {new Date(courseDetail.updatedAt).toLocaleDateString('vi-VN')}
             </div>
           </div>
         </div>
@@ -208,48 +226,50 @@ export default function CourseDetailPage() {
         <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
           <div className="w-full h-[250px] relative rounded-lg overflow-hidden mb-8">
             <Image
-              src={courseData.imageUrl}
-              alt={courseData.title}
+              src={courseDetail.thumbnail}
+              alt={courseDetail.title}
               fill
               style={{ objectFit: "cover" }}
             />
           </div>
           <div className="text-[#2F57EF] font-semibold mb-1">
-            {courseData.category}
+            {courseDetail.category.title}
           </div>
-          <h2 className="text-xl font-bold mb-4">{courseData.title}</h2>
+          <h2 className="text-xl font-bold mb-4">{courseDetail.title}</h2>
 
           <div className="flex items-center mb-4">
             <div className="flex items-center">
               <span className="text-yellow-400">★</span>
-              <span className="ml-1 text-gray-700">{courseData.rating}</span>
+              <span className="ml-1 text-gray-700">{courseDetail.ratingAvg || 0}</span>
               <span className="ml-1 text-gray-500">
-                ({courseData.ratingCount})
+                ({courseDetail.ratingCnt})
               </span>
             </div>
             <div className="mx-3 text-gray-300">|</div>
             <div className="text-gray-700">
-              {courseData.studentCount} học viên
+              {courseDetail.enrollmentCnt} học viên
             </div>
           </div>
 
           <div className="flex items-center mb-6">
             <div className="text-2xl font-bold text-[#2F57EF]">
-              {courseData.currentPrice}đ
+              {(courseDetail.discountedPrice || courseDetail.regularPrice).toLocaleString()}đ
             </div>
-            <div className="ml-2 text-gray-500 line-through text-sm">
-              {courseData.originalPrice}đ
-            </div>
+            {courseDetail.discountedPrice && (
+              <div className="ml-2 text-gray-500 line-through text-sm">
+                {courseDetail.regularPrice.toLocaleString()}đ
+              </div>
+            )}
           </div>
 
           <button
-            onClick={() => handleCheckoutCourse(courseData)}
+            onClick={handleCheckoutCourse}
             className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
           >
             Thêm vào giỏ hàng
           </button>
           <button
-            onClick={() => handleCheckoutCourse(courseData)}
+            onClick={handleCheckoutCourse}
             className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer"
           >
             Mua ngay
@@ -493,8 +513,7 @@ export default function CourseDetailPage() {
             >
               <h3 className="text-xl font-bold mb-6">Yêu cầu</h3>
               <div className="space-y-2">
-                <div>&#8226; Không yêu cầu kiến thức nền tảng về thiết kế.</div>
-                <div>&#8226; Không yêu cầu kiến thức nền tảng về thiết kế.</div>
+                <div>&#8226; {courseDetail.requirements || "Không có yêu cầu đặc biệt"}</div>
               </div>
             </div>
 
@@ -503,35 +522,19 @@ export default function CourseDetailPage() {
               <div
                 className={`space-y-4 ${!showFullDesc ? "line-clamp-3" : ""}`}
               >
-                <p>
-                  Khóa học &#34;Thiết kế Giao diện và Trải nghiệm Người dùng
-                  (UI/UX)&#34; mang đến cho bạn một hành trình học tập thực tế
-                  từ nền tảng đến nâng cao.
-                </p>
-
-                <p>
-                  Bạn sẽ làm chủ quy trình nghiên cứu người dùng, xây dựng luồng
-                  UX hiệu quả, thiết kế giao diện tinh tế với các công cụ phổ
-                  biến, và hoàn thiện sản phẩm số chất lượng cao.
-                </p>
-
-                <p>
-                  Song song với lý thuyết là những bài tập thực hành thực tế,
-                  giúp bạn tự tin tạo ra sản phẩm thực tiễn và xây dựng
-                  portfolio cá nhân chuyên nghiệp.
-                </p>
-
-                <p>
-                  Hoàn thành khóa học, bạn có thể làm việc với các vị trí
-                  Designer, UX Researcher, UI/UX Specialist tại các công ty công
-                  nghệ, startup, hoặc phát triển sự nghiệp tự do.
-                </p>
+                <p>{courseDetail.description}</p>
+                {courseDetail.learningOutcomes && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Kết quả học tập:</h4>
+                    <p>{courseDetail.learningOutcomes}</p>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setShowFullDesc(!showFullDesc)}
                 className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
               >
-                Hiển thị thêm
+                {showFullDesc ? "Ẩn bớt" : "Hiển thị thêm"}
                 {!showFullDesc ? (
                   <ArrowDown2 size="20" color="#2F57EF" />
                 ) : (
@@ -893,7 +896,7 @@ export default function CourseDetailPage() {
                 <div className="md:text-3xl text-sm font-bold text-[#212B36]">
                   Khóa học khác của{" "}
                   <span className="text-[#2F57EF]">
-                    {courseData.instructor}
+                    {courseDetail.owner.fullName}
                   </span>
                 </div>
                 <button

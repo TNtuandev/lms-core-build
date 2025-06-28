@@ -25,4 +25,13 @@ export const useCourseById = (id: string) => {
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
+};
+
+export const useCourseBySlug = (slug: string) => {
+  return useQuery({
+    queryKey: courseKeys.detail(slug),
+    queryFn: () => courseAPI.getCourseBySlug(slug),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
 }; 

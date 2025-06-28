@@ -5,7 +5,11 @@ import { Search, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CourseTab } from "@/components/courses/course-tab";
 import { useCourses } from "@/hooks/queries/course/useCourses";
-import { CourseFilters, DifficultyLevel, SortOption } from "@/api/types/course.type";
+import {
+  CourseFilters,
+  DifficultyLevel,
+  SortOption,
+} from "@/api/types/course.type";
 import { useDebounce } from "@/hooks/useDebounce";
 
 function CoursePage() {
@@ -13,7 +17,10 @@ function CoursePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("Nổi bật");
   const [filterOption, setFilterOption] = useState("Tất cả");
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel[]>([]);
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel[]>(
+    [],
+  );
+  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +30,7 @@ function CoursePage() {
 
   // Debounce search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  
+
   // Check if search is pending (user is typing but debounced value hasn't updated)
   const isSearchPending = searchQuery !== debouncedSearchQuery;
 
@@ -71,22 +78,41 @@ function CoursePage() {
     }
 
     return filters;
-  }, [debouncedSearchQuery, sortOption, filterOption, difficultyFilter, currentPage]);
+  }, [
+    debouncedSearchQuery,
+    sortOption,
+    filterOption,
+    difficultyFilter,
+    currentPage,
+  ]);
 
   // Fetch courses for the main filtered list
   const { data: coursesData, isLoading, error } = useCourses(apiFilters);
-  
-  // Fetch courses for CourseTab (unfiltered, showing featured/popular courses)
-  const courseTabFilters: CourseFilters = useMemo(() => ({
-    sort_by: SortOption.POPULAR,
-    limit: 6, // Get more courses for CourseTab
-  }), []);
-  
-  const { 
-    data: courseTabData, 
-    isLoading: isLoadingCourseTab, 
-    error: errorCourseTab 
+
+  // Fetch courses for CourseTab with label filter
+  const courseTabFilters: CourseFilters = useMemo(() => {
+    const filters: CourseFilters = {
+      sort_by: SortOption.POPULAR,
+      limit: 6, // Get more courses for CourseTab
+    };
+
+    if (selectedLabel) {
+      filters.label = [selectedLabel];
+    }
+
+    return filters;
+  }, [selectedLabel]);
+
+  const {
+    data: courseTabData,
+    isLoading: isLoadingCourseTab,
+    error: errorCourseTab,
   } = useCourses(courseTabFilters);
+
+  // Handle label change from CourseTab
+  const handleLabelChange = (label: string | null) => {
+    setSelectedLabel(label);
+  };
 
   // Handle click outside to close dropdowns
   useEffect(() => {
@@ -135,7 +161,7 @@ function CoursePage() {
     setIsFilterOpen(false);
   };
 
-  // Handle sort selection  
+  // Handle sort selection
   const handleSortSelect = (sort: string) => {
     setSortOption(sort);
     setIsSortOpen(false);
@@ -169,11 +195,13 @@ function CoursePage() {
           <div className="text-[#637381] mt-1">
             Khám phá các khóa học từ các chuyên gia giàu kinh nghiệm thực tế.
           </div>
-          <CourseTab 
-            courses={courseTabData?.data || []} 
-            isLoading={isLoadingCourseTab} 
+          <CourseTab
+            courses={courseTabData?.data || []}
+            isLoading={isLoadingCourseTab}
             error={errorCourseTab}
             onCourseClick={handleCourseClick}
+            onLabelChange={handleLabelChange}
+            activeLabel={selectedLabel}
           />
         </div>
       </div>
@@ -257,13 +285,22 @@ function CoursePage() {
                 </button>
                 {isFilterOpen && (
                   <div className="absolute top-full left-0 sm:left-auto sm:right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-full sm:w-48 z-20">
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Tất cả")}>
+                    <div
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleFilterSelect("Tất cả")}
+                    >
                       Tất cả
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Miễn phí")}>
+                    <div
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleFilterSelect("Miễn phí")}
+                    >
                       Miễn phí
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Trả phí")}>
+                    <div
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleFilterSelect("Trả phí")}
+                    >
                       Trả phí
                     </div>
                   </div>
@@ -350,8 +387,12 @@ function CoursePage() {
           {error && (
             <div className="flex justify-center items-center col-span-full py-20">
               <div className="text-center">
-                <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải dữ liệu</p>
-                <p className="text-gray-500 text-sm">{error?.message || "Vui lòng thử lại sau"}</p>
+                <p className="text-red-500 mb-2">
+                  Có lỗi xảy ra khi tải dữ liệu
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {error?.message || "Vui lòng thử lại sau"}
+                </p>
               </div>
             </div>
           )}
@@ -372,65 +413,88 @@ function CoursePage() {
                       imageUrl={course.thumbnail}
                       category="Khóa học"
                       courseName={course.title}
-                      instructor="Giảng viên"
-                      lessonCount={0}
+                      instructor={`Giảng viên: ${course?.owner.fullName}`}
+                      lessonCount={course.totalLesion}
+                      badge={course.label}
                       studentCount={course.enrollmentCnt}
-                      currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
-                      originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
+                      currentPrice={
+                        course.pricing.discounted
+                          ? course.pricing.discounted.toLocaleString()
+                          : course.pricing.regular.toLocaleString()
+                      }
+                      originalPrice={
+                        course.pricing.discounted
+                          ? course.pricing.regular.toLocaleString()
+                          : ""
+                      }
                     />
                   </div>
                 ))
               ) : (
                 <div className="col-span-full text-center py-20">
                   <p className="text-gray-500">Không tìm thấy khóa học nào</p>
-                  <p className="text-gray-400 text-sm mt-2">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                  <p className="text-gray-400 text-sm mt-2">
+                    Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+                  </p>
                 </div>
               )}
             </div>
           )}
 
           {/* Pagination */}
-          {!isLoading && !error && coursesData?.meta && coursesData.meta.totalPages > 1 && (
-            <div className="flex justify-center mt-8">
-              <div className="flex gap-2">
-                {/* Previous Button */}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                >
-                  Trước
-                </button>
+          {!isLoading &&
+            !error &&
+            coursesData?.meta &&
+            coursesData.meta.totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <div className="flex gap-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  >
+                    Trước
+                  </button>
 
-                {/* Page Numbers */}
-                {Array.from({ length: Math.min(5, coursesData.meta.totalPages) }, (_, i) => {
-                  const page = i + 1;
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border border-gray-200 rounded-lg ${
-                        page === currentPage
-                          ? "bg-[#2F57EF] text-white"
-                          : "hover:bg-gray-50"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
+                  {/* Page Numbers */}
+                  {Array.from(
+                    { length: Math.min(5, coursesData.meta.totalPages) },
+                    (_, i) => {
+                      const page = i + 1;
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-4 py-2 border border-gray-200 rounded-lg ${
+                            page === currentPage
+                              ? "bg-[#2F57EF] text-white"
+                              : "hover:bg-gray-50"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    },
+                  )}
 
-                {/* Next Button */}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(coursesData.meta.totalPages, prev + 1))}
-                  disabled={currentPage === coursesData.meta.totalPages}
-                  className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-                >
-                  Sau
-                </button>
+                  {/* Next Button */}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(coursesData.meta.totalPages, prev + 1),
+                      )
+                    }
+                    disabled={currentPage === coursesData.meta.totalPages}
+                    className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  >
+                    Sau
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </div>

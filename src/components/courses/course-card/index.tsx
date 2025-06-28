@@ -5,7 +5,7 @@ import {Edit} from "iconsax-react";
 import {Button} from "@/components/ui/button";
 
 interface CourseCardProps {
-  badge?: "NEW" | "BESTSELLER" | "SALE";
+  badge?: string;
   title: string;
   imageUrl: string;
   category: string;
@@ -35,10 +35,12 @@ function CourseCard({
     switch (badge) {
       case "NEW":
         return "bg-cyan-400";
-      case "BESTSELLER":
+      case "BEST_SELLER":
         return "bg-green-500";
-      case "SALE":
+      case "FEATURED":
         return "bg-red-500";
+      case "HOT":
+        return "bg-yellow-500";
       default:
         return "bg-cyan-400";
     }

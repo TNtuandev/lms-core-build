@@ -2,7 +2,7 @@
 
 import CourseCard from "@/components/courses/course-card";
 import React, { useState } from "react";
-import { Course } from "@/api/types/course.type";
+import { Course, CourseLabel } from "@/api/types/course.type";
 import { Loader2 } from "lucide-react";
 
 interface CourseTabProps {
@@ -10,6 +10,8 @@ interface CourseTabProps {
   isLoading?: boolean;
   error?: any;
   onCourseClick?: (courseId: string) => void;
+  onLabelChange?: (label: string | null) => void;
+  activeLabel?: string | null;
 }
 
 const listTab = [
@@ -17,31 +19,40 @@ const listTab = [
     id: 1,
     name: "Tất cả",
     numberLesson: 0, // Will be updated dynamically
+    label: null,
   },
   {
     id: 2,
     name: "Nổi bật",
     numberLesson: 0,
+    label: CourseLabel.FEATURED,
   },
   {
     id: 3,
-    name: "Phổ biến",
+    name: "Phổ biến", 
     numberLesson: 0,
+    label: CourseLabel.BEST_SELLER,
   },
   {
     id: 4,
     name: "Xu hướng",
     numberLesson: 0,
+    label: CourseLabel.HOT,
   },
   {
     id: 5,
     name: "Mới nhất",
     numberLesson: 0,
+    label: CourseLabel.NEW,
   },
 ];
 
-export function CourseTab({ courses = [], isLoading = false, error = null, onCourseClick }: CourseTabProps) {
-  const [activeTab, setActiveTab] = useState(1);
+export function CourseTab({ courses = [], isLoading = false, error = null, onCourseClick, onLabelChange, activeLabel }: CourseTabProps) {
+  // Get active tab ID based on activeLabel
+  const getActiveTabId = () => {
+    const matchingTab = listTab.find(tab => tab.label === activeLabel);
+    return matchingTab?.id || 1; // Default to "Tất cả" if no match
+  };
 
   // Update tabs with actual course counts
   const updatedTabs = listTab.map(tab => {
@@ -56,6 +67,10 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
       };
     }
   });
+
+  const handleTabClick = (tab: any) => {
+    onLabelChange?.(tab.label);
+  };
 
   const handleCourseClick = (courseId: string) => {
     if (onCourseClick) {
@@ -73,9 +88,9 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
         {updatedTabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabClick(tab)}
             className={`cursor-pointer relative flex flex-col items-center justify-center min-w-[120px] px-8 py-4 rounded-full transition-all ${
-              activeTab === tab.id
+              getActiveTabId() === tab.id
                 ? "bg-[#2F57EF] text-white"
                 : "bg-white text-[#637381] border border-gray-200 hover:bg-gray-50"
             }`}
@@ -84,7 +99,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
               {tab.numberLesson}
             </span>
             <span
-              className={`text-sm font-medium ${activeTab === tab.id ? "text-white" : "text-gray-700"}`}
+              className={`text-sm font-medium ${getActiveTabId() === tab.id ? "text-white" : "text-gray-700"}`}
             >
               {tab.name}
             </span>
@@ -114,13 +129,13 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
               onClick={() => handleCourseClick(course.slug)}
             >
               <CourseCard
-                badge="NEW"
+                badge={course.label}
                 title={course.title}
                 imageUrl={course.thumbnail}
                 category="Khóa học"
                 courseName={course.title}
-                instructor="Giảng viên"
-                lessonCount={0}
+                instructor={`Giảng viên: ${course?.owner.fullName}`}
+                lessonCount={course.totalLesion}
                 studentCount={course.enrollmentCnt}
                 currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
                 originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}

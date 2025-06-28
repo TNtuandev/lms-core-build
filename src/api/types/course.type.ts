@@ -2,6 +2,7 @@ export interface CourseFilters {
   search?: string;
   category?: string[];
   difficulty?: DifficultyLevel[];
+  label?: string[];
   price?: string;
   rating_min?: number;
   sort_by?: SortOption;
@@ -28,6 +29,14 @@ export enum SortOption {
   POPULAR = "popular"
 }
 
+export enum CourseLabel {
+  NEW = "NEW",
+  HOT = "HOT",
+  BEST_SELLER = "BEST_SELLER",
+  FEATURED = "FEATURED",
+  NONE = "NONE"
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -35,6 +44,13 @@ export interface Course {
   shortDescription: string;
   thumbnail: string;
   difficulty: string;
+  label?: string;
+  totalLesion: number;
+  owner: {
+    id: string;
+    email: string;
+    fullName: string;
+  }
   pricing: {
     regular: number;
     discounted?: number;

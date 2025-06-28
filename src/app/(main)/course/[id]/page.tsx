@@ -19,7 +19,7 @@ import {
   Backward5Seconds,
 } from "iconsax-react";
 import IconTickGreen from "../../../../../public/icons/IconTickGreen";
-import { useCourseBySlug } from "@/hooks/queries/course/useCourses";
+import { useCourseBySlug, useRelatedCourses, useFAQs } from "@/hooks/queries/course/useCourses";
 
 // interface PageProps {
 //   params: {
@@ -27,18 +27,7 @@ import { useCourseBySlug } from "@/hooks/queries/course/useCourses";
 //   };
 // }
 
-const listQuestions = [
-  {
-    id: "1",
-    title: "Giới thiệu về UI/UX",
-    description: "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,"
-  },
-  {
-    id: "2",
-    title: "Nghiên cứu người dùng",
-    description: "Curabitur nisi. Phasellus blandit leo ut odio. Donec posuere vulputate arcu. Donec mi odio, faucibus at, scelerisque quis, convallis in,"
-  }
-]
+
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -48,6 +37,20 @@ export default function CourseDetailPage() {
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
+
+  // Fetch related courses when we have course detail
+  const { 
+    data: relatedCoursesData, 
+    isLoading: isLoadingRelated, 
+    error: errorRelated 
+  } = useRelatedCourses(courseDetail?.id || "");
+
+  // Fetch FAQs when we have course detail
+  const { 
+    data: faqsData, 
+    isLoading: isLoadingFAQs, 
+    error: errorFAQs 
+  } = useFAQs(courseDetail?.id || "");
 
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
@@ -145,8 +148,8 @@ export default function CourseDetailPage() {
     );
   }
 
-  const handleCourseClick = (courseId: number) => {
-    router.push(`/course/${courseId}`);
+  const handleCourseClick = (courseSlug: string) => {
+    router.push(`/course/${courseSlug}`);
   };
 
   const handleCheckoutCourse = () => {
@@ -850,44 +853,63 @@ export default function CourseDetailPage() {
 
             <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
               <h3 className="text-xl font-bold mb-6">Câu hỏi thường gặp</h3>
-              <div className="space-y-3">
-                {listQuestions.map((it) => (
-                  <div
-                    key={it.id}
-                    role="presentation"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      if (acticeQuestion === it.id) {
-                        setActiveQuestion(null);
-                        return;
-                      }
-                      setActiveQuestion(it.id);
-                    }}
-                  >
-                    <div className="flex items-center flex-shink-0 justify-between bg-[#F4F6F8] px-3 py-2 rounded">
-                      <div className={`font-semibold ${acticeQuestion === it.id ? "text-[#2F57EF]" : ""}`}>{it.title}</div>
-                      {acticeQuestion === it.id ? (
-                        <ArrowUp2
-                          size="16"
-                          color="#212B36"
-                          className="flex-shink-0"
-                        />
-                      ) : (
-                        <ArrowDown2
-                          size="16"
-                          color="#212B36"
-                          className="flex-shink-0"
-                        />
+              
+              {isLoadingFAQs ? (
+                <div className="flex justify-center items-center py-10">
+                  <Loader2 className="animate-spin text-gray-400" size={24} />
+                  <span className="ml-2 text-gray-500">Đang tải câu hỏi thường gặp...</span>
+                </div>
+              ) : errorFAQs ? (
+                <div className="text-center py-10">
+                  <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải câu hỏi thường gặp</p>
+                  <p className="text-gray-500 text-sm">{errorFAQs?.message || "Vui lòng thử lại sau"}</p>
+                </div>
+              ) : faqsData?.data && faqsData.data.length > 0 ? (
+                <div className="space-y-3">
+                  {faqsData.data.map((faq) => (
+                    <div
+                      key={faq.id}
+                      role="presentation"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (acticeQuestion === faq.id) {
+                          setActiveQuestion(null);
+                          return;
+                        }
+                        setActiveQuestion(faq.id);
+                      }}
+                    >
+                      <div className="flex items-center flex-shink-0 justify-between bg-[#F4F6F8] px-3 py-2 rounded">
+                        <div className={`font-semibold ${acticeQuestion === faq.id ? "text-[#2F57EF]" : ""}`}>
+                          {faq.question}
+                        </div>
+                        {acticeQuestion === faq.id ? (
+                          <ArrowUp2
+                            size="16"
+                            color="#212B36"
+                            className="flex-shink-0"
+                          />
+                        ) : (
+                          <ArrowDown2
+                            size="16"
+                            color="#212B36"
+                            className="flex-shink-0"
+                          />
+                        )}
+                      </div>
+                      {acticeQuestion === faq.id && (
+                        <div className="mt-2 text-primary px-2">
+                          {faq.answer}
+                        </div>
                       )}
                     </div>
-                    {acticeQuestion === it.id && (
-                      <div className="mt-2 text-primary px-2">
-                        {it.description}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">Chưa có câu hỏi thường gặp nào</p>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-4">
@@ -911,7 +933,7 @@ export default function CourseDetailPage() {
                   <div
                     key={index}
                     className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    onClick={() => handleCourseClick(courseId)}
+                    onClick={() => handleCourseClick(courseId.toString())}
                   >
                     <CourseCard
                       gridNUmber={2}
@@ -941,28 +963,48 @@ export default function CourseDetailPage() {
             Các khóa học liên quan
           </div>
 
-          <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
-            {[1, 2, 3, 4].map((courseId, index) => (
-              <div
-                key={index}
-                className="cursor-pointer transition-transform hover:scale-[1.02]"
-                onClick={() => handleCourseClick(courseId)}
-              >
-                <CourseCard
-                  gridNUmber={4}
-                  title="Difficult Things About Education."
-                  imageUrl="/images/banner-sign-in.png"
-                  category="Khóa học Thiết kế"
-                  courseName="Thiết kế giao diện người dùng và trải nghiệm (UI/UX)"
-                  instructor="Anh Tuấn, Quang Anh"
-                  lessonCount={12}
-                  studentCount={768}
-                  currentPrice="529,000"
-                  originalPrice="1,769,000"
-                />
-              </div>
-            ))}
-          </div>
+          {isLoadingRelated ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="animate-spin text-gray-400" size={32} />
+              <span className="ml-2 text-gray-500">Đang tải khóa học liên quan...</span>
+            </div>
+          ) : errorRelated ? (
+            <div className="text-center py-20">
+              <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải khóa học liên quan</p>
+              <p className="text-gray-500 text-sm">{errorRelated?.message || "Vui lòng thử lại sau"}</p>
+            </div>
+          ) : relatedCoursesData?.data && relatedCoursesData.data.length > 0 ? (
+            <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
+              {relatedCoursesData.data.map((relatedCourse) => {
+                const course = relatedCourse.relatedCourse;
+                return (
+                  <div
+                    key={relatedCourse.id}
+                    className="cursor-pointer transition-transform hover:scale-[1.02]"
+                    onClick={() => router.push(`/course/${course.slug}`)}
+                  >
+                    <CourseCard
+                      gridNUmber={4}
+                      title={course.title}
+                      imageUrl={course.thumbnail}
+                      category="Khóa học"
+                      courseName={course.title}
+                      instructor={`Giảng viên: ${course.owner.fullName}`}
+                      lessonCount={course.totalLesion}
+                      studentCount={course.enrollmentCnt}
+                      currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
+                      originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
+                      badge={course.label}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-gray-500">Chưa có khóa học liên quan nào</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

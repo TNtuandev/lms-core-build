@@ -1,4 +1,4 @@
-import { CourseFilters, CoursesResponse, CourseDetail } from "@/api/types/course.type";
+import { CourseFilters, CoursesResponse, CourseDetail, RelatedCoursesResponse, FAQsResponse } from "@/api/types/course.type";
 import api from "@/api/api";
 
 export const courseAPI = {
@@ -28,6 +28,16 @@ export const courseAPI = {
 
   getCourseBySlug: async (slug: string): Promise<CourseDetail> => {
     const { data } = await api.get(`/courses/${slug}`);
+    return data;
+  },
+
+  getRelatedCourses: async (courseId: string): Promise<RelatedCoursesResponse> => {
+    const { data } = await api.get(`/courses/${courseId}/related`);
+    return data;
+  },
+
+  getFAQs: async (courseId: string): Promise<FAQsResponse> => {
+    const { data } = await api.get(`/courses/${courseId}/faqs`);
     return data;
   },
 }; 

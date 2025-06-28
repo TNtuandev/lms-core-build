@@ -8,6 +8,8 @@ export const courseKeys = {
   list: (filters?: CourseFilters) => [...courseKeys.lists(), filters] as const,
   details: () => [...courseKeys.all, "detail"] as const,
   detail: (id: string) => [...courseKeys.details(), id] as const,
+  related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
+  faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
 };
 
 export const useCourses = (filters?: CourseFilters) => {
@@ -33,5 +35,23 @@ export const useCourseBySlug = (slug: string) => {
     queryFn: () => courseAPI.getCourseBySlug(slug),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useRelatedCourses = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.related(courseId),
+    queryFn: () => courseAPI.getRelatedCourses(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useFAQs = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.faqs(courseId),
+    queryFn: () => courseAPI.getFAQs(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }; 

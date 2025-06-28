@@ -105,4 +105,30 @@ export interface CoursesResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
+}
+
+export interface RelatedCourse {
+  id: string;
+  productId: string;
+  relatedId: string;
+  order: number;
+  notes: string;
+  relatedCourse: Course;
+}
+
+export interface RelatedCoursesResponse {
+  data: RelatedCourse[];
+}
+
+export interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  order: string;
+  status: string;
+  productId: string;
+}
+
+export interface FAQsResponse {
+  data: FAQ[];
 } 

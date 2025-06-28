@@ -73,8 +73,20 @@ function CoursePage() {
     return filters;
   }, [debouncedSearchQuery, sortOption, filterOption, difficultyFilter, currentPage]);
 
-  // Fetch courses using the hook
+  // Fetch courses for the main filtered list
   const { data: coursesData, isLoading, error } = useCourses(apiFilters);
+  
+  // Fetch courses for CourseTab (unfiltered, showing featured/popular courses)
+  const courseTabFilters: CourseFilters = useMemo(() => ({
+    sort_by: SortOption.POPULAR,
+    limit: 6, // Get more courses for CourseTab
+  }), []);
+  
+  const { 
+    data: courseTabData, 
+    isLoading: isLoadingCourseTab, 
+    error: errorCourseTab 
+  } = useCourses(courseTabFilters);
 
   // Handle click outside to close dropdowns
   useEffect(() => {
@@ -139,7 +151,7 @@ function CoursePage() {
               Khóa học thiết kế
             </div>
             <div className="mt-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
-              🎉 {coursesData?.meta?.total || 0} Khóa học
+              🎉 {courseTabData?.meta?.total || 0} Khóa học
             </div>
           </div>
           <p className="text-[#212B36] mt-2">
@@ -158,9 +170,9 @@ function CoursePage() {
             Khám phá các khóa học từ các chuyên gia giàu kinh nghiệm thực tế.
           </div>
           <CourseTab 
-            courses={coursesData?.data || []} 
-            isLoading={isLoading} 
-            error={error}
+            courses={courseTabData?.data || []} 
+            isLoading={isLoadingCourseTab} 
+            error={errorCourseTab}
             onCourseClick={handleCourseClick}
           />
         </div>
@@ -172,6 +184,9 @@ function CoursePage() {
         <div className="flex flex-col gap-4">
           <div className="text-3xl font-bold text-[#212B36]">
             Tất cả khóa học Thiết kế
+          </div>
+          <div className="text-sm text-gray-500 mb-2">
+            {coursesData?.meta?.total || 0} kết quả được tìm thấy
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mt-2 w-full">

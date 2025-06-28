@@ -44,10 +44,18 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
   const [activeTab, setActiveTab] = useState(1);
 
   // Update tabs with actual course counts
-  const updatedTabs = listTab.map(tab => ({
-    ...tab,
-    numberLesson: tab.id === 1 ? courses.length : Math.floor(courses.length / listTab.length)
-  }));
+  const updatedTabs = listTab.map(tab => {
+    if (tab.id === 1) {
+      // "Tất cả" tab shows total courses available
+      return { ...tab, numberLesson: courses.length };
+    } else {
+      // Other tabs show estimated counts (you can make these dynamic based on actual filters if needed)
+      return { 
+        ...tab, 
+        numberLesson: Math.floor(courses.length * 0.7) // Estimated 70% for other categories
+      };
+    }
+  });
 
   const handleCourseClick = (courseId: string) => {
     if (onCourseClick) {

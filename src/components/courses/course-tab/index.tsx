@@ -2,41 +2,67 @@
 
 import CourseCard from "@/components/courses/course-card";
 import React, { useState } from "react";
+import { Course } from "@/api/types/course.type";
+import { Loader2 } from "lucide-react";
+
+interface CourseTabProps {
+  courses?: Course[];
+  isLoading?: boolean;
+  error?: any;
+  onCourseClick?: (courseId: string) => void;
+}
+
 const listTab = [
   {
     id: 1,
     name: "Tất cả",
-    numberLesson: 2635,
+    numberLesson: 0, // Will be updated dynamically
   },
   {
     id: 2,
     name: "Nổi bật",
-    numberLesson: 1233,
+    numberLesson: 0,
   },
   {
     id: 3,
     name: "Phổ biến",
-    numberLesson: 433,
+    numberLesson: 0,
   },
   {
     id: 4,
     name: "Xu hướng",
-    numberLesson: 757,
+    numberLesson: 0,
   },
   {
     id: 5,
     name: "Mới nhất",
-    numberLesson: 212,
+    numberLesson: 0,
   },
 ];
-export function CourseTab() {
+
+export function CourseTab({ courses = [], isLoading = false, error = null, onCourseClick }: CourseTabProps) {
   const [activeTab, setActiveTab] = useState(1);
+
+  // Update tabs with actual course counts
+  const updatedTabs = listTab.map(tab => ({
+    ...tab,
+    numberLesson: tab.id === 1 ? courses.length : Math.floor(courses.length / listTab.length)
+  }));
+
+  const handleCourseClick = (courseId: string) => {
+    if (onCourseClick) {
+      onCourseClick(courseId);
+    }
+  };
+
+  // Get courses to display (limit to 3 for preview)
+  const displayCourses = courses.slice(0, 3);
 
   return (
     <div className="flex flex-col gap-4">
       {/*tab render*/}
       <div className="flex flex-wrap justify-center gap-3 mt-5 mb-5">
-        {listTab.map((tab) => (
+        {updatedTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -46,33 +72,58 @@ export function CourseTab() {
                 : "bg-white text-[#637381] border border-gray-200 hover:bg-gray-50"
             }`}
           >
-                <span className="text-[10px] right-2.5 top-2 absolute text-[#919EABCC]">
-                  {tab.numberLesson}
-                </span>
+            <span className="text-[10px] right-2.5 top-2 absolute text-[#919EABCC]">
+              {tab.numberLesson}
+            </span>
             <span
               className={`text-sm font-medium ${activeTab === tab.id ? "text-white" : "text-gray-700"}`}
             >
-                  {tab.name}
-                </span>
+              {tab.name}
+            </span>
           </button>
         ))}
       </div>
+
+      {/* Courses Display */}
       <div className="md:grid md:grid-cols-3 gap-10 flex flex-col">
-        {[1, 2, 3].map((_, index) => (
-          <CourseCard
-            key={index}
-            badge="NEW"
-            title="Difficult Things About Education."
-            imageUrl="/images/banner-sign-in.png"
-            category="Khóa học Thiết kế"
-            courseName="Thiết kế giao diện người dùng và trải nghiệm (UI/UX)"
-            instructor="Anh Tuấn, Quang Anh"
-            lessonCount={12}
-            studentCount={768}
-            currentPrice="529,000"
-            originalPrice="1,769,000"
-          />
-        ))}
+        {isLoading ? (
+          <div className="col-span-3 flex justify-center items-center py-20">
+            <Loader2 className="animate-spin text-gray-400" size={32} />
+            <span className="ml-2 text-gray-500">Đang tải khóa học...</span>
+          </div>
+        ) : error ? (
+          <div className="col-span-3 flex justify-center items-center py-20">
+            <div className="text-center">
+              <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải dữ liệu</p>
+              <p className="text-gray-500 text-sm">{error?.message || "Vui lòng thử lại sau"}</p>
+            </div>
+          </div>
+        ) : displayCourses.length > 0 ? (
+          displayCourses.map((course) => (
+            <div
+              key={course.id}
+              className="cursor-pointer transition-transform hover:scale-[1.02]"
+              onClick={() => handleCourseClick(course.id)}
+            >
+              <CourseCard
+                badge="NEW"
+                title={course.title}
+                imageUrl={course.thumbnail}
+                category="Khóa học"
+                courseName={course.title}
+                instructor="Giảng viên"
+                lessonCount={0}
+                studentCount={course.enrollmentCnt}
+                currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
+                originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="col-span-3 text-center py-20">
+            <p className="text-gray-500">Chưa có khóa học nào</p>
+          </div>
+        )}
       </div>
     </div>
   )

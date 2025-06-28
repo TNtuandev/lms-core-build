@@ -1,20 +1,80 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import CourseCard from "@/components/courses/course-card";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CourseTab } from "@/components/courses/course-tab";
-
+import { useCourses } from "@/hooks/queries/course/useCourses";
+import { CourseFilters, DifficultyLevel, SortOption } from "@/api/types/course.type";
+import { useDebounce } from "@/hooks/useDebounce";
 
 function CoursePage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("Nổi bật");
+  const [filterOption, setFilterOption] = useState("Tất cả");
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filterRef = useRef<HTMLDivElement>(null);
   const sortRef = useRef<HTMLDivElement>(null);
+
+  // Debounce search query to avoid excessive API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  
+  // Check if search is pending (user is typing but debounced value hasn't updated)
+  const isSearchPending = searchQuery !== debouncedSearchQuery;
+
+  // Build filters for API
+  const apiFilters: CourseFilters = useMemo(() => {
+    const filters: CourseFilters = {
+      page: currentPage,
+      limit: 12,
+    };
+
+    if (debouncedSearchQuery.trim()) {
+      filters.search = debouncedSearchQuery.trim();
+    }
+
+    if (difficultyFilter.length > 0) {
+      filters.difficulty = difficultyFilter;
+    }
+
+    // Convert sort option to API format
+    switch (sortOption) {
+      case "Mới nhất":
+        filters.sort_by = SortOption.NEWEST;
+        break;
+      case "Giá thấp đến cao":
+        filters.sort_by = SortOption.PRICE_ASC;
+        break;
+      case "Giá cao đến thấp":
+        filters.sort_by = SortOption.PRICE_DESC;
+        break;
+      case "Đánh giá cao nhất":
+        filters.sort_by = SortOption.RATING_DESC;
+        break;
+      case "Đánh giá thấp nhất":
+        filters.sort_by = SortOption.RATING_ASC;
+        break;
+      default:
+        filters.sort_by = SortOption.POPULAR;
+    }
+
+    // Convert filter option to API format
+    if (filterOption === "Miễn phí") {
+      filters.price = "free";
+    } else if (filterOption === "Trả phí") {
+      filters.price = "paid";
+    }
+
+    return filters;
+  }, [debouncedSearchQuery, sortOption, filterOption, difficultyFilter, currentPage]);
+
+  // Fetch courses using the hook
+  const { data: coursesData, isLoading, error } = useCourses(apiFilters);
 
   // Handle click outside to close dropdowns
   useEffect(() => {
@@ -47,9 +107,26 @@ function CoursePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, sortOption, filterOption, difficultyFilter]);
+
   // Function to handle course card click
-  const handleCourseClick = (courseId: number) => {
+  const handleCourseClick = (courseId: string) => {
     router.push(`/course/${courseId}`);
+  };
+
+  // Handle filter selection
+  const handleFilterSelect = (filter: string) => {
+    setFilterOption(filter);
+    setIsFilterOpen(false);
+  };
+
+  // Handle sort selection  
+  const handleSortSelect = (sort: string) => {
+    setSortOption(sort);
+    setIsSortOpen(false);
   };
 
   return (
@@ -62,7 +139,7 @@ function CoursePage() {
               Khóa học thiết kế
             </div>
             <div className="mt-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
-              🎉 12 Khoá học
+              🎉 {coursesData?.meta?.total || 0} Khóa học
             </div>
           </div>
           <p className="text-[#212B36] mt-2">
@@ -80,7 +157,12 @@ function CoursePage() {
           <div className="text-[#637381] mt-1">
             Khám phá các khóa học từ các chuyên gia giàu kinh nghiệm thực tế.
           </div>
-          <CourseTab />
+          <CourseTab 
+            courses={coursesData?.data || []} 
+            isLoading={isLoading} 
+            error={error}
+            onCourseClick={handleCourseClick}
+          />
         </div>
       </div>
       <div
@@ -100,12 +182,36 @@ function CoursePage() {
                 placeholder="Tìm kiếm..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2.5 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#2F57EF] focus:border-[#2F57EF]"
+                className="pl-10 pr-10 py-2.5 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#2F57EF] focus:border-[#2F57EF]"
               />
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 size={18}
               />
+              {/* Search pending indicator */}
+              {isSearchPending && (
+                <Loader2
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 animate-spin"
+                  size={16}
+                />
+              )}
+              {/* Clear search button */}
+              {searchQuery && !isSearchPending && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M12 4L4 12M4 4l8 8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Filter and Sort */}
@@ -136,13 +242,13 @@ function CoursePage() {
                 </button>
                 {isFilterOpen && (
                   <div className="absolute top-full left-0 sm:left-auto sm:right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-full sm:w-48 z-20">
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Tất cả")}>
                       Tất cả
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Miễn phí")}>
                       Miễn phí
                     </div>
-                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                    <div className="px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleFilterSelect("Trả phí")}>
                       Trả phí
                     </div>
                   </div>
@@ -177,39 +283,39 @@ function CoursePage() {
                   <div className="absolute top-full left-0 sm:left-auto sm:right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-full sm:w-52 z-20">
                     <div
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setSortOption("Nổi bật");
-                        setIsSortOpen(false);
-                      }}
+                      onClick={() => handleSortSelect("Nổi bật")}
                     >
                       Nổi bật
                     </div>
                     <div
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setSortOption("Mới nhất");
-                        setIsSortOpen(false);
-                      }}
+                      onClick={() => handleSortSelect("Mới nhất")}
                     >
                       Mới nhất
                     </div>
                     <div
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setSortOption("Giá thấp đến cao");
-                        setIsSortOpen(false);
-                      }}
+                      onClick={() => handleSortSelect("Giá thấp đến cao")}
                     >
                       Giá thấp đến cao
                     </div>
                     <div
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setSortOption("Giá cao đến thấp");
-                        setIsSortOpen(false);
-                      }}
+                      onClick={() => handleSortSelect("Giá cao đến thấp")}
                     >
                       Giá cao đến thấp
+                    </div>
+                    <div
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleSortSelect("Đánh giá cao nhất")}
+                    >
+                      Đánh giá cao nhất
+                    </div>
+                    <div
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleSortSelect("Đánh giá thấp nhất")}
+                    >
+                      Đánh giá thấp nhất
                     </div>
                   </div>
                 )}
@@ -217,28 +323,99 @@ function CoursePage() {
             </div>
           </div>
 
-          <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
-            {[1, 2, 3, 4].map((courseId, index) => (
-              <div
-                key={index}
-                className="cursor-pointer transition-transform hover:scale-[1.02]"
-                onClick={() => handleCourseClick(courseId)}
-              >
-                <CourseCard
-                  gridNUmber={4}
-                  title="Difficult Things About Education."
-                  imageUrl="/images/banner-sign-in.png"
-                  category="Khóa học Thiết kế"
-                  courseName="Thiết kế giao diện người dùng và trải nghiệm (UI/UX)"
-                  instructor="Anh Tuấn, Quang Anh"
-                  lessonCount={12}
-                  studentCount={768}
-                  currentPrice="529,000"
-                  originalPrice="1,769,000"
-                />
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex justify-center items-center col-span-full py-20">
+              <Loader2 className="animate-spin text-gray-400" size={48} />
+              <span className="ml-2 text-gray-500">Đang tải khóa học...</span>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="flex justify-center items-center col-span-full py-20">
+              <div className="text-center">
+                <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải dữ liệu</p>
+                <p className="text-gray-500 text-sm">{error?.message || "Vui lòng thử lại sau"}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {/* Course Grid */}
+          {!isLoading && !error && (
+            <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
+              {coursesData?.data?.length ? (
+                coursesData.data.map((course) => (
+                  <div
+                    key={course.id}
+                    className="cursor-pointer transition-transform hover:scale-[1.02]"
+                    onClick={() => handleCourseClick(course.id)}
+                  >
+                    <CourseCard
+                      gridNUmber={4}
+                      title={course.title}
+                      imageUrl={course.thumbnail}
+                      category="Khóa học"
+                      courseName={course.title}
+                      instructor="Giảng viên"
+                      lessonCount={0}
+                      studentCount={course.enrollmentCnt}
+                      currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
+                      originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-20">
+                  <p className="text-gray-500">Không tìm thấy khóa học nào</p>
+                  <p className="text-gray-400 text-sm mt-2">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!isLoading && !error && coursesData?.meta && coursesData.meta.totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <div className="flex gap-2">
+                {/* Previous Button */}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  Trước
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from({ length: Math.min(5, coursesData.meta.totalPages) }, (_, i) => {
+                  const page = i + 1;
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 border border-gray-200 rounded-lg ${
+                        page === currentPage
+                          ? "bg-[#2F57EF] text-white"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                {/* Next Button */}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(coursesData.meta.totalPages, prev + 1))}
+                  disabled={currentPage === coursesData.meta.totalPages}
+                  className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  Sau
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

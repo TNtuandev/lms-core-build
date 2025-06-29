@@ -12,6 +12,17 @@ import {
   VideoIntroSection,
 } from "@/app/(admin)/create-courses/create/components";
 import { useCreateCourse } from "@/hooks/queries/course";
+import { Trash } from "iconsax-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ListStatusCourse } from "@/contants/course";
+import {EStatusCourse, useStatusCourse} from "@/hooks/queries/course/useStatusCourse";
+import {Course} from "@/api/types/course.type";
 
 const steps = [
   { id: 1, title: "Tạo khóa học", description: "Tạo khóa học" },
@@ -21,9 +32,7 @@ const steps = [
 function CreateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<fullCourseFormData>>({});
-
-  const { createCourse, courseData } = useCreateCourse();
-
+  const [courseData, setCourseData] = useState<Course | null>(null);
   const handleStepNext = (data: any) => {
     const finalData = { ...formData, ...data };
     setFormData((prev: any) => ({ ...prev, ...finalData }));
@@ -32,17 +41,20 @@ function CreateCourse() {
       return;
     }
     setCurrentStep((prev) => prev + 1);
-
-    // Handle final form submission here
   };
+
+  const handleSetCourseData = (data: Course) => {
+    setCourseData(data)
+  }
+
+  const { createCourse } = useCreateCourse(handleSetCourseData);
+  const { archiveCourse, draftCourse, publishCourse } = useStatusCourse(handleSetCourseData);
+
 
   const handleStepBack = () => {
     setCurrentStep((prev) => prev - 1);
   };
   const handleFinalSubmit = (data: fullCourseFormData) => {
-
-    console.log("data---", data)
-
     const request = {
       title: data.title,
       description: data.description,
@@ -62,6 +74,20 @@ function CreateCourse() {
 
     createCourse.mutate(request);
   };
+
+  const handleOnChangeStatus = (value: string) => {
+    switch (value) {
+      case EStatusCourse.ARCHIVED:
+        archiveCourse.mutate(courseData?.id || "");
+        break;
+      case EStatusCourse.DRAFT:
+        draftCourse.mutate(courseData?.id || "");
+        break;
+      case EStatusCourse.PUBLIC:
+        publishCourse.mutate(courseData?.id || "");
+        break;
+    }
+  }
 
   const stepsList = [
     {
@@ -170,7 +196,32 @@ function CreateCourse() {
               ))}
             </div>
           </div>
+          {courseData && (
+            <div className="flex items-end justify-end gap-2">
+              <div className="p-2">
+                <Trash />
+              </div>
+              <div>
+                <Select
+                  onValueChange={(value) => handleOnChangeStatus(value)}
+                  value={courseData.status}
+                >
+                  <SelectTrigger className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <SelectValue placeholder="Youtube" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ListStatusCourse.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
         </div>
+
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}

@@ -1,3 +1,5 @@
+import {EStatusCourse} from "@/hooks/queries/course/useStatusCourse";
+
 export interface CourseFilters {
   search?: string;
   category?: string[];
@@ -60,6 +62,7 @@ export interface Course {
     count: number;
   };
   enrollmentCnt: number;
+  status: EStatusCourse;
 }
 
 export interface CourseDetail {

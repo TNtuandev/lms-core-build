@@ -11,8 +11,8 @@ export const step1Schema = z.object({
 });
 
 export const infoCourseSchema = z.object({
-  description: z.string().min(1, "Mô tả chi tiết không được để trống"),
-  requirements: z.string().min(1, "Yêu cầu không được để trống"),
+  description: z.string().min(10, "Mô tả chi tiết không được để trống"),
+  requirements: z.string().min(10, "Yêu cầu không được để trống"),
   learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
   hour: z.any().optional(),
   minute: z.any().optional(),

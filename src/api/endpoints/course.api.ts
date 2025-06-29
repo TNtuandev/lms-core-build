@@ -45,4 +45,19 @@ export const courseAPI = {
     const { data } = await api.post("/courses", courseData);
     return data;
   },
+
+  archiveCourse: async (id: string): Promise<any> => {
+    const { data } = await api.post(`/courses/${id}/archive`);
+    return data;
+  },
+
+  draftCourse: async (id: string): Promise<any> => {
+    const { data } = await api.post(`/courses/${id}/draft`);
+    return data;
+  },
+
+  publishCourse: async (id: string): Promise<any> => {
+    const { data } = await api.post(`/courses/${id}/publish`);
+    return data;
+  },
 }; 

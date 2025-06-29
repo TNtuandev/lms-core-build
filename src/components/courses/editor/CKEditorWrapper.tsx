@@ -29,7 +29,7 @@ interface CKEditorProps {
 
 type CKEditorComponent = React.ComponentType<CKEditorProps>;
 
-// eslint-disable-next-line react/function-component-definition
+ 
 const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   value,
   onChange,
@@ -79,7 +79,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
     loadCKEditor();
 
-    // eslint-disable-next-line consistent-return
+     
     return () => {
       isMounted = false;
     };

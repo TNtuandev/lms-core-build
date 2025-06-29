@@ -2,68 +2,129 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { ChevronRight, Check } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import Step1Form from "@/app/(admin)/create-courses/create/Step1Form";
-import Step2Form from "@/app/(admin)/create-courses/create/Step2Form";
+import { fullCourseFormData } from "@/app/(admin)/create-courses/create/schemas";
+import CourseInfoSection from "./create/components/CourseInfoSection";
+import {
+  CoursePricingSection,
+  CourseSettingsSection,
+  VideoIntroSection,
+} from "@/app/(admin)/create-courses/create/components";
+import { useCreateCourse } from "@/hooks/queries/course";
 
 const steps = [
   { id: 1, title: "Tạo khóa học", description: "Tạo khóa học" },
   { id: 2, title: "Thêm thông tin", description: "Thêm thông tin" },
 ];
 
-// Combined form data types
-type Step1Data = {
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  teacher: string;
-  thumbnail?: any;
-};
-
-type Step2Data = {
-  shortDescription: string;
-  requirements: string;
-  objectives: string;
-  duration: string;
-  lessons: string;
-  level: string;
-  instructor: string;
-  tags?: string[];
-  isSale?: boolean;
-  isNew?: boolean;
-  isBestseller?: boolean;
-};
-
-type CourseFormData = Step1Data & Step2Data;
-
 function CreateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<CourseFormData>>({});
-  const stepsList = [
-    { label: "Tạo khóa học", stepIndex: 1},
-    { label: "Thêm thông tin", stepIndex: 2},
-    { label: "Cài đặt khoá học", stepIndex: 3},
-    { label: "Video giới thiệu", stepIndex: 4},
-    { label: "Xây dựng khoá học", stepIndex: 5},
-    { label: "Giá khoá học", stepIndex: 6 },
+  const [formData, setFormData] = useState<Partial<fullCourseFormData>>({});
 
-  ]
+  const { createCourse, courseData } = useCreateCourse();
 
-  const handleStep1Complete = (data: Step1Data) => {
-    setFormData((prev) => ({ ...prev, ...data }));
-    setCurrentStep(2);
-  };
-
-  const handleStep2Complete = (data: Step2Data) => {
+  const handleStepNext = (data: any) => {
     const finalData = { ...formData, ...data };
-    console.log("Final form data:", finalData);
+    setFormData((prev: any) => ({ ...prev, ...finalData }));
+    if (currentStep === stepsList.length) {
+      handleFinalSubmit(finalData);
+      return;
+    }
+    setCurrentStep((prev) => prev + 1);
+
     // Handle final form submission here
-    alert("Tạo khóa học thành công!");
   };
 
-  const handleStep2Back = () => {
-    setCurrentStep(1);
+  const handleStepBack = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+  const handleFinalSubmit = (data: fullCourseFormData) => {
+
+    console.log("data---", data)
+
+    const request = {
+      title: data.title,
+      description: data.description,
+      requirements: data.requirements,
+      slug: data.slug,
+      label: data.label,
+      thumbnail: data.thumbnail,
+      shortDescription: data.shortDescription,
+      categoryId: data.categoryId,
+      learningOutcomes: data.learningOutcomes,
+      previewVideo: data.previewVideo,
+      previewImg: data.previewImg,
+      difficulty: data.difficulty,
+      regularPrice: data.regularPrice,
+      discountedPrice: data.discountedPrice,
+    };
+
+    createCourse.mutate(request);
+  };
+
+  const stepsList = [
+    {
+      label: "Tạo khóa học",
+      stepIndex: 1,
+      component: <Step1Form onNext={handleStepNext} initialData={formData} />,
+    },
+    {
+      label: "Thêm thông tin",
+      stepIndex: 2,
+      component: (
+        <CourseInfoSection
+          onNext={handleStepNext}
+          onBack={handleStepBack}
+          initialData={formData}
+        />
+      ),
+    },
+    {
+      label: "Cài đặt khoá học",
+      stepIndex: 3,
+      component: (
+        <CourseSettingsSection
+          onNext={handleStepNext}
+          onBack={handleStepBack}
+          initialData={formData}
+        />
+      ),
+    },
+    {
+      label: "Video giới thiệu",
+      stepIndex: 4,
+      component: (
+        <VideoIntroSection
+          onNext={handleStepNext}
+          onBack={handleStepBack}
+          initialData={formData}
+        />
+      ),
+    },
+    {
+      label: "Giá khoá học",
+      stepIndex: 5,
+      component: (
+        <CoursePricingSection
+          onNext={handleStepNext}
+          onBack={handleStepBack}
+          initialData={formData}
+        />
+      ),
+    },
+
+    // { label: "Xây dựng khoá học", stepIndex: 5},
+  ];
+
+  const renderStepScreen = () => {
+    const currentStepData = stepsList.find(
+      (item) => item.stepIndex === currentStep,
+    );
+    if (currentStepData) {
+      return currentStepData.component;
+    }
+    return null;
   };
 
   return (
@@ -137,31 +198,7 @@ function CreateCourse() {
           {/* Main Content */}
           <div className="lg:col-span-9">
             {/* Form Card */}
-            {currentStep === 1 && (
-              <Card className="p-8 bg-white shadow-sm border border-gray-200">
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    Chi tiết
-                  </h2>
-                </div>
-
-                {/* Step 1 Form */}
-
-                <Step1Form
-                  onNext={handleStep1Complete}
-                  initialData={formData}
-                />
-
-                {/* Step 2 Form */}
-              </Card>
-            )}
-            {currentStep >= 2 && (
-              <Step2Form
-                onNext={handleStep2Complete}
-                onBack={handleStep2Back}
-                initialData={formData}
-              />
-            )}
+            {renderStepScreen()}
           </div>
         </div>
       </div>

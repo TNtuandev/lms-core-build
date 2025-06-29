@@ -3,15 +3,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Routes } from "@/lib/routes/routes";
-import { useAuthContext } from "@/context/AuthProvider";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  ArrowDown2,
-  BagHappy,
-  CloseCircle,
-  SearchNormal,
-} from "iconsax-react";
+import { ArrowDown2, BagHappy, CloseCircle, SearchNormal } from "iconsax-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -22,18 +16,21 @@ import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
 import Link from "next/link";
-import {useCartStore} from "@/store/slices/cart.slice";
-import {MenuMobile} from "@/components/layout/navbar/MenuMobile";
+import { useCartStore } from "@/store/slices/cart.slice";
+import { MenuMobile } from "@/components/layout/navbar/MenuMobile";
+import {useAuthContext} from "@/context/AuthProvider";
+import { ICategory } from "@/api/types/category";
 
 function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, categories } = useAuthContext();
   const { pushToCart } = useCartStore();
   const [timeLeft, setTimeLeft] = useState(3300);
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
 
   useEffect(() => {
     // Hàm xử lý bắt phím
@@ -57,16 +54,6 @@ function Navbar() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     refetch().then((res) => {
-  //       if (res.data) {
-  //         setListCart(res.data);
-  //       }
-  //     });
-  //   }
-  // }, [isAuthenticated]);
 
   useEffect(() => {
     setIsFlashSale(pathname === Routes.home);
@@ -99,20 +86,21 @@ function Navbar() {
       salesPrice: 80000,
       originalPrice: 120000,
       imageUrl: "/images/banner-sign-in.png", // Thay bằng đường dẫn hình ảnh thực tế
-    })
+    });
     router.push(Routes.checkout);
   };
 
   const navigateToProfile = () => {
-    router.push(Routes.dashboard)
+    router.push(Routes.dashboard);
   };
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);
   };
 
-  const handleNavigateToProduct = (slug: string) => {
-    console.log("----slug", slug);
+  const handleNavigateToProduct = (category: ICategory) => {
+    console.log("----slug", category.slug);
+    setSelectedCategory(category);
   };
 
   useEffect(() => {
@@ -210,7 +198,7 @@ function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger className="hidden lg:block focus-visible:outline-none">
                   <div className="flex gap-2 items-center cursor-pointer">
-                    <div>Khám phá</div>
+                    <div>{selectedCategory ? selectedCategory.title : "Khám phá"}</div>
                     <ArrowDown2 size={16} color="#27272A" />
                   </div>
                 </DropdownMenuTrigger>
@@ -220,14 +208,18 @@ function Navbar() {
                   alignOffset={-10}
                   className="grid grid-cols-3 grid-rows-3 bg-white border-none"
                 >
-                  {[1, 2, 4, 3].map((_) => (
-                    <DropdownMenuItem key={_} className="block">
+                  {categories?.map((category) => (
+                    <DropdownMenuItem key={category.id} className="block">
                       <Button
                         variant="ghost"
-                        className="block w-full text-left text-normal text-text-primary font-normal hover:text-text-primary"
-                        onClick={() => handleNavigateToProduct("Khám phá")}
+                        className={`block w-full text-left text-normal font-normal ${
+                          selectedCategory?.id === category.id
+                            ? "text-primary-main bg-primary-main/10 hover:text-primary-main"
+                            : "text-text-primary hover:text-text-primary"
+                        }`}
+                        onClick={() => handleNavigateToProduct(category)}
                       >
-                        Khám phá
+                        {category.title}
                       </Button>
                     </DropdownMenuItem>
                   ))}
@@ -237,48 +229,52 @@ function Navbar() {
 
             {/* Buttons */}
             <div className="flex space-x-6 items-center">
+              <div className="flex items-center gap-4">
+                <Image
+                  src="/vietnam.svg"
+                  alt="Logo"
+                  className="m-2 lg:block hidden"
+                  width={28}
+                  height={20}
+                />
 
-                <div className="flex items-center gap-4">
-                  <Image src="/vietnam.svg" alt="Logo" className="m-2 lg:block hidden" width={28} height={20} />
-
-                  <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center">
+                  <Button
+                    style={{ padding: 8 }}
+                    size="lg"
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setOpenSearch(true);
+                    }}
+                  >
+                    <SearchNormal size={24} color="#71717B" />
+                  </Button>
+                  {/*<span className="p-1 bg-white text-sm rounded shadow">*/}
+                  {/*  ⌘K*/}
+                  {/*</span>*/}
+                  {/*<Button size="lg" type="button" variant="ghost">*/}
+                  {/*  <Heart size="24" color="#71717B" />*/}
+                  {/*</Button>*/}
+                  <NotificationBadge label={"1"}>
                     <Button
-                      style={{padding: 8}}
+                      style={{ padding: 8 }}
                       size="lg"
                       type="button"
                       variant="ghost"
-                      onClick={() => {
-                        setOpenSearch(true)
-                      }}
+                      onClick={navigateToCheckout}
                     >
-                      <SearchNormal size={24} color="#71717B" />
+                      <BagHappy size="24" color="#71717B" />
                     </Button>
-                    {/*<span className="p-1 bg-white text-sm rounded shadow">*/}
-                    {/*  ⌘K*/}
-                    {/*</span>*/}
-                    {/*<Button size="lg" type="button" variant="ghost">*/}
-                    {/*  <Heart size="24" color="#71717B" />*/}
-                    {/*</Button>*/}
-                    <NotificationBadge label={"1"}>
-                      <Button
-                        style={{padding: 8}}
+                  </NotificationBadge>
+                </div>
 
-                        size="lg"
-                        type="button"
-                        variant="ghost"
-                        onClick={navigateToCheckout}
-                      >
-                        <BagHappy size="24" color="#71717B" />
-                      </Button>
-                    </NotificationBadge>
-                  </div>
-
-                  {/*<NotificationBadge label="0">*/}
-                  {/*  <Button size="lg" type="button" variant="ghost">*/}
-                  {/*    <Notification size="24" color="#71717B" />*/}
-                  {/*  </Button>*/}
-                  {/*</NotificationBadge>*/}
-                  {isAuthenticated ? (
+                {/*<NotificationBadge label="0">*/}
+                {/*  <Button size="lg" type="button" variant="ghost">*/}
+                {/*    <Notification size="24" color="#71717B" />*/}
+                {/*  </Button>*/}
+                {/*</NotificationBadge>*/}
+                {isAuthenticated ? (
                   <Image
                     onClick={navigateToProfile}
                     src={"/images/banner-sign-in.png"} // Đường dẫn đến avatar
@@ -287,21 +283,22 @@ function Navbar() {
                     height={40}
                     className="cursor-pointer rounded-full h-[40px] w-[40px]"
                   />
-              ) : (
-                <div className="lg:flex gap-2 items-center hidden">
-                  <Button variant="ghost" className="h-10">
-                    <Link href={Routes.login}>Đăng nhập</Link>
-                  </Button>
-                  <Button
-                    variant="default"
-                    className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
-                  >
-                    <Link href={Routes.login} className="text-white">Bắt đầu miễn phí</Link>
-                  </Button>
-                </div>
-              )}
-
-                </div>
+                ) : (
+                  <div className="lg:flex gap-2 items-center hidden">
+                    <Button variant="ghost" className="h-10">
+                      <Link href={Routes.login}>Đăng nhập</Link>
+                    </Button>
+                    <Button
+                      variant="default"
+                      className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+                    >
+                      <Link href={Routes.login} className="text-white">
+                        Bắt đầu miễn phí
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

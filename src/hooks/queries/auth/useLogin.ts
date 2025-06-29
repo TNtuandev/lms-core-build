@@ -15,7 +15,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authAPI.login(credentials),
     onSuccess: (data) => {
-      setAuth("" as unknown as User, data?.accessToken);
+      setAuth(data as unknown as User, data?.accessToken);
       userQuery.refetch().then(pis => {
         if (pis?.data) {
           setAuth(pis.data, data?.accessToken);

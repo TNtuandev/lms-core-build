@@ -165,6 +165,8 @@ export default function CourseDetailPage() {
     router.push(Routes.checkout);
   };
 
+  console.log(faqsData);
+
   return (
     <div className="bg-white">
       {/* Header */}
@@ -649,6 +651,7 @@ export default function CourseDetailPage() {
                   open={openReview}
                   onOpenChange={setOpenReview}
                   onSubmit={(rating, comment) => {
+                    console.log(rating, comment);
                     // Xử lý gửi đánh giá ở đây
                     // handleUpdateReview(rating, comment)
                   }}
@@ -864,9 +867,9 @@ export default function CourseDetailPage() {
                   <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải câu hỏi thường gặp</p>
                   <p className="text-gray-500 text-sm">{errorFAQs?.message || "Vui lòng thử lại sau"}</p>
                 </div>
-              ) : faqsData?.data && faqsData.data.length > 0 ? (
+              ) : faqsData && faqsData?.length > 0 ? (
                 <div className="space-y-3">
-                  {faqsData.data.map((faq) => (
+                  {faqsData.map((faq) => (
                     <div
                       key={faq.id}
                       role="presentation"
@@ -973,9 +976,9 @@ export default function CourseDetailPage() {
               <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải khóa học liên quan</p>
               <p className="text-gray-500 text-sm">{errorRelated?.message || "Vui lòng thử lại sau"}</p>
             </div>
-          ) : relatedCoursesData?.data && relatedCoursesData.data.length > 0 ? (
+          ) : relatedCoursesData && relatedCoursesData.length > 0 ? (
             <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
-              {relatedCoursesData.data.map((relatedCourse) => {
+              {relatedCoursesData.map((relatedCourse) => {
                 const course = relatedCourse.relatedCourse;
                 return (
                   <div
@@ -985,16 +988,16 @@ export default function CourseDetailPage() {
                   >
                     <CourseCard
                       gridNUmber={4}
-                      title={course.title}
-                      imageUrl={course.thumbnail}
+                      title={course?.title}
+                      imageUrl={course?.thumbnail}
                       category="Khóa học"
-                      courseName={course.title}
-                      instructor={`Giảng viên: ${course.owner.fullName}`}
-                      lessonCount={course.totalLesion}
-                      studentCount={course.enrollmentCnt}
-                      currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
-                      originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
-                      badge={course.label}
+                      courseName={course?.title}
+                      instructor={`Giảng viên: ${course?.owner?.fullName}`}
+                      lessonCount={course?.totalLesion}
+                      studentCount={course?.enrollmentCnt}
+                      currentPrice={course?.pricing?.discounted ? course.pricing.discounted.toLocaleString() : course?.pricing?.regular?.toLocaleString()}
+                      originalPrice={course?.pricing?.discounted ? course.pricing.regular.toLocaleString() : ""}
+                      badge={course?.label}
                     />
                   </div>
                 );

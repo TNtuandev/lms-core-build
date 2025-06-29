@@ -3,12 +3,15 @@ import { createContext, ReactNode, useContext } from "react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { User } from "@/models/user.model";
 import { useMe } from "@/hooks/queries/auth/useMe";
+import {useCategory} from "@/hooks/queries/category/useCategory";
+import {ICategory} from "@/api/types/category";
 
 // ✅ Define AuthContext Interface
 interface AuthContextType {
   user: User | null; // Define a proper user type in the future
   isAuthenticated: boolean;
   isLoading: boolean;
+  categories?: ICategory[];
   signOut: () => void;
 }
 
@@ -28,13 +31,13 @@ export const useAuthContext = () => {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { user, isAuthenticated, logout } = useAuthStore();
   const userQuery = useMe();
-
-  console.log(userQuery, "----userQuery");
+  const { data: categories } = useCategory();
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        categories,
         isAuthenticated,
         isLoading: userQuery.isLoading,
         signOut: () => {

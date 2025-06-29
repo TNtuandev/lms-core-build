@@ -3,7 +3,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Step2FormData } from "../Step2Form";
 import {Add, Edit, ImportCurve, Menu, Trash} from "iconsax-react";
 import {ChevronDown, Upload} from "lucide-react";
 import { useState } from "react";
@@ -14,6 +13,7 @@ import {
   UploadArticleAssignment
 } from "@/app/(admin)/create-courses/create/components/modal/CreateAssignment/UploadArticleAssignment";
 import { UploadCodeAssignment } from "./modal/CreateAssignment/UploadCodeAssignment";
+import {Step2FormData} from "@/app/(admin)/create-courses/create/schemas";
 
 interface Lesson {
   id: string;

@@ -14,13 +14,13 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
 
       setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
-      setUserDraft: (user) => set({ user }),
+      setUserDraft: (user, token) => set({ user, token, isAuthenticated: !!token }),
 
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
 
@@ -34,7 +34,13 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         token: state.token,
+        isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.token) {
+          state.isAuthenticated = true;
+        }
+      },
     },
   ),
 );

@@ -131,4 +131,21 @@ export interface FAQ {
 
 export interface FAQsResponse {
   data: FAQ[];
-} 
+}
+
+export interface ICreateCourseRequest {
+  title: string
+  slug?: string
+  shortDescription: string
+  description: string
+  thumbnail: string
+  label?: string
+  categoryId: string
+  requirements: string
+  learningOutcomes: string
+  previewVideo: string
+  previewImg: string
+  difficulty: string
+  regularPrice: number
+  discountedPrice?: number
+}

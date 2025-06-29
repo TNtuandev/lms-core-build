@@ -3,9 +3,9 @@
 import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Step2FormData } from "../Step2Form";
-import {Add, Edit, HambergerMenu, Menu, Trash} from "iconsax-react";
+import { Add, Edit, HambergerMenu, Trash } from "iconsax-react";
 import { ChevronDown } from "lucide-react";
+import { Step2FormData } from "@/app/(admin)/create-courses/create/schemas";
 
 interface FAQ {
   id: string;
@@ -65,9 +65,7 @@ export default function CourseFAQ({
         className="flex items-center justify-between p-4 cursor-pointer transition-colors"
         onClick={onToggle}
       >
-        <h3 className="text-base font-medium text-primary-contrastText">
-          FAQ
-        </h3>
+        <h3 className="text-base font-medium text-primary-contrastText">FAQ</h3>
         <ChevronDown
           className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
             isExpanded ? "rotate-180" : ""

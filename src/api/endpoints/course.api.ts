@@ -1,9 +1,4 @@
-import {
-  CourseFilters,
-  CoursesResponse,
-  CourseDetail,
-  RelatedCourse, FAQ
-} from "@/api/types/course.type";
+import { CourseFilters, CoursesResponse, CourseDetail, RelatedCoursesResponse, FAQsResponse, ICreateCourseRequest, RelatedCourse, FAQ } from "@/api/types/course.type";
 import api from "@/api/api";
 
 export const courseAPI = {
@@ -45,4 +40,9 @@ export const courseAPI = {
     const { data } = await api.get(`/courses/${courseId}/faqs`);
     return data;
   },
-}; 
+
+  createCourse: async (courseData: ICreateCourseRequest): Promise<any> => {
+    const { data } = await api.post("/courses", courseData);
+    return data;
+  },
+};

@@ -38,13 +38,18 @@ export const courseAPI = {
     return data;
   },
 
-  getRelatedCourses: async (courseId: string): Promise<RelatedCourse[]> => {
+  getRelatedCourses: async (courseId: string): Promise<{data: RelatedCourse[]}> => {
     const { data } = await api.get(`/courses/${courseId}/related`);
     return data;
   },
 
   getFAQs: async (courseId: string): Promise<FAQ[]> => {
     const { data } = await api.get(`/courses/${courseId}/faqs`);
+    return data;
+  },
+
+  getModule: async (courseId: string): Promise<FAQ[]> => {
+    const { data } = await api.get(`/courses/${courseId}/modules`);
     return data;
   },
 

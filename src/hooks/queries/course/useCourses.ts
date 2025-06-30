@@ -10,6 +10,7 @@ export const courseKeys = {
   detail: (id: string) => [...courseKeys.details(), id] as const,
   related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
+  modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
 };
 
 export const useCourses = (filters?: CourseFilters) => {
@@ -54,4 +55,13 @@ export const useFAQs = (courseId: string) => {
     enabled: !!courseId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
-}; 
+};
+
+export const useModule = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.modules(courseId),
+    queryFn: () => courseAPI.getModule(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};

@@ -38,7 +38,6 @@ function CoursePage() {
   const apiFilters: CourseFilters = useMemo(() => {
     const filters: CourseFilters = {
       page: currentPage,
-      limit: 12,
     };
 
     if (debouncedSearchQuery.trim()) {
@@ -93,7 +92,6 @@ function CoursePage() {
   const courseTabFilters: CourseFilters = useMemo(() => {
     const filters: CourseFilters = {
       sort_by: SortOption.POPULAR,
-      limit: 6, // Get more courses for CourseTab
     };
 
     if (selectedLabel) {

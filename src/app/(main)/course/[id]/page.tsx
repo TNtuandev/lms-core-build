@@ -9,9 +9,9 @@ import CourseCard from "@/components/courses/course-card";
 import { useRouter, useParams } from "next/navigation";
 import { useCartStore } from "@/store/slices/cart.slice";
 import { Routes } from "@/lib/routes/routes";
-import {Button} from "@/components/ui/button";
-import {Edit, Loader2} from "lucide-react";
-import {ReviewDialog} from "@/components/courses/components/ReviewDialog";
+import { Button } from "@/components/ui/button";
+import { Edit, Loader2 } from "lucide-react";
+import { ReviewDialog } from "@/components/courses/components/ReviewDialog";
 import {
   ArrowDown2,
   ArrowRight2,
@@ -19,15 +19,18 @@ import {
   Backward5Seconds,
 } from "iconsax-react";
 import IconTickGreen from "../../../../../public/icons/IconTickGreen";
-import { useCourseBySlug, useRelatedCourses, useFAQs } from "@/hooks/queries/course/useCourses";
+import {
+  useCourseBySlug,
+  useRelatedCourses,
+  useFAQs,
+  useModule,
+} from "@/hooks/queries/course/useCourses";
 
 // interface PageProps {
 //   params: {
 //     id: string;
 //   };
 // }
-
-
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -39,18 +42,23 @@ export default function CourseDetailPage() {
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
 
   // Fetch related courses when we have course detail
-  const { 
-    data: relatedCoursesData, 
-    isLoading: isLoadingRelated, 
-    error: errorRelated 
+  const {
+    data: relatedCoursesData,
+    isLoading: isLoadingRelated,
+    error: errorRelated,
   } = useRelatedCourses(courseDetail?.id || "");
 
   // Fetch FAQs when we have course detail
-  const { 
-    data: faqsData, 
-    isLoading: isLoadingFAQs, 
-    error: errorFAQs 
+  const {
+    data: faqsData,
+    isLoading: isLoadingFAQs,
+    error: errorFAQs,
   } = useFAQs(courseDetail?.id || "");
+
+  // Fetch FAQs when we have course detail
+  const { data: moduleData } = useModule(courseDetail?.id || "");
+
+  console.log(moduleData, "--moduleData");
 
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
@@ -114,7 +122,9 @@ export default function CourseDetailPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="animate-spin text-gray-400" size={48} />
-        <span className="ml-2 text-gray-500">Đang tải thông tin khóa học...</span>
+        <span className="ml-2 text-gray-500">
+          Đang tải thông tin khóa học...
+        </span>
       </div>
     );
   }
@@ -124,8 +134,12 @@ export default function CourseDetailPage() {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải thông tin khóa học</p>
-          <p className="text-gray-500 text-sm">{error?.message || "Vui lòng thử lại sau"}</p>
+          <p className="text-red-500 mb-2">
+            Có lỗi xảy ra khi tải thông tin khóa học
+          </p>
+          <p className="text-gray-500 text-sm">
+            {error?.message || "Vui lòng thử lại sau"}
+          </p>
         </div>
       </div>
     );
@@ -137,8 +151,8 @@ export default function CourseDetailPage() {
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <p className="text-gray-500 mb-2">Không tìm thấy khóa học</p>
-          <button 
-            onClick={() => router.push('/course')}
+          <button
+            onClick={() => router.push("/course")}
             className="text-blue-500 hover:underline"
           >
             Quay lại danh sách khóa học
@@ -181,7 +195,7 @@ export default function CourseDetailPage() {
           </p>
           <div className="my-4 flex flex-wrap items-center gap-4">
             <div className="mt-2 w-max flex items-center gap-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
-              <IconPrize /> {courseDetail.label || 'Bestseller'}
+              <IconPrize /> {courseDetail.label || "Bestseller"}
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-1">
@@ -217,7 +231,8 @@ export default function CourseDetailPage() {
           <div className="flex items-center gap-2">
             <IconClock />
             <div className="text-gray-600 text-sm">
-              Cập nhật lần cuối {new Date(courseDetail.updatedAt).toLocaleDateString('vi-VN')}
+              Cập nhật lần cuối{" "}
+              {new Date(courseDetail.updatedAt).toLocaleDateString("vi-VN")}
             </div>
           </div>
         </div>
@@ -242,7 +257,9 @@ export default function CourseDetailPage() {
           <div className="flex items-center mb-4">
             <div className="flex items-center">
               <span className="text-yellow-400">★</span>
-              <span className="ml-1 text-gray-700">{courseDetail.ratingAvg || 0}</span>
+              <span className="ml-1 text-gray-700">
+                {courseDetail.ratingAvg || 0}
+              </span>
               <span className="ml-1 text-gray-500">
                 ({courseDetail.ratingCnt})
               </span>
@@ -255,7 +272,10 @@ export default function CourseDetailPage() {
 
           <div className="flex items-center mb-6">
             <div className="text-2xl font-bold text-[#2F57EF]">
-              {(courseDetail.discountedPrice || courseDetail.regularPrice).toLocaleString()}đ
+              {(
+                courseDetail.discountedPrice || courseDetail.regularPrice
+              ).toLocaleString()}
+              đ
             </div>
             {courseDetail.discountedPrice && (
               <div className="ml-2 text-gray-500 line-through text-sm">
@@ -286,7 +306,7 @@ export default function CourseDetailPage() {
               <div className="text-secondary font-semibold">Thời lượng</div>
               <div className="bg-[#919EAB29] px-2 rounded">
                 <span className="text-xs text-gray-500 font-semibold">
-                  1 giờ 12 phút
+                  {courseDetail?.duration} phút
                 </span>
               </div>
             </div>
@@ -299,7 +319,9 @@ export default function CourseDetailPage() {
             <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
               <div className="text-secondary font-semibold">Bài giảng</div>
               <div className="bg-[#919EAB29] px-2 rounded">
-                <span className="text-xs text-gray-500 font-semibold">50</span>
+                <span className="text-xs text-gray-500 font-semibold">
+                  {courseDetail?.totalLessons}
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
@@ -515,7 +537,10 @@ export default function CourseDetailPage() {
             >
               <h3 className="text-xl font-bold mb-6">Yêu cầu</h3>
               <div className="space-y-2">
-                <div>&#8226; {courseDetail.requirements || "Không có yêu cầu đặc biệt"}</div>
+                <div>
+                  &#8226;{" "}
+                  {courseDetail.requirements || "Không có yêu cầu đặc biệt"}
+                </div>
               </div>
             </div>
 
@@ -562,7 +587,9 @@ export default function CourseDetailPage() {
                     />
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg">Nguyễn Anh Tuấn</h4>
+                    <h4 className="font-bold text-lg">
+                      {courseDetail?.owner?.fullName}
+                    </h4>
                     <p className="text-gray-600 mb-2">
                       Nhà thiết kế và Giảng viên chính
                     </p>
@@ -649,6 +676,7 @@ export default function CourseDetailPage() {
                   open={openReview}
                   onOpenChange={setOpenReview}
                   onSubmit={(rating, comment) => {
+                    console.log(rating, comment);
                     // Xử lý gửi đánh giá ở đây
                     // handleUpdateReview(rating, comment)
                   }}
@@ -853,20 +881,26 @@ export default function CourseDetailPage() {
 
             <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
               <h3 className="text-xl font-bold mb-6">Câu hỏi thường gặp</h3>
-              
+
               {isLoadingFAQs ? (
                 <div className="flex justify-center items-center py-10">
                   <Loader2 className="animate-spin text-gray-400" size={24} />
-                  <span className="ml-2 text-gray-500">Đang tải câu hỏi thường gặp...</span>
+                  <span className="ml-2 text-gray-500">
+                    Đang tải câu hỏi thường gặp...
+                  </span>
                 </div>
               ) : errorFAQs ? (
                 <div className="text-center py-10">
-                  <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải câu hỏi thường gặp</p>
-                  <p className="text-gray-500 text-sm">{errorFAQs?.message || "Vui lòng thử lại sau"}</p>
+                  <p className="text-red-500 mb-2">
+                    Có lỗi xảy ra khi tải câu hỏi thường gặp
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    {errorFAQs?.message || "Vui lòng thử lại sau"}
+                  </p>
                 </div>
-              ) : faqsData?.data && faqsData.data.length > 0 ? (
+              ) : faqsData && faqsData?.length > 0 ? (
                 <div className="space-y-3">
-                  {faqsData.data.map((faq) => (
+                  {faqsData.map((faq) => (
                     <div
                       key={faq.id}
                       role="presentation"
@@ -880,7 +914,9 @@ export default function CourseDetailPage() {
                       }}
                     >
                       <div className="flex items-center flex-shink-0 justify-between bg-[#F4F6F8] px-3 py-2 rounded">
-                        <div className={`font-semibold ${acticeQuestion === faq.id ? "text-[#2F57EF]" : ""}`}>
+                        <div
+                          className={`font-semibold ${acticeQuestion === faq.id ? "text-[#2F57EF]" : ""}`}
+                        >
                           {faq.question}
                         </div>
                         {acticeQuestion === faq.id ? (
@@ -907,7 +943,9 @@ export default function CourseDetailPage() {
                 </div>
               ) : (
                 <div className="text-center py-10">
-                  <p className="text-gray-500">Chưa có câu hỏi thường gặp nào</p>
+                  <p className="text-gray-500">
+                    Chưa có câu hỏi thường gặp nào
+                  </p>
                 </div>
               )}
             </div>
@@ -966,17 +1004,24 @@ export default function CourseDetailPage() {
           {isLoadingRelated ? (
             <div className="flex justify-center items-center py-20">
               <Loader2 className="animate-spin text-gray-400" size={32} />
-              <span className="ml-2 text-gray-500">Đang tải khóa học liên quan...</span>
+              <span className="ml-2 text-gray-500">
+                Đang tải khóa học liên quan...
+              </span>
             </div>
           ) : errorRelated ? (
             <div className="text-center py-20">
-              <p className="text-red-500 mb-2">Có lỗi xảy ra khi tải khóa học liên quan</p>
-              <p className="text-gray-500 text-sm">{errorRelated?.message || "Vui lòng thử lại sau"}</p>
+              <p className="text-red-500 mb-2">
+                Có lỗi xảy ra khi tải khóa học liên quan
+              </p>
+              <p className="text-gray-500 text-sm">
+                {errorRelated?.message || "Vui lòng thử lại sau"}
+              </p>
             </div>
-          ) : relatedCoursesData?.data && relatedCoursesData.data.length > 0 ? (
+          ) : relatedCoursesData?.data &&
+            relatedCoursesData?.data.length > 0 ? (
             <div className="md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 flex flex-col mt-4">
-              {relatedCoursesData.data.map((relatedCourse) => {
-                const course = relatedCourse.relatedCourse;
+              {relatedCoursesData?.data.map((relatedCourse) => {
+                const course = relatedCourse.product;
                 return (
                   <div
                     key={relatedCourse.id}
@@ -985,16 +1030,24 @@ export default function CourseDetailPage() {
                   >
                     <CourseCard
                       gridNUmber={4}
-                      title={course.title}
-                      imageUrl={course.thumbnail}
+                      title={course?.title}
+                      imageUrl={course?.thumbnail}
                       category="Khóa học"
-                      courseName={course.title}
-                      instructor={`Giảng viên: ${course.owner.fullName}`}
-                      lessonCount={course.totalLesion}
-                      studentCount={course.enrollmentCnt}
-                      currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
-                      originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}
-                      badge={course.label}
+                      courseName={course?.title}
+                      instructor={`Giảng viên: ${course?.owner?.fullName}`}
+                      lessonCount={course?.totalLessons}
+                      studentCount={course?.enrollmentCnt}
+                      currentPrice={
+                        course?.regularPrice
+                          ? course.regularPrice.toLocaleString()
+                          : course?.regularPrice.toLocaleString()
+                      }
+                      originalPrice={
+                        course?.discountedPrice
+                          ? course.discountedPrice.toLocaleString()
+                          : ""
+                      }
+                      badge={course?.label}
                     />
                   </div>
                 );

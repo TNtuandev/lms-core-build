@@ -96,6 +96,8 @@ export interface CourseDetail {
   requirements: string;
   createdAt: string;
   updatedAt: string;
+  totalLessons: number;
+  duration: number;
 }
 
 export interface CoursesResponse {
@@ -116,7 +118,74 @@ export interface RelatedCourse {
   relatedId: string;
   order: number;
   notes: string;
-  relatedCourse: Course;
+  relatedTo: {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    shortDescription: string;
+    type: string;
+    thumbnail: string;
+    label: string;
+    status: string;
+    regularPrice: number;
+    discountedPrice: number;
+    ratingAvg: number;
+    ratingCnt: number;
+    enrollmentCnt: number;
+    category: {
+      id: string;
+      title: string;
+      slug: string;
+    };
+    owner: {
+      id: string;
+      email: string;
+      fullName: string;
+    };
+    previewImg: string;
+    learningOutcomes: string;
+    previewVideo: string;
+    requirements: string;
+    totalLessons: number;
+    duration: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  product: {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    shortDescription: string;
+    type: string;
+    thumbnail: string;
+    label: string;
+    status: string;
+    regularPrice: number;
+    discountedPrice: number;
+    ratingAvg: number;
+    ratingCnt: number;
+    enrollmentCnt: number;
+    category: {
+      id: string;
+      title: string;
+      slug: string;
+    };
+    owner: {
+      id: string;
+      email: string;
+      fullName: string;
+    };
+    previewImg: string;
+    learningOutcomes: string;
+    previewVideo: string;
+    requirements: string;
+    totalLessons: number;
+    duration: number;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface RelatedCoursesResponse {

@@ -9,13 +9,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -26,26 +25,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import {InfoCircle} from "iconsax-react";
+import { InfoCircle } from "iconsax-react";
 import ToggleSwitch from "../ToggleSwitch";
-
-const lessonSchema = z.object({
-  title: z.string().min(1, "Tiêu đề không được để trống"),
-  type: z.string().min(1, "Loại bài học không được để trống"),
-  summary: z.string().min(1, "Tóm tắt không được để trống"),
-  thumbnail: z.any().optional(),
-  videoUrl: z.string().url("URL video không hợp lệ").optional(),
-  replayHour: z.string().optional(),
-  replayMinute: z.string().optional(),
-  replaySecond: z.string().optional(),
-  attachment: z.any().optional(),
-  isPreview: z.boolean().optional(),
-});
-
-type LessonFormData = z.infer<typeof lessonSchema>;
+import {
+  LessonFormData,
+  lessonSchema,
+} from "@/app/(admin)/create-courses/create/schemas";
+import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
@@ -53,24 +41,28 @@ interface CreateLessonModalProps {
   onSubmit: (data: LessonFormData) => void;
 }
 
-export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonModalProps) => {
+export const CreateLessonModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}: CreateLessonModalProps) => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const [lessonType, setLessonType] = useState<string>("video");
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
       title: "",
-      type: "video",
-      summary: "",
-      thumbnail: undefined,
+      description: "",
+      notes: "",
       videoUrl: "",
-      replayMinute: "",
-      replaySecond: "",
-      attachment: undefined,
-      isPreview: false,
+      duration: "",
+      attachmentUrl: undefined,
+      isPreviewable: false,
+      htmlContent: "",
     },
   });
 
@@ -89,7 +81,10 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-5"
+          >
             {/* Tiêu đề */}
             <FormField
               control={form.control}
@@ -105,32 +100,24 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
               )}
             />
             {/* Loại bài học */}
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Loại bài học</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại bài học" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="document">Tài liệu</SelectItem>
-                        <SelectItem value="quiz">Quiz</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Loại bài học
+              </label>
+              <Select value={lessonType} onValueChange={setLessonType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn loại bài học" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="video">Video</SelectItem>
+                  <SelectItem value="document">Bài đọc</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {/* Tóm tắt */}
             <FormField
               control={form.control}
-              name="summary"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tóm tắt</FormLabel>
@@ -141,6 +128,27 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                 </FormItem>
               )}
             />
+            {/* Nội dung */}
+            {lessonType === "document" && (
+              <FormField
+                control={form.control}
+                name="htmlContent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nội dung</FormLabel>
+                    <FormControl>
+                      <CKEditorWrapper
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Viết gì đó..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             {/* Ảnh đại diện */}
             <FormField
               control={form.control}
@@ -169,10 +177,10 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                             Thả hoặc chọn tệp tin
                           </h3>
                           <p className="text-sm text-gray-500 mb-4">
-                            Thả tệp tin vào đây hoặc nhấp để {" "}
+                            Thả tệp tin vào đây hoặc nhấp để{" "}
                             <span className="text-blue-600 hover:underline cursor-pointer">
                               duyệt
-                            </span> {" "}
+                            </span>{" "}
                             từ máy tính
                           </p>
                         </div>
@@ -192,7 +200,7 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                             variant="outline"
                             size="sm"
                             type="button"
-                            onClick={e => {
+                            onClick={(e) => {
                               e.stopPropagation();
                               setThumbnailFile(null);
                               field.onChange(null);
@@ -209,7 +217,7 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                         type="file"
                         accept="image/*"
                         ref={thumbnailInputRef}
-                        onChange={e => {
+                        onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
                             setThumbnailFile(file);
@@ -222,186 +230,158 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                     </div>
                   </FormControl>
                   <p className="text-xs text-gray-500">
-                    <span className="font-medium">Kích thước:</span> 700x430 pixel, {" "}
-                    <span className="font-medium">Hỗ trợ tệp:</span> JPG, JPEG, PNG, GIF, WEBP
+                    <span className="font-medium">Kích thước:</span> 700x430
+                    pixel, <span className="font-medium">Hỗ trợ tệp:</span> JPG,
+                    JPEG, PNG, GIF, WEBP
                   </p>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {/* Thêm URL Video */}
-            <FormField
-              control={form.control}
-              name="videoUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Thêm URL Video của bạn</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://youtube.com/..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                  <p className="text-xs text-gray-500 mt-1">
-                    VD: <span className="text-primary-main underline">https://www.youtube.com/watch?v=your-video-id</span>
-                  </p>
-                </FormItem>
-              )}
-            />
-            {/* Thời gian phát lại video */}
-            <div className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="replayHour"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Thời gian phát lại video
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="00"
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-gray-500 flex items-center">
-                      <InfoCircle variant="Bold" size={16} color="#637381"/>
-                      <span className="ml-1">Giờ</span>
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="replayMinute"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700 opacity-0">
-                      Ẩn
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="00"
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-gray-500 flex items-center">
-                      <InfoCircle variant="Bold" size={16} color="#637381"/>
-                      <span className="ml-1">Phút</span>
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="replaySecond"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700 opacity-0">
-                      Ẩn
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="00"
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-gray-500 flex items-center">
-                      <InfoCircle variant="Bold" size={16} color="#637381"/>
-                      <span className="ml-1">Giây</span>
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {lessonType === "video" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="videoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thêm URL Video của bạn</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://youtube.com/..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <p className="text-xs text-gray-500 mt-1">
+                        VD:{" "}
+                        <span className="text-primary-main underline">
+                          https://www.youtube.com/watch?v=your-video-id
+                        </span>
+                      </p>
+                    </FormItem>
+                  )}
+                />
+                {/* Thời gian phát lại video */}
+                <div className="grid grid-cols-1 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="duration"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Thời gian phát lại video
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="00"
+                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            {...field}
+                          />
+                        </FormControl>
+                        <p className="text-xs text-gray-500 flex items-center">
+                          <InfoCircle
+                            variant="Bold"
+                            size={16}
+                            color="#637381"
+                          />
+                          <span className="ml-1">Giờ</span>
+                        </p>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            {/* File đính kèm */}
-            <FormField
-              control={form.control}
-              name="attachment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Tải lên tệp đính kèm
-                  </FormLabel>
-                  <FormControl>
-                    <div
-                      className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
-                      onClick={() => attachmentInputRef.current?.click()}
-                    >
-                      {!attachmentFile ? (
-                        <div className="flex flex-col items-center">
-                          <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
-                            <Image
-                              width={64}
-                              height={64}
-                              alt="file"
-                              src="/images/upload.png"
-                            />
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            Thả hoặc chọn tệp tin
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-4">
-                            Thả tệp tin vào đây hoặc nhấp để {" "}
-                            <span className="text-blue-600 hover:underline cursor-pointer">
-                              duyệt
-                            </span> {" "}
-                            từ máy tính
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <p className="text-sm text-gray-500 mb-2">{attachmentFile.name}</p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            type="button"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setAttachmentFile(null);
-                              field.onChange(null);
-                              if (attachmentInputRef.current) {
-                                attachmentInputRef.current.value = "";
+                {/* File đính kèm */}
+                <FormField
+                  control={form.control}
+                  name="attachmentUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Tải lên tệp đính kèm
+                      </FormLabel>
+                      <FormControl>
+                        <div
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          onClick={() => attachmentInputRef.current?.click()}
+                        >
+                          {!attachmentFile ? (
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                                <Image
+                                  width={64}
+                                  height={64}
+                                  alt="file"
+                                  src="/images/upload.png"
+                                />
+                              </div>
+                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                Thả hoặc chọn tệp tin
+                              </h3>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Thả tệp tin vào đây hoặc nhấp để{" "}
+                                <span className="text-blue-600 hover:underline cursor-pointer">
+                                  duyệt
+                                </span>{" "}
+                                từ máy tính
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <p className="text-sm text-gray-500 mb-2">
+                                {attachmentFile.name}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setAttachmentFile(null);
+                                  field.onChange(null);
+                                  if (attachmentInputRef.current) {
+                                    attachmentInputRef.current.value = "";
+                                  }
+                                }}
+                              >
+                                Xóa
+                              </Button>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept=".pdf,.zip,.rar"
+                            ref={attachmentInputRef}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setAttachmentFile(file);
+                                field.onChange(file);
                               }
                             }}
-                          >
-                            Xóa
-                          </Button>
+                            className="hidden"
+                            id="attachment-upload"
+                          />
                         </div>
-                      )}
-                      <input
-                        type="file"
-                        accept=".pdf,.zip,.rar"
-                        ref={attachmentInputRef}
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setAttachmentFile(file);
-                            field.onChange(file);
-                          }
-                        }}
-                        className="hidden"
-                        id="attachment-upload"
-                      />
-                    </div>
-                  </FormControl>
-                  <p className="text-xs text-gray-500">
-                    <span className="font-medium">Kích thước tối đa:</span> 100MB. {" "}
-                    <span className="font-medium">Hỗ trợ:</span> PDF, ZIP, RAR
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      </FormControl>
+                      <p className="text-xs text-gray-500">
+                        <span className="font-medium">Kích thước tối đa:</span>{" "}
+                        100MB. <span className="font-medium">Hỗ trợ:</span> PDF,
+                        ZIP, RAR
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
             {/* Bật chế độ xem trước khóa học */}
             <FormField
               control={form.control}
-              name="isPreview"
+              name="isPreviewable"
               render={({ field }) => (
                 <FormItem className="flex items-center gap-3">
                   <FormControl>
@@ -411,7 +391,9 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
                       color="green"
                     />
                   </FormControl>
-                  <FormLabel className="">Bật chế độ xem trước khóa học</FormLabel>
+                  <FormLabel className="">
+                    Bật chế độ xem trước khóa học
+                  </FormLabel>
                 </FormItem>
               )}
             />
@@ -424,7 +406,11 @@ export const CreateLessonModal = ({ isOpen, onClose, onSubmit }: CreateLessonMod
               >
                 Hủy bỏ
               </Button>
-              <Button type="submit" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button
+                type="submit"
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 Thêm chủ đề
               </Button>
             </DialogFooter>

@@ -1,19 +1,25 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {Add, Edit, ImportCurve, Menu, Trash} from "iconsax-react";
-import {ChevronDown, Upload} from "lucide-react";
-import { useState } from "react";
+import {Add, Edit, HambergerMenu, ImportCurve, Menu, Trash} from "iconsax-react";
+import { ChevronDown, Upload } from "lucide-react";
+import { useState, useEffect } from "react";
 import AddChapterModal from "./modal/AddChapterModal";
-import {CreateLessonModal} from "@/app/(admin)/create-courses/create/components/modal/CreateLessonModal";
-import {CreateQuizModal} from "@/app/(admin)/create-courses/create/components/modal/CreateQuizModal";
-import {
-  UploadArticleAssignment
-} from "@/app/(admin)/create-courses/create/components/modal/CreateAssignment/UploadArticleAssignment";
+import { CreateLessonModal } from "@/app/(admin)/create-courses/create/components/modal/CreateLessonModal";
+import { CreateQuizModal } from "@/app/(admin)/create-courses/create/components/modal/CreateQuizModal";
+import { UploadArticleAssignment } from "@/app/(admin)/create-courses/create/components/modal/CreateAssignment/UploadArticleAssignment";
 import { UploadCodeAssignment } from "./modal/CreateAssignment/UploadCodeAssignment";
-import {Step2FormData} from "@/app/(admin)/create-courses/create/schemas";
+import {
+  fullCourseFormData,
+  ModuleCourseFormData,
+  VideoIntroFormData,
+} from "@/app/(admin)/create-courses/create/schemas";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import {
+  useCreateModule,
+  useModules,
+} from "@/hooks/queries/course/useModuleCourse";
 
 interface Lesson {
   id: string;
@@ -25,28 +31,50 @@ interface Chapter {
   title: string;
   summary?: string;
   isExpanded: boolean;
-  lessons: Lesson[];
+  lessons?: Lesson[];
 }
 
 interface CourseBuilderSectionProps {
-  form: UseFormReturn<Step2FormData>;
-  isExpanded: boolean;
-  onToggle: () => void;
-  chapters: Chapter[];
-  setChapters: (chapters: Chapter[]) => void;
+  onNext: (data: VideoIntroFormData) => void;
+  onBack: () => void;
+  initialData?: Partial<fullCourseFormData>;
 }
 
 export default function CourseBuilderSection({
-  isExpanded,
-  onToggle,
-  chapters,
-  setChapters,
+  onNext,
+  onBack,
+  initialData,
 }: CourseBuilderSectionProps) {
+  const [isExpandedChapters, setIsExpandedChapters] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpenModalCreateLesson, setIsOpenModalCreateLesson] = useState(false);
   const [isOpenModalCreateQuiz, setIsOpenModalCreateQuiz] = useState(false);
-  const [isOpenModalCreateAssignment, setIsOpenModalCreateAssignment] = useState(false);
-  const [isOpenModalCreateAssignmentCode, setIsOpenModalCreateAssignmentCode] = useState(false);
+  const [isOpenModalCreateAssignment, setIsOpenModalCreateAssignment] =
+    useState(false);
+  const [isOpenModalCreateAssignmentCode, setIsOpenModalCreateAssignmentCode] =
+    useState(false);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const { courseData } = useCreateCourseContext();
+
+  const { data: initialChapters, refetch: refetchChapters } = useModules(
+    courseData?.id as string,
+  );
+
+  const createModule = useCreateModule(courseData?.id as string);
+
+  useEffect(() => {
+    if (initialChapters) {
+      setChapters(
+        initialChapters.map((c) => ({
+          id: c.id,
+          title: c.title,
+          summary: c.shortDescription,
+          isExpanded: false,
+          lessons: [{ id: '1', title: "Bài học 1" }],
+        }))
+      );
+    }
+  }, [initialChapters]);
 
   const toggleChapter = (chapterId: string) => {
     setChapters(
@@ -58,15 +86,17 @@ export default function CourseBuilderSection({
     );
   };
 
-  const addNewChapter = (title: string, summary: string) => {
-    const newChapter: Chapter = {
-      id: Date.now().toString(),
-      title,
-      summary,
-      isExpanded: true,
-      lessons: [],
-    };
-    setChapters([...chapters, newChapter]);
+  console.log("initialChapters---", initialChapters);
+
+  const addNewChapter = (value: ModuleCourseFormData) => {
+    createModule.mutate(value, {
+      onSuccess: () => {
+        refetchChapters();
+      },
+      onError: (error) => {
+        console.error("Error creating chapter:", error);
+      },
+    });
   };
 
   const deleteChapter = (chapterId: string) => {
@@ -83,15 +113,15 @@ export default function CourseBuilderSection({
 
   const handleSubmitCreateAssignmentCode = (data: any) => {
     console.log("Submitted assignment data code:", data);
-  }
+  };
 
   const handleSubmitCreateAssignment = (data: any) => {
     console.log("Submitted assignment data:", data);
-  }
+  };
 
   const handleSubmitCreateLesson = (data: any) => {
     console.log("Submitted lesson data:", data);
-  }
+  };
 
   // const handleSubmitCreateQuiz = (data: any) => {
   //   console.log("Submitted quiz data:", data);
@@ -101,17 +131,19 @@ export default function CourseBuilderSection({
     <Card className="bg-white shadow-sm border border-gray-200">
       <div
         className="flex items-center justify-between p-4 cursor-pointer transition-colors"
-        onClick={onToggle}
+        onClick={() => setIsExpandedChapters(!isExpandedChapters)}
       >
-        <h3 className="text-base font-medium text-primary-contrastText">Xây dựng khóa học</h3>
+        <h3 className="text-base font-medium text-primary-contrastText">
+          Xây dựng khóa học
+        </h3>
         <ChevronDown
           className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-            isExpanded ? "rotate-180" : ""
+            isExpandedChapters ? "rotate-180" : ""
           }`}
         />
       </div>
 
-      {isExpanded && (
+      {isExpandedChapters && (
         <div className="p-4 space-y-3">
           {chapters.map((chapter) => (
             <div key={chapter.id} className="bg-white rounded-lg">
@@ -161,14 +193,14 @@ export default function CourseBuilderSection({
 
               {chapter.isExpanded && (
                 <div className="p-4 space-y-3">
-                  {chapter.lessons &&
-                    chapter.lessons.map((lesson) => (
+                  {chapter?.lessons &&
+                    chapter?.lessons?.map((lesson) => (
                       <div
                         key={lesson.id}
-                        className="flex items-center justify-between p-3 border rounded-md bg-white hover:bg-gray-50"
+                        className="flex items-center justify-between p-3 border border-[#919EAB52] rounded-md bg-white hover:bg-gray-50"
                       >
                         <div className="flex items-center">
-                          <Menu size={24} color="#637381" className="h-5 w-5 text-gray-400 mr-3 cursor-move" />
+                          <HambergerMenu size={24} color="#637381" className="h-5 w-5 text-gray-400 mr-3 cursor-move" />
                           <p className="text-sm font-medium">{lesson.title}</p>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -202,21 +234,61 @@ export default function CourseBuilderSection({
 
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center space-x-2">
-                      <Button onClick={() => setIsOpenModalCreateLesson(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
-                        <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
+                      <Button
+                        onClick={() => setIsOpenModalCreateLesson(true)}
+                        className="border-primary-main/48"
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Add
+                          size={20}
+                          color="#2F57EF"
+                          className="w-4 h-4 mr-1"
+                        />
                         Bài học
                       </Button>
-                      <Button onClick={() => setIsOpenModalCreateQuiz(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
-                        <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
+                      <Button
+                        onClick={() => setIsOpenModalCreateQuiz(true)}
+                        className="border-primary-main/48"
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Add
+                          size={20}
+                          color="#2F57EF"
+                          className="w-4 h-4 mr-1"
+                        />
                         Bài kiểm tra
                       </Button>
-                      <Button onClick={() => setIsOpenModalCreateAssignmentCode(true)} className="border-primary-main/48" type="button" variant="outline" size="sm">
-                        <Add size={20} color="#2F57EF" className="w-4 h-4 mr-1" />
+                      <Button
+                        onClick={() => setIsOpenModalCreateAssignmentCode(true)}
+                        className="border-primary-main/48"
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Add
+                          size={20}
+                          color="#2F57EF"
+                          className="w-4 h-4 mr-1"
+                        />
                         Bài tập
                       </Button>
                     </div>
-                    <Button onClick={() => setIsOpenModalCreateAssignment(true)} className="border-primary-main/48" size="sm" type="button" variant="outline">
-                      <ImportCurve size={20} color="#2F57EF" className="w-4 h-4 mr-2" />
+                    <Button
+                      onClick={() => setIsOpenModalCreateAssignment(true)}
+                      className="border-primary-main/48"
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      <ImportCurve
+                        size={20}
+                        color="#2F57EF"
+                        className="w-4 h-4 mr-2"
+                      />
                       Nhập bài kiểm tra
                     </Button>
                   </div>
@@ -251,7 +323,8 @@ export default function CourseBuilderSection({
       <CreateLessonModal
         isOpen={isOpenModalCreateLesson}
         onClose={() => setIsOpenModalCreateLesson(false)}
-        onSubmit={handleSubmitCreateLesson} />
+        onSubmit={handleSubmitCreateLesson}
+      />
       <AddChapterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -263,4 +336,4 @@ export default function CourseBuilderSection({
       />
     </Card>
   );
-} 
+}

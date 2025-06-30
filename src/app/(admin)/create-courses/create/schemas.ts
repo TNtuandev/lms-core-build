@@ -38,6 +38,23 @@ export const pricingCourseSchema = z.object({
 })
 export const fullCourseSchema = step1Schema.merge(infoCourseSchema).merge(settingCourseSchema).merge(videoIntroSchema).merge(pricingCourseSchema)
 
+export const moduleCourseSchema = z.object({
+  title: z.string().min(1, "Tiêu đề module không được để trống"),
+  shortDescription: z.string().min(1, "Giới thiệu module không được để trống"),
+  order: z.number().optional()
+})
+
+export const lessonSchema = z.object({
+  title: z.string().min(1, "Tiêu đề không được để trống"),
+  description: z.string().min(1, "Tóm tắt không được để trống"),
+  notes: z.any().optional(),
+  videoUrl: z.string().url("URL video không hợp lệ").optional(),
+  duration: z.string().optional(),
+  attachmentUrl: z.any().optional(),
+  isPreviewable: z.boolean().optional(),
+  htmlContent: z.any().optional(),
+  thumbnail: z.any().optional()
+});
 
 // Type definitions
 export type Step1FormData = z.infer<typeof step1Schema>;
@@ -46,4 +63,5 @@ export type SettingCourseFormData = z.infer<typeof settingCourseSchema>;
 export type VideoIntroFormData = z.infer<typeof videoIntroSchema>;
 export type PricingCourseFormData = z.infer<typeof pricingCourseSchema>;
 export type fullCourseFormData = z.infer<typeof fullCourseSchema>
-
+export type ModuleCourseFormData = z.infer<typeof moduleCourseSchema>;
+export type LessonFormData = z.infer<typeof lessonSchema>;

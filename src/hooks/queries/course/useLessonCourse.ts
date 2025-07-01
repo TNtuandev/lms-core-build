@@ -3,26 +3,26 @@ import { courseAPI } from "@/api/endpoints/course.api";
 import toast from "react-hot-toast";
 
 export interface IRequestArticles {
-    duration: number
-    title: string
-    shortDescription: string
-    description: string
-    order: number
-    isPreviewable: boolean
-    attachmentUrl: string
-    htmlContent: string
+    duration?: number
+    title?: string
+    shortDescription?: string
+    description?: string
+    order?: number
+    isPreviewable?: boolean
+    attachmentUrl?: string
+    htmlContent?: string
 }
 
 export interface IRequestVideos {
-    duration: number
-    title: string
-    shortDescription: string
-    description: string
-    order: number
-    isPreviewable: boolean
-    attachmentUrl: string
-    videoUrl: string
-    notes: string
+    duration?: number
+    title?: string
+    shortDescription?: string
+    description?: string
+    order?: number
+    isPreviewable?: boolean
+    attachmentUrl?: string
+    videoUrl?: string
+    notes?: string
 }
 
 export interface IRequestQuizz {

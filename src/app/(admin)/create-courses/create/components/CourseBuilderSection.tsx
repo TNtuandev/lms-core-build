@@ -17,21 +17,15 @@ import {
 } from "@/app/(admin)/create-courses/create/schemas";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import {
+  IModule,
   useCreateModule,
   useModules,
 } from "@/hooks/queries/course/useModuleCourse";
+import {useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
 
 interface Lesson {
   id: string;
   title: string;
-}
-
-interface Chapter {
-  id: string;
-  title: string;
-  summary?: string;
-  isExpanded: boolean;
-  lessons?: Lesson[];
 }
 
 interface CourseBuilderSectionProps {
@@ -53,7 +47,9 @@ export default function CourseBuilderSection({
     useState(false);
   const [isOpenModalCreateAssignmentCode, setIsOpenModalCreateAssignmentCode] =
     useState(false);
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+
+  const [chapters, setChapters] = useState<IModule[]>([]);
+  const [moduleItem, setModuleItem] = useState<IModule | null>(null);
   const { courseData } = useCreateCourseContext();
 
   const { data: initialChapters, refetch: refetchChapters } = useModules(
@@ -65,12 +61,12 @@ export default function CourseBuilderSection({
   useEffect(() => {
     if (initialChapters) {
       setChapters(
-        initialChapters.map((c) => ({
+        initialChapters?.data.map((c) => ({
           id: c.id,
           title: c.title,
-          summary: c.shortDescription,
+          shortDescription: c.shortDescription,
           isExpanded: false,
-          lessons: [{ id: '1', title: "Bài học 1" }],
+          lessons: c.lessons
         }))
       );
     }
@@ -119,8 +115,8 @@ export default function CourseBuilderSection({
     console.log("Submitted assignment data:", data);
   };
 
-  const handleSubmitCreateLesson = (data: any) => {
-    console.log("Submitted lesson data:", data);
+  const handleSubmitCreateLesson = () => {
+    refetchChapters()
   };
 
   // const handleSubmitCreateQuiz = (data: any) => {
@@ -210,7 +206,7 @@ export default function CourseBuilderSection({
                             size="icon"
                             className="h-8 w-8"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit size={16} color="#637381" className="h-4 w-4" />
                           </Button>
                           <Button
                             type="button"
@@ -235,7 +231,10 @@ export default function CourseBuilderSection({
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center space-x-2">
                       <Button
-                        onClick={() => setIsOpenModalCreateLesson(true)}
+                        onClick={() => {
+                          setIsOpenModalCreateLesson(true)
+                          setModuleItem(chapter)
+                        }}
                         className="border-primary-main/48"
                         type="button"
                         variant="outline"
@@ -322,7 +321,11 @@ export default function CourseBuilderSection({
       />
       <CreateLessonModal
         isOpen={isOpenModalCreateLesson}
-        onClose={() => setIsOpenModalCreateLesson(false)}
+        moduleItem={moduleItem}
+        onClose={() => {
+          setIsOpenModalCreateLesson(false)
+          setModuleItem(null)
+        }}
         onSubmit={handleSubmitCreateLesson}
       />
       <AddChapterModal

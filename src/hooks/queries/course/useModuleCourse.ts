@@ -16,7 +16,9 @@ export interface IModule {
   id: string
   title: string
   shortDescription: string
-  order: number
+  order?: number
+  lessons: any[]
+  isExpanded?: boolean;
 }
 
 
@@ -29,7 +31,7 @@ export const moduleKeys = {
 export const useModules = (courseId: string) => {
   return useQuery({
     queryKey: moduleKeys.list(courseId),
-    queryFn: (): Promise<IModule[]> => courseAPI.getModules(courseId),
+    queryFn: (): Promise<{data: IModule[]}> => courseAPI.getModules(courseId),
     enabled: !!courseId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

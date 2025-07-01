@@ -34,23 +34,29 @@ import {
   lessonSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
+import {useCreateLessonArticle, useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
+import {IModule} from "@/hooks/queries/course/useModuleCourse";
+import {useCreateCourseContext} from "@/context/CreateCourseProvider";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: LessonFormData) => void;
+  onSubmit: () => void;
+  moduleItem: IModule | null
 }
 
 export const CreateLessonModal = ({
   isOpen,
   onClose,
   onSubmit,
+                                    moduleItem
 }: CreateLessonModalProps) => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
-  const [lessonType, setLessonType] = useState<string>("video");
+
+  const {courseData} = useCreateCourseContext()
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
@@ -63,6 +69,7 @@ export const CreateLessonModal = ({
       attachmentUrl: undefined,
       isPreviewable: false,
       htmlContent: "",
+      type: "video",
     },
   });
 
@@ -71,6 +78,51 @@ export const CreateLessonModal = ({
     setAttachmentFile(null);
     onClose();
   };
+
+  const createLessonVideo = useCreateLessonVideo(courseData?.id as string, moduleItem?.id as string)
+  const createLessonArticle = useCreateLessonArticle(courseData?.id as string, moduleItem?.id as string)
+
+  const handleCreateLesson = (data: LessonFormData) => {
+    if (lessonType === 'video') {
+      const formData = {
+        title: data.title,
+        description: data.description,
+        notes: data.notes,
+        shortDescription: data.description,
+        videoUrl: data.videoUrl,
+        duration: Number(data.duration),
+        attachmentUrl: data.attachmentUrl ?? 'https://example.com/attachment.pdf',
+        isPreviewable: data.isPreviewable,
+      }
+      createLessonVideo.mutate(formData, {
+        onSuccess: () => {
+          form.reset();
+          onSubmit()
+          onClose();
+        }
+      })
+    } else {
+      const formData = {
+        title: data.title,
+        shortDescription: "",
+        description: data.description,
+        htmlContent: data.htmlContent,
+        duration: Number(data.duration),
+        attachmentUrl: data.attachmentUrl,
+        isPreviewable: data.isPreviewable,
+      }
+      createLessonArticle.mutate(formData, {
+        onSuccess: () => {
+          onSubmit()
+        }
+      })
+    }
+
+  }
+
+
+  const lessonType = form.watch("type");
+
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -82,7 +134,7 @@ export const CreateLessonModal = ({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(handleCreateLesson)}
             className="p-6 space-y-5"
           >
             {/* Tiêu đề */}
@@ -100,20 +152,28 @@ export const CreateLessonModal = ({
               )}
             />
             {/* Loại bài học */}
-            <div className="mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Loại bài học
-              </label>
-              <Select value={lessonType} onValueChange={setLessonType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn loại bài học" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="video">Video</SelectItem>
-                  <SelectItem value="document">Bài đọc</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Loại bài học</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={(value) => {
+                      field.onChange(value);
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại bài học" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="video">Video</SelectItem>
+                        <SelectItem value="document">Tài liệu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             {/* Tóm tắt */}
             <FormField
               control={form.control}
@@ -238,6 +298,37 @@ export const CreateLessonModal = ({
                 </FormItem>
               )}
             />
+
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Thời gian phát lại video
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="00"
+                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-xs text-gray-500 flex items-center">
+                      <InfoCircle
+                        variant="Bold"
+                        size={16}
+                        color="#637381"
+                      />
+                      <span className="ml-1">Giờ</span>
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             {/* Thêm URL Video */}
             {lessonType === "video" && (
               <>
@@ -264,35 +355,6 @@ export const CreateLessonModal = ({
                   )}
                 />
                 {/* Thời gian phát lại video */}
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="duration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">
-                          Thời gian phát lại video
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="00"
-                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            {...field}
-                          />
-                        </FormControl>
-                        <p className="text-xs text-gray-500 flex items-center">
-                          <InfoCircle
-                            variant="Bold"
-                            size={16}
-                            color="#637381"
-                          />
-                          <span className="ml-1">Giờ</span>
-                        </p>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
                 {/* File đính kèm */}
                 <FormField

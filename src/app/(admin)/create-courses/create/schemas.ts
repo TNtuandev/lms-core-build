@@ -53,7 +53,8 @@ export const lessonSchema = z.object({
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
-  thumbnail: z.any().optional()
+  thumbnail: z.any().optional(),
+  type: z.string().optional()
 });
 
 // Type definitions

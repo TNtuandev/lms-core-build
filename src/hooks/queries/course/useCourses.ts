@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { courseAPI } from "@/api/endpoints/course.api";
 import { CourseFilters } from "@/api/types/course.type";
+import { instructorAPI } from "@/api/endpoints/Instructor.api";
 
 export const courseKeys = {
   all: ["courses"] as const,
@@ -11,6 +12,8 @@ export const courseKeys = {
   related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
   modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
+  review: (courseId: string) => [...courseKeys.all, "review", courseId] as const,
+  instructor: (courseId: string) => [...courseKeys.all, "instructor", courseId] as const,
 };
 
 export const useCourses = (filters?: CourseFilters) => {
@@ -62,6 +65,24 @@ export const useModule = (courseId: string) => {
     queryKey: courseKeys.modules(courseId),
     queryFn: () => courseAPI.getModule(courseId),
     enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useReview = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.review(courseId),
+    queryFn: () => courseAPI.getReview(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useInstructorProfile = (userId: string) => {
+  return useQuery({
+    queryKey: courseKeys.review(userId),
+    queryFn: () => instructorAPI.getInstructorProfile(userId),
+    enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

@@ -205,6 +205,32 @@ export interface FAQsResponse {
   data: FAQ[];
 }
 
+interface LessonModule {
+  id: string;
+  moduleId: string;
+  title: string;
+  shortDescription: string;
+  order: number;
+  type: 'ARTICLE' | 'VIDEO' | 'QUIZ' | string; // Extend types as needed
+  duration: number; // in minutes
+  isPreviewable: boolean;
+  description: string;
+  thumbnail: string | null;
+  attachment: string | null;
+}
+
+interface Module {
+  id: string;
+  title: string;
+  shortDescription: string;
+  order: number;
+  lessons: LessonModule[];
+}
+
+export interface ModuleResponse {
+  data: Module[];
+}
+
 export interface ICreateCourseRequest {
   title: string
   slug?: string

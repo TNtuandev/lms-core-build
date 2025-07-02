@@ -23,7 +23,7 @@ import {
   useCourseBySlug,
   useRelatedCourses,
   useFAQs,
-  useModule,
+  useModule, useReview, useInstructorProfile
 } from "@/hooks/queries/course/useCourses";
 
 // interface PageProps {
@@ -57,8 +57,11 @@ export default function CourseDetailPage() {
 
   // Fetch FAQs when we have course detail
   const { data: moduleData } = useModule(courseDetail?.id || "");
+  const { data: reviewData } = useReview(courseDetail?.id || "");
+  const { data: instructorProfileData } = useInstructorProfile(courseDetail?.owner?.id || "");
 
-  console.log(moduleData, "--moduleData");
+  console.log(reviewData, "--reviewData");
+  console.log(instructorProfileData, "--instructorProfileData");
 
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
@@ -509,7 +512,7 @@ export default function CourseDetailPage() {
             >
               <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>
               <div className="space-y-2">
-                {[1, 2, 3].map((_, index) => (
+                {moduleData?.data && moduleData.data?.length > 0  && moduleData.data.map((item, index) => (
                   <div
                     role="presentation"
                     className="p-4 rounded-lg bg-gray-50 cursor-pointer"
@@ -518,7 +521,7 @@ export default function CourseDetailPage() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">Giới thiệu về UI/UX</h4>
+                        <h4 className="font-semibold">{item.title}</h4>
                         <div className="bg-[#919EAB29] p-1 rounded">
                           <span className="text-sm text-gray-500 font-semibold">
                             1 giờ 12 phút

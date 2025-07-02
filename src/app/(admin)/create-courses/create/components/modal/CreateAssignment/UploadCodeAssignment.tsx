@@ -10,13 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useRef, useState } from "react";
@@ -32,57 +31,82 @@ import Image from "next/image";
 import { InfoCircle } from "iconsax-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { cpp } from "@codemirror/lang-cpp";
-
-const uploadAssignmentSchema = z.object({
-  title: z.string().min(1, "Tiêu đề không được để trống"),
-  type: z.enum(["coding"]),
-  content: z.string().min(1, "Nội dung không được để trống"),
-  inputData: z.any().optional(),
-  outputData: z.any().optional(),
-  suggestion: z.string().optional(),
-  sampleData: z.string().optional(),
-  answer: z.string().optional(),
-});
-type UploadAssignmentFormData = z.infer<typeof uploadAssignmentSchema>;
+import {
+  UploadAssignmentFormData,
+  uploadAssignmentSchema,
+} from "../../../schemas";
+import { IModule } from "@/hooks/queries/course/useModuleCourse";
+import {useCreateCourseContext} from "@/context/CreateCourseProvider";
+import {useCreateLessonPractice, useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UploadAssignmentFormData) => void;
+  moduleItem: IModule;
 }
 
 export const UploadCodeAssignment = ({
   isOpen,
   onClose,
   onSubmit,
+  moduleItem,
 }: UploadCodeAssignmentProps) => {
   const [inputDataFile, setInputDataFile] = useState<File | null>(null);
   const [outputDataFile, setOutputDataFile] = useState<File | null>(null);
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const inputDataInputRef = useRef<HTMLInputElement>(null);
   const outputDataInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
+
+  const {courseData} = useCreateCourseContext()
+
 
   const form = useForm<UploadAssignmentFormData>({
     resolver: zodResolver(uploadAssignmentSchema),
     defaultValues: {
       title: "",
-      type: "coding",
-      content: "",
+      practiceType: "coding",
+      shortDescription: "",
+      description: "",
       inputData: undefined,
       outputData: undefined,
       suggestion: "",
       sampleData: "",
       answer: "",
+      attachmentUrl: undefined,
+      passScore: 0,
+      duration: "",
     },
   });
 
+  const practiceType = form.watch("practiceType");
+
+  const createPractice = useCreateLessonPractice(courseData?.id as string, moduleItem?.id as string)
+
+
   const handleClose = () => {
     form.reset();
+    setInputDataFile(null);
+    setOutputDataFile(null);
+    setAttachmentFile(null);
     onClose();
   };
 
   const handleSubmit = (data: UploadAssignmentFormData) => {
-    onSubmit(data);
-    handleClose();
+    const formRequest = {
+      title: data.title,
+      practiceType: data.practiceType,
+      shortDescription: data.shortDescription ?? '',
+      description: data.description,
+      attachmentUrl: data.attachmentUrl || null,
+    }
+    createPractice.mutate(formRequest, {
+      onSuccess: (res) => {
+        onSubmit(res);
+        handleClose();
+      }
+    })
   };
 
   return (
@@ -115,17 +139,20 @@ export const UploadCodeAssignment = ({
             {/* Loại bài tập */}
             <FormField
               control={form.control}
-              name="type"
+              name="practiceType"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Loại bài tập</FormLabel>
                   <FormControl>
-                    <Select value={field.value} disabled>
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="h-12">
                         <SelectValue placeholder="Coding" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="coding">Coding</SelectItem>
+                        <SelectItem value="upload_file">
+                          Tải lên tài liệu
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -136,7 +163,7 @@ export const UploadCodeAssignment = ({
             {/* Nội dung */}
             <FormField
               control={form.control}
-              name="content"
+              name="shortDescription"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nội dung</FormLabel>
@@ -151,226 +178,383 @@ export const UploadCodeAssignment = ({
                 </FormItem>
               )}
             />
-            {/* Dữ liệu đầu vào */}
+            {/* Mô tả */}
             <FormField
               control={form.control}
-              name="inputData"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Dữ liệu đầu vào
-                  </FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <div
-                      className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
-                      onClick={() => inputDataInputRef.current?.click()}
-                    >
-                      {!inputDataFile ? (
-                        <div className="flex flex-col items-center">
-                          <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
-                            <Image
-                              width={64}
-                              height={64}
-                              alt="file"
-                              src="/images/upload.png"
-                            />
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            Thả hoặc chọn tệp tin
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-4">
-                            Thả tệp tin vào đây hoặc nhấp để{" "}
-                            <span className="text-blue-600 hover:underline cursor-pointer">
-                              duyệt
-                            </span>{" "}
-                            từ máy tính
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <p className="text-sm text-gray-500 mb-2">
-                            {inputDataFile.name}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            type="button"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setInputDataFile(null);
-                              field.onChange(null);
-                              if (inputDataInputRef.current) {
-                                inputDataInputRef.current.value = "";
+                    <Textarea placeholder="Mô tả chi tiết" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Fields cho practiceType = "coding" */}
+            {practiceType === "coding" && (
+              <>
+                {/* Dữ liệu đầu vào */}
+                <FormField
+                  control={form.control}
+                  name="inputData"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Dữ liệu đầu vào
+                      </FormLabel>
+                      <FormControl>
+                        <div
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          onClick={() => inputDataInputRef.current?.click()}
+                        >
+                          {!inputDataFile ? (
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                                <Image
+                                  width={64}
+                                  height={64}
+                                  alt="file"
+                                  src="/images/upload.png"
+                                />
+                              </div>
+                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                Thả hoặc chọn tệp tin
+                              </h3>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Thả tệp tin vào đây hoặc nhấp để{" "}
+                                <span className="text-blue-600 hover:underline cursor-pointer">
+                                  duyệt
+                                </span>{" "}
+                                từ máy tính
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <p className="text-sm text-gray-500 mb-2">
+                                {inputDataFile.name}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setInputDataFile(null);
+                                  field.onChange(null);
+                                  if (inputDataInputRef.current) {
+                                    inputDataInputRef.current.value = "";
+                                  }
+                                }}
+                              >
+                                Xóa
+                              </Button>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept=".txt,.json"
+                            ref={inputDataInputRef}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setInputDataFile(file);
+                                field.onChange(file);
                               }
                             }}
-                          >
-                            Xóa
-                          </Button>
+                            className="hidden"
+                            id="input-data-upload"
+                          />
                         </div>
-                      )}
-                      <input
-                        type="file"
-                        accept=".txt,.json"
-                        ref={inputDataInputRef}
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setInputDataFile(file);
-                            field.onChange(file);
-                          }
-                        }}
-                        className="hidden"
-                        id="input-data-upload"
-                      />
-                    </div>
-                  </FormControl>
-                  <p className="text-xs text-gray-500 gap-1 mt-2 flex items-center">
-                    <InfoCircle variant="Bold" size={16} color="#637381" />
-                    <span className="font-medium">Kích thước:</span> 10Mb. {" "}
-                    <span className="font-medium">Hỗ trợ tệp:</span> TXT, JSON
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Dữ liệu đầu ra */}
-            <FormField
-              control={form.control}
-              name="outputData"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Dữ liệu đầu ra
-                  </FormLabel>
-                  <FormControl>
-                    <div
-                      className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
-                      onClick={() => outputDataInputRef.current?.click()}
-                    >
-                      {!outputDataFile ? (
-                        <div className="flex flex-col items-center">
-                          <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
-                            <Image
-                              width={64}
-                              height={64}
-                              alt="file"
-                              src="/images/upload.png"
-                            />
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            Thả hoặc chọn tệp tin
-                          </h3>
-                          <p className="text-sm text-gray-500 mb-4">
-                            Thả tệp tin vào đây hoặc nhấp để{" "}
-                            <span className="text-blue-600 hover:underline cursor-pointer">
-                              duyệt
-                            </span>{" "}
-                            từ máy tính
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <p className="text-sm text-gray-500 mb-2">
-                            {outputDataFile.name}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            type="button"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setOutputDataFile(null);
-                              field.onChange(null);
-                              if (outputDataInputRef.current) {
-                                outputDataInputRef.current.value = "";
+                      </FormControl>
+                      <p className="text-xs text-gray-500 gap-1 mt-2 flex items-center">
+                        <InfoCircle variant="Bold" size={16} color="#637381" />
+                        <span className="font-medium">
+                          Kích thước:
+                        </span> 10Mb.{" "}
+                        <span className="font-medium">Hỗ trợ tệp:</span> TXT,
+                        JSON
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Dữ liệu đầu ra */}
+                <FormField
+                  control={form.control}
+                  name="outputData"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Dữ liệu đầu ra
+                      </FormLabel>
+                      <FormControl>
+                        <div
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          onClick={() => outputDataInputRef.current?.click()}
+                        >
+                          {!outputDataFile ? (
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                                <Image
+                                  width={64}
+                                  height={64}
+                                  alt="file"
+                                  src="/images/upload.png"
+                                />
+                              </div>
+                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                Thả hoặc chọn tệp tin
+                              </h3>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Thả tệp tin vào đây hoặc nhấp để{" "}
+                                <span className="text-blue-600 hover:underline cursor-pointer">
+                                  duyệt
+                                </span>{" "}
+                                từ máy tính
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <p className="text-sm text-gray-500 mb-2">
+                                {outputDataFile.name}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOutputDataFile(null);
+                                  field.onChange(null);
+                                  if (outputDataInputRef.current) {
+                                    outputDataInputRef.current.value = "";
+                                  }
+                                }}
+                              >
+                                Xóa
+                              </Button>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept=".txt,.json"
+                            ref={outputDataInputRef}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setOutputDataFile(file);
+                                field.onChange(file);
                               }
                             }}
-                          >
-                            Xóa
-                          </Button>
+                            className="hidden"
+                            id="output-data-upload"
+                          />
                         </div>
-                      )}
-                      <input
-                        type="file"
-                        accept=".txt,.json"
-                        ref={outputDataInputRef}
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setOutputDataFile(file);
-                            field.onChange(file);
+                      </FormControl>
+                      <p className="text-xs text-gray-500 gap-1 mt-2 flex items-center">
+                        <InfoCircle variant="Bold" size={16} color="#637381" />
+                        <span className="font-medium">
+                          Kích thước:
+                        </span> 10Mb.{" "}
+                        <span className="font-medium">Hỗ trợ tệp:</span> TXT,
+                        JSON
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Gợi ý */}
+                <FormField
+                  control={form.control}
+                  name="suggestion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gợi ý</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Gợi ý" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Dữ liệu mẫu */}
+                <FormField
+                  control={form.control}
+                  name="sampleData"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>
+                      <FormControl>
+                        <CodeMirror
+                          value={field.value || ""}
+                          height="200px"
+                          extensions={[cpp()]}
+                          theme="light"
+                          onChange={field.onChange}
+                          basicSetup={{ lineNumbers: true }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Đáp án */}
+                <FormField
+                  control={form.control}
+                  name="answer"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Đáp án</FormLabel>
+                      <FormControl>
+                        <CodeMirror
+                          value={field.value || ""}
+                          height="200px"
+                          extensions={[cpp()]}
+                          theme="light"
+                          onChange={field.onChange}
+                          basicSetup={{ lineNumbers: true }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            {/* Fields cho practiceType = "upload_file" */}
+            {practiceType === "upload_file" && (
+              <>
+                {/* Tải lên tệp đính kèm */}
+                <FormField
+                  control={form.control}
+                  name="attachmentUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Tải lên tệp đính kèm
+                      </FormLabel>
+                      <FormControl>
+                        <div
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          onClick={() => attachmentInputRef.current?.click()}
+                        >
+                          {!attachmentFile ? (
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                                <Image
+                                  width={64}
+                                  height={64}
+                                  alt="file"
+                                  src="/images/upload.png"
+                                />
+                              </div>
+                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                Thả hoặc chọn tệp tin
+                              </h3>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Thả tệp tin vào đây hoặc nhấp để{" "}
+                                <span className="text-blue-600 hover:underline cursor-pointer">
+                                  duyệt
+                                </span>{" "}
+                                từ máy tính
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <p className="text-sm text-gray-500 mb-2">
+                                {attachmentFile.name}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setAttachmentFile(null);
+                                  field.onChange(null);
+                                  if (attachmentInputRef.current) {
+                                    attachmentInputRef.current.value = "";
+                                  }
+                                }}
+                              >
+                                Xóa
+                              </Button>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx,.txt"
+                            ref={attachmentInputRef}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setAttachmentFile(file);
+                                field.onChange(file);
+                              }
+                            }}
+                            className="hidden"
+                            id="attachment-upload"
+                          />
+                        </div>
+                      </FormControl>
+                      <p className="text-xs text-gray-500 gap-1 mt-2 flex items-center">
+                        <InfoCircle variant="Bold" size={16} color="#637381" />
+                        <span className="font-medium">
+                          Kích thước:
+                        </span> 10Mb.{" "}
+                        <span className="font-medium">Hỗ trợ tệp:</span> PDF,
+                        DOC, DOCX, TXT
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Thời gian tối đa */}
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thời gian tối đa (phút)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Nhập thời gian tối đa"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Điểm đạt */}
+                <FormField
+                  control={form.control}
+                  name="passScore"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Điểm đạt</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Nhập điểm đạt"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
                           }
-                        }}
-                        className="hidden"
-                        id="output-data-upload"
-                      />
-                    </div>
-                  </FormControl>
-                  <p className="text-xs text-gray-500 gap-1 mt-2 flex items-center">
-                    <InfoCircle variant="Bold" size={16} color="#637381" />
-                    <span className="font-medium">Kích thước:</span> 10Mb. {" "}
-                    <span className="font-medium">Hỗ trợ tệp:</span> TXT, JSON
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Gợi ý */}
-            <FormField
-              control={form.control}
-              name="suggestion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gợi ý</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Gợi ý" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Dữ liệu mẫu */}
-            <FormField
-              control={form.control}
-              name="sampleData"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>
-                  <FormControl>
-                    <CodeMirror
-                      value={field.value}
-                      height="200px"
-                      extensions={[cpp()]}
-                      theme="light"
-                      readOnly
-                      basicSetup={{ lineNumbers: true }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Đáp án */}
-            <FormField
-              control={form.control}
-              name="answer"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Đáp án</FormLabel>
-                  <FormControl>
-                    <CodeMirror
-                      value={field.value}
-                      height="200px"
-                      extensions={[cpp()]}
-                      theme="light"
-                      readOnly
-                      basicSetup={{ lineNumbers: true }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
             <DialogFooter className="flex justify-end space-x-3 pt-4 border-t border-[#919EAB52]">
               <Button
                 type="button"

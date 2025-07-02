@@ -39,15 +39,15 @@ export interface IRequestQuizz {
 }
 
 export interface IRequestPractices {
-    duration: number
+    duration?: number
     title: string
     shortDescription: string
     description: string
-    order: number
-    isPreviewable: boolean
-    attachmentUrl: string
+    order?: number
+    isPreviewable?: boolean
+    attachmentUrl?: string
     practiceType: string
-    notes: string
+    notes?: string
 }
 
 export const useCreateLessonArticle = (courseId: string, moduleId: string, onSuccessCallback?: (data: any) => void) => {

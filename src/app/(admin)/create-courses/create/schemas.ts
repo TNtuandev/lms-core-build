@@ -57,6 +57,21 @@ export const lessonSchema = z.object({
   type: z.string().optional()
 });
 
+export const uploadAssignmentSchema = z.object({
+  title: z.string().min(1, "Tiêu đề không được để trống"),
+  practiceType: z.string().min(1, "Vui lòng chọn loại bài tập"),
+  shortDescription: z.string().optional(),
+  description: z.string().min(1, "Mô tả không được để trống"),
+  attachmentUrl: z.any().optional(),
+  passScore: z.number().optional(),
+  duration: z.string().optional(),
+  inputData: z.any().optional(),
+  outputData: z.any().optional(),
+  suggestion: z.string().optional(),
+  sampleData: z.string().optional(),
+  answer: z.string().optional(),
+});
+
 // Type definitions
 export type Step1FormData = z.infer<typeof step1Schema>;
 export type InfoFormData = z.infer<typeof infoCourseSchema>;
@@ -66,3 +81,4 @@ export type PricingCourseFormData = z.infer<typeof pricingCourseSchema>;
 export type fullCourseFormData = z.infer<typeof fullCourseSchema>
 export type ModuleCourseFormData = z.infer<typeof moduleCourseSchema>;
 export type LessonFormData = z.infer<typeof lessonSchema>;
+export type UploadAssignmentFormData = z.infer<typeof uploadAssignmentSchema>;

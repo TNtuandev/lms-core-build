@@ -262,7 +262,10 @@ export default function CourseBuilderSection({
                         Bài kiểm tra
                       </Button>
                       <Button
-                        onClick={() => setIsOpenModalCreateAssignmentCode(true)}
+                        onClick={() => {
+                          setIsOpenModalCreateAssignmentCode(true)
+                          setModuleItem(chapter)
+                        }}
                         className="border-primary-main/48"
                         type="button"
                         variant="outline"
@@ -311,7 +314,11 @@ export default function CourseBuilderSection({
       )}
       <UploadCodeAssignment
         isOpen={isOpenModalCreateAssignmentCode}
-        onClose={() => setIsOpenModalCreateAssignmentCode(false)}
+        moduleItem={moduleItem}
+        onClose={() => {
+          setModuleItem(null)
+          setIsOpenModalCreateAssignmentCode(false)
+        }}
         onSubmit={handleSubmitCreateAssignmentCode}
       />
       <UploadArticleAssignment

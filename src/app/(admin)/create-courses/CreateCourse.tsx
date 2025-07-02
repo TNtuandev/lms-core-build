@@ -25,6 +25,7 @@ import { ListStatusCourse } from "@/contants/course";
 import {EStatusCourse, useStatusCourse} from "@/hooks/queries/course/useStatusCourse";
 import {Course} from "@/api/types/course.type";
 import {CreateCourseProvider, useCreateCourseContext} from "@/context/CreateCourseProvider";
+import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
 
 const STEP_SUBMIT_CREATE_COURSE = 5
 
@@ -149,6 +150,17 @@ function CreateCourse() {
       stepIndex: 6,
       component: (
         <CourseBuilderSection
+          onNext={handleStepNext}
+          onBack={handleStepBack}
+          initialData={formData}
+        />
+      ),
+    },
+    {
+      label: "FAQ khoá học",
+      stepIndex: 7,
+      component: (
+        <CourseFAQ
           onNext={handleStepNext}
           onBack={handleStepBack}
           initialData={formData}

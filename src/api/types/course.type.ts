@@ -199,6 +199,7 @@ export interface FAQ {
   order: string;
   status: string;
   productId: string;
+  isExpanded?: boolean;
 }
 
 export interface FAQsResponse {

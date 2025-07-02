@@ -99,7 +99,8 @@ export const UploadCodeAssignment = ({
       practiceType: data.practiceType,
       shortDescription: data.shortDescription ?? '',
       description: data.description,
-      attachmentUrl: data.attachmentUrl || null,
+      attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
+      duration: data.duration ? Number(data.duration) : 0,
     }
     createPractice.mutate(formRequest, {
       onSuccess: (res) => {

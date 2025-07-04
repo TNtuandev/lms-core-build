@@ -27,6 +27,7 @@ import {
   useReview,
   useInstructorProfile,
 } from "@/hooks/queries/course/useCourses";
+import { useCreateReview } from "@/hooks/queries/course/useCreateRview";
 
 // interface PageProps {
 //   params: {
@@ -42,6 +43,14 @@ export default function CourseDetailPage() {
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
+
+  // Initialize createReview hook with courseDetail.id for query invalidation
+  const { createReview, isLoading: isCreatingReview } = useCreateReview(
+    courseDetail?.id,
+    () => {
+      setOpenReview(false); // Close modal on success
+    }
+  );
 
   // Fetch related courses when we have course detail
   const {
@@ -225,6 +234,24 @@ export default function CourseDetailPage() {
     });
 
     router.push(Routes.checkout);
+  };
+
+  const handleUpdateReview = (rating: number, comment: string, title?: string) => {
+    if (!courseDetail?.id) {
+      console.error("Course ID not available");
+      return;
+    }
+
+    const reviewData = {
+      data: {
+        rating: rating,
+        content: comment,
+        title: title || "",
+      },
+      productId: courseDetail.id,
+    };
+
+    createReview.mutate(reviewData);
   };
 
   return (
@@ -712,10 +739,9 @@ export default function CourseDetailPage() {
                 <ReviewDialog
                   open={openReview}
                   onOpenChange={setOpenReview}
-                  onSubmit={(rating, comment) => {
-                    console.log(rating, comment);
-                    // Xử lý gửi đánh giá ở đây
-                    // handleUpdateReview(rating, comment)
+                  isLoading={isCreatingReview}
+                  onSubmit={(rating, comment, title) => {
+                    handleUpdateReview(rating, comment, title);
                   }}
                 />
               </div>

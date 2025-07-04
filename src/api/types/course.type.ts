@@ -265,3 +265,12 @@ export interface ICreateCourseRequest {
   regularPrice: number
   discountedPrice?: number
 }
+
+export interface ICreateReviewRequest {
+  data: {
+    rating: number;
+    content: string;
+    title: string;
+  };
+  productId: string
+}

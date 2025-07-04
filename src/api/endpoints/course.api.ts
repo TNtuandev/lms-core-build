@@ -5,7 +5,8 @@ import {
   ICreateCourseRequest,
   FAQ,
   ModuleResponse,
-  RelatedCoursesResponse, ReviewFAQsResponse
+  ReviewFAQsResponse,
+  RelatedCourse, ICreateReviewRequest
 } from "@/api/types/course.type";
 import api from "@/api/api";
 
@@ -58,6 +59,12 @@ export const courseAPI = {
     const { data } = await api.get(`/products/${courseId}/reviews`);
     return data;
   },
+
+  createReview: async (dataReview: ICreateReviewRequest): Promise<any> => {
+    const { data } = await api.post(`/products/${dataReview.productId}/reviews`, dataReview.data);
+    return data;
+  },
+
 
   createCourse: async (courseData: ICreateCourseRequest): Promise<any> => {
     const { data } = await api.post("/cms/courses", courseData);

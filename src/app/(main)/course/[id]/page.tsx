@@ -67,6 +67,47 @@ export default function CourseDetailPage() {
   console.log(reviewData, "--reviewData");
   console.log(instructorProfileData?.data, "--instructorProfileData");
 
+  // Helper function to calculate rating distribution
+  const calculateRatingStats = () => {
+    const reviews =
+      reviewData?.data?.filter((review) => review.status === "approved") || [];
+    const totalReviews = reviews.length;
+
+    if (totalReviews === 0) {
+      return { ratingCounts: [0, 0, 0, 0, 0], totalReviews: 0 };
+    }
+
+    const ratingCounts = [0, 0, 0, 0, 0]; // Index 0 = 1 star, Index 4 = 5 stars
+    reviews.forEach((review) => {
+      if (review.rating >= 1 && review.rating <= 5) {
+        ratingCounts[review.rating - 1]++;
+      }
+    });
+
+    return { ratingCounts, totalReviews };
+  };
+
+  // Helper function to format user display name
+  const formatUserDisplayName = (userId: string) => {
+    return `Người dùng ***${userId.slice(-4)}`;
+  };
+
+  // Helper function to render star rating
+  const renderStarRating = (rating: number) => {
+    return (
+      <div className="flex ">
+        {Array.from({ length: rating }, (_, i) => (
+          <span className="text-[#FFB145]" key={i}>★</span>
+        ))}
+        {Array.from({ length: 5 - rating }, (_, i) => (
+          <span key={i} className="text-gray-300">
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
     "overview" | "content" | "details" | "instructor" | "reviews"
@@ -681,97 +722,51 @@ export default function CourseDetailPage() {
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="bg-[#FFF8EE] p-6 rounded-lg text-center min-w-[200px]">
                   <div className="text-6xl font-bold text-[#212B36] mb-2">
-                    4.8
+                    {courseDetail.ratingAvg || 0}
                   </div>
                   <div className="text-sm text-gray-500">
-                    124.687
+                    {courseDetail.ratingCnt?.toLocaleString() || 0}
                     <br />
                     Lượt đánh giá
                   </div>
                 </div>
 
                 <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-[#FFB145]">★★★★★</div>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                      <div
-                        className="h-2 bg-[#FFB145] rounded-full"
-                        style={{ width: "63%" }}
-                      ></div>
-                    </div>
-                    <div className="w-10 text-sm text-gray-600 text-right">
-                      63%
-                    </div>
-                  </div>
+                  {(() => {
+                    const { ratingCounts, totalReviews } =
+                      calculateRatingStats();
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-[#FFB145]">
-                      ★★★★
-                      <span className="text-gray-300">★</span>
-                    </div>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                      <div
-                        className="h-2 bg-[#FFB145] rounded-full"
-                        style={{ width: "29%" }}
-                      ></div>
-                    </div>
-                    <div className="w-10 text-sm text-gray-600 text-right">
-                      29%
-                    </div>
-                  </div>
+                    if (totalReviews === 0) {
+                      return (
+                        <div className="text-gray-500">
+                          Chưa có đánh giá nào
+                        </div>
+                      );
+                    }
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-[#FFB145]">
-                      ★★★
-                      <span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                    </div>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                      <div
-                        className="h-2 bg-[#FFB145] rounded-full"
-                        style={{ width: "6%" }}
-                      ></div>
-                    </div>
-                    <div className="w-10 text-sm text-gray-600 text-right">
-                      6%
-                    </div>
-                  </div>
+                    return [5, 4, 3, 2, 1].map((star) => {
+                      const count = ratingCounts[star - 1];
+                      const percentage =
+                        totalReviews > 0
+                          ? Math.round((count / totalReviews) * 100)
+                          : 0;
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-[#FFB145]">
-                      ★★
-                      <span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                    </div>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                      <div
-                        className="h-2 bg-[#FFB145] rounded-full"
-                        style={{ width: "1%" }}
-                      ></div>
-                    </div>
-                    <div className="w-10 text-sm text-gray-600 text-right">
-                      1%
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className="flex text-[#FFB145]">
-                      ★<span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                      <span className="text-gray-300">★</span>
-                    </div>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                      <div
-                        className="h-2 bg-[#FFB145] rounded-full"
-                        style={{ width: "1%" }}
-                      ></div>
-                    </div>
-                    <div className="w-10 text-sm text-gray-600 text-right">
-                      1%
-                    </div>
-                  </div>
+                      return (
+                        <div key={star} className="flex items-center gap-2">
+                          {renderStarRating(star)}
+                          <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                            <div
+                              className="h-2 bg-[#FFB145] rounded-full"
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <div className="w-10 text-sm text-gray-600 text-right">
+                            {percentage}%
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </div>
             </div>
@@ -779,103 +774,82 @@ export default function CourseDetailPage() {
             {/* Featured Reviews */}
             <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
               <h3 className="text-xl font-bold mb-6">Đánh giá nổi bật</h3>
-              <div className="space-y-3">
-                {/* Review 1 */}
-                <div
-                  className={`border-b border-dashed pb-3 ${!showMoreReviews && "border-b-0 pb-0"}`}
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0">
-                      <Image
-                        src="/images/banner-sign-in.png"
-                        alt="Linda Wilkinson"
-                        fill
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-[#212B36]">
-                        Linda Wilkinson
-                      </h4>
-                      <div className="flex text-[#FFB145] mt-1">★★★★★</div>
-                      <p className="text-gray-600">
-                        There are many variations of passages of Lorem Ipsum
-                        available, but the majority have suffered alteration in
-                        some form, by injected humour.
-                      </p>
-                    </div>
-                  </div>
+
+              {reviewData?.data && reviewData.data.length > 0 ? (
+                <div className="space-y-3">
+                  {(() => {
+                    const reviewsToShow = showMoreReviews
+                      ? reviewData.data.filter(
+                          (review) => review.status === "approved",
+                        )
+                      : reviewData.data
+                          .filter((review) => review.status === "approved")
+                          .slice(0, 1);
+
+                    return reviewsToShow.map((review, index) => (
+                      <div
+                        key={review.id}
+                        className={`${
+                          index < reviewsToShow.length - 1 && showMoreReviews
+                            ? "border-b border-dashed pb-3"
+                            : ""
+                        }`}
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0 bg-gray-200">
+                            {/* Placeholder for user avatar - you may need to fetch user data separately */}
+                            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+                              User
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-[#212B36]">
+                              {/* You may need to fetch user info separately as it's not in review data */}
+                              {formatUserDisplayName(review.userId)}
+                            </h4>
+                            <div className="flex text-[#FFB145] mt-1">
+                              {renderStarRating(review.rating)}
+                            </div>
+                            <div className="text-sm text-gray-500 mt-1">
+                              {new Date(review.createdAt).toLocaleDateString(
+                                "vi-VN",
+                              )}
+                            </div>
+                            {review.title && (
+                              <h5 className="font-medium text-[#212B36] mt-2">
+                                {review.title}
+                              </h5>
+                            )}
+                            <p className="text-gray-600 mt-2">
+                              {review.content}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ));
+                  })()}
                 </div>
-
-                {showMoreReviews && (
-                  <>
-                    {/* Review 2 */}
-                    <div className="border-b border-dashed pb-3">
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0">
-                          <Image
-                            src="/images/banner-sign-in.png"
-                            alt="Randolph Hand"
-                            fill
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-[#212B36]">
-                            Randolph Hand
-                          </h4>
-                          <div className="flex text-[#FFB145] mt-1">★★★★★</div>
-                        </div>
-                      </div>
-                      <p className="text-gray-600">
-                        There are many variations of passages of Lorem Ipsum
-                        available, but the majority have suffered alteration in
-                        some form, by injected humour.
-                      </p>
-                    </div>
-
-                    {/* Review 3 */}
-                    <div>
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0">
-                          <Image
-                            src="/images/banner-sign-in.png"
-                            alt="Ella Tromp"
-                            fill
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-[#212B36]">
-                            Ella Tromp
-                          </h4>
-                          <div className="flex text-[#FFB145] mt-1">★★★★★</div>
-                        </div>
-                      </div>
-                      <p className="text-gray-600">
-                        There are many variations of passages of Lorem Ipsum
-                        available, but the majority have suffered alteration in
-                        some form, by injected humour.
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {reviewData?.data && reviewData.data.length > 1 && (
-                <button
-                  onClick={() => setShowMoreReviews(!showMoreReviews)}
-                  className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
-                >
-                  Hiển thị thêm
-                  {!showMoreReviews ? (
-                    <ArrowDown2 size="20" color="#2F57EF" />
-                  ) : (
-                    <ArrowUp2 size="20" color="#2F57EF" />
-                  )}
-                </button>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">Chưa có đánh giá nào</p>
+                </div>
               )}
 
+              {reviewData?.data &&
+                reviewData.data.filter((review) => review.status === "approved")
+                  .length > 1 && (
+                  <button
+                    onClick={() => setShowMoreReviews(!showMoreReviews)}
+                    className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
+                  >
+                    {showMoreReviews ? "Ẩn bớt" : "Hiển thị thêm"}
+                    {!showMoreReviews ? (
+                      <ArrowDown2 size="20" color="#2F57EF" />
+                    ) : (
+                      <ArrowUp2 size="20" color="#2F57EF" />
+                    )}
+                  </button>
+                )}
             </div>
 
             <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">

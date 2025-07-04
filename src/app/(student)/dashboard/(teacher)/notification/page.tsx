@@ -4,9 +4,8 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Table } from "antd";
-import { Trash2 } from "lucide-react";
 import "antd/dist/reset.css";
-import {Edit, Edit2, Trash} from "iconsax-react";
+import {Edit, Trash} from "iconsax-react";
 
 const dataSource = [
   {

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
 import {Eye, Trash} from "iconsax-react";
 
 interface TestScore {

@@ -1,7 +1,7 @@
 "use client";
 
 import CourseCard from "@/components/courses/course-card";
-import React, { useState } from "react";
+import React from "react";
 import { Course, CourseLabel } from "@/api/types/course.type";
 import { Loader2 } from "lucide-react";
 

@@ -3,8 +3,9 @@ import {
   CoursesResponse,
   CourseDetail,
   ICreateCourseRequest,
-  RelatedCourse,
-  FAQ, ModuleResponse
+  FAQ,
+  ModuleResponse,
+  RelatedCoursesResponse, ReviewFAQsResponse
 } from "@/api/types/course.type";
 import api from "@/api/api";
 
@@ -53,7 +54,7 @@ export const courseAPI = {
     return data;
   },
 
-  getReview: async (courseId: string): Promise<FAQ[]> => {
+  getReview: async (courseId: string): Promise<ReviewFAQsResponse> => {
     const { data } = await api.get(`/products/${courseId}/reviews`);
     return data;
   },
@@ -84,86 +85,208 @@ export const courseAPI = {
   },
 
   createModule: async (courseId: string, moduleData: any): Promise<any> => {
-    const { data } = await api.post(`/cms/courses/${courseId}/modules`, moduleData);
+    const { data } = await api.post(
+      `/cms/courses/${courseId}/modules`,
+      moduleData,
+    );
     return data;
   },
 
   reorderModules: async (courseId: string, reorderData: any): Promise<any> => {
-    const { data } = await api.patch(`/cms/courses/${courseId}/modules/reorder`, reorderData);
+    const { data } = await api.patch(
+      `/cms/courses/${courseId}/modules/reorder`,
+      reorderData,
+    );
     return data;
   },
 
   // LESSONS API
-  createLessonArticle: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/articles`, data);
+  createLessonArticle: async (
+    courseId: string,
+    moduleId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/articles`,
+      data,
+    );
     return res;
   },
-  updateLessonArticle: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/articles/${lessonId}`, data);
+  updateLessonArticle: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/modules/${moduleId}/lessons/articles/${lessonId}`,
+      data,
+    );
     return res;
   },
-  createLessonVideo: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/videos`, data);
+  createLessonVideo: async (
+    courseId: string,
+    moduleId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/videos`,
+      data,
+    );
     return res;
   },
-  updateLessonVideo: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/videos/${lessonId}`, data);
+  updateLessonVideo: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/modules/${moduleId}/lessons/videos/${lessonId}`,
+      data,
+    );
     return res;
   },
 
   // QUIZZES API
-  createLessonQuiz: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/quizzes`, data);
+  createLessonQuiz: async (
+    courseId: string,
+    moduleId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/quizzes`,
+      data,
+    );
     return res;
   },
-  updateLessonQuiz: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/quizzes/${lessonId}`, data);
+  updateLessonQuiz: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/modules/${moduleId}/lessons/quizzes/${lessonId}`,
+      data,
+    );
     return res;
   },
 
   // PRACTICES API
-  createLessonPractice: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/practices`, data);
+  createLessonPractice: async (
+    courseId: string,
+    moduleId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/practices`,
+      data,
+    );
     return res;
   },
-  updateLessonPractice: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/practices/${lessonId}`, data);
+  updateLessonPractice: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/modules/${moduleId}/lessons/practices/${lessonId}`,
+      data,
+    );
     return res;
   },
 
   // LESSON STATUS API
-  publishLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/publish`);
+  publishLesson: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/publish`,
+    );
     return res;
   },
-  draftLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/draft`);
+  draftLesson: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/draft`,
+    );
     return res;
   },
-  archiveLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/archive`);
+  archiveLesson: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/archive`,
+    );
     return res;
   },
 
   // QUIZ QUESTION API
-  createQuizQuestion: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions`, data);
+  createQuizQuestion: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions`,
+      data,
+    );
     return res;
   },
-  updateQuizQuestion: async (courseId: string, moduleId: string, lessonId: string, questionId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}`, data);
+  updateQuizQuestion: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    questionId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}`,
+      data,
+    );
     return res;
   },
-  publishQuizQuestion: async (courseId: string, moduleId: string, lessonId: string, questionId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/publish`);
+  publishQuizQuestion: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    questionId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/publish`,
+    );
     return res;
   },
-  draftQuizQuestion: async (courseId: string, moduleId: string, lessonId: string, questionId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/draft`);
+  draftQuizQuestion: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    questionId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/draft`,
+    );
     return res;
   },
-  archiveQuizQuestion: async (courseId: string, moduleId: string, lessonId: string, questionId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/archive`);
+  archiveQuizQuestion: async (
+    courseId: string,
+    moduleId: string,
+    lessonId: string,
+    questionId: string,
+  ): Promise<any> => {
+    const { data: res } = await api.post(
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/archive`,
+    );
     return res;
   },
 
@@ -173,11 +296,11 @@ export const courseAPI = {
     moduleId: string,
     lessonId: string,
     questionId: string,
-    data: any
+    data: any,
   ): Promise<any> => {
     const { data: res } = await api.post(
       `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/options`,
-      data
+      data,
     );
     return res;
   },
@@ -187,11 +310,11 @@ export const courseAPI = {
     lessonId: string,
     questionId: string,
     optionId: string,
-    data: any
+    data: any,
   ): Promise<any> => {
     const { data: res } = await api.patch(
       `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/options/${optionId}`,
-      data
+      data,
     );
     return res;
   },
@@ -200,10 +323,10 @@ export const courseAPI = {
     moduleId: string,
     lessonId: string,
     questionId: string,
-    optionId: string
+    optionId: string,
   ): Promise<any> => {
     const { data: res } = await api.delete(
-      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/options/${optionId}`
+      `/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/questions/${questionId}/options/${optionId}`,
     );
     return res;
   },
@@ -213,20 +336,33 @@ export const courseAPI = {
     const { data: res } = await api.post(`/courses/${courseId}/faqs`, data);
     return res;
   },
-  updateFAQ: async (courseId: string, faqId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/faqs/${faqId}`, data);
+  updateFAQ: async (
+    courseId: string,
+    faqId: string,
+    data: any,
+  ): Promise<any> => {
+    const { data: res } = await api.patch(
+      `/courses/${courseId}/faqs/${faqId}`,
+      data,
+    );
     return res;
   },
   deleteFAQ: async (courseId: string, faqId: string): Promise<any> => {
-    const { data: res } = await api.delete(`/courses/${courseId}/faqs/${faqId}`);
+    const { data: res } = await api.delete(
+      `/courses/${courseId}/faqs/${faqId}`,
+    );
     return res;
   },
   publishFAQ: async (courseId: string, faqId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/faqs/${faqId}/publish`);
+    const { data: res } = await api.post(
+      `/courses/${courseId}/faqs/${faqId}/publish`,
+    );
     return res;
   },
   draftFAQ: async (courseId: string, faqId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/faqs/${faqId}/draft`);
+    const { data: res } = await api.post(
+      `/courses/${courseId}/faqs/${faqId}/draft`,
+    );
     return res;
   },
 };

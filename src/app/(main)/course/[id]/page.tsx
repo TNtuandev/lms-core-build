@@ -23,7 +23,9 @@ import {
   useCourseBySlug,
   useRelatedCourses,
   useFAQs,
-  useModule, useReview, useInstructorProfile
+  useModule,
+  useReview,
+  useInstructorProfile,
 } from "@/hooks/queries/course/useCourses";
 
 // interface PageProps {
@@ -58,10 +60,12 @@ export default function CourseDetailPage() {
   // Fetch FAQs when we have course detail
   const { data: moduleData } = useModule(courseDetail?.id || "");
   const { data: reviewData } = useReview(courseDetail?.id || "");
-  const { data: instructorProfileData } = useInstructorProfile(courseDetail?.owner?.id || "");
+  const { data: instructorProfileData } = useInstructorProfile(
+    courseDetail?.owner?.id || "",
+  );
 
   console.log(reviewData, "--reviewData");
-  console.log(instructorProfileData, "--instructorProfileData");
+  console.log(instructorProfileData?.data, "--instructorProfileData");
 
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
@@ -512,26 +516,28 @@ export default function CourseDetailPage() {
             >
               <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>
               <div className="space-y-2">
-                {moduleData?.data && moduleData.data?.length > 0  && moduleData.data.map((item, index) => (
-                  <div
-                    role="presentation"
-                    className="p-4 rounded-lg bg-gray-50 cursor-pointer"
-                    key={index}
-                    onClick={() => router.push("/lesson")}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">{item.title}</h4>
-                        <div className="bg-[#919EAB29] p-1 rounded">
-                          <span className="text-sm text-gray-500 font-semibold">
-                            1 giờ 12 phút
-                          </span>
+                {moduleData?.data &&
+                  moduleData.data?.length > 0 &&
+                  moduleData.data.map((item, index) => (
+                    <div
+                      role="presentation"
+                      className="p-4 rounded-lg bg-gray-50 cursor-pointer"
+                      key={index}
+                      onClick={() => router.push("/lesson")}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold">{item.title}</h4>
+                          <div className="bg-[#919EAB29] p-1 rounded">
+                            <span className="text-sm text-gray-500 font-semibold">
+                              1 giờ 12 phút
+                            </span>
+                          </div>
                         </div>
+                        <ArrowRight2 size="24" color="black" />
                       </div>
-                      <ArrowRight2 size="24" color="black" />
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
             <div
@@ -600,12 +606,12 @@ export default function CourseDetailPage() {
                       <div className="flex items-center gap-1">
                         <span className="text-yellow-500">★</span>
                         <span className="text-sm text-gray-600">
-                          215,548 Nhận xét
+                          {instructorProfileData?.data?.totalReviews} Nhận xét
                         </span>
                       </div>
                       <div className="bg-[#919EAB29] p-1 rounded">
                         <span className="text-sm text-gray-500 font-semibold">
-                          4,8 Đánh giá
+                          {instructorProfileData?.data?.ratingAverage} Đánh giá
                         </span>
                       </div>
 
@@ -627,36 +633,23 @@ export default function CourseDetailPage() {
 
                 <div className={`mt-4 ${!showFullBio ? "line-clamp-3" : ""}`}>
                   <p className="text-gray-600">
-                    Tôi là Nguyễn Anh Tuấn, một nhà phát triển với niềm đam mê
-                    giảng dạy. Tôi là giảng viên chính tại London App Brewery,
-                    trại huấn luyện lập trình hàng đầu London. Tôi đã giúp hàng
-                    trăm nghìn học viên học cách viết mã và thay đổi cuộc sống
-                    của họ bằng cách trở thành một nhà phát triển. Tôi đã được
-                    các công ty như Twitter, Facebook và Google mời đến để dạy
-                    cho nhân viên của họ.
-                  </p>
-                  <p className="text-gray-600">
-                    Tôi là Nguyễn Anh Tuấn, một nhà phát triển với niềm đam mê
-                    giảng dạy. Tôi là giảng viên chính tại London App Brewery,
-                    trại huấn luyện lập trình hàng đầu London. Tôi đã giúp hàng
-                    trăm nghìn học viên học cách viết mã và thay đổi cuộc sống
-                    của họ bằng cách trở thành một nhà phát triển. Tôi đã được
-                    các công ty như Twitter, Facebook và Google mời đến để dạy
-                    cho nhân viên của họ.
+                    {instructorProfileData?.data?.bio}
                   </p>
                 </div>
 
-                <button
-                  onClick={() => setShowFullBio(!showFullBio)}
-                  className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
-                >
-                  Hiển thị thêm
-                  {!showFullBio ? (
-                    <ArrowDown2 size="20" color="#2F57EF" />
-                  ) : (
-                    <ArrowUp2 size="20" color="#2F57EF" />
-                  )}
-                </button>
+                {instructorProfileData?.data?.bio && (
+                  <button
+                    onClick={() => setShowFullBio(!showFullBio)}
+                    className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
+                  >
+                    Hiển thị thêm
+                    {!showFullBio ? (
+                      <ArrowDown2 size="20" color="#2F57EF" />
+                    ) : (
+                      <ArrowUp2 size="20" color="#2F57EF" />
+                    )}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -869,17 +862,20 @@ export default function CourseDetailPage() {
                 )}
               </div>
 
-              <button
-                onClick={() => setShowMoreReviews(!showMoreReviews)}
-                className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
-              >
-                Hiển thị thêm
-                {!showMoreReviews ? (
-                  <ArrowDown2 size="20" color="#2F57EF" />
-                ) : (
-                  <ArrowUp2 size="20" color="#2F57EF" />
-                )}
-              </button>
+              {reviewData?.data && reviewData.data.length > 1 && (
+                <button
+                  onClick={() => setShowMoreReviews(!showMoreReviews)}
+                  className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
+                >
+                  Hiển thị thêm
+                  {!showMoreReviews ? (
+                    <ArrowDown2 size="20" color="#2F57EF" />
+                  ) : (
+                    <ArrowUp2 size="20" color="#2F57EF" />
+                  )}
+                </button>
+              )}
+
             </div>
 
             <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">

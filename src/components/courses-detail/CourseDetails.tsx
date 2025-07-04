@@ -1,0 +1,56 @@
+import React, { useState } from "react";
+import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+
+interface CourseDetailsProps {
+  courseDetail: {
+    requirements?: string;
+    description: string;
+    learningOutcomes?: string;
+  };
+}
+
+export const CourseDetails: React.FC<CourseDetailsProps> = ({ courseDetail }) => {
+  const [showFullDesc, setShowFullDesc] = useState(false);
+
+  return (
+    <>
+      {/* Requirements Section */}
+      <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
+        <h3 className="text-xl font-bold mb-6">Yêu cầu</h3>
+        <div className="space-y-2">
+          <div>
+            &#8226;{" "}
+            {courseDetail.requirements || "Không có yêu cầu đặc biệt"}
+          </div>
+        </div>
+      </div>
+
+      {/* Description Section */}
+      <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
+        <h3 className="text-xl font-bold mb-6">Mô tả</h3>
+        <div
+          className={`space-y-4 ${!showFullDesc ? "line-clamp-3" : ""}`}
+        >
+          <p>{courseDetail.description}</p>
+          {courseDetail.learningOutcomes && (
+            <div>
+              <h4 className="font-semibold mb-2">Kết quả học tập:</h4>
+              <p>{courseDetail.learningOutcomes}</p>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => setShowFullDesc(!showFullDesc)}
+          className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
+        >
+          {showFullDesc ? "Ẩn bớt" : "Hiển thị thêm"}
+          {!showFullDesc ? (
+            <ArrowDown2 size="20" color="#2F57EF" />
+          ) : (
+            <ArrowUp2 size="20" color="#2F57EF" />
+          )}
+        </button>
+      </div>
+    </>
+  );
+}; 

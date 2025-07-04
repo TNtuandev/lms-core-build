@@ -282,6 +282,8 @@ export default function CourseDetailPage() {
 
             <OtherCourses 
               instructorName={courseDetail.owner.fullName}
+              instructorId={courseDetail.owner.id}
+              currentCourseId={courseDetail.id}
               onCourseClick={handleCourseClick}
             />
           </div>

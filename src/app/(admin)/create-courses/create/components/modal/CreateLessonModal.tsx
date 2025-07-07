@@ -63,9 +63,8 @@ export const CreateLessonModal = ({
     defaultValues: {
       title: "",
       description: "",
-      notes: "",
-      videoUrl: "",
-      duration: "",
+      videoUrl: null,
+      playbackTime: "",
       attachmentUrl: undefined,
       isPreviewable: false,
       htmlContent: "",
@@ -76,6 +75,7 @@ export const CreateLessonModal = ({
   const handleClose = () => {
     setThumbnailFile(null);
     setAttachmentFile(null);
+    form.reset();
     onClose();
   };
 
@@ -87,11 +87,10 @@ export const CreateLessonModal = ({
       const formData = {
         title: data.title,
         description: data.description,
-        notes: data.notes,
-        shortDescription: data.description,
         videoUrl: data.videoUrl,
-        duration: Number(data.duration),
-        attachmentUrl: data.attachmentUrl ?? 'https://example.com/attachment.pdf',
+        playbackTime: Number(data.playbackTime),
+        attachmentUrl: 'https://example.com/attachment.pdf',
+        sampleImageUrl: 'https://example.com/sample-image.jpg',
         isPreviewable: data.isPreviewable,
       }
       createLessonVideo.mutate(formData, {
@@ -104,21 +103,22 @@ export const CreateLessonModal = ({
     } else {
       const formData = {
         title: data.title,
-        shortDescription: "",
         description: data.description,
         htmlContent: data.htmlContent,
-        duration: Number(data.duration),
-        attachmentUrl: data.attachmentUrl,
-        isPreviewable: data.isPreviewable,
+        sampleImageUrl: 'https://example.com/sample-image.jpg',
       }
       createLessonArticle.mutate(formData, {
         onSuccess: () => {
           onSubmit()
+          onClose();
+          form.reset();
         }
       })
     }
 
   }
+
+  console.log("form----", form.formState.errors, form.getValues())
 
 
   const lessonType = form.watch("type");
@@ -299,39 +299,39 @@ export const CreateLessonModal = ({
               )}
             />
 
-            <div className="grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Thời gian phát lại video
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="00"
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-gray-500 flex items-center">
-                      <InfoCircle
-                        variant="Bold"
-                        size={16}
-                        color="#637381"
-                      />
-                      <span className="ml-1">Giờ</span>
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             {/* Thêm URL Video */}
             {lessonType === "video" && (
               <>
+                <div className="grid grid-cols-1 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="playbackTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Thời gian phát lại video
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="00"
+                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            {...field}
+                          />
+                        </FormControl>
+                        <p className="text-xs text-gray-500 flex items-center">
+                          <InfoCircle
+                            variant="Bold"
+                            size={16}
+                            color="#637381"
+                          />
+                          <span className="ml-1">Giờ</span>
+                        </p>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="videoUrl"
@@ -438,27 +438,28 @@ export const CreateLessonModal = ({
                     </FormItem>
                   )}
                 />
+                {/* Bật chế độ xem trước khóa học */}
+                <FormField
+                  control={form.control}
+                  name="isPreviewable"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-3">
+                      <FormControl>
+                        <ToggleSwitch
+                          value={field.value || false}
+                          onChange={field.onChange}
+                          color="green"
+                        />
+                      </FormControl>
+                      <FormLabel className="">
+                        Bật chế độ xem trước khóa học
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
               </>
             )}
-            {/* Bật chế độ xem trước khóa học */}
-            <FormField
-              control={form.control}
-              name="isPreviewable"
-              render={({ field }) => (
-                <FormItem className="flex items-center gap-3">
-                  <FormControl>
-                    <ToggleSwitch
-                      value={field.value || false}
-                      onChange={field.onChange}
-                      color="green"
-                    />
-                  </FormControl>
-                  <FormLabel className="">
-                    Bật chế độ xem trước khóa học
-                  </FormLabel>
-                </FormItem>
-              )}
-            />
+
             <DialogFooter className="flex justify-end space-x-3 pt-4 border-t border-[#919EAB52]">
               <Button
                 type="button"

@@ -25,39 +25,33 @@ export const useCreateCourseContext = () => {
 // ✅ AuthProvider Component
 export function CreateCourseProvider({ children }: { children: ReactNode }) {
   const [courseData, setCourseData] = useState<Course>({
-    id: "753d2f71-9f71-447e-bd76-2098809587c3",
-    title: "Khoá học Website",
-    slug: "khoa-hoc-website-mchuhrph-1bqk9",
-    description: "Khoá học Website",
-    shortDescription: "Khoá học Website",
-    type: "COURSE",
-    thumbnail:
-      "https://www.icantech.vn/_next/image?url=https%3A%2F%2Fs3.icankid.io%2Ficantech%2Fcms%2F1_3x_2dad764ee9.png&w=3840&q=100",
-    label: "NEW",
-    status: "DRAFT",
-    regularPrice: 10,
-    discountedPrice: 1,
-    ratingAvg: 0,
-    ratingCnt: 0,
-    enrollmentCnt: 0,
+    id: "1d0d04e1-957c-4e54-9629-b63c3ef4ca31",
+    title: "Khoá học thiết kế Web",
+    slug: "khoa-hoc-thiet-ke-web-mct9lony-3ww1e",
+    shortDescription: "Giứoi thiệu",
+    thumbnail: "https://www.youtube.com/watch?v=Nu95GIWYK_E",
+    difficulty: "ADVANCED",
+    label: "BEST_SELLER",
     category: {
-      id: "de1a7b5e-4e28-45ca-b343-38428494eb35",
-      title: "Clothing",
-      slug: "clothing",
+      id: "166e17a8-5e21-48ee-836b-1d190476617f",
+      slug: "khoa-hoc-thiet-ke-web-mct9lony-3ww1e",
+      title: "khoa-hoc-thiet-ke-web-mct9lony-3ww1e",
+    },
+    pricing: {
+      regular: 1111110,
+      discounted: 222220,
+    },
+    rating: {
+      avg: 0,
+      count: 0,
     },
     owner: {
-      id: "8e4c7d51-8308-408c-944b-6817ed2e4920",
-      email: "tuan209200@gmail.com",
-      fullName: "tuanna",
+      id: "c2d248e0-59be-43df-95a1-ad8d924d1990",
+      email: "admin@thangvv.id.vn",
+      fullName: "Thắng Vũ",
     },
-    previewImg:
-      "https://www.icantech.vn/_next/image?url=https%3A%2F%2Fs3.icankid.io%2Ficantech%2Fcms%2F1_3x_2dad764ee9.png&w=3840&q=100",
-    learningOutcomes: "Khoá học Website",
-    previewVideo:
-      "https://www.youtube.com/watch?v=gQVqr9t78vo&list=RDv_lgp2onzxk&index=2",
-    requirements: "Khoá học Website",
-    createdAt: "2025-06-29T22:49:00.681Z",
-    updatedAt: "2025-06-29T22:49:00.681Z",
+    totalLesson: 0,
+    enrollmentCnt: 0,
   });
 
   return (

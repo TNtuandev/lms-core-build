@@ -119,7 +119,7 @@ export const FaqModal = ({
               >
                 Hủy
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="text-white">
                 Thêm FAQ
               </Button>
             </DialogFooter>

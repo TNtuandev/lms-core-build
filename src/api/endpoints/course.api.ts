@@ -95,53 +95,53 @@ export const courseAPI = {
 
   // LESSONS API
   createLessonArticle: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/articles`, data);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/articles`, data);
     return res;
   },
   updateLessonArticle: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/articles/${lessonId}`, data);
+    const { data: res } = await api.patch(`/cms/courses/${courseId}/modules/${moduleId}/lessons/articles/${lessonId}`, data);
     return res;
   },
   createLessonVideo: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/videos`, data);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/videos`, data);
     return res;
   },
   updateLessonVideo: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/videos/${lessonId}`, data);
+    const { data: res } = await api.patch(`/cms/courses/${courseId}/modules/${moduleId}/lessons/videos/${lessonId}`, data);
     return res;
   },
 
   // QUIZZES API
   createLessonQuiz: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/quizzes`, data);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/quizzes`, data);
     return res;
   },
   updateLessonQuiz: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/quizzes/${lessonId}`, data);
+    const { data: res } = await api.patch(`/cms/courses/${courseId}/modules/${moduleId}/lessons/quizzes/${lessonId}`, data);
     return res;
   },
 
   // PRACTICES API
   createLessonPractice: async (courseId: string, moduleId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/practices`, data);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/practices`, data);
     return res;
   },
   updateLessonPractice: async (courseId: string, moduleId: string, lessonId: string, data: any): Promise<any> => {
-    const { data: res } = await api.patch(`/courses/${courseId}/modules/${moduleId}/lessons/practices/${lessonId}`, data);
+    const { data: res } = await api.patch(`/cms/courses/${courseId}/modules/${moduleId}/lessons/practices/${lessonId}`, data);
     return res;
   },
 
   // LESSON STATUS API
   publishLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/publish`);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/publish`);
     return res;
   },
   draftLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/draft`);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/draft`);
     return res;
   },
   archiveLesson: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/archive`);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}/archive`);
     return res;
   },
 

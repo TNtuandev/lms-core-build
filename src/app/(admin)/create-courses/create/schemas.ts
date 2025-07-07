@@ -12,7 +12,7 @@ export const step1Schema = z.object({
 
 export const infoCourseSchema = z.object({
   description: z.string().min(10, "Mô tả chi tiết không được để trống"),
-  requirements: z.string().min(10, "Yêu cầu không được để trống"),
+  requirements: z.string().min(1, "Yêu cầu không được để trống"),
   learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
   hour: z.any().optional(),
   minute: z.any().optional(),
@@ -47,9 +47,8 @@ export const moduleCourseSchema = z.object({
 export const lessonSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   description: z.string().min(1, "Tóm tắt không được để trống"),
-  notes: z.any().optional(),
-  videoUrl: z.string().url("URL video không hợp lệ").optional(),
-  duration: z.string().optional(),
+  videoUrl: z.string().url("URL video không hợp lệ").optional().nullable(),
+  playbackTime: z.string().optional(),
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),

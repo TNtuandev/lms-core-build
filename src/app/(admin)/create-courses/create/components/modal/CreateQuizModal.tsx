@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import React, { useState } from "react";
 import {Edit, InfoCircle} from "iconsax-react";
-import QuizQuestionModal from "./QuizQuestionModal";
+import QuizQuestionModal, {QuestionFormData, QuestionType} from "./QuizQuestionModal";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
@@ -41,62 +41,55 @@ interface CreateQuizModalProps {
 
 const quizSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
-  summary: z.string().min(1, "Tóm tắt không được để trống"),
+  description: z.string().min(1, "Tóm tắt không được để trống"),
 });
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  duration: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
+  timeLimitMin: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
   durationUnit: z.enum(["second", "minute", "hour"]),
-  showTime: z.boolean(),
+  isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "review", "retry"]),
   passScore: z.string().min(1, "Vui lòng nhập điểm đạt"),
   maxAttempts: z.string().min(1, "Vui lòng nhập số lần trả lời"),
-  autoFinish: z.boolean(),
+  autoStart: z.boolean(),
   randomQuestion: z.boolean(),
   questionLayout: z.enum(["random", "order"]),
-  questionView: z.enum(["all", "one"]),
-  shortAnswerLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
-  essayLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
+  questionViewMode: z.enum(["all", "one"]),
+  shortAnswerCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
+  essayCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
 export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
   const [step, setStep] = useState(1);
-  const [questions, setQuestions] = useState([
-    { question: "Câu hỏi 1", type: "single", score: "10", answers: [{ text: "A", isCorrect: true }, { text: "B", isCorrect: false }], random: false, required: false },
-    { question: "Câu hỏi 2", type: "short", score: "10", answers: [{ text: "" , isCorrect: false}, { text: "", isCorrect: false }], random: false, required: false },
-    { question: "Câu hỏi 3", type: "multiple", score: "10", answers: [{ text: "A", isCorrect: true }, { text: "B", isCorrect: true }], random: false, required: false },
-  ]);
+  const [questions, setQuestions] = useState<QuestionFormData[]>([]);
   const [openQuestionModal, setOpenQuestionModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [showTime, setShowTime] = useState(false);
-  const [autoFinish, setAutoFinish] = useState(false);
-  const [randomQuestion, setRandomQuestion] = useState(false);
 
   const form = useForm<QuizFormData>({
     resolver: zodResolver(quizSchema),
     defaultValues: {
       title: "",
-      summary: "",
+      description: "",
     },
   });
 
   const settingsForm = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      duration: "00",
+      timeLimitMin: "00",
       durationUnit: "second",
-      showTime: false,
+      isViewTimeLimit: false,
       feedbackMode: "default",
       passScore: "50",
       maxAttempts: "10",
-      autoFinish: false,
+      autoStart: false,
       randomQuestion: false,
       questionLayout: "random",
-      questionView: "all",
-      shortAnswerLimit: "200",
-      essayLimit: "500",
+      questionViewMode: "all",
+      shortAnswerCharLimit: "200",
+      essayCharLimit: "500",
     },
   });
 
@@ -118,8 +111,16 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
     setStep(1);
     form.reset();
     settingsForm.reset();
-    onClose && onClose();
+    onClose();
   };
+
+  const handleSubmitCreateQuiz = (value: QuestionFormData) => {
+    setQuestions((prev) => {
+      return [...prev, value];
+    })
+  }
+
+  console.log("questions---", questions)
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -182,7 +183,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                 />
                 <FormField
                   control={form.control}
-                  name="summary"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tóm tắt</FormLabel>
@@ -205,12 +206,12 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                     key={idx}
                     className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
                   >
-                    <span className="text-base font-medium text-gray-900">{q.question}</span>
+                    <span className="text-base font-medium text-gray-900">{q.content}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">
-                        {q.type === "single" && "Một đáp án"}
-                        {q.type === "short" && "Câu trả lời ngắn"}
-                        {q.type === "multiple" && "Nhiều đáp án"}
+                        {q.type === QuestionType.SINGLE_CHOICE && "Một đáp án"}
+                        {q.type === QuestionType.SHORT_ANSWER && "Câu trả lời ngắn"}
+                        {q.type === QuestionType.MULTIPLE_CHOICE && "Nhiều đáp án"}
                       </span>
                       <button type="button" className="p-1 rounded hover:bg-gray-100" onClick={() => { setEditIndex(idx); setOpenQuestionModal(true); }}>
                         <Edit color="#637381" size={20}/>
@@ -234,18 +235,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                 onClose={() => setOpenQuestionModal(false)}
                 defaultValues={editIndex !== null ? questions[editIndex] : undefined}
                 onSubmit={(data) => {
-                  const normalized = {
-                    ...data,
-                    random: !!data.random,
-                    required: !!data.required,
-                    answers: data.answers.map(a => ({ ...a, isCorrect: !!a.isCorrect })),
-                  };
-                  if (editIndex !== null) {
-                    setQuestions(questions.map((q, i) => (i === editIndex ? normalized : q)));
-                  } else {
-                    setQuestions([...questions, normalized]);
-                  }
-                  setOpenQuestionModal(false);
+                  handleSubmitCreateQuiz(data)
                 }}
               />
             </div>
@@ -259,7 +249,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                   <div className="grid grid-cols-3 gap-4 items-center">
                     <FormField
                       control={settingsForm.control}
-                      name="duration"
+                      name="timeLimitMin"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
@@ -292,7 +282,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                     />
                     <FormField
                       control={settingsForm.control}
-                      name="showTime"
+                      name="isViewTimeLimit"
                       render={({ field }) => (
                         <FormItem className="flex items-center gap-2 flex-1">
                           <FormControl>
@@ -383,13 +373,13 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                     <AccordionContent className="space-y-8 px-4 pb-4">
                       <FormField
                         control={settingsForm.control}
-                        name="autoFinish"
+                        name="autoStart"
                         render={({ field }) => (
                           <FormItem className="flex items-center gap-2">
                             <FormControl>
                               <ToggleSwitch value={field.value} onChange={field.onChange} color="blue" />
                             </FormControl>
-                            <span className="text-sm">Tự động kết thúc kiểm tra</span>
+                            <span className="text-sm">Tự động bắt đầu kiểm tra</span>
                           </FormItem>
                         )}
                       />
@@ -416,7 +406,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                         />
                         <FormField
                           control={settingsForm.control}
-                          name="questionView"
+                          name="questionViewMode"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Cài đặt câu hỏi</FormLabel>
@@ -450,7 +440,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={settingsForm.control}
-                          name="shortAnswerLimit"
+                          name="shortAnswerCharLimit"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Giới hạn ký tự trả lời ngắn</FormLabel>
@@ -462,7 +452,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                         />
                         <FormField
                           control={settingsForm.control}
-                          name="essayLimit"
+                          name="essayCharLimit"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Giới hạn ký tự trả lời câu hỏi mở/Bình luận</FormLabel>

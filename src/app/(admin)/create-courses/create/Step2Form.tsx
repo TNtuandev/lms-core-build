@@ -3,18 +3,26 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import {
+  CourseBuilderSection,
   CourseInfoSection,
+  CoursePricingSection,
   CourseSettingsSection,
   VideoIntroSection,
-  CourseBuilderSection,
-  CoursePricingSection,
 } from "./components";
 import ToggleSwitch from "./components/ToggleSwitch";
 import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
+import {Step2FormData, step2Schema,
+} from "./schemas";
+import { z } from "zod";
 
 interface FAQ {
   id: string;
@@ -23,66 +31,20 @@ interface FAQ {
   isExpanded: boolean;
 }
 
-// Schema validation for Step 2
-const step2Schema = z.object({
-  shortDescription: z.string().min(1, "Mô tả ngắn không được để trống"),
-  requirements: z.string().min(1, "Yêu cầu không được để trống"),
-  objectives: z.string().min(1, "Đối tượng mục tiêu không được để trống"),
-  duration: z.string().min(1, "Tổng thời lượng không được để trống"),
-  lessons: z.string().min(1, "Số bài học không được để trống"),
-  level: z.string().min(1, "Vui lòng chọn danh mục"),
-  instructor: z.string().min(1, "Giáo viên không được để trống"),
-  tags: z.array(z.string()).optional(),
-  isSale: z.boolean().optional(),
-  isNew: z.boolean().optional(),
-  isBestseller: z.boolean().optional(),
-  // Course Settings
-  isPublic: z.boolean().optional(),
-  enableQA: z.boolean().optional(),
-  enableDrip: z.boolean().optional(),
-  // Video Introduction
-  videoSource: z.string().optional(),
-  videoUrl: z.string().optional(),
-  // Course Builder
-  chapters: z
-    .array(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        isExpanded: z.boolean().optional(),
-      }),
-    )
-    .optional(),
-  faqs: z
-    .array(
-      z.object({
-        id: z.string(),
-        question: z.string(),
-        answer: z.string(),
-        isExpanded: z.boolean().optional(),
-      }),
-    )
-    .optional(),
-  // Pricing
-  isFree: z.boolean().optional(),
-  originalPrice: z.string().optional(),
-  salePrice: z.string().optional(),
-  isPublished: z.boolean().optional(),
-});
-
-export type Step2FormData = z.infer<typeof step2Schema>;
-
 interface Step2FormProps {
   onNext: (data: Step2FormData) => void;
   onBack: () => void;
   initialData?: Partial<Step2FormData>;
+  schema?: z.ZodSchema<Step2FormData>;
 }
 
 export default function Step2Form({
   onNext,
   onBack,
   initialData,
+  schema,
 }: Step2FormProps) {
+  const [isPending] = useState(false);
   const [chapters, setChapters] = useState(
     initialData?.chapters?.map((c) => ({
       ...c,
@@ -121,7 +83,7 @@ export default function Step2Form({
   const [pricingExpanded, setPricingExpanded] = useState(true);
 
   const form = useForm<Step2FormData>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(schema || step2Schema),
     defaultValues: {
       shortDescription: initialData?.shortDescription || "",
       requirements: initialData?.requirements || "",
@@ -150,12 +112,9 @@ export default function Step2Form({
   });
 
   const onSubmit = (data: Step2FormData) => {
-    const formDataWithChapters = {
-      ...data,
-      chapters: chapters.map(({ ...chapter }) => chapter),
-      faqs: faqs.map(({ ...faq }) => faq),
-    };
-    onNext(formDataWithChapters);
+    // Call onNext to pass data back to parent component
+    console.log("Step 2 form data:", data);
+    onNext(data);
   };
 
   return (
@@ -176,7 +135,7 @@ export default function Step2Form({
             onToggle={() => setCourseSettingsExpanded(!courseSettingsExpanded)}
           />
 
-          {/* 3. Video Introduction Section */}
+          {/*/!* 3. Video Introduction Section *!/*/}
           <VideoIntroSection
             form={form}
             isExpanded={videoIntroExpanded}
@@ -233,6 +192,7 @@ export default function Step2Form({
                 variant="outline"
                 onClick={onBack}
                 className="px-6 text-primary-contrastText"
+                disabled={isPending}
               >
                 Quay lại
               </Button>
@@ -241,6 +201,7 @@ export default function Step2Form({
                 variant="outline"
                 onClick={onBack}
                 className="px-6 text-primary-contrastText"
+                disabled={isPending}
               >
                 Huỷ bỏ
               </Button>
@@ -248,7 +209,7 @@ export default function Step2Form({
                 type="submit"
                 className="px-8 bg-[#212B36] hover:bg-blue-700 text-white"
               >
-                Tạo khóa học
+                {isPending ? "Đang tạo khóa học..." : "Tạo khóa học"}
               </Button>
             </div>
           </div>

@@ -33,7 +33,7 @@ export default function CourseFAQ({
     courseData?.id as string,
   );
 
-  const deleteFaq = useDeleteFAQ()
+  // const deleteFaq = useDeleteFAQ()
 
   const handleSubmit = () => {
     refetchFaqs();
@@ -64,7 +64,7 @@ export default function CourseFAQ({
 
   const deleteFaq = (faqId: string) => {
     setFaqs(faqs.filter((faq) => faq.id !== faqId));
-    deleteFaq.mutate({ courseId: courseData?.id as string, faqId });
+    // deleteFaq.mutate({ courseId: courseData?.id as string, faqId });
   };
 
   const editFaqQuestion = (faqId: string, newQuestion: string) => {

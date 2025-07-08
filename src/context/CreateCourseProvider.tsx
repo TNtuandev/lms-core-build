@@ -1,11 +1,14 @@
 "use client";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { Course } from "@/api/types/course.type";
+import {IModule} from "@/hooks/queries/course/useModuleCourse";
 
 // ✅ Define AuthContext Interface
 interface CreateCourseContextType {
   courseData?: Course;
   setCourseData: (course: Course) => void;
+  moduleSelected?: IModule
+  setModuleSelected?: (module: IModule) => void;
 }
 
 // ✅ Create Context
@@ -54,12 +57,18 @@ export function CreateCourseProvider({ children }: { children: ReactNode }) {
     enrollmentCnt: 0,
   });
 
+  const [moduleSelected, setModuleSelected] = useState<IModule>();
+
   return (
     <CreateCourseContext.Provider
       value={{
         courseData,
         setCourseData: (c: Course) => {
           setCourseData(c);
+        },
+        moduleSelected,
+        setModuleSelected: (m: IModule) => {
+          setModuleSelected(m);
         },
       }}
     >

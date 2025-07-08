@@ -34,29 +34,32 @@ import {
   lessonSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
-import {useCreateLessonArticle, useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
-import {IModule} from "@/hooks/queries/course/useModuleCourse";
-import {useCreateCourseContext} from "@/context/CreateCourseProvider";
+import {
+  useCreateLessonArticle,
+  useCreateLessonVideo,
+} from "@/hooks/queries/course/useLessonCourse";
+import { IModule } from "@/hooks/queries/course/useModuleCourse";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
-  moduleItem: IModule | null
+  moduleItem: IModule | null;
 }
 
 export const CreateLessonModal = ({
   isOpen,
   onClose,
   onSubmit,
-                                    moduleItem
+  moduleItem,
 }: CreateLessonModalProps) => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
 
-  const {courseData} = useCreateCourseContext()
+  const { courseData } = useCreateCourseContext();
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
@@ -79,50 +82,53 @@ export const CreateLessonModal = ({
     onClose();
   };
 
-  const createLessonVideo = useCreateLessonVideo(courseData?.id as string, moduleItem?.id as string)
-  const createLessonArticle = useCreateLessonArticle(courseData?.id as string, moduleItem?.id as string)
+  const createLessonVideo = useCreateLessonVideo(
+    courseData?.id as string,
+    moduleItem?.id as string,
+  );
+  const createLessonArticle = useCreateLessonArticle(
+    courseData?.id as string,
+    moduleItem?.id as string,
+  );
 
   const handleCreateLesson = (data: LessonFormData) => {
-    if (lessonType === 'video') {
+    if (lessonType === "video") {
       const formData = {
         title: data.title,
         description: data.description,
         videoUrl: data.videoUrl,
         playbackTime: Number(data.playbackTime),
-        attachmentUrl: 'https://example.com/attachment.pdf',
-        sampleImageUrl: 'https://example.com/sample-image.jpg',
+        attachmentUrl: "https://example.com/attachment.pdf",
+        sampleImageUrl: "https://example.com/sample-image.jpg",
         isPreviewable: data.isPreviewable,
-      }
+      };
       createLessonVideo.mutate(formData, {
         onSuccess: () => {
           form.reset();
-          onSubmit()
+          onSubmit();
           onClose();
-        }
-      })
+        },
+      });
     } else {
       const formData = {
         title: data.title,
         description: data.description,
         htmlContent: data.htmlContent,
-        sampleImageUrl: 'https://example.com/sample-image.jpg',
-      }
+        sampleImageUrl: "https://example.com/sample-image.jpg",
+      };
       createLessonArticle.mutate(formData, {
         onSuccess: () => {
-          onSubmit()
+          onSubmit();
           onClose();
           form.reset();
-        }
-      })
+        },
+      });
     }
+  };
 
-  }
-
-  console.log("form----", form.formState.errors, form.getValues())
-
+  console.log("form----", form.formState.errors, form.getValues());
 
   const lessonType = form.watch("type");
-
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -159,9 +165,12 @@ export const CreateLessonModal = ({
                 <FormItem>
                   <FormLabel>Loại bài học</FormLabel>
                   <FormControl>
-                    <Select value={field.value} onValueChange={(value) => {
-                      field.onChange(value);
-                    }}>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn loại bài học" />
                       </SelectTrigger>

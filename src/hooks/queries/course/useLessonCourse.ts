@@ -26,16 +26,21 @@ export interface IRequestVideos {
 }
 
 export interface IRequestQuizz {
-    duration: number
     title: string
-    shortDescription: string
     description: string
     order: number
-    isPreviewable: boolean
-    attachmentUrl: string
+    timeLimitMin: number
+    isViewTimeLimit: boolean
+    feedbackMode: string
     passingScore: number
-    deadline: string
-    timeLimitMin: boolean
+    maxAttempts: number
+    autoStart: boolean
+    questionLayout: string
+    questionViewMode: string
+    showQuestionCount: boolean
+    shortAnswerCharLimit: number
+    essayCharLimit: number
+    questions: any[]
 }
 
 export interface IRequestPractices {

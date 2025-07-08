@@ -103,8 +103,6 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
     name: "options",
   });
 
-  console.log("form errors", form.formState.errors);
-
   const handleSubmit = (value: QuestionFormData) => {
     onSubmit(value);
     onClose();

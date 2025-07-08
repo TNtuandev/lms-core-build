@@ -49,7 +49,7 @@ export default function CourseBuilderSection({
     useState(false);
 
   const [chapters, setChapters] = useState<IModule[]>([]);
-  const [moduleItem, setModuleItem] = useState<IModule | null>(null);
+  const [moduleItem, setModuleItem] = useState<IModule>();
   const { courseData } = useCreateCourseContext();
 
   const { data: initialChapters, refetch: refetchChapters } = useModules(
@@ -248,7 +248,10 @@ export default function CourseBuilderSection({
                         Bài học
                       </Button>
                       <Button
-                        onClick={() => setIsOpenModalCreateQuiz(true)}
+                        onClick={() => {
+                          setIsOpenModalCreateQuiz(true)
+                          setModuleItem(chapter)
+                        }}
                         className="border-primary-main/48"
                         type="button"
                         variant="outline"
@@ -341,6 +344,7 @@ export default function CourseBuilderSection({
         onAddChapter={addNewChapter}
       />
       <CreateQuizModal
+        module={moduleItem}
         isOpen={isOpenModalCreateQuiz}
         onClose={() => setIsOpenModalCreateQuiz(false)}
       />

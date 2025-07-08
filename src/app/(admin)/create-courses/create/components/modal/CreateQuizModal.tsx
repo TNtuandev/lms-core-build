@@ -19,7 +19,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Edit, InfoCircle} from "iconsax-react";
 import QuizQuestionModal, {QuestionFormData, QuestionType} from "./QuizQuestionModal";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -33,10 +33,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToggleSwitch from "../ToggleSwitch";
+import {IRequestQuizz, useCreateLessonQuiz} from "@/hooks/queries/course/useLessonCourse";
+import {useCreateCourseContext} from "@/context/CreateCourseProvider";
+import {IModule} from "@/hooks/queries/course/useModuleCourse";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CreateQuizModalProps {
   isOpen: boolean;
   onClose: () => void;
+  module?: IModule
 }
 
 const quizSchema = z.object({
@@ -49,23 +54,31 @@ const settingsSchema = z.object({
   timeLimitMin: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
   durationUnit: z.enum(["second", "minute", "hour"]),
   isViewTimeLimit: z.boolean(),
-  feedbackMode: z.enum(["default", "review", "retry"]),
-  passScore: z.string().min(1, "Vui lòng nhập điểm đạt"),
+  feedbackMode: z.enum(["default", "show", "retry"]),
+  passingScore: z.string().min(1, "Vui lòng nhập điểm đạt"),
   maxAttempts: z.string().min(1, "Vui lòng nhập số lần trả lời"),
   autoStart: z.boolean(),
-  randomQuestion: z.boolean(),
-  questionLayout: z.enum(["random", "order"]),
-  questionViewMode: z.enum(["all", "one"]),
+  showQuestionCount: z.boolean(),
+  questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
+  questionViewMode: z.enum(["single", "paginated", 'scrollable']),
   shortAnswerCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
   essayCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
-export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
+export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProps) => {
   const [step, setStep] = useState(1);
   const [questions, setQuestions] = useState<QuestionFormData[]>([]);
   const [openQuestionModal, setOpenQuestionModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const {courseData} = useCreateCourseContext()
+  const queryClient = useQueryClient();
+  // Đảm bảo chỉ truyền id khi đã có courseData và module
+  const createLessonQuiz = useCreateLessonQuiz(courseData?.id || "", module?.id || "");
+
+  useEffect(() => {
+    setQuestions([])
+  }, [isOpen])
 
   const form = useForm<QuizFormData>({
     resolver: zodResolver(quizSchema),
@@ -82,12 +95,12 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
       durationUnit: "second",
       isViewTimeLimit: false,
       feedbackMode: "default",
-      passScore: "50",
+      passingScore: "50",
       maxAttempts: "10",
       autoStart: false,
-      randomQuestion: false,
+      showQuestionCount: false,
       questionLayout: "random",
-      questionViewMode: "all",
+      questionViewMode: "single",
       shortAnswerCharLimit: "200",
       essayCharLimit: "500",
     },
@@ -104,6 +117,13 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
       const valid = await form.trigger();
       if (!valid) return;
     }
+    if (step === 3) {
+      const valid = await settingsForm.trigger();
+      if (valid) {
+        handleSubmit()
+      }
+      return;
+    }
     setStep((prev) => prev + 1);
   };
 
@@ -113,6 +133,27 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
     settingsForm.reset();
     onClose();
   };
+
+  const handleSubmit = async () => {
+    const data = {
+      ...form.getValues(),
+      ...settingsForm.getValues(),
+      questions: questions,
+      passingScore: Number(settingsForm.getValues().passingScore),
+    } as any
+    delete data.durationUnit
+    delete data.passScore
+
+    createLessonQuiz.mutate(data, {
+      onSuccess: () => {
+        // invalidate lại query useModule
+        if (courseData?.id) {
+          queryClient.invalidateQueries({queryKey: ['modules', courseData.id]});
+        }
+        handleClose();
+      }
+    })
+  }
 
   const handleSubmitCreateQuiz = (value: QuestionFormData) => {
     setQuestions((prev) => {
@@ -314,7 +355,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                           <span className="text-xs text-gray-500">(Câu trả lời được hiển thị sau khi bài kiểm tra kết thúc)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" value="review" checked={field.value === "review"} onChange={() => field.onChange("review")}
+                          <input type="radio" value="show" checked={field.value === "show"} onChange={() => field.onChange("show")}
                             className="accent-blue-600" />
                           <span className="font-medium text-xs">Chế độ hiển thị</span>
                           <span className="text-xs text-gray-500">(Hiển thị kết quả sau khi thử)</span>
@@ -333,7 +374,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                 {/* Điểm đạt */}
                 <FormField
                   control={settingsForm.control}
-                  name="passScore"
+                  name="passingScore"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="mb-1 block">Điểm đạt (%)</FormLabel>
@@ -397,7 +438,9 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="random">Ngẫu nhiên</SelectItem>
-                                    <SelectItem value="order">Theo thứ tự</SelectItem>
+                                    <SelectItem value="categorized">Theo chủ đề</SelectItem>
+                                    <SelectItem value="ascending">Tăng dần</SelectItem>
+                                    <SelectItem value="descending">Giảm dần</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -416,8 +459,9 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                                     <SelectValue placeholder="Đặt chế độ xem bố cục câu hỏi" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="all">Xem tất cả</SelectItem>
-                                    <SelectItem value="one">Xem từng câu</SelectItem>
+                                    <SelectItem value="paginated">Theo số trang</SelectItem>
+                                    <SelectItem value="single">Xem từng câu</SelectItem>
+                                    <SelectItem value="scrollable">Cuộn từng câu</SelectItem>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -427,7 +471,7 @@ export const CreateQuizModal = ({ isOpen, onClose }: CreateQuizModalProps) => {
                       </div>
                       <FormField
                         control={settingsForm.control}
-                        name="randomQuestion"
+                        name="showQuestionCount"
                         render={({ field }) => (
                           <FormItem className="flex items-center gap-2">
                             <FormControl>

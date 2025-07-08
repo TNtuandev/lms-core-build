@@ -11,7 +11,7 @@ import QuizLesson from "@/components/lesson/QuizLesson";
 import ExerciseLesson from "@/components/lesson/ExerciseLesson";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import ContentTab from "@/components/lesson/ContentTab";
-import StudyCode from "@/components/lesson/StudyCode";
+import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
 
 interface Lesson {
   id: string;
@@ -23,7 +23,7 @@ interface Lesson {
 function LessonPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
-  const [quizCode, ] = useState<boolean>(false);
+  const [quizCode, ] = useState<boolean>(true);
 
   const [sections, setSections] = useState([
     {
@@ -268,7 +268,7 @@ function LessonPage() {
         </div>
 
         {quizCode ? (
-          <StudyCode />
+          <StudyCode exercise={defaultJavaExercise} />
         ) : (
           <>
             {renderLessonBody(currentLesson.type)}

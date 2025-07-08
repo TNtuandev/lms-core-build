@@ -202,6 +202,23 @@ export interface FAQ {
   isExpanded?: boolean;
 }
 
+export interface Review {
+  id: string;
+  userId: string;
+  productId: string;
+  rating: number;
+  title: string;
+  content: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface ReviewFAQsResponse {
+  data: Review[];
+}
+
 export interface FAQsResponse {
   data: FAQ[];
 }
@@ -247,4 +264,13 @@ export interface ICreateCourseRequest {
   difficulty: string
   regularPrice: number
   discountedPrice?: number
+}
+
+export interface ICreateReviewRequest {
+  data: {
+    rating: number;
+    content: string;
+    title: string;
+  };
+  productId: string
 }

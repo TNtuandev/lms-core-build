@@ -23,7 +23,7 @@ interface Lesson {
 function LessonPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
-  const [quizCode, setQuizCode] = useState<boolean>(false);
+  const [quizCode, ] = useState<boolean>(false);
 
   const [sections, setSections] = useState([
     {

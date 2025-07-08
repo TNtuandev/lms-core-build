@@ -1,7 +1,6 @@
 import {
   TickCircle,
   CloseCircle,
-  Refresh,
   ArrowRotateLeft,
 } from "iconsax-react";
 import { useState } from "react";

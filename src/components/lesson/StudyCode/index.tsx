@@ -56,7 +56,7 @@ export default function StudyCode({
 }) {
   const [currentCode, setCurrentCode] = useState(exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [, setIsSubmitted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [activeTab, setActiveTab] = useState("noi-dung");
   const [activeResultTab, setActiveResultTab] = useState("test-cases");
@@ -64,9 +64,9 @@ export default function StudyCode({
   const [attemptCount, setAttemptCount] = useState(0);
 
   // Handle code changes from Sandpack
-  const handleCodeChange = useCallback((newCode: string) => {
-    setCurrentCode(newCode);
-  }, []);
+  // const handleCodeChange = useCallback((newCode: string) => {
+  //   setCurrentCode(newCode);
+  // }, []);
 
   const handleRunTest = useCallback(async () => {
     setIsRunning(true);
@@ -164,10 +164,10 @@ export default function StudyCode({
     };
   };
 
-  const handleSubmit = useCallback(() => {
-    setIsSubmitted(true);
-    handleRunTest();
-  }, [handleRunTest]);
+  // const handleSubmit = useCallback(() => {
+  //   setIsSubmitted(true);
+  //   handleRunTest();
+  // }, [handleRunTest]);
 
   return (
     <div className="flex bg-[#1e1e1e] h-full">

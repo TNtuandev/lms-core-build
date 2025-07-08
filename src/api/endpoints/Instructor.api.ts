@@ -7,5 +7,4 @@ export const instructorAPI = {
     const { data } = await api.get(`/instructors/${userId}/profile`);
     return data;
   },
-
 };

@@ -17,6 +17,7 @@ import {
 import IconBookWhite from "../../../../public/icons/IconBookWhite";
 import { DocumentText, MessageText, NotificationBing } from "iconsax-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import { useStudent } from "@/hooks/queries/dashboard/useStudent";
 
 export default function DashboardLayout({
   children,
@@ -26,6 +27,11 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { logout } = useAuthStore();
   const router = useRouter();
+  const user = useAuthStore.getState().user
+
+  const { data: learnerProfileData } = useStudent(
+    user?.id || "",
+  );
 
   const isActive = (path: string) => {
     return pathname === path;

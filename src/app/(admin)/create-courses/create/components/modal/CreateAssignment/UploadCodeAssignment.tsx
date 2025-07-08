@@ -67,16 +67,16 @@ export const UploadCodeAssignment = ({
     defaultValues: {
       title: "",
       practiceType: "coding",
-      shortDescription: "",
+      htmlContent: "",
       description: "",
-      inputData: undefined,
-      outputData: undefined,
+      inputFile: undefined,
+      outputFile: undefined,
       suggestion: "",
       sampleData: "",
       answer: "",
       attachmentUrl: undefined,
-      passScore: 0,
-      duration: "",
+      passingScore: 0,
+      submissionTimeLimit: "",
     },
   });
 
@@ -95,13 +95,15 @@ export const UploadCodeAssignment = ({
 
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
-      title: data.title,
-      practiceType: data.practiceType,
-      shortDescription: data.shortDescription ?? '',
-      description: data.description,
+      ...data,
+      inputFile: "input.txt",
+      outputFile: "output.txt",
       attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
-      duration: data.duration ? Number(data.duration) : 0,
+      submissionTimeLimit: data.submissionTimeLimit ? Number(data.submissionTimeLimit) : 0,
     }
+    delete formRequest.sampleData
+    delete formRequest.answer
+
     createPractice.mutate(formRequest, {
       onSuccess: (res) => {
         onSubmit(res);
@@ -164,7 +166,7 @@ export const UploadCodeAssignment = ({
             {/* Nội dung */}
             <FormField
               control={form.control}
-              name="shortDescription"
+              name="htmlContent"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nội dung</FormLabel>
@@ -517,7 +519,7 @@ export const UploadCodeAssignment = ({
                 {/* Thời gian tối đa */}
                 <FormField
                   control={form.control}
-                  name="duration"
+                  name="submissionTimeLimit"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Thời gian tối đa (phút)</FormLabel>
@@ -535,7 +537,7 @@ export const UploadCodeAssignment = ({
                 {/* Điểm đạt */}
                 <FormField
                   control={form.control}
-                  name="passScore"
+                  name="passingScore"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Điểm đạt</FormLabel>

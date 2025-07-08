@@ -115,7 +115,7 @@ export default function CourseBuilderSection({
     console.log("Submitted assignment data:", data);
   };
 
-  const handleSubmitCreateLesson = () => {
+  const handleRefetch = () => {
     refetchChapters()
   };
 
@@ -322,7 +322,7 @@ export default function CourseBuilderSection({
           setModuleItem(null)
           setIsOpenModalCreateAssignmentCode(false)
         }}
-        onSubmit={handleSubmitCreateAssignmentCode}
+        onSubmit={handleRefetch}
       />
       <UploadArticleAssignment
         isOpen={isOpenModalCreateAssignment}
@@ -336,7 +336,7 @@ export default function CourseBuilderSection({
           setIsOpenModalCreateLesson(false)
           setModuleItem(null)
         }}
-        onSubmit={handleSubmitCreateLesson}
+        onSubmit={handleRefetch}
       />
       <AddChapterModal
         isOpen={isModalOpen}
@@ -346,6 +346,7 @@ export default function CourseBuilderSection({
       <CreateQuizModal
         module={moduleItem}
         isOpen={isOpenModalCreateQuiz}
+        onSubmit={handleRefetch}
         onClose={() => setIsOpenModalCreateQuiz(false)}
       />
     </Card>

@@ -42,6 +42,7 @@ interface CreateQuizModalProps {
   isOpen: boolean;
   onClose: () => void;
   module?: IModule
+  onSubmit: () => void;
 }
 
 const quizSchema = z.object({
@@ -66,7 +67,7 @@ const settingsSchema = z.object({
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
-export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProps) => {
+export const CreateQuizModal = ({ module, isOpen, onClose, onSubmit }: CreateQuizModalProps) => {
   const [step, setStep] = useState(1);
   const [questions, setQuestions] = useState<QuestionFormData[]>([]);
   const [openQuestionModal, setOpenQuestionModal] = useState(false);
@@ -146,10 +147,7 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
 
     createLessonQuiz.mutate(data, {
       onSuccess: () => {
-        // invalidate lại query useModule
-        if (courseData?.id) {
-          queryClient.invalidateQueries({queryKey: ['modules', courseData.id]});
-        }
+        onSubmit()
         handleClose();
       }
     })

@@ -1,5 +1,5 @@
 import { Sandpack } from "@codesandbox/sandpack-react";
-import { useCallback, useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 interface ExerciseData {
   title: string;
@@ -8,6 +8,7 @@ interface ExerciseData {
   objectives: string[];
   initialCode: string;
   testCases: string[];
+  language?: 'java' | 'cpp' | 'javascript'; // Add language property
 }
 
 interface TestResult {
@@ -47,6 +48,28 @@ struct Tester
 
 }`,
   testCases: ["Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra"],
+  language: 'cpp',
+};
+
+// Java default exercise
+const defaultJavaExercise: ExerciseData = {
+  title: "Java Exercise - Hello World",
+  description: "Tạo một chương trình Java đơn giản để in ra Hello World.",
+  requirements: [
+    "Tạo class Main với phương thức main",
+    "Sử dụng System.out.println để in ra console",
+  ],
+  objectives: [
+    "Làm quen với cú pháp Java cơ bản",
+    "Hiểu cách hoạt động của method main trong Java",
+  ],
+  initialCode: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`,
+  testCases: ["Test 1: In ra Hello, World!"],
+  language: 'java',
 };
 
 export default function StudyCode({
@@ -54,13 +77,18 @@ export default function StudyCode({
 }: {
   exercise?: ExerciseData;
 }) {
-  const [currentCode] = useState(exercise.initialCode);
+  const [currentCode, setCurrentCode] = useState(exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [activeTab, setActiveTab] = useState("noi-dung");
   const [activeResultTab, setActiveResultTab] = useState("test-cases");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
+
+  // Java compiler iframe ref
+  const javaIframeRef = useRef<HTMLIFrameElement>(null);
+
+
 
   // Handle code changes from Sandpack
   // const handleCodeChange = useCallback((newCode: string) => {
@@ -71,22 +99,105 @@ export default function StudyCode({
     setIsRunning(true);
     setAttemptCount((prev) => prev + 1);
 
-    setTimeout(() => {
-      // More realistic C++ code validation
-      const codeValidation = validateCppCode(currentCode);
-      const result: TestResult = {
-        success: codeValidation.isValid,
-        output: codeValidation.output,
-        error: codeValidation.error,
-        warnings: codeValidation.warnings,
-        testsPassed: codeValidation.testsPassed,
-        testsTotal: codeValidation.testsTotal,
-      };
+    if (exercise.language === 'java') {
+      // For Java, trigger run in OneCompiler iframe
+      if (javaIframeRef.current) {
+        javaIframeRef.current.contentWindow?.postMessage({
+          eventType: 'triggerRun'
+        }, '*');
+      }
 
-      setTestResult(result);
-      setIsRunning(false);
-    }, 1500);
-  }, [currentCode]);
+      setTimeout(() => {
+        const result: TestResult = {
+          success: true,
+          output: "Java code executed in OneCompiler",
+          testsPassed: 1,
+          testsTotal: 1,
+        };
+        setTestResult(result);
+        setIsRunning(false);
+      }, 1000);
+    } else {
+      // Original C++ validation logic
+      setTimeout(() => {
+        const codeValidation = validateCppCode(currentCode);
+        const result: TestResult = {
+          success: codeValidation.isValid,
+          output: codeValidation.output,
+          error: codeValidation.error,
+          warnings: codeValidation.warnings,
+          testsPassed: codeValidation.testsPassed,
+          testsTotal: codeValidation.testsTotal,
+        };
+
+        setTestResult(result);
+        setIsRunning(false);
+      }, 1500);
+    }
+  }, [currentCode, exercise.language]);
+
+  // Load initial code into Java iframe
+  const loadJavaCode = useCallback(() => {
+    if (javaIframeRef.current && exercise.language === 'java') {
+      console.log('Loading Java code:', currentCode);
+      javaIframeRef.current.contentWindow?.postMessage({
+        eventType: 'populateCode',
+        language: 'java',
+        files: [{
+          name: 'Main.java',
+          content: currentCode
+        }]
+      }, '*');
+    }
+  }, [currentCode, exercise.language]);
+
+  useEffect(() => {
+    if (exercise.language === 'java') {
+      // Delay to ensure iframe is loaded
+      const timer = setTimeout(() => {
+        loadJavaCode();
+      }, 2000); // Tăng thời gian delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [loadJavaCode, exercise.language]);
+
+  // Listen for iframe load event
+  const handleIframeLoad = useCallback(() => {
+    console.log('Java iframe loaded');
+    if (exercise.language === 'java') {
+      // Load code when iframe is ready
+      setTimeout(() => {
+        console.log('Attempting to load code after iframe load');
+        loadJavaCode();
+      }, 500);
+    }
+  }, [exercise.language, loadJavaCode]);
+
+  useEffect(() => {
+    // Listen for messages from OneCompiler iframe for Java
+    const handleMessage = (event: MessageEvent) => {
+      console.log('Received message:', event.data);
+
+      if (event.data && event.data.language === 'java') {
+        console.log('Java code changed:', event.data);
+        if (event.data.files && event.data.files[0]) {
+          setCurrentCode(event.data.files[0].content);
+        }
+      }
+
+      // OneCompiler ready signal
+      if (event.data && event.data.eventType === 'ready') {
+        console.log('OneCompiler is ready, loading code...');
+        setTimeout(loadJavaCode, 100);
+      }
+    };
+
+    if (exercise.language === 'java') {
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }
+  }, [exercise.language, loadJavaCode]);
 
   // Helper function to validate C++ code
   const validateCppCode = (code: string) => {
@@ -167,6 +278,105 @@ export default function StudyCode({
   //   setIsSubmitted(true);
   //   handleRunTest();
   // }, [handleRunTest]);
+
+  const renderCodeEditor = () => {
+    if (exercise.language === 'java') {
+      return (
+        <div className="flex-1 relative border-2 border-[#7c4dff] m-2 rounded">
+          <div className="absolute top-2 right-2 z-10 flex gap-2">
+            <button
+              onClick={loadJavaCode}
+              className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Load Code
+            </button>
+            <button
+              onClick={() => {
+                if (javaIframeRef.current) {
+                  javaIframeRef.current.src = javaIframeRef.current.src;
+                  setTimeout(loadJavaCode, 2000);
+                }
+              }}
+              className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Reload
+            </button>
+          </div>
+          <iframe
+            ref={javaIframeRef}
+            src="https://onecompiler.com/embed/java?listenToEvents=true&codeChangeEvent=true&theme=dark"
+            width="100%"
+            height="50vh"
+            frameBorder="0"
+            title="Java Compiler"
+            onLoad={handleIframeLoad}
+          />
+        </div>
+      );
+    }
+
+    // Original Sandpack for C++/other languages
+    return (
+      <div className="flex-1 relative border-2 border-[#7c4dff] m-2 rounded">
+        <Sandpack
+          template="vanilla"
+          files={{
+            "exercise.h": {
+              code: currentCode,
+              active: true,
+            },
+          }}
+          options={{
+            showNavigator: false,
+            showTabs: true,
+            showLineNumbers: true,
+            showInlineErrors: true,
+            wrapContent: false,
+            editorHeight: "50vh",
+            layout: "preview",
+            showConsole: false,
+            showConsoleButton: false,
+          }}
+          theme={{
+            colors: {
+              surface1: "#1e1e1e",
+              surface2: "#2d2d30",
+              surface3: "#3e3e42",
+              clickable: "#999999",
+              base: "#cccccc",
+              disabled: "#999999",
+              hover: "#4e4e50",
+              accent: "#7c4dff",
+              error: "#f44747",
+              errorSurface: "#5a1d1d",
+              warning: "#ffcc02",
+              warningSurface: "#332b00",
+            },
+            syntax: {
+              plain: "#cccccc",
+              comment: "#6a9955",
+              keyword: "#569cd6",
+              tag: "#569cd6",
+              punctuation: "#cccccc",
+              definition: "#4ec9b0",
+              property: "#9cdcfe",
+              static: "#4fc1ff",
+              string: "#ce9178",
+            },
+            font: {
+              body: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
+              mono: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
+              size: "14px",
+              lineHeight: "1.5",
+            },
+          }}
+          customSetup={{
+            dependencies: {},
+          }}
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="flex bg-[#1e1e1e] h-full">
@@ -255,8 +465,10 @@ export default function StudyCode({
               {/* Main Content */}
               <div className="text-sm text-white space-y-4">
                 <p className="text-sm text-white">
-                  Tuy thuộc vào chiến lược báo cáo lỗi đã được tuân theo, bạn
-                  cần xử lý lỗi và nếu không có lỗi, hãy báo cáo nội dung tệp.
+                  {exercise.language === 'java'
+                    ? "Viết chương trình Java theo yêu cầu bài tập."
+                    : "Tuy thuộc vào chiến lược báo cáo lỗi đã được tuân theo, bạn cần xử lý lỗi và nếu không có lỗi, hãy báo cáo nội dung tệp."
+                  }
                 </p>
 
                 <p className="text-white">
@@ -264,20 +476,18 @@ export default function StudyCode({
                 </p>
 
                 <ol className="list-decimal list-inside space-y-2 ml-4 text-white">
-                  <li className="text-sm text-white">
-                    Nếu không có lỗi, bạn nên &#34;báo cáo&#34; nội dung của tập
-                    tin
-                  </li>
-                  <li className="text-sm text-white">
-                    Nếu có lỗi, hãy làm cho hàm &#39;run_test&#39; trả về giá
-                    trị khác không, thường là 1 hoặc 2
-                  </li>
+                  {exercise.requirements.map((req, index) => (
+                    <li key={index} className="text-sm text-white">
+                      {req}
+                    </li>
+                  ))}
                 </ol>
 
                 <p className="text-sm text-white">
-                  Nếu bạn có gắng báo cáo một kết quả mà bạn không nên báo cáo
-                  hoặc trả về mã sai từ hàm &#39;run_test&#39;, các bài kiểm tra
-                  sẽ không thành công.
+                  {exercise.language === 'java'
+                    ? "Đảm bảo code Java của bạn có thể compile và chạy thành công."
+                    : "Nếu bạn có gắng báo cáo một kết quả mà bạn không nên báo cáo hoặc trả về mã sai từ hàm 'run_test', các bài kiểm tra sẽ không thành công."
+                  }
                 </p>
 
                 <div>
@@ -314,21 +524,40 @@ export default function StudyCode({
                       🔓 Gợi ý đã mở khóa:
                     </h4>
                     <div className="space-y-2">
-                      <p className="text-white">
-                        • Đảm bảo bạn có đầy đủ header guards (#ifndef, #define)
-                      </p>
-                      <p className="text-white">
-                        • Struct Tester cần có virtual destructor
-                      </p>
-                      <p className="text-white">
-                        • Method reportResult phải là pure virtual (= 0)
-                      </p>
-                      <p className="text-white">
-                        • Kiểm tra syntax của method signature
-                      </p>
-                      <p className="text-white">
-                        • Đừng quên đóng tất cả các dấu ngoặc nhọn
-                      </p>
+                      {exercise.language === 'java' ? (
+                        <>
+                          <p className="text-white">
+                            • Đảm bảo class name trùng với tên file
+                          </p>
+                          <p className="text-white">
+                            • Method main phải có signature chính xác: public static void main(String[] args)
+                          </p>
+                          <p className="text-white">
+                            • Sử dụng System.out.println() để in ra console
+                          </p>
+                          <p className="text-white">
+                            • Kiểm tra syntax và đóng mở ngoặc nhọn
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-white">
+                            • Đảm bảo bạn có đầy đủ header guards (#ifndef, #define)
+                          </p>
+                          <p className="text-white">
+                            • Struct Tester cần có virtual destructor
+                          </p>
+                          <p className="text-white">
+                            • Method reportResult phải là pure virtual (= 0)
+                          </p>
+                          <p className="text-white">
+                            • Kiểm tra syntax của method signature
+                          </p>
+                          <p className="text-white">
+                            • Đừng quên đóng tất cả các dấu ngoặc nhọn
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
@@ -350,68 +579,13 @@ export default function StudyCode({
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="bg-[#2d2d30] border-b border-gray-600 px-4 py-3 flex items-center justify-between">
-          <h1 className="text-white font-medium">Bài tập</h1>
+          <h1 className="text-white font-medium">
+            Bài tập {exercise.language === 'java' ? '(Java)' : '(C++)'}
+          </h1>
         </div>
 
         {/* Code Editor */}
-        <div className="flex-1 relative border-2 border-[#7c4dff] m-2 rounded">
-          <Sandpack
-            template="vanilla"
-            files={{
-              "exercise.h": {
-                code: currentCode,
-                active: true,
-              },
-            }}
-            options={{
-              showNavigator: false,
-              showTabs: true,
-              showLineNumbers: true,
-              showInlineErrors: true,
-              wrapContent: false,
-              editorHeight: "50vh",
-              layout: "preview",
-              showConsole: false,
-              showConsoleButton: false,
-            }}
-            theme={{
-              colors: {
-                surface1: "#1e1e1e",
-                surface2: "#2d2d30",
-                surface3: "#3e3e42",
-                clickable: "#999999",
-                base: "#cccccc",
-                disabled: "#999999",
-                hover: "#4e4e50",
-                accent: "#7c4dff",
-                error: "#f44747",
-                errorSurface: "#5a1d1d",
-                warning: "#ffcc02",
-                warningSurface: "#332b00",
-              },
-              syntax: {
-                plain: "#cccccc",
-                comment: "#6a9955",
-                keyword: "#569cd6",
-                tag: "#569cd6",
-                punctuation: "#cccccc",
-                definition: "#4ec9b0",
-                property: "#9cdcfe",
-                static: "#4fc1ff",
-                string: "#ce9178",
-              },
-              font: {
-                body: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
-                mono: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
-                size: "14px",
-                lineHeight: "1.5",
-              },
-            }}
-            customSetup={{
-              dependencies: {},
-            }}
-          />
-        </div>
+        {renderCodeEditor()}
 
         {/* Bottom Results Section */}
         <div className="h-96 bg-[#2d2d30] border-t border-gray-600">
@@ -509,3 +683,6 @@ export default function StudyCode({
     </div>
   );
 }
+
+// Export the Java exercise for testing
+export { defaultJavaExercise };

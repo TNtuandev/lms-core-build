@@ -96,7 +96,7 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
               >
                 <div className="flex items-center">
                   <span className="text-sm font-semibold">
-                    {section.id}. {section.title}
+                    {section.title}
                   </span>
                   {section.progress && (
                     <span className="ml-2 bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">
@@ -139,7 +139,7 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
                           )}
                         </div>
                         <p className={`text-sm ${lesson.active ? "text-[#2F57EF]" : ""}`}>
-                          {lesson.id} {lesson.title}
+                          {lesson.title}
                         </p>
 
                         <div className="flex items-center gap-2">

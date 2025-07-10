@@ -251,7 +251,7 @@ export default function CourseDetailPage() {
             </div>
 
             <div ref={contentRef}>
-              <CourseContent moduleData={moduleData} />
+              <CourseContent moduleData={moduleData} slug={slug} />
             </div>
             
             <div ref={detailsRef}>

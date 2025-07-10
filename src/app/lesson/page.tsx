@@ -11,112 +11,168 @@ import QuizLesson from "@/components/lesson/QuizLesson";
 import ExerciseLesson from "@/components/lesson/ExerciseLesson";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import ContentTab from "@/components/lesson/ContentTab";
-import StudyCode from "@/components/lesson/StudyCode";
+import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
+import { useSearchParams } from "next/navigation";
+import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
 
-interface Lesson {
+// Interface compatible with LessonSidebar
+interface SidebarLesson {
   id: string;
   title: string;
-  active?: boolean;
+  duration: string;
   type: string;
+  active?: boolean;
+}
+
+interface SidebarSection {
+  id: string;
+  title: string;
+  expanded: boolean;
+  lessons: SidebarLesson[];
+  progress?: string;
+}
+
+// Extended interface for internal use
+interface ExtendedLesson extends SidebarLesson {
+  moduleId: string;
+  order: number;
+  status: string;
+  isPreviewable: boolean;
+  description: string;
+  attachmentUrl: string | null;
 }
 
 function LessonPage() {
-  const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
   const [quizCode, ] = useState<boolean>(false);
 
-  const [sections, setSections] = useState([
-    {
-      id: "1",
-      title: "Giới thiệu về UI/UX",
-      expanded: false,
-      lessons: [],
-    },
-    {
-      id: "2",
-      title: "Nghiên cứu người dùng",
-      expanded: true,
-      lessons: [
-        {
-          id: "2.1",
-          title: "Phương pháp nghiên cứu người dùng",
-          duration: "06:23",
-          type: "video",
-        },
-        {
-          id: "2.2",
-          title: "Xây dựng chân dung người dùng (Persona)",
-          duration: "20:15",
-          type: "video",
-          active: true,
-        },
-        {
-          id: "2.3",
-          title: "Phân tích hành vi và nhu cầu",
-          duration: "08:56",
-          type: "doc",
-        },
-        {
-          id: "2.4",
-          title: "Phân tích hành vi và nhu cầu",
-          duration: "08:56",
-          type: "quiz",
-        },
-        {
-          id: "2.5",
-          title: "Phân tích hành vi và nhu cầu",
-          duration: "08:56",
-          type: "exercise",
-        },
-      ],
-    },
-    {
-      id: "3",
-      title: "Thiết kế trải nghiệm người dùng (UX Design)",
-      expanded: false,
-      lessons: [
-        {
-          id: "3.1",
-          title: "Phương pháp nghiên cứu người dùng",
-          duration: "06:23",
-          type: "video",
-        },
-        {
-          id: "3.2",
-          title: "Xây dựng chân dung người dùng (Persona)",
-          duration: "20:15",
-          type: "video",
-          active: true,
-        },
-        {
-          id: "3.3",
-          title: "Phân tích hành vi và nhu cầu",
-          duration: "08:56",
-          type: "doc",
-        },
-        {
-          id: "3.4",
-          title: "Phân tích hành vi và nhu cầu",
-          duration: "08:56",
-          type: "quiz",
-        },
-      ],
-      progress: "0/8",
-    },
-  ]);
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("course");
+  const moduleId = searchParams.get("module");
+  const lessonId = searchParams.get("lesson");
 
+  const { data: courseDetail } = useCourseBySlug(slug as string);
+  const { data: moduleData } = useModule(courseDetail?.id || "");
+
+  const [sections, setSections] = useState<SidebarSection[]>([]);
+  const [lessonsData, setLessonsData] = useState<ExtendedLesson[]>([]); // Store extended lesson data
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(null);
 
-  const [currentLesson, setCurrentLesson] = useState({
-    id: "2.2",
-    title: "Xây dựng chân dung người dùng (Persona)",
-    videoUrl: "/videos/lesson.mp4",
-    type: "video",
-  });
+  const courseTitle = courseDetail?.title || "";
 
-  const courseTitle =
-    "Thiết kế giao diện người dùng và trải nghiệm người dùng (UI/UX)";
+  // Map lesson type from BE to frontend
+  const mapLessonType = (type: string) => {
+    switch (type) {
+      case "VIDEO":
+        return "video";
+      case "ARTICLE":
+        return "doc";
+      case "QUIZ":
+        return "quiz";
+      case "PRACTICE":
+        return "exercise";
+      default:
+        return "video";
+    }
+  };
+
+  // Format duration to display string
+  const formatDuration = (duration: number) => {
+    if (duration === 0) return "00:00";
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // Transform BE data to frontend sections
+  useEffect(() => {
+    if (moduleData?.data) {
+      const allLessonsData: ExtendedLesson[] = [];
+      
+      const transformedSections = moduleData.data
+        .filter((module: any) => module.status === "PUBLISHED")
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((module: any) => {
+          const publishedLessons = module.lessons
+            .filter((lesson: any) => lesson.status === "PUBLISHED")
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((lesson: any) => {
+              const extendedLesson: ExtendedLesson = {
+                id: lesson.id,
+                title: lesson.title,
+                duration: formatDuration(lesson.duration),
+                type: mapLessonType(lesson.type),
+                moduleId: lesson.moduleId,
+                order: lesson.order,
+                status: lesson.status,
+                isPreviewable: lesson.isPreviewable,
+                description: lesson.description,
+                attachmentUrl: lesson.attachmentUrl,
+                active: false
+              };
+              
+              allLessonsData.push(extendedLesson);
+              
+              // Return sidebar-compatible lesson
+              return {
+                id: lesson.id,
+                title: lesson.title,
+                duration: formatDuration(lesson.duration),
+                type: mapLessonType(lesson.type),
+                active: false
+              };
+            });
+
+          return {
+            id: module.id,
+            title: module.title,
+            expanded: module.id === moduleId, // Expand section if it matches URL moduleId
+            lessons: publishedLessons,
+            progress: `0/${publishedLessons.length}`
+          };
+        });
+
+      setLessonsData(allLessonsData);
+      setSections(transformedSections);
+
+      // Set current lesson based on URL params or first lesson of active module
+      if (allLessonsData.length > 0) {
+        let lessonToSelect = null;
+
+        if (lessonId) {
+          // Find lesson by lessonId
+          lessonToSelect = allLessonsData.find((lesson: ExtendedLesson) => lesson.id === lessonId);
+        }
+
+        if (!lessonToSelect && moduleId) {
+          // Find first lesson in the specified module
+          lessonToSelect = allLessonsData.find((lesson: ExtendedLesson) => lesson.moduleId === moduleId);
+        }
+
+        if (!lessonToSelect) {
+          // Fallback to first lesson
+          lessonToSelect = allLessonsData[0];
+        }
+
+        if (lessonToSelect) {
+          setCurrentLesson(lessonToSelect);
+          // Update sections to mark the selected lesson as active
+          setSections(prevSections => 
+            prevSections.map(section => ({
+              ...section,
+              lessons: section.lessons.map(lesson => ({
+                ...lesson,
+                active: lesson.id === lessonToSelect!.id
+              }))
+            }))
+          );
+        }
+      }
+    }
+  }, [moduleData, moduleId, lessonId]);
 
   // Handle responsive sidebar visibility
   useEffect(() => {
@@ -156,32 +212,36 @@ function LessonPage() {
     );
   };
 
-  const selectLesson = (lesson: Lesson) => {
-    // Create a new sections array with the active lesson updated
-    const newSections = [...sections];
+  const selectLesson = (lesson: SidebarLesson) => {
+    // Find the extended lesson data
+    const extendedLesson = lessonsData.find(l => l.id === lesson.id);
+    if (!extendedLesson) return;
 
-    // Update all lessons to be not active
-    newSections.forEach((section) => {
-      section.lessons.forEach((l) => {
-        l.active = l.id === lesson.id;
-      });
-    });
+    // Create a new sections array with the active lesson updated
+    const newSections = sections.map(section => ({
+      ...section,
+      lessons: section.lessons.map(l => ({
+        ...l,
+        active: l.id === lesson.id
+      }))
+    }));
 
     // Set the updated sections
     setSections(newSections);
 
-    // Update current lesson with new data (simplified for demo)
-    setCurrentLesson({
-      ...currentLesson,
-      id: lesson.id,
-      title: lesson.title,
-      type: lesson.type,
-    });
+    // Update current lesson
+    setCurrentLesson(extendedLesson);
 
     // Hide sidebar on mobile after selecting a lesson
     if (isMobileView) {
       setIsSidebarVisible(false);
     }
+
+    // Update URL params to reflect current lesson
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('lesson', lesson.id);
+    newSearchParams.set('module', extendedLesson.moduleId);
+    window.history.replaceState({}, '', `${window.location.pathname}?${newSearchParams}`);
   };
 
   const toggleSidebar = () => {
@@ -194,12 +254,12 @@ function LessonPage() {
       case "video":
         return (
           <VideoPlayer
-            src={currentLesson.videoUrl}
+            src={currentLesson?.attachmentUrl || "/videos/lesson.mp4"}
             poster="/images/lesson-thumbnail.jpg"
           />
         );
       case "doc":
-        return <DocumentLesson />;
+        return <DocumentLesson data={currentLesson} />;
       case "quiz":
         return <QuizLesson />;
       case "exercise":
@@ -208,6 +268,14 @@ function LessonPage() {
         return null;
     }
   };
+
+  if (!courseDetail || !currentLesson) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Đang tải...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex relative">
@@ -268,7 +336,7 @@ function LessonPage() {
         </div>
 
         {quizCode ? (
-          <StudyCode />
+          <StudyCode exercise={defaultJavaExercise} />
         ) : (
           <>
             {renderLessonBody(currentLesson.type)}
@@ -276,7 +344,7 @@ function LessonPage() {
             {!isQuizStarted && (
               <ContentTab
                 courseTitle={courseTitle}
-                currentLesson={currentLesson}
+                currentLesson={courseDetail}
               />
             )}
           </>

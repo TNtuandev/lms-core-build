@@ -76,6 +76,11 @@ export const courseAPI = {
     return data;
   },
 
+  updateCourse: async (courseData: ICreateCourseRequest, id: string): Promise<any> => {
+    const { data } = await api.patch(`/cms/courses/${id}/metadata`, courseData);
+    return data;
+  },
+
   archiveCourse: async (id: string): Promise<any> => {
     const { data } = await api.post(`/cms/courses/${id}/archive`);
     return data;

@@ -29,8 +29,8 @@ import {
 import { CourseDetail } from "@/api/types/course.type";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
-import { useSearchParams } from "next/navigation";
 import { useCourseCMSBySlug } from "@/hooks/queries/course/useCourses";
+import { useUpdateCourse } from "@/hooks/queries/course/useCreateCourse";
 
 const STEP_SUBMIT_CREATE_COURSE = 5;
 
@@ -39,17 +39,13 @@ const steps = [
   { id: 2, title: "Thêm thông tin", description: "Thêm thông tin" },
 ];
 
-function CreateCourse() {
+function CreateCourse({ courseSlug }: { courseSlug: string }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const searchParams = useSearchParams();
-  const courseSlug = searchParams.get("slug") ?? '';
   const { courseData, setCourseData } = useCreateCourseContext();
   const [formData, setFormData] = useState<Partial<fullCourseFormData>>();
+  const isEdit = Boolean(courseSlug);
 
   const { data: initialCourseData } = useCourseCMSBySlug(courseSlug as string);
-
-  console.log("initialCourseData-", initialCourseData)
-  console.log("formData-", formData)
 
   useEffect(() => {
     if (initialCourseData) {
@@ -76,6 +72,7 @@ function CreateCourse() {
   };
 
   const { createCourse } = useCreateCourse(handleSetCourseData);
+  const updateCourse = useUpdateCourse(courseData?.id as string);
 
   const { archiveCourse, draftCourse, publishCourse } =
     useStatusCourse(handleSetCourseData);
@@ -100,6 +97,14 @@ function CreateCourse() {
       regularPrice: data.regularPrice,
       discountedPrice: data.discountedPrice,
     };
+    if (isEdit) {
+      updateCourse.mutate(request, {
+        onSuccess: (data) => {
+          setCourseData(data);
+        },
+      });
+      return;
+    }
     createCourse.mutate(request);
   };
 

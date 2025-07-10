@@ -26,3 +26,18 @@ export const useCreateCourse = (
     createCourse,
   };
 };
+
+export const useUpdateCourse = (courseId: string) => {
+  return  useMutation({
+    mutationFn: (request: ICreateCourseRequest) =>
+      courseAPI.updateCourse(request, courseId),
+    onSuccess: () => {
+      toast.success("Chỉnh sửa khóa học thành công!");
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || "Đã xảy ra lỗi khi lưu trữ khóa học.",
+      );
+    },
+  });
+};

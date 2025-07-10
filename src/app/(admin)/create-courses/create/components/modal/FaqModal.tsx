@@ -19,8 +19,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {useCreateFAQ} from "@/hooks/queries/course/useFaqs";
-import {useCreateCourseContext} from "@/context/CreateCourseProvider";
+import { useCreateFAQ } from "@/hooks/queries/course/useFaqs";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 
 // Schema validation cho form FAQ
 const faqSchema = z.object({
@@ -36,11 +36,7 @@ interface FaqModalProps {
   onSubmit: () => void;
 }
 
-export const FaqModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}: FaqModalProps) => {
+export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
   const form = useForm<FaqFormData>({
     resolver: zodResolver(faqSchema),
     defaultValues: {
@@ -48,10 +44,9 @@ export const FaqModal = ({
       answer: "",
     },
   });
-  const {courseData} = useCreateCourseContext()
+  const { courseData } = useCreateCourseContext();
 
-
-  const createFaq = useCreateFAQ(courseData?.id as string)
+  const createFaq = useCreateFAQ(courseData?.id as string);
 
   const handleClose = () => {
     form.reset();
@@ -59,7 +54,7 @@ export const FaqModal = ({
   };
 
   const handleSubmit = (value: FaqFormData) => {
-    createFaq.mutate(value)
+    createFaq.mutate(value);
     handleClose();
   };
 
@@ -99,10 +94,10 @@ export const FaqModal = ({
                 <FormItem>
                   <FormLabel>Câu trả lời</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Nhập câu trả lời..." 
+                    <Textarea
+                      placeholder="Nhập câu trả lời..."
                       className="min-h-[120px]"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />

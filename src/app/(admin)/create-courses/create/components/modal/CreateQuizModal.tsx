@@ -39,7 +39,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToggleSwitch from "../ToggleSwitch";
-import {useCreateLessonQuiz, useUpdateLessonQuiz} from "@/hooks/queries/course/useLessonCourse";
+import {
+  useCreateLessonQuiz,
+  useUpdateLessonQuiz,
+} from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 
 interface CreateQuizModalProps {
@@ -141,7 +144,7 @@ export const CreateQuizModal = ({
       settingsForm.reset(lessonSelected);
       setQuestions(lessonSelected?.questions || []);
     } else {
-      form.reset()
+      form.reset();
       settingsForm.reset();
       setQuestions([]);
       setStep(1);

@@ -21,9 +21,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {useCreateCourseContext} from "@/context/CreateCourseProvider";
-import {IModule, useCreateModule, useUpdateModule} from "@/hooks/queries/course/useModuleCourse";
-import {useEffect} from "react";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import {
+  useCreateModule,
+  useUpdateModule,
+} from "@/hooks/queries/course/useModuleCourse";
+import { useEffect } from "react";
 
 interface AddChapterModalProps {
   isOpen: boolean;
@@ -39,7 +42,10 @@ export default function AddChapterModal({
   const { moduleSelected, courseData } = useCreateCourseContext();
   const isEdit = Boolean(moduleSelected?.id);
   const createModule = useCreateModule(courseData?.id as string);
-  const updateModule = useUpdateModule(courseData?.id as string, moduleSelected?.id as string);
+  const updateModule = useUpdateModule(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+  );
   const form = useForm<ModuleCourseFormData>({
     resolver: zodResolver(moduleCourseSchema),
     defaultValues: {
@@ -50,7 +56,7 @@ export default function AddChapterModal({
 
   useEffect(() => {
     if (moduleSelected) {
-      form.reset(moduleSelected)
+      form.reset(moduleSelected);
     } else {
       form.reset({
         title: "",
@@ -81,7 +87,6 @@ export default function AddChapterModal({
         console.error("Error creating chapter:", error);
       },
     });
-
   };
 
   const handleClose = () => {

@@ -1,16 +1,28 @@
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { useForm, useFieldArray } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
@@ -31,45 +43,58 @@ const answerSchema = z.object({
   isCorrect: z.boolean().optional(),
 });
 
-const questionSchema = z.object({
-  content: z.string().min(1, "Câu hỏi không được để trống"),
-  type: z.string().min(1, "Chọn loại câu hỏi"),
-  point: z.string().min(1, "Nhập điểm cho câu trả lời"),
-  isRandom: z.boolean().optional(),
-  isRequiredAnswer: z.boolean().optional(),
-  description: z.string().optional(),
-  options: z.array(answerSchema),
-  correctExplanation: z.string().optional(),
-  answer: z.string().optional(),
-  incorrectHint: z.string().optional(),
-}).refine((data) => {
-  // Validation cho loại câu hỏi multiple
-  if (data.type === QuestionType.MULTIPLE_CHOICE) {
-    return data.options.filter(option => option.isCorrect).length >= 2;
-  }
-  return true;
-}, {
-  message: "Câu hỏi nhiều đáp án cần ít nhất 2 đáp án",
-  path: ["options"]
-}).refine((data) => {
-  // Validation cho loại câu hỏi single
-  if (data.type === 'SINGLE_CHOICE') {
-    return data.options.filter(option => option.isCorrect).length === 1;
-  }
-  return true;
-}, {
-  message: "Chỉ có 1 đáp án đúng cho câu hỏi này",
-  path: ["options"]
-}).refine((data) => {
-  // Validation cho loại câu hỏi short
-  if (data.type === QuestionType.SHORT_ANSWER) {
-    return data.answer && data.answer.trim().length > 0;
-  }
-  return true;
-}, {
-  message: "Câu trả lời ngắn không được để trống",
-  path: ["answer"]
-});
+const questionSchema = z
+  .object({
+    content: z.string().min(1, "Câu hỏi không được để trống"),
+    type: z.string().min(1, "Chọn loại câu hỏi"),
+    point: z.string().min(1, "Nhập điểm cho câu trả lời"),
+    isRandom: z.boolean().optional(),
+    isRequiredAnswer: z.boolean().optional(),
+    description: z.string().optional(),
+    options: z.array(answerSchema),
+    correctExplanation: z.string().optional(),
+    answer: z.string().optional(),
+    incorrectHint: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Validation cho loại câu hỏi multiple
+      if (data.type === QuestionType.MULTIPLE_CHOICE) {
+        return data.options.filter((option) => option.isCorrect).length >= 2;
+      }
+      return true;
+    },
+    {
+      message: "Câu hỏi nhiều đáp án cần ít nhất 2 đáp án",
+      path: ["options"],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validation cho loại câu hỏi single
+      if (data.type === "SINGLE_CHOICE") {
+        return data.options.filter((option) => option.isCorrect).length === 1;
+      }
+      return true;
+    },
+    {
+      message: "Chỉ có 1 đáp án đúng cho câu hỏi này",
+      path: ["options"],
+    },
+  )
+  .refine(
+    (data) => {
+      // Validation cho loại câu hỏi short
+      if (data.type === QuestionType.SHORT_ANSWER) {
+        return data.answer && data.answer.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Câu trả lời ngắn không được để trống",
+      path: ["answer"],
+    },
+  );
 
 export type QuestionFormData = z.infer<typeof questionSchema>;
 
@@ -80,7 +105,12 @@ interface QuizQuestionModalProps {
   defaultValues?: Partial<QuestionFormData>;
 }
 
-export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultValues }: QuizQuestionModalProps) {
+export default function QuizQuestionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  defaultValues,
+}: QuizQuestionModalProps) {
   const form = useForm<QuestionFormData>({
     resolver: zodResolver(questionSchema),
     defaultValues: defaultValues || {
@@ -90,9 +120,7 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
       isRandom: false,
       isRequiredAnswer: false,
       description: "",
-      options: [
-        { content: "", isCorrect: true },
-      ],
+      options: [{ content: "", isCorrect: true }],
       correctExplanation: "",
       incorrectHint: "",
     },
@@ -107,7 +135,7 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
     onSubmit(value);
     onClose();
     form.reset();
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -118,7 +146,10 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="p-6 space-y-5">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="p-6 space-y-5"
+          >
             {/* Nhập câu hỏi */}
             <FormField
               control={form.control}
@@ -142,14 +173,23 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                   <FormItem>
                     <FormLabel>Loại câu hỏi</FormLabel>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="h-12">
                           <SelectValue placeholder="Chọn loại câu hỏi" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={QuestionType.SINGLE_CHOICE}>1 Đáp án</SelectItem>
-                          <SelectItem value={QuestionType.MULTIPLE_CHOICE}>Nhiều đáp án</SelectItem>
-                          <SelectItem value={QuestionType.SHORT_ANSWER}>Câu trả lời ngắn</SelectItem>
+                          <SelectItem value={QuestionType.SINGLE_CHOICE}>
+                            1 Đáp án
+                          </SelectItem>
+                          <SelectItem value={QuestionType.MULTIPLE_CHOICE}>
+                            Nhiều đáp án
+                          </SelectItem>
+                          <SelectItem value={QuestionType.SHORT_ANSWER}>
+                            Câu trả lời ngắn
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -214,7 +254,11 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                 <FormItem>
                   <FormLabel>Mô tả (Tùy chọn)</FormLabel>
                   <FormControl>
-                    <CKEditorWrapper value={field.value || ""} onChange={field.onChange} placeholder="Viết gì đó..." />
+                    <CKEditorWrapper
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder="Viết gì đó..."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -234,7 +278,10 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                         render={({ field }) => (
                           <FormItem className="flex-1">
                             <FormControl>
-                              <Input placeholder={`Đáp án ${String.fromCharCode(65 + idx)}`} {...field} />
+                              <Input
+                                placeholder={`Đáp án ${String.fromCharCode(65 + idx)}`}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -258,13 +305,20 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                       />
 
                       {/* Xóa đáp án */}
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(idx)}>
-                          <Trash size={24} color="#637381"/>
-                        </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => remove(idx)}
+                      >
+                        <Trash size={24} color="#637381" />
+                      </Button>
                     </div>
                   ))}
                   {form.formState.errors.options && (
-                    <div className="text-error-main">{form.formState.errors.options.root?.message}</div>
+                    <div className="text-error-main">
+                      {form.formState.errors.options.root?.message}
+                    </div>
                   )}
                 </div>
                 <Button
@@ -273,12 +327,21 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                   className="w-full mt-3 flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100"
                   onClick={() => append({ content: "", isCorrect: false })}
                 >
-                  <svg width="18" height="18" fill="none" stroke="#637381" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                  <svg
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="#637381"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
                   Thêm đáp án
                 </Button>
               </div>
             )}
-            
+
             {/* Câu trả lời ngắn - Chỉ hiện khi type = short */}
             {form.watch("type") === QuestionType.SHORT_ANSWER && (
               <div>
@@ -289,10 +352,10 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                     <FormItem>
                       <FormLabel>Đáp án đúng</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Nhập đáp án đúng cho câu hỏi này..." 
+                        <Textarea
+                          placeholder="Nhập đáp án đúng cho câu hỏi này..."
                           className="min-h-[100px]"
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -344,10 +407,18 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
                 Quay lại
               </Button>
               <div className="flex gap-2">
-                <Button type="button" variant="ghost" onClick={onClose} className="text-[#E53935]">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={onClose}
+                  className="text-[#E53935]"
+                >
                   Hủy bỏ
                 </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
                   Lưu & Tiếp tục
                 </Button>
               </div>
@@ -357,4 +428,4 @@ export default function QuizQuestionModal({ isOpen, onClose, onSubmit, defaultVa
       </DialogContent>
     </Dialog>
   );
-} 
+}

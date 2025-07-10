@@ -183,6 +183,16 @@ export const CreateQuizModal = ({
     delete data.durationUnit;
     delete data.passScore;
 
+    if(isEdit) {
+      updateLessonQuiz.mutate(data, {
+        onSuccess: () => {
+          onSubmit();
+          handleClose();
+        },
+      })
+      return;
+    }
+
     createLessonQuiz.mutate(data, {
       onSuccess: () => {
         onSubmit();

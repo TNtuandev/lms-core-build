@@ -58,7 +58,7 @@ const quizSchema = z.object({
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  timeLimitMin: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
+  duration: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
   durationUnit: z.enum(["second", "minute", "hour"]),
   isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "show", "retry"]),
@@ -115,7 +115,7 @@ export const CreateQuizModal = ({
   const settingsForm = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      timeLimitMin: "00",
+      duration: "00",
       durationUnit: "second",
       isViewTimeLimit: false,
       feedbackMode: "default",
@@ -366,7 +366,7 @@ export const CreateQuizModal = ({
                   <div className="grid grid-cols-3 gap-4 items-center">
                     <FormField
                       control={settingsForm.control}
-                      name="timeLimitMin"
+                      name="duration"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>

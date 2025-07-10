@@ -77,7 +77,7 @@ export const UploadCodeAssignment = ({
       answer: "",
       attachmentUrl: undefined,
       passingScore: 0,
-      submissionTimeLimit: "",
+      duration: "",
     },
   });
 
@@ -100,7 +100,7 @@ export const UploadCodeAssignment = ({
         answer: "",
         attachmentUrl: undefined,
         passingScore: 0,
-        submissionTimeLimit: "",
+        duration: "",
       });
       setInputDataFile(null);
       setOutputDataFile(null);
@@ -134,8 +134,8 @@ export const UploadCodeAssignment = ({
       inputFile: "input.txt",
       outputFile: "output.txt",
       attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
-      submissionTimeLimit: data.submissionTimeLimit
-        ? Number(data.submissionTimeLimit)
+      duration: data.duration
+        ? Number(data.duration)
         : 0,
     };
     delete formRequest.sampleData;
@@ -564,7 +564,7 @@ export const UploadCodeAssignment = ({
                 {/* Thời gian tối đa */}
                 <FormField
                   control={form.control}
-                  name="submissionTimeLimit"
+                  name="duration"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Thời gian tối đa (phút)</FormLabel>

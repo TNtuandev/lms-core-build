@@ -29,7 +29,7 @@ export interface IRequestQuizz {
     title: string
     description: string
     order: number
-    timeLimitMin: number
+    duration: number
     isViewTimeLimit: boolean
     feedbackMode: string
     passingScore: number

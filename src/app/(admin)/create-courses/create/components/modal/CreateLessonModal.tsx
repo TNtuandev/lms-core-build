@@ -67,7 +67,7 @@ export const CreateLessonModal = ({
       description: lessonSelected?.description || "",
       type: lessonSelected?.type || "VIDEO",
       videoUrl: lessonSelected?.videoUrl || "",
-      playbackTime: lessonSelected?.playbackTime || 0,
+      duration: lessonSelected?.duration || 0,
       htmlContent: lessonSelected?.htmlContent || "",
       sampleImageUrl: lessonSelected?.sampleImageUrl || "",
       attachmentUrl: null,
@@ -86,7 +86,7 @@ export const CreateLessonModal = ({
         description: "",
         type: "VIDEO",
         videoUrl: "",
-        playbackTime: "0",
+        duration: "0",
         htmlContent: "",
         sampleImageUrl: "",
         attachmentUrl: null,
@@ -126,7 +126,7 @@ export const CreateLessonModal = ({
         title: data.title,
         description: data.description,
         videoUrl: data.videoUrl,
-        playbackTime: Number(data.playbackTime),
+        duration: Number(data.duration),
         attachmentUrl: "https://example.com/attachment.pdf",
         sampleImageUrl: "https://example.com/sample-image.jpg",
         isPreviewable: data.isPreviewable,
@@ -360,7 +360,7 @@ export const CreateLessonModal = ({
                 <div className="grid grid-cols-1 gap-4">
                   <FormField
                     control={form.control}
-                    name="playbackTime"
+                    name="duration"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium text-gray-700">

@@ -54,9 +54,8 @@ export default function StudyCode({
 }: {
   exercise?: ExerciseData;
 }) {
-  const [currentCode, setCurrentCode] = useState(exercise.initialCode);
+  const [currentCode] = useState(exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
-  const [, setIsSubmitted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [activeTab, setActiveTab] = useState("noi-dung");
   const [activeResultTab, setActiveResultTab] = useState("test-cases");

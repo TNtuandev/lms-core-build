@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   Select,
@@ -35,22 +35,22 @@ import {
   UploadAssignmentFormData,
   uploadAssignmentSchema,
 } from "../../../schemas";
-import { IModule } from "@/hooks/queries/course/useModuleCourse";
-import {useCreateCourseContext} from "@/context/CreateCourseProvider";
-import {useCreateLessonPractice, useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import {
+  useCreateLessonPractice,
+  useUpdateLessonPractice,
+} from "@/hooks/queries/course/useLessonCourse";
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UploadAssignmentFormData) => void;
-  moduleItem: IModule;
 }
 
 export const UploadCodeAssignment = ({
   isOpen,
   onClose,
   onSubmit,
-  moduleItem,
 }: UploadCodeAssignmentProps) => {
   const [inputDataFile, setInputDataFile] = useState<File | null>(null);
   const [outputDataFile, setOutputDataFile] = useState<File | null>(null);
@@ -59,31 +59,66 @@ export const UploadCodeAssignment = ({
   const outputDataInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
 
-  const {courseData} = useCreateCourseContext()
-
+  const { courseData, lessonSelected, moduleSelected } =
+    useCreateCourseContext();
+  const isEdit = Boolean(lessonSelected?.id);
 
   const form = useForm<UploadAssignmentFormData>({
     resolver: zodResolver(uploadAssignmentSchema),
     defaultValues: {
       title: "",
       practiceType: "coding",
-      shortDescription: "",
+      htmlContent: "",
       description: "",
-      inputData: undefined,
-      outputData: undefined,
+      inputFile: undefined,
+      outputFile: undefined,
       suggestion: "",
       sampleData: "",
       answer: "",
       attachmentUrl: undefined,
-      passScore: 0,
-      duration: "",
+      passingScore: 0,
+      submissionTimeLimit: "",
     },
   });
 
+  useEffect(() => {
+    if (lessonSelected) {
+      form.reset(lessonSelected);
+      setInputDataFile(null);
+      setOutputDataFile(null);
+      setAttachmentFile(null);
+    } else {
+      form.reset({
+        title: "",
+        practiceType: "coding",
+        htmlContent: "",
+        description: "",
+        inputFile: undefined,
+        outputFile: undefined,
+        suggestion: "",
+        sampleData: "",
+        answer: "",
+        attachmentUrl: undefined,
+        passingScore: 0,
+        submissionTimeLimit: "",
+      });
+      setInputDataFile(null);
+      setOutputDataFile(null);
+      setAttachmentFile(null);
+    }
+  }, [lessonSelected]);
+
   const practiceType = form.watch("practiceType");
 
-  const createPractice = useCreateLessonPractice(courseData?.id as string, moduleItem?.id as string)
-
+  const createPractice = useCreateLessonPractice(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+  );
+  const updatePractice = useUpdateLessonPractice(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+    lessonSelected?.id as string,
+  );
 
   const handleClose = () => {
     form.reset();
@@ -95,19 +130,31 @@ export const UploadCodeAssignment = ({
 
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
-      title: data.title,
-      practiceType: data.practiceType,
-      shortDescription: data.shortDescription ?? '',
-      description: data.description,
+      ...data,
+      inputFile: "input.txt",
+      outputFile: "output.txt",
       attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
-      duration: data.duration ? Number(data.duration) : 0,
+      submissionTimeLimit: data.submissionTimeLimit
+        ? Number(data.submissionTimeLimit)
+        : 0,
+    };
+    delete formRequest.sampleData;
+    delete formRequest.answer;
+    if (isEdit) {
+      updatePractice.mutate(formRequest as any, {
+        onSuccess: (res) => {
+          onSubmit(res);
+          handleClose();
+        },
+      });
+      return;
     }
-    createPractice.mutate(formRequest, {
+    createPractice.mutate(formRequest as any, {
       onSuccess: (res) => {
         onSubmit(res);
         handleClose();
-      }
-    })
+      },
+    });
   };
 
   return (
@@ -164,13 +211,13 @@ export const UploadCodeAssignment = ({
             {/* Nội dung */}
             <FormField
               control={form.control}
-              name="shortDescription"
+              name="htmlContent"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nội dung</FormLabel>
                   <FormControl>
                     <CKEditorWrapper
-                      value={field.value}
+                      value={field?.value ?? ''}
                       onChange={field.onChange}
                       placeholder="Viết gì đó..."
                     />
@@ -200,7 +247,7 @@ export const UploadCodeAssignment = ({
                 {/* Dữ liệu đầu vào */}
                 <FormField
                   control={form.control}
-                  name="inputData"
+                  name="inputFile"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-gray-700">
@@ -285,7 +332,7 @@ export const UploadCodeAssignment = ({
                 {/* Dữ liệu đầu ra */}
                 <FormField
                   control={form.control}
-                  name="outputData"
+                  name="outputFile"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-gray-700">
@@ -517,7 +564,7 @@ export const UploadCodeAssignment = ({
                 {/* Thời gian tối đa */}
                 <FormField
                   control={form.control}
-                  name="duration"
+                  name="submissionTimeLimit"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Thời gian tối đa (phút)</FormLabel>
@@ -535,7 +582,7 @@ export const UploadCodeAssignment = ({
                 {/* Điểm đạt */}
                 <FormField
                   control={form.control}
-                  name="passScore"
+                  name="passingScore"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Điểm đạt</FormLabel>

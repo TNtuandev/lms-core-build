@@ -21,39 +21,76 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {useCreateCourseContext} from "@/context/CreateCourseProvider";
+import {IModule, useCreateModule, useUpdateModule} from "@/hooks/queries/course/useModuleCourse";
+import {useEffect} from "react";
 
 interface AddChapterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddChapter: (value: ModuleCourseFormData) => void;
-  initialData?: Partial<ModuleCourseFormData>;
+  onAddChapter: () => void;
 }
 
 export default function AddChapterModal({
   isOpen,
   onClose,
   onAddChapter,
-  initialData,
 }: AddChapterModalProps) {
+  const { moduleSelected, courseData } = useCreateCourseContext();
+  const isEdit = Boolean(moduleSelected?.id);
+  const createModule = useCreateModule(courseData?.id as string);
+  const updateModule = useUpdateModule(courseData?.id as string, moduleSelected?.id as string);
   const form = useForm<ModuleCourseFormData>({
     resolver: zodResolver(moduleCourseSchema),
     defaultValues: {
-      title: initialData?.title || "",
-      shortDescription: initialData?.shortDescription || "",
+      title: moduleSelected?.title || "",
+      shortDescription: moduleSelected?.shortDescription || "",
     },
   });
 
+  useEffect(() => {
+    if (moduleSelected) {
+      form.reset(moduleSelected)
+    } else {
+      form.reset({
+        title: "",
+        shortDescription: "",
+      });
+    }
+  }, [moduleSelected]);
+
   const onSubmit = (value: ModuleCourseFormData) => {
-    onAddChapter(value);
-    handleClose();
+    if (isEdit) {
+      updateModule.mutate(value, {
+        onSuccess: () => {
+          onAddChapter();
+          handleClose();
+        },
+        onError: (error) => {
+          console.error("Error updating chapter:", error);
+        },
+      });
+      return;
+    }
+    createModule.mutate(value, {
+      onSuccess: () => {
+        onAddChapter();
+        handleClose();
+      },
+      onError: (error) => {
+        console.error("Error creating chapter:", error);
+      },
+    });
+
   };
 
   const handleClose = () => {
     onClose();
+    form.reset();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[580px] bg-white p-0 rounded-lg">
         <DialogHeader className="p-6 pb-4 border-b border-[#919EAB52] text-left">
           <DialogTitle className="text-lg text-left font-medium text-gray-900">

@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { courseAPI } from "@/api/endpoints/course.api";
 import toast from "react-hot-toast";
-import {Course} from "@/api/types/course.type";
+import {Course, CourseDetail} from "@/api/types/course.type";
 
-export const useStatusCourse = (onSuccessCallback?: (data: Course) => void) => {
+export const useStatusCourse = (onSuccessCallback?: (data: CourseDetail) => void) => {
   const archiveCourse = useMutation({
     mutationFn: (id: string) => courseAPI.archiveCourse(id),
     onSuccess: (data) => {

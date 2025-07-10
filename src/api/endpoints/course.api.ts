@@ -40,6 +40,11 @@ export const courseAPI = {
     return data;
   },
 
+  getCourseCMSBySlug: async (slug: string): Promise<CourseDetail> => {
+    const { data } = await api.get(`/cms/courses/${slug}`);
+    return data;
+  },
+
   getRelatedCourses: async (courseId: string): Promise<{data: RelatedCourse[]}> => {
     const { data } = await api.get(`/courses/${courseId}/related`);
     return data;
@@ -94,6 +99,14 @@ export const courseAPI = {
   createModule: async (courseId: string, moduleData: any): Promise<any> => {
     const { data } = await api.post(
       `/cms/courses/${courseId}/modules`,
+      moduleData,
+    );
+    return data;
+  },
+
+  updateModule: async (courseId: string, moduleId: string, moduleData: any): Promise<any> => {
+    const { data } = await api.patch(
+      `/cms/courses/${courseId}/modules/${moduleId}`,
       moduleData,
     );
     return data;

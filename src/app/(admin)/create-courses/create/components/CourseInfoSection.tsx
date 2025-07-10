@@ -41,9 +41,9 @@ export default function CourseInfoSection({
     resolver: zodResolver(infoCourseSchema),
     defaultValues: {
       requirements: initialData?.requirements || "",
-      hour: initialData?.hour || 0,
+      hourCourse: initialData?.hourCourse || 0,
       learningOutcomes: initialData?.learningOutcomes || "",
-      minute: initialData?.minute || 0,
+      minutesCourse: initialData?.minutesCourse || 0,
       description: initialData?.description || "",
       label: initialData?.label || "",
     },
@@ -147,7 +147,7 @@ export default function CourseInfoSection({
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="hour"
+                  name="hourCourse"
                   render={({ field,  }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-gray-700">
@@ -171,7 +171,7 @@ export default function CourseInfoSection({
                 />
                 <FormField
                   control={form.control}
-                  name="minute"
+                  name="minutesCourse"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm font-medium text-gray-700 opacity-0">

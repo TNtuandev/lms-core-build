@@ -53,10 +53,6 @@ export default function VideoIntroSection({
 }: VideoIntroSectionProps) {
   const [isExpanded, setIsExpand] = useState(true);
   const [type, setTypeSource] = useState(typeSource[0].value);
-  const [selectedFile, setSelectedFile] = useState<File | null>(
-    initialData?.previewImg,
-  );
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<VideoIntroFormData>({
     resolver: zodResolver(videoIntroSchema),

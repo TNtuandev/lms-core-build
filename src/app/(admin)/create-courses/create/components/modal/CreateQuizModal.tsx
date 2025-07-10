@@ -10,21 +10,27 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, {useEffect, useState} from "react";
-import {Edit, InfoCircle} from "iconsax-react";
-import QuizQuestionModal, {QuestionFormData, QuestionType} from "./QuizQuestionModal";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Toggle } from "@/components/ui/toggle";
+import React, { useEffect, useState } from "react";
+import { Edit, InfoCircle } from "iconsax-react";
+import QuizQuestionModal, {
+  QuestionFormData,
+  QuestionType,
+} from "./QuizQuestionModal";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Select,
   SelectContent,
@@ -33,15 +39,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ToggleSwitch from "../ToggleSwitch";
-import {IRequestQuizz, useCreateLessonQuiz} from "@/hooks/queries/course/useLessonCourse";
-import {useCreateCourseContext} from "@/context/CreateCourseProvider";
-import {IModule} from "@/hooks/queries/course/useModuleCourse";
-import { useQueryClient } from "@tanstack/react-query";
+import {useCreateLessonQuiz, useUpdateLessonQuiz} from "@/hooks/queries/course/useLessonCourse";
+import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 
 interface CreateQuizModalProps {
   isOpen: boolean;
   onClose: () => void;
-  module?: IModule
+  onSubmit: () => void;
 }
 
 const quizSchema = z.object({
@@ -60,25 +64,42 @@ const settingsSchema = z.object({
   autoStart: z.boolean(),
   showQuestionCount: z.boolean(),
   questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
-  questionViewMode: z.enum(["single", "paginated", 'scrollable']),
-  shortAnswerCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
+  questionViewMode: z.enum(["single", "paginated", "scrollable"]),
+  shortAnswerCharLimit: z
+    .string()
+    .min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
   essayCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
-export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProps) => {
+export const CreateQuizModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}: CreateQuizModalProps) => {
   const [step, setStep] = useState(1);
   const [questions, setQuestions] = useState<QuestionFormData[]>([]);
   const [openQuestionModal, setOpenQuestionModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const {courseData} = useCreateCourseContext()
-  const queryClient = useQueryClient();
+  const { courseData, moduleSelected, lessonSelected } =
+    useCreateCourseContext();
+  const isEdit = Boolean(lessonSelected?.id);
+
   // Đảm bảo chỉ truyền id khi đã có courseData và module
-  const createLessonQuiz = useCreateLessonQuiz(courseData?.id || "", module?.id || "");
+  const createLessonQuiz = useCreateLessonQuiz(
+    courseData?.id || "",
+    moduleSelected?.id || "",
+  );
+
+  const updateLessonQuiz = useUpdateLessonQuiz(
+    courseData?.id || "",
+    moduleSelected?.id || "",
+    lessonSelected?.id || "",
+  );
 
   useEffect(() => {
-    setQuestions([])
-  }, [isOpen])
+    setQuestions([]);
+  }, [isOpen]);
 
   const form = useForm<QuizFormData>({
     resolver: zodResolver(quizSchema),
@@ -112,6 +133,21 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
     { label: "Cài đặt" },
   ];
 
+  useEffect(() => {
+    // Reset step and forms when modal opens
+    if (lessonSelected) {
+      setStep(1);
+      form.reset(lessonSelected);
+      settingsForm.reset(lessonSelected);
+      setQuestions(lessonSelected?.questions || []);
+    } else {
+      form.reset()
+      settingsForm.reset();
+      setQuestions([]);
+      setStep(1);
+    }
+  }, [lessonSelected]);
+
   const handleNext = async () => {
     if (step === 1) {
       const valid = await form.trigger();
@@ -120,7 +156,7 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
     if (step === 3) {
       const valid = await settingsForm.trigger();
       if (valid) {
-        handleSubmit()
+        handleSubmit();
       }
       return;
     }
@@ -140,28 +176,23 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
       ...settingsForm.getValues(),
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
-    } as any
-    delete data.durationUnit
-    delete data.passScore
+    } as any;
+    delete data.durationUnit;
+    delete data.passScore;
 
     createLessonQuiz.mutate(data, {
       onSuccess: () => {
-        // invalidate lại query useModule
-        if (courseData?.id) {
-          queryClient.invalidateQueries({queryKey: ['modules', courseData.id]});
-        }
+        onSubmit();
         handleClose();
-      }
-    })
-  }
+      },
+    });
+  };
 
   const handleSubmitCreateQuiz = (value: QuestionFormData) => {
     setQuestions((prev) => {
       return [...prev, value];
-    })
-  }
-
-  console.log("questions---", questions)
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -175,21 +206,28 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
         <div className="flex items-start px-6 pt-6 pb-2 w-full">
           {steps.map((item, idx) => (
             <>
-              <div key={item.label} className="flex flex-col items-center min-w-[80px]">
+              <div
+                key={item.label}
+                className="flex flex-col items-center min-w-[80px]"
+              >
                 <div
                   className={`w-8 h-8 flex items-center justify-center rounded-full border-2 transition-all duration-200
-                    ${step >= idx + 1
-                      ? "border-primary-main bg-primary-main text-white"
-                      : "border-gray-300 bg-white text-gray-400"}
+                    ${
+                      step >= idx + 1
+                        ? "border-primary-main bg-primary-main text-white"
+                        : "border-gray-300 bg-white text-gray-400"
+                    }
                   `}
                 >
                   {idx + 1}
                 </div>
                 <span
                   className={`mt-2 text-base transition-all duration-200
-                    ${step >= idx + 1
-                      ? "text-black font-bold"
-                      : "text-gray-400 font-normal"}
+                    ${
+                      step >= idx + 1
+                        ? "text-black font-bold"
+                        : "text-gray-400 font-normal"
+                    }
                   `}
                 >
                   {item.label}
@@ -247,15 +285,26 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                     key={idx}
                     className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
                   >
-                    <span className="text-base font-medium text-gray-900">{q.content}</span>
+                    <span className="text-base font-medium text-gray-900">
+                      {q.content}
+                    </span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">
                         {q.type === QuestionType.SINGLE_CHOICE && "Một đáp án"}
-                        {q.type === QuestionType.SHORT_ANSWER && "Câu trả lời ngắn"}
-                        {q.type === QuestionType.MULTIPLE_CHOICE && "Nhiều đáp án"}
+                        {q.type === QuestionType.SHORT_ANSWER &&
+                          "Câu trả lời ngắn"}
+                        {q.type === QuestionType.MULTIPLE_CHOICE &&
+                          "Nhiều đáp án"}
                       </span>
-                      <button type="button" className="p-1 rounded hover:bg-gray-100" onClick={() => { setEditIndex(idx); setOpenQuestionModal(true); }}>
-                        <Edit color="#637381" size={20}/>
+                      <button
+                        type="button"
+                        className="p-1 rounded hover:bg-gray-100"
+                        onClick={() => {
+                          setEditIndex(idx);
+                          setOpenQuestionModal(true);
+                        }}
+                      >
+                        <Edit color="#637381" size={20} />
                       </button>
                     </div>
                   </div>
@@ -265,18 +314,32 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
               <button
                 type="button"
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gray-50 text-gray-900 font-medium text-base mt-2 hover:bg-gray-100 transition"
-                onClick={() => { setEditIndex(null); setOpenQuestionModal(true); }}
+                onClick={() => {
+                  setEditIndex(null);
+                  setOpenQuestionModal(true);
+                }}
               >
-                <svg width="20" height="20" fill="none" stroke="#637381" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="#637381"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
                 Thêm câu hỏi
               </button>
               {/* Modal thêm/sửa câu hỏi */}
               <QuizQuestionModal
                 isOpen={openQuestionModal}
                 onClose={() => setOpenQuestionModal(false)}
-                defaultValues={editIndex !== null ? questions[editIndex] : undefined}
+                defaultValues={
+                  editIndex !== null ? questions[editIndex] : undefined
+                }
                 onSubmit={(data) => {
-                  handleSubmitCreateQuiz(data)
+                  handleSubmitCreateQuiz(data);
                 }}
               />
             </div>
@@ -294,7 +357,11 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input className="flex-1" placeholder="00" {...field} />
+                            <Input
+                              className="flex-1"
+                              placeholder="00"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -306,8 +373,14 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger style={{marginBlockEnd: 0}} className="h-12 flex-1 space-y-0">
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger
+                                style={{ marginBlockEnd: 0 }}
+                                className="h-12 flex-1 space-y-0"
+                              >
                                 <SelectValue placeholder="Giây" />
                               </SelectTrigger>
                               <SelectContent>
@@ -327,16 +400,25 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                       render={({ field }) => (
                         <FormItem className="flex items-center gap-2 flex-1">
                           <FormControl>
-                            <ToggleSwitch value={field.value} onChange={field.onChange} color="blue" />
+                            <ToggleSwitch
+                              value={field.value}
+                              onChange={field.onChange}
+                              color="blue"
+                            />
                           </FormControl>
-                          <span className="text-sm text-gray-600">Ẩn/Hiện thời gian kiểm tra</span>
+                          <span className="text-sm text-gray-600">
+                            Ẩn/Hiện thời gian kiểm tra
+                          </span>
                         </FormItem>
                       )}
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-2 flex items-center">
-                    <InfoCircle variant="Bold" size={16} color="#637381"/>
-                    <span className="ml-1">Giới hạn thời gian cho bài kiểm tra này. Đặt 0 để không giới hạn.</span>
+                    <InfoCircle variant="Bold" size={16} color="#637381" />
+                    <span className="ml-1">
+                      Giới hạn thời gian cho bài kiểm tra này. Đặt 0 để không
+                      giới hạn.
+                    </span>
                   </p>
                 </div>
                 {/* Chế độ phân chia câu hỏi */}
@@ -345,26 +427,58 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                   name="feedbackMode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="mb-1 block">Chế độ phản hồi câu hỏi</FormLabel>
-                      <div className="mt-1 text-[#637381] text-xs">(Chọn hành vi của hệ thống câu đố dựa trên các câu hỏi lựa chọn.)</div>
+                      <FormLabel className="mb-1 block">
+                        Chế độ phản hồi câu hỏi
+                      </FormLabel>
+                      <div className="mt-1 text-[#637381] text-xs">
+                        (Chọn hành vi của hệ thống câu đố dựa trên các câu hỏi
+                        lựa chọn.)
+                      </div>
                       <div className="space-y-2">
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" value="default" checked={field.value === "default"} onChange={() => field.onChange("default")}
-                            className="accent-blue-600" />
+                          <input
+                            type="radio"
+                            value="default"
+                            checked={field.value === "default"}
+                            onChange={() => field.onChange("default")}
+                            className="accent-blue-600"
+                          />
                           <span className="font-medium text-xs">Mặc định</span>
-                          <span className="text-xs text-gray-500">(Câu trả lời được hiển thị sau khi bài kiểm tra kết thúc)</span>
+                          <span className="text-xs text-gray-500">
+                            (Câu trả lời được hiển thị sau khi bài kiểm tra kết
+                            thúc)
+                          </span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" value="show" checked={field.value === "show"} onChange={() => field.onChange("show")}
-                            className="accent-blue-600" />
-                          <span className="font-medium text-xs">Chế độ hiển thị</span>
-                          <span className="text-xs text-gray-500">(Hiển thị kết quả sau khi thử)</span>
+                          <input
+                            type="radio"
+                            value="show"
+                            checked={field.value === "show"}
+                            onChange={() => field.onChange("show")}
+                            className="accent-blue-600"
+                          />
+                          <span className="font-medium text-xs">
+                            Chế độ hiển thị
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            (Hiển thị kết quả sau khi thử)
+                          </span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" value="retry" checked={field.value === "retry"} onChange={() => field.onChange("retry")}
-                            className="accent-blue-600" />
-                          <span className="font-medium text-xs">Chế độ thi lại</span>
-                          <span className="text-xs text-gray-500">(Thí sinh trả bài kiểm tra bất kỳ số lần nào. Định nghĩa số lần thử được phép bên dưới)</span>
+                          <input
+                            type="radio"
+                            value="retry"
+                            checked={field.value === "retry"}
+                            onChange={() => field.onChange("retry")}
+                            className="accent-blue-600"
+                          />
+                          <span className="font-medium text-xs">
+                            Chế độ thi lại
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            (Thí sinh trả bài kiểm tra bất kỳ số lần nào. Định
+                            nghĩa số lần thử được phép bên dưới)
+                          </span>
                         </label>
                       </div>
                       <FormMessage />
@@ -383,7 +497,7 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
-                        <InfoCircle variant="Bold" size={16} color="#637381"/>
+                        <InfoCircle variant="Bold" size={16} color="#637381" />
                         <span className="ml-1">Đặt 0 để không giới hạn.</span>
                       </p>
                     </FormItem>
@@ -395,14 +509,21 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                   name="maxAttempts"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="mb-1 block">Câu hỏi tối đa được phép trả lời</FormLabel>
+                      <FormLabel className="mb-1 block">
+                        Câu hỏi tối đa được phép trả lời
+                      </FormLabel>
                       <FormControl>
                         <Input className="flex-1" placeholder="10" {...field} />
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
-                        <InfoCircle variant="Bold" size={16} color="#637381"/>
-                        <span className="ml-1">Số lượng câu hỏi sẽ có sẵn để học sinh trả lời và câu hỏi sẽ được chọn ngẫu nhiên từ tất cả các câu hỏi có sẵn trong bài kiểm tra. Nếu số lượng này lớn hơn số câu hỏi có sẵn, học sinh có thể trả lời mọi câu hỏi.</span>
+                        <InfoCircle variant="Bold" size={16} color="#637381" />
+                        <span className="ml-1">
+                          Số lượng câu hỏi sẽ có sẵn để học sinh trả lời và câu
+                          hỏi sẽ được chọn ngẫu nhiên từ tất cả các câu hỏi có
+                          sẵn trong bài kiểm tra. Nếu số lượng này lớn hơn số
+                          câu hỏi có sẵn, học sinh có thể trả lời mọi câu hỏi.
+                        </span>
                       </p>
                     </FormItem>
                   )}
@@ -410,7 +531,9 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                 {/* Accordion nâng cao */}
                 <Accordion type="single" collapsible className="rounded-lg">
                   <AccordionItem value="advanced">
-                    <AccordionTrigger className="px-4 py-3 font-semibold">Cài đặt nâng cao</AccordionTrigger>
+                    <AccordionTrigger className="px-4 py-3 font-semibold">
+                      Cài đặt nâng cao
+                    </AccordionTrigger>
                     <AccordionContent className="space-y-8 px-4 pb-4">
                       <FormField
                         control={settingsForm.control}
@@ -418,9 +541,15 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                         render={({ field }) => (
                           <FormItem className="flex items-center gap-2">
                             <FormControl>
-                              <ToggleSwitch value={field.value} onChange={field.onChange} color="blue" />
+                              <ToggleSwitch
+                                value={field.value}
+                                onChange={field.onChange}
+                                color="blue"
+                              />
                             </FormControl>
-                            <span className="text-sm">Tự động bắt đầu kiểm tra</span>
+                            <span className="text-sm">
+                              Tự động bắt đầu kiểm tra
+                            </span>
                           </FormItem>
                         )}
                       />
@@ -432,15 +561,26 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                             <FormItem>
                               <FormLabel>Bố cục câu hỏi</FormLabel>
                               <FormControl>
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                >
                                   <SelectTrigger className="h-12">
                                     <SelectValue placeholder="Ngẫu nhiên" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="random">Ngẫu nhiên</SelectItem>
-                                    <SelectItem value="categorized">Theo chủ đề</SelectItem>
-                                    <SelectItem value="ascending">Tăng dần</SelectItem>
-                                    <SelectItem value="descending">Giảm dần</SelectItem>
+                                    <SelectItem value="random">
+                                      Ngẫu nhiên
+                                    </SelectItem>
+                                    <SelectItem value="categorized">
+                                      Theo chủ đề
+                                    </SelectItem>
+                                    <SelectItem value="ascending">
+                                      Tăng dần
+                                    </SelectItem>
+                                    <SelectItem value="descending">
+                                      Giảm dần
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -454,14 +594,23 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                             <FormItem>
                               <FormLabel>Cài đặt câu hỏi</FormLabel>
                               <FormControl>
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                >
                                   <SelectTrigger className="h-12">
                                     <SelectValue placeholder="Đặt chế độ xem bố cục câu hỏi" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="paginated">Theo số trang</SelectItem>
-                                    <SelectItem value="single">Xem từng câu</SelectItem>
-                                    <SelectItem value="scrollable">Cuộn từng câu</SelectItem>
+                                    <SelectItem value="paginated">
+                                      Theo số trang
+                                    </SelectItem>
+                                    <SelectItem value="single">
+                                      Xem từng câu
+                                    </SelectItem>
+                                    <SelectItem value="scrollable">
+                                      Cuộn từng câu
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -475,9 +624,15 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                         render={({ field }) => (
                           <FormItem className="flex items-center gap-2">
                             <FormControl>
-                              <ToggleSwitch value={field.value} onChange={field.onChange} color="blue" />
+                              <ToggleSwitch
+                                value={field.value}
+                                onChange={field.onChange}
+                                color="blue"
+                              />
                             </FormControl>
-                            <span className="text-sm">Ngẫu nhiên số câu hỏi khi làm bài</span>
+                            <span className="text-sm">
+                              Ngẫu nhiên số câu hỏi khi làm bài
+                            </span>
                           </FormItem>
                         )}
                       />
@@ -499,7 +654,9 @@ export const CreateQuizModal = ({ module, isOpen, onClose }: CreateQuizModalProp
                           name="essayCharLimit"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Giới hạn ký tự trả lời câu hỏi mở/Bình luận</FormLabel>
+                              <FormLabel>
+                                Giới hạn ký tự trả lời câu hỏi mở/Bình luận
+                              </FormLabel>
                               <FormControl>
                                 <Input placeholder="500" {...field} />
                               </FormControl>

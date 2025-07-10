@@ -14,8 +14,8 @@ export const infoCourseSchema = z.object({
   description: z.string().min(10, "Mô tả chi tiết không được để trống"),
   requirements: z.string().min(1, "Yêu cầu không được để trống"),
   learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
-  hour: z.any().optional(),
-  minute: z.any().optional(),
+  hourCourse: z.any().optional(),
+  minutesCourse: z.any().optional(),
   label: z.string().optional(),
 });
 
@@ -52,20 +52,20 @@ export const lessonSchema = z.object({
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
-  thumbnail: z.any().optional(),
+  sampleImageUrl: z.any().optional(),
   type: z.string().optional()
 });
 
 export const uploadAssignmentSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   practiceType: z.string().min(1, "Vui lòng chọn loại bài tập"),
-  shortDescription: z.string().optional(),
+  htmlContent: z.string().optional(),
   description: z.string().min(1, "Mô tả không được để trống"),
   attachmentUrl: z.any().optional(),
-  passScore: z.number().optional(),
-  duration: z.string().optional(),
-  inputData: z.any().optional(),
-  outputData: z.any().optional(),
+  passingScore: z.number().optional(),
+  submissionTimeLimit: z.string().optional(),
+  inputFile: z.any().optional(),
+  outputFile: z.any().optional(),
   suggestion: z.string().optional(),
   sampleData: z.string().optional(),
   answer: z.string().optional(),

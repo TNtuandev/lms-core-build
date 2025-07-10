@@ -52,6 +52,20 @@ export const useCreateModule = (courseId: string, onSuccessCallback?: (data: any
   });
 };
 
+export const useUpdateModule = (courseId: string, moduleId: string) => {
+  return useMutation({
+    mutationFn: (moduleData: IRequestModule) => courseAPI.updateModule(courseId, moduleId, moduleData),
+    onSuccess: (data) => {
+      console.log("Module created successfully:", data);
+      toast.success("Chủ đề đã được cập nhật thành công!");
+    },
+    onError: (error: any) => {
+      console.error("Error creating module:", error);
+      toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi cập nhật module.");
+    },
+  });
+};
+
 export const useReorderModules = (courseId: string, onSuccessCallback?: (data: any) => void) => {
   return useMutation({
     mutationFn: (reorderData: IReorderModules) => courseAPI.reorderModules(courseId, reorderData),

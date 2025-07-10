@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -22,12 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Info } from "lucide-react";
-import Image from "next/image";
 import { Step1FormData, step1Schema } from "./schemas";
 import { z } from "zod";
 import { useCategory } from "@/hooks/queries/category/useCategory";
-import {Card} from "@/components/ui/card";
-import {InfoCircle} from "iconsax-react";
+import { Card } from "@/components/ui/card";
+import { InfoCircle } from "iconsax-react";
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -36,8 +34,6 @@ interface Step1FormProps {
 }
 
 export default function Step1Form({ onNext, initialData }: Step1FormProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(initialData?.thumbnail);
-  const inputRef = useRef<HTMLInputElement>(null);
   const { data: categories } = useCategory();
 
   const form = useForm<Step1FormData>({
@@ -48,6 +44,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
       teacher: initialData?.teacher || "",
       slug: initialData?.slug || "",
       shortDescription: initialData?.shortDescription || "",
+      thumbnail: initialData?.thumbnail || "",
     },
   });
 
@@ -60,9 +57,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     <Form {...form}>
       <Card className="p-8 bg-white shadow-sm border border-gray-200">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Chi tiết
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Chi tiết</h2>
         </div>
 
         {/* Step 1 Form */}
@@ -166,8 +161,8 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                 <p className="text-xs text-gray-500">
                   Xem trước:{" "}
                   <span className="text-blue-600">
-                  https://kicaacademy.com/{field.value || "khoa-hoc-moi"}
-                </span>
+                    https://kicaacademy.com/{field.value || "khoa-hoc-moi"}
+                  </span>
                 </p>
                 <FormMessage />
               </FormItem>
@@ -206,7 +201,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Thêm URL Video của bạn"
+                    placeholder="Thêm URL Thumbnail của bạn"
                     className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     {...field}
                   />

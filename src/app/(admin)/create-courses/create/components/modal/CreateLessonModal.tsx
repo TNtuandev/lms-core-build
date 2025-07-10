@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,43 +37,63 @@ import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   useCreateLessonArticle,
   useCreateLessonVideo,
+  useUpdateLessonArticle,
+  useUpdateLessonVideo,
 } from "@/hooks/queries/course/useLessonCourse";
-import { IModule } from "@/hooks/queries/course/useModuleCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
-  moduleItem: IModule | null;
 }
 
 export const CreateLessonModal = ({
   isOpen,
   onClose,
   onSubmit,
-  moduleItem,
 }: CreateLessonModalProps) => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
-
-  const { courseData } = useCreateCourseContext();
-
+  const { courseData, lessonSelected, moduleSelected } =
+    useCreateCourseContext();
+  const isEdit = Boolean(lessonSelected?.id);
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      videoUrl: null,
-      playbackTime: "",
-      attachmentUrl: undefined,
-      isPreviewable: false,
-      htmlContent: "",
-      type: "video",
+      title: lessonSelected?.title || "",
+      description: lessonSelected?.description || "",
+      type: lessonSelected?.type || "VIDEO",
+      videoUrl: lessonSelected?.videoUrl || "",
+      playbackTime: lessonSelected?.playbackTime || 0,
+      htmlContent: lessonSelected?.htmlContent || "",
+      sampleImageUrl: lessonSelected?.sampleImageUrl || "",
+      attachmentUrl: null,
+      isPreviewable: lessonSelected?.isPreviewable || true,
     },
   });
+
+  useEffect(() => {
+    if (lessonSelected) {
+      form.reset(lessonSelected);
+      setThumbnailFile(null);
+      setAttachmentFile(null);
+    } else {
+      form.reset({
+        title: "",
+        description: "",
+        type: "VIDEO",
+        videoUrl: "",
+        playbackTime: "0",
+        htmlContent: "",
+        sampleImageUrl: "",
+        attachmentUrl: null,
+        isPreviewable: true,
+      });
+    }
+  }, [lessonSelected]);
 
   const handleClose = () => {
     setThumbnailFile(null);
@@ -84,15 +104,24 @@ export const CreateLessonModal = ({
 
   const createLessonVideo = useCreateLessonVideo(
     courseData?.id as string,
-    moduleItem?.id as string,
+    moduleSelected?.id as string,
+  );
+  const updateLessonVideo = useUpdateLessonVideo(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+    lessonSelected?.id as string,
   );
   const createLessonArticle = useCreateLessonArticle(
     courseData?.id as string,
-    moduleItem?.id as string,
+    moduleSelected?.id as string,
   );
-
+  const updateLessonArticle = useUpdateLessonArticle(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+    lessonSelected?.id as string,
+  );
   const handleCreateLesson = (data: LessonFormData) => {
-    if (lessonType === "video") {
+    if (lessonType === "VIDEO") {
       const formData = {
         title: data.title,
         description: data.description,
@@ -102,7 +131,17 @@ export const CreateLessonModal = ({
         sampleImageUrl: "https://example.com/sample-image.jpg",
         isPreviewable: data.isPreviewable,
       };
-      createLessonVideo.mutate(formData, {
+      if (isEdit) {
+        updateLessonVideo.mutate(formData as any, {
+          onSuccess: () => {
+            form.reset();
+            onSubmit();
+            onClose();
+          },
+        });
+        return;
+      }
+      createLessonVideo.mutate(formData as any, {
         onSuccess: () => {
           form.reset();
           onSubmit();
@@ -116,6 +155,16 @@ export const CreateLessonModal = ({
         htmlContent: data.htmlContent,
         sampleImageUrl: "https://example.com/sample-image.jpg",
       };
+      if (isEdit) {
+        updateLessonArticle.mutate(formData, {
+          onSuccess: () => {
+            form.reset();
+            onSubmit();
+            onClose();
+          },
+        });
+        return;
+      }
       createLessonArticle.mutate(formData, {
         onSuccess: () => {
           onSubmit();
@@ -125,9 +174,6 @@ export const CreateLessonModal = ({
       });
     }
   };
-
-  console.log("form----", form.formState.errors, form.getValues());
-
   const lessonType = form.watch("type");
 
   return (
@@ -175,8 +221,8 @@ export const CreateLessonModal = ({
                         <SelectValue placeholder="Chọn loại bài học" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="video">Video</SelectItem>
-                        <SelectItem value="document">Tài liệu</SelectItem>
+                        <SelectItem value="VIDEO">Video</SelectItem>
+                        <SelectItem value="ARTICLE">Tài liệu</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -198,7 +244,7 @@ export const CreateLessonModal = ({
               )}
             />
             {/* Nội dung */}
-            {lessonType === "document" && (
+            {lessonType === "ARTICLE" && (
               <FormField
                 control={form.control}
                 name="htmlContent"
@@ -221,7 +267,7 @@ export const CreateLessonModal = ({
             {/* Ảnh đại diện */}
             <FormField
               control={form.control}
-              name="thumbnail"
+              name="sampleImageUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">
@@ -309,7 +355,7 @@ export const CreateLessonModal = ({
             />
 
             {/* Thêm URL Video */}
-            {lessonType === "video" && (
+            {lessonType === "VIDEO" && (
               <>
                 <div className="grid grid-cols-1 gap-4">
                   <FormField
@@ -341,28 +387,24 @@ export const CreateLessonModal = ({
                   />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="videoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Thêm URL Video của bạn</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://youtube.com/..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <p className="text-xs text-gray-500 mt-1">
-                        VD:{" "}
-                        <span className="text-primary-main underline">
+                <FormField control={form.control} name="videoUrl" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Thêm URL Video của bạn</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="https://youtube.com/..."
+                        {...field as any}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <p className="text-xs text-gray-500 mt-1">
+                      VD:{" "}
+                      <span className="text-primary-main underline">
                           https://www.youtube.com/watch?v=your-video-id
                         </span>
-                      </p>
-                    </FormItem>
-                  )}
-                />
+                    </p>
+                  </FormItem>
+                )}/>
                 {/* Thời gian phát lại video */}
 
                 {/* File đính kèm */}

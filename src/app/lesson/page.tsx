@@ -12,6 +12,8 @@ import ExerciseLesson from "@/components/lesson/ExerciseLesson";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import ContentTab from "@/components/lesson/ContentTab";
 import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
+import { useSearchParams } from "next/navigation";
+import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
 
 interface Lesson {
   id: string;
@@ -23,7 +25,16 @@ interface Lesson {
 function LessonPage() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(["2.1"]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
-  const [quizCode, ] = useState<boolean>(true);
+  const [quizCode, ] = useState<boolean>(false);
+
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("course");
+
+  const { data: courseDetail } = useCourseBySlug(slug as string);
+  const { data: moduleData } = useModule(courseDetail?.id || "");
+
+  console.log(courseDetail);
+  console.log(moduleData?.data, "moduleData");
 
   const [sections, setSections] = useState([
     {

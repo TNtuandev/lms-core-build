@@ -1,6 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { courseAPI } from "@/api/endpoints/course.api";
 import toast from "react-hot-toast";
+import { courseKeys } from "@/hooks/queries/course/useCourses";
 
 export interface IRequestArticles {
     duration?: number
@@ -54,6 +55,15 @@ export interface IRequestPractices {
     practiceType: string
     notes?: string
 }
+
+export const useGetLessonByModule = (courseId: string, moduleId: string) => {
+  return useQuery({
+    queryKey: courseKeys.modules(courseId),
+    queryFn: () => courseAPI.getLesson(courseId, moduleId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
 
 export const useCreateLessonArticle = (courseId: string, moduleId: string, onSuccessCallback?: (data: any) => void) => {
     return useMutation({

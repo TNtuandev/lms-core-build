@@ -4,16 +4,19 @@ import { useRouter } from "next/navigation";
 
 interface Module {
   title: string;
+  id: string
 }
 
 interface CourseContentProps {
   moduleData?: {
     data?: Module[];
   };
+  slug?: string;
 }
 
-export const CourseContent: React.FC<CourseContentProps> = ({ moduleData }) => {
+export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }) => {
   const router = useRouter();
+  console.log(slug);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-100 mb-8">
@@ -21,12 +24,12 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData }) => {
       <div className="space-y-2">
         {moduleData?.data &&
           moduleData.data?.length > 0 &&
-          moduleData.data.map((item, index) => (
+          moduleData.data.map((item) => (
             <div
               role="presentation"
               className="p-4 rounded-lg bg-gray-50 cursor-pointer"
-              key={index}
-              onClick={() => router.push("/lesson")}
+              key={item.id}
+              onClick={() => router.push(`/lesson?course=${slug}`)}
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

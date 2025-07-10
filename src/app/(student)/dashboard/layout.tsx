@@ -33,6 +33,8 @@ export default function DashboardLayout({
     user?.id || "",
   );
 
+  console.log(learnerProfileData?.data, "---learnerProfileData");
+
   const isActive = (path: string) => {
     return pathname === path;
   };

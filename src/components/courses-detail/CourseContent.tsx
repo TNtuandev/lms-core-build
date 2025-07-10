@@ -16,7 +16,6 @@ interface CourseContentProps {
 
 export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }) => {
   const router = useRouter();
-  console.log(slug);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-100 mb-8">
@@ -29,7 +28,7 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }
               role="presentation"
               className="p-4 rounded-lg bg-gray-50 cursor-pointer"
               key={item.id}
-              onClick={() => router.push(`/lesson?course=${slug}`)}
+              onClick={() => router.push(`/lesson?course=${slug}&module=${item.id}`)}
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

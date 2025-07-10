@@ -1,12 +1,13 @@
 import IconWarning from "../../../public/icons/IconWarning";
 import IconStar from "../../../public/icons/IconStar";
-import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+// import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import { Plus } from "lucide-react";
 import IconEditLesson from "../../../public/icons/lessson/IconEditLesson";
 import IconTrashLesson from "../../../public/icons/lessson/IconTrashLesson";
 import IconDownload from "../../../public/icons/lessson/IconDownload";
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatToHourUnit, formatToVietnameseMonthYear } from "@/until";
 
 export interface ContentTabProps {
   courseTitle: string;
@@ -16,7 +17,7 @@ export interface ContentTabProps {
 export default function ContentTab(props: ContentTabProps) {
   const { courseTitle, currentLesson } = props;
   const [newNote, setNewNote] = useState("");
-  const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
+  // const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
 
@@ -79,33 +80,32 @@ export default function ContentTab(props: ContentTabProps) {
         return (
           <>
             <p className="text-secondary mb-3">
-              Học thiết kế web trong 1 giờ với hơn 25 quy tắc và hướng dẫn dễ sử
-              dụng — bao gồm rất nhiều tài nguyên thiết kế web tuyệt vời!
+              {currentLesson?.shortDescription}
             </p>
             <div className="flex gap-2 items-center mb-3">
               <IconWarning />
               <div className="text-secondary">
-                Cập nhật lần cuối: Tháng 5/2025
+                Cập nhật lần cuối: {currentLesson?.updatedAt ? formatToVietnameseMonthYear(currentLesson?.updatedAt) : "Chưa cập nhật"}
               </div>
             </div>
             <div className="flex gap-8 pb-6 border-b border-dashed border-b-gray-200 mb-4">
               <div>
                 <div className="text-primary font-semibold flex items-center gap-1 text-[#FF9800]">
-                  4.8
+                  {currentLesson?.ratingAvg}
                   <IconStar />
                 </div>
-                <div className="text-secondary text-xs">43,673 Đánh giá</div>
+                <div className="text-secondary text-xs">{currentLesson?.ratingCnt} Đánh giá</div>
               </div>
               <div>
                 <div className="text-primary font-semibold">800,664</div>
                 <div className="text-secondary text-xs">Học sinh</div>
               </div>
               <div>
-                <div className="text-primary font-semibold">2.5 Giờ</div>
+                <div className="text-primary font-semibold">{currentLesson?.duration ? formatToHourUnit(currentLesson.duration) : "0"}</div>
                 <div className="text-secondary text-xs">Tổng</div>
               </div>
               <div>
-                <div className="text-primary font-semibold">10</div>
+                <div className="text-primary font-semibold">{currentLesson?.totalLessons}</div>
                 <div className="text-secondary text-xs">Bài giảng</div>
               </div>
               <div>
@@ -115,50 +115,20 @@ export default function ContentTab(props: ContentTabProps) {
             </div>
             <div className="text-primary font-semibold mb-4">Mô tả</div>
             <p className="mb-4">
-              Khóa học Thiết kế Giao diện và Trải nghiệm Người dùng (UI/UX) mang
-              đến cho bạn một hành trình học tập thực tế từ nền tảng đến nâng
-              cao.
+              {currentLesson?.description}
             </p>
-            <p className="mb-4">
-              Bạn sẽ làm chủ quy trình nghiên cứu người dùng, xây dựng tường UX
-              hiệu quả, thiết kế giao diện tinh tế với các công cụ phổ biến, và
-              hoàn thiện sản phẩm số chất lượng cao.
-            </p>
-            <p className="mb-4">
-              Song song với lý thuyết là những bài tập thực hành thực tế, giúp
-              bạn tự tin tạo ra sản phẩm thực tiễn và xây dựng portfolio cá nhân
-              chuyên nghiệp.
-            </p>
-            <p>
-              Hoàn thành khóa học, bạn có thể làm việc với các vị trí Designer,
-              UX Researcher, UI/UX Specialist tại các công ty công nghệ,
-              startup, hoặc phát triển sự nghiệp tự do.
-            </p>
-            {showMoreCardProduct && (
-              <>
-                <p className="mb-4">
-                  Song song với lý thuyết là những bài tập thực hành thực tế,
-                  giúp bạn tự tin tạo ra sản phẩm thực tiễn và xây dựng
-                  portfolio cá nhân chuyên nghiệp.
-                </p>
-                <p>
-                  Hoàn thành khóa học, bạn có thể làm việc với các vị trí
-                  Designer, UX Researcher, UI/UX Specialist tại các công ty công
-                  nghệ, startup, hoặc phát triển sự nghiệp tự do.
-                </p>
-              </>
-            )}
-            <button
-              onClick={() => setShowMoreCardProduct(!showMoreCardProduct)}
-              className="text-[#2F57EF] flex items-center cursor-pointer gap-2 mt-4 font-medium"
-            >
-              {!showMoreCardProduct ? "Hiển thị thêm" : "Ẩn bớt"}
-              {!showMoreCardProduct ? (
-                <ArrowDown2 size="20" color="#2F57EF" />
-              ) : (
-                <ArrowUp2 size="20" color="#2F57EF" />
-              )}
-            </button>
+
+            {/*<button*/}
+            {/*  onClick={() => setShowMoreCardProduct(!showMoreCardProduct)}*/}
+            {/*  className="text-[#2F57EF] flex items-center cursor-pointer gap-2 mt-4 font-medium"*/}
+            {/*>*/}
+            {/*  {!showMoreCardProduct ? "Hiển thị thêm" : "Ẩn bớt"}*/}
+            {/*  {!showMoreCardProduct ? (*/}
+            {/*    <ArrowDown2 size="20" color="#2F57EF" />*/}
+            {/*  ) : (*/}
+            {/*    <ArrowUp2 size="20" color="#2F57EF" />*/}
+            {/*  )}*/}
+            {/*</button>*/}
           </>
         );
       case "notes":

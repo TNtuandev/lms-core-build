@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ArrowDown2, ArrowUp2, Backward5Seconds } from "iconsax-react";
+import { formatToHourUnit } from "@/until";
 
 interface CourseSidebarProps {
   courseDetail: {
@@ -93,7 +94,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
             <div className="text-secondary font-semibold">Thời lượng</div>
             <div className="bg-[#919EAB29] px-2 rounded">
               <span className="text-xs text-gray-500 font-semibold">
-                {courseDetail?.duration} phút
+                {courseDetail?.duration? formatToHourUnit(courseDetail.duration): "0"}
               </span>
             </div>
           </div>

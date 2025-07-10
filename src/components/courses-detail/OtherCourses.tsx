@@ -116,6 +116,7 @@ export const OtherCourses: React.FC<OtherCoursesProps> = ({
             onClick={() => handleCourseClick(course.slug)}
           >
             <CourseCard
+              slug={course.slug}
               gridNUmber={2}
               title={course.title}
               imageUrl={course.thumbnail}

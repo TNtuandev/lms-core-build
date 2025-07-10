@@ -42,14 +42,14 @@ const steps = [
 function CreateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
   const searchParams = useSearchParams();
-  const courseSlug = searchParams.get("slug");
+  const courseSlug = searchParams.get("slug") ?? '';
   const { courseData, setCourseData } = useCreateCourseContext();
-  const [formData, setFormData] = useState<Partial<fullCourseFormData>>({
-    ...courseData,
-    categoryId: courseData?.category.id,
-  });
+  const [formData, setFormData] = useState<Partial<fullCourseFormData>>();
 
   const { data: initialCourseData } = useCourseCMSBySlug(courseSlug as string);
+
+  console.log("initialCourseData-", initialCourseData)
+  console.log("formData-", formData)
 
   useEffect(() => {
     if (initialCourseData) {
@@ -100,7 +100,6 @@ function CreateCourse() {
       regularPrice: data.regularPrice,
       discountedPrice: data.discountedPrice,
     };
-
     createCourse.mutate(request);
   };
 

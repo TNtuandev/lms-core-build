@@ -26,6 +26,7 @@ import { z } from "zod";
 import { useCategory } from "@/hooks/queries/category/useCategory";
 import { Card } from "@/components/ui/card";
 import { InfoCircle } from "iconsax-react";
+import {useEffect} from "react";
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -38,15 +39,18 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
 
   const form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
-    defaultValues: {
+  });
+
+  useEffect(() => {
+    form.reset({
       title: initialData?.title || "",
       categoryId: initialData?.categoryId || "",
       teacher: initialData?.teacher || "",
       slug: initialData?.slug || "",
       shortDescription: initialData?.shortDescription || "",
       thumbnail: initialData?.thumbnail || "",
-    },
-  });
+    })
+  }, [initialData]);
 
   const onSubmit = (data: Step1FormData) => {
     console.log(";Submitted data:", data);
@@ -102,7 +106,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   <FormControl>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <SelectTrigger className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Danh mục" />

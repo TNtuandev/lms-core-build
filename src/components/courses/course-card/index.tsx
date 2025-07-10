@@ -1,8 +1,10 @@
 import React from "react";
 import IconBook from "../../../../public/icons/IconBook";
 import IconUser from "../../../../public/icons/IconUser";
-import {Edit} from "iconsax-react";
-import {Button} from "@/components/ui/button";
+import { Edit } from "iconsax-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Routes } from "@/lib/routes/routes";
 
 interface CourseCardProps {
   badge?: string;
@@ -16,11 +18,13 @@ interface CourseCardProps {
   currentPrice: string;
   originalPrice: string;
   gridNUmber?: number;
+  slug?: string;
 }
 
 function CourseCard({
   badge,
   title,
+  slug,
   imageUrl,
   category,
   courseName,
@@ -31,6 +35,8 @@ function CourseCard({
   originalPrice,
   gridNUmber = 3,
 }: CourseCardProps) {
+  const router = useRouter();
+
   const getBadgeColor = () => {
     switch (badge) {
       case "NEW":
@@ -44,6 +50,12 @@ function CourseCard({
       default:
         return "bg-cyan-400";
     }
+  };
+
+  const onNavigateEditCourse = (event: any) => {
+    event.stopPropagation();
+    event.preventDefault();
+    router.push(`create-courses?slug=${slug}`);
   };
 
   return (
@@ -94,8 +106,11 @@ function CourseCard({
             {originalPrice}₫
           </span>
         </div>
-        <Button className="mt-4 hover:bg-secondary/24 cursor-pointer flex items-center w-fit  min-w-6 h-6 gap-2 bg-secondary/16 rounded-lg px-2">
-          <Edit size={16} color="#637381"/>
+        <Button
+          onClick={(event) => onNavigateEditCourse(event)}
+          className="mt-4 hover:bg-secondary/24 cursor-pointer flex items-center w-fit  min-w-6 h-6 gap-2 bg-secondary/16 rounded-lg px-2"
+        >
+          <Edit size={16} color="#637381" />
           <span className="text-secondary text-sm font-bold">Chỉnh sửa</span>
         </Button>
       </div>

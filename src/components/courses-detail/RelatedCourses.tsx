@@ -70,6 +70,7 @@ export const RelatedCourses: React.FC<RelatedCoursesProps> = ({
                   onClick={() => router.push(`/course/${course.slug}`)}
                 >
                   <CourseCard
+                    slug={course.slug}
                     gridNUmber={4}
                     title={course?.title}
                     imageUrl={course?.thumbnail}

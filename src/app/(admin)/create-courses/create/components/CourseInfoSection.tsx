@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -39,15 +39,18 @@ export default function CourseInfoSection({
 
   const form = useForm<InfoFormData>({
     resolver: zodResolver(infoCourseSchema),
-    defaultValues: {
+  });
+
+  useEffect(() => {
+    form.reset({
       requirements: initialData?.requirements || "",
       hourCourse: initialData?.hourCourse || 0,
       learningOutcomes: initialData?.learningOutcomes || "",
       minutesCourse: initialData?.minutesCourse || 0,
       description: initialData?.description || "",
       label: initialData?.label || "",
-    },
-  });
+    })
+  }, [initialData]);
 
   const onSubmit = (data: InfoFormData) => {
     // Call onNext to pass data back to parent component

@@ -25,7 +25,7 @@ import {
   videoIntroSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const typeSource = [
@@ -55,11 +55,14 @@ export default function VideoIntroSection({
 
   const form = useForm<VideoIntroFormData>({
     resolver: zodResolver(videoIntroSchema),
-    defaultValues: {
+  });
+
+  useEffect(() => {
+    form.reset({
       previewVideo: initialData?.previewVideo || "",
       previewImg: initialData?.previewImg || "",
-    },
-  });
+    })
+  }, [initialData]);
 
   const onSubmit = (data: VideoIntroFormData) => {
     // Call onNext to pass data back to parent component

@@ -17,7 +17,7 @@ import {
   PricingCourseFormData,
   pricingCourseSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +42,14 @@ export default function CoursePricingSection({
       isFree: initialData?.isFree
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      regularPrice: initialData?.regularPrice || 0,
+      discountedPrice: initialData?.discountedPrice || 0,
+      isFree: initialData?.isFree
+    })
+  }, [initialData]);
 
   const onSubmit = (data: PricingCourseFormData) => {
     // Call onNext to pass data back to parent component

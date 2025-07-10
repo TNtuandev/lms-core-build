@@ -129,6 +129,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
               onClick={() => handleCourseClick(course.slug)}
             >
               <CourseCard
+                slug={course.slug}
                 badge={course.label}
                 title={course.title}
                 imageUrl={course.thumbnail}

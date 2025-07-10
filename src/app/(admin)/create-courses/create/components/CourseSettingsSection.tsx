@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -44,15 +44,18 @@ export default function CourseSettingsSection({
 
   const form = useForm<SettingCourseFormData>({
     resolver: zodResolver(settingCourseSchema),
-    defaultValues: {
+  });
+
+  const [studentCount, setStudentCount] = useState(100);
+
+  useEffect(() => {
+    form.reset({
       difficulty: initialData?.difficulty || "",
       isPublic: initialData?.isPublic || false,
       enableQA: initialData?.enableQA || true,
       enableDrip: initialData?.enableDrip || true,
-    },
-  });
-
-  const [studentCount, setStudentCount] = useState(100);
+    })
+  }, []);
 
   const onSubmit = (data: SettingCourseFormData) => {
     // Call onNext to pass data back to parent component
@@ -93,7 +96,7 @@ export default function CourseSettingsSection({
                       <FormItem>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger className="h-11 rounded-lg border-gray-200 bg-white focus:border-blue-500 focus:ring-blue-500">

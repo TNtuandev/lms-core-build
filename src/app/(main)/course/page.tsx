@@ -407,6 +407,7 @@ function CoursePage() {
                     onClick={() => handleCourseClick(course.slug)}
                   >
                     <CourseCard
+                      slug={course.slug}
                       gridNUmber={4}
                       title={course.title}
                       imageUrl={course.thumbnail}

@@ -31,6 +31,7 @@ import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
 import { useCourseCMSBySlug } from "@/hooks/queries/course/useCourses";
 import { useUpdateCourse } from "@/hooks/queries/course/useCreateCourse";
+import {useSearchParams} from "next/navigation";
 
 const STEP_SUBMIT_CREATE_COURSE = 5;
 
@@ -39,7 +40,9 @@ const steps = [
   { id: 2, title: "Thêm thông tin", description: "Thêm thông tin" },
 ];
 
-function CreateCourse({ courseSlug }: { courseSlug: string }) {
+function CreateCourse() {
+  const searchParams = useSearchParams();
+  const courseSlug = searchParams.get("slug") ?? "";
   const [currentStep, setCurrentStep] = useState(1);
   const { courseData, setCourseData } = useCreateCourseContext();
   const [formData, setFormData] = useState<Partial<fullCourseFormData>>();

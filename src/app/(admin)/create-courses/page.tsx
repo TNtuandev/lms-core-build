@@ -1,19 +1,17 @@
 "use client";
 
-import {CreateCourseProvider} from "@/context/CreateCourseProvider";
+import { CreateCourseProvider } from "@/context/CreateCourseProvider";
 import CreateCourse from "@/app/(admin)/create-courses/CreateCourse";
-import {useSearchParams} from "next/navigation";
+import { Suspense } from "react";
 
 const CreateCoursePage = () => {
-
-  const searchParams = useSearchParams();
-  const courseSlug = searchParams.get("slug") ?? "";
   return (
-    <CreateCourseProvider>
-      <CreateCourse courseSlug={courseSlug} />
-    </CreateCourseProvider>
-  )
-}
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateCourseProvider>
+        <CreateCourse />
+      </CreateCourseProvider>
+    </Suspense>
+  );
+};
 
 export default CreateCoursePage;
-

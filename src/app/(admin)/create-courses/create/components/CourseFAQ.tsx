@@ -4,27 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Add, Edit, HambergerMenu, Trash } from "iconsax-react";
 import { ChevronDown } from "lucide-react";
-import {
-  fullCourseFormData,
-  VideoIntroFormData,
-} from "@/app/(admin)/create-courses/create/schemas";
 import { useEffect, useState } from "react";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
-import {useDeleteFAQ, useFAQs} from "@/hooks/queries/course/useFaqs";
+import { useFAQs } from "@/hooks/queries/course/useFaqs";
 import { FAQ } from "@/api/types/course.type";
-import {FaqModal} from "@/app/(admin)/create-courses/create/components/modal/FaqModal";
+import { FaqModal } from "@/app/(admin)/create-courses/create/components/modal/FaqModal";
 
-interface CourseFAQProps {
-  onNext: (data: VideoIntroFormData) => void;
-  onBack: () => void;
-  initialData?: Partial<fullCourseFormData>;
-}
-
-export default function CourseFAQ({
-  onNext,
-  onBack,
-  initialData,
-}: CourseFAQProps) {
+export default function CourseFAQ() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [isOpenFaqModal, setIsOpenFaqModal] = useState(false);
   const { courseData } = useCreateCourseContext();
@@ -37,7 +23,7 @@ export default function CourseFAQ({
 
   const handleSubmit = () => {
     refetchFaqs();
-  }
+  };
 
   useEffect(() => {
     if (initialFaqs) {
@@ -169,7 +155,11 @@ export default function CourseFAQ({
           </Button>
         </div>
       </div>
-      <FaqModal isOpen={isOpenFaqModal} onClose={() => setIsOpenFaqModal(false)}  onSubmit={handleSubmit} />
+      <FaqModal
+        isOpen={isOpenFaqModal}
+        onClose={() => setIsOpenFaqModal(false)}
+        onSubmit={handleSubmit}
+      />
     </Card>
   );
 }

@@ -42,6 +42,15 @@ export const useCourseBySlug = (slug: string) => {
   });
 };
 
+export const useCourseCMSBySlug = (slug: string) => {
+  return useQuery({
+    queryKey: courseKeys.detail(slug),
+    queryFn: () => courseAPI.getCourseCMSBySlug(slug),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 export const useRelatedCourses = (courseId: string) => {
   return useQuery({
     queryKey: courseKeys.related(courseId),

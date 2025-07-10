@@ -14,8 +14,8 @@ export const infoCourseSchema = z.object({
   description: z.string().min(10, "Mô tả chi tiết không được để trống"),
   requirements: z.string().min(1, "Yêu cầu không được để trống"),
   learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
-  hour: z.any().optional(),
-  minute: z.any().optional(),
+  hourCourse: z.any().optional(),
+  minutesCourse: z.any().optional(),
   label: z.string().optional(),
 });
 
@@ -52,7 +52,7 @@ export const lessonSchema = z.object({
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
-  thumbnail: z.any().optional(),
+  sampleImageUrl: z.any().optional(),
   type: z.string().optional()
 });
 

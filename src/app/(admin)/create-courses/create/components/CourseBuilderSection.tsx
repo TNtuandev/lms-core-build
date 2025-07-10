@@ -2,61 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {Add, Edit, HambergerMenu, ImportCurve, Menu, Trash} from "iconsax-react";
+import { Add, Edit, HambergerMenu, ImportCurve, Trash } from "iconsax-react";
 import { ChevronDown, Upload } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AddChapterModal from "./modal/AddChapterModal";
 import { CreateLessonModal } from "@/app/(admin)/create-courses/create/components/modal/CreateLessonModal";
 import { CreateQuizModal } from "@/app/(admin)/create-courses/create/components/modal/CreateQuizModal";
-import { UploadArticleAssignment } from "@/app/(admin)/create-courses/create/components/modal/CreateAssignment/UploadArticleAssignment";
 import { UploadCodeAssignment } from "./modal/CreateAssignment/UploadCodeAssignment";
-import {
-  fullCourseFormData,
-  ModuleCourseFormData,
-  VideoIntroFormData,
-} from "@/app/(admin)/create-courses/create/schemas";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
-import {
-  IModule,
-  useCreateModule,
-  useModules,
-} from "@/hooks/queries/course/useModuleCourse";
-import {useCreateLessonVideo} from "@/hooks/queries/course/useLessonCourse";
+import { IModule, useModules } from "@/hooks/queries/course/useModuleCourse";
 
-interface Lesson {
-  id: string;
-  title: string;
-}
-
-interface CourseBuilderSectionProps {
-  onNext: (data: VideoIntroFormData) => void;
-  onBack: () => void;
-  initialData?: Partial<fullCourseFormData>;
-}
-
-export default function CourseBuilderSection({
-  onNext,
-  onBack,
-  initialData,
-}: CourseBuilderSectionProps) {
+export default function CourseBuilderSection() {
   const [isExpandedChapters, setIsExpandedChapters] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpenModalCreateLesson, setIsOpenModalCreateLesson] = useState(false);
   const [isOpenModalCreateQuiz, setIsOpenModalCreateQuiz] = useState(false);
-  const [isOpenModalCreateAssignment, setIsOpenModalCreateAssignment] =
-    useState(false);
   const [isOpenModalCreateAssignmentCode, setIsOpenModalCreateAssignmentCode] =
     useState(false);
-
   const [chapters, setChapters] = useState<IModule[]>([]);
-  const [moduleItem, setModuleItem] = useState<IModule>();
-  const { courseData } = useCreateCourseContext();
+  const { courseData, setModuleSelected, setLessonSelected } =
+    useCreateCourseContext();
 
   const { data: initialChapters, refetch: refetchChapters } = useModules(
     courseData?.id as string,
   );
-
-  const createModule = useCreateModule(courseData?.id as string);
 
   useEffect(() => {
     if (initialChapters) {
@@ -66,8 +35,8 @@ export default function CourseBuilderSection({
           title: c.title,
           shortDescription: c.shortDescription,
           isExpanded: false,
-          lessons: c.lessons
-        }))
+          lessons: c.lessons,
+        })),
       );
     }
   }, [initialChapters]);
@@ -82,41 +51,34 @@ export default function CourseBuilderSection({
     );
   };
 
-  console.log("initialChapters---", initialChapters);
-
-  const addNewChapter = (value: ModuleCourseFormData) => {
-    createModule.mutate(value, {
-      onSuccess: () => {
-        refetchChapters();
-      },
-      onError: (error) => {
-        console.error("Error creating chapter:", error);
-      },
-    });
-  };
-
   const deleteChapter = (chapterId: string) => {
     setChapters(chapters.filter((chapter) => chapter.id !== chapterId));
   };
 
-  const editChapterTitle = (chapterId: string, newTitle: string) => {
-    setChapters(
-      chapters.map((chapter) =>
-        chapter.id === chapterId ? { ...chapter, title: newTitle } : chapter,
-      ),
-    );
+  const handleEditModule = (module: IModule) => {
+    setModuleSelected(module);
+    setIsModalOpen(true);
   };
 
-  const handleSubmitCreateAssignmentCode = (data: any) => {
-    console.log("Submitted assignment data code:", data);
-  };
-
-  const handleSubmitCreateAssignment = (data: any) => {
-    console.log("Submitted assignment data:", data);
+  const handleEditLesson = (module: IModule, lesson: any) => {
+    setLessonSelected(lesson);
+    setModuleSelected(module);
+    switch (lesson.type) {
+      case "VIDEO":
+      case "ARTICLE":
+        setIsOpenModalCreateLesson(true);
+        break;
+      case "QUIZ":
+        setIsOpenModalCreateQuiz(true);
+        break;
+      case "PRACTICE":
+        setIsOpenModalCreateAssignmentCode(true);
+        break;
+    }
   };
 
   const handleRefetch = () => {
-    refetchChapters()
+    refetchChapters();
   };
 
   // const handleSubmitCreateQuiz = (data: any) => {
@@ -155,14 +117,7 @@ export default function CourseBuilderSection({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const newTitle = prompt(
-                        "Nhập tên chủ đề mới:",
-                        chapter.title,
-                      );
-                      if (newTitle) editChapterTitle(chapter.id, newTitle);
-                    }}
+                    onClick={() => handleEditModule(chapter)}
                     className="h-8 w-8"
                   >
                     <Edit size={16} color="#637381" />
@@ -196,17 +151,28 @@ export default function CourseBuilderSection({
                         className="flex items-center justify-between p-3 border border-[#919EAB52] rounded-md bg-white hover:bg-gray-50"
                       >
                         <div className="flex items-center">
-                          <HambergerMenu size={24} color="#637381" className="h-5 w-5 text-gray-400 mr-3 cursor-move" />
+                          <HambergerMenu
+                            size={24}
+                            color="#637381"
+                            className="h-5 w-5 text-gray-400 mr-3 cursor-move"
+                          />
                           <p className="text-sm font-medium">{lesson.title}</p>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Button
                             type="button"
+                            onClick={() => {
+                              handleEditLesson(chapter, lesson);
+                            }}
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
                           >
-                            <Edit size={16} color="#637381" className="h-4 w-4" />
+                            <Edit
+                              size={16}
+                              color="#637381"
+                              className="h-4 w-4"
+                            />
                           </Button>
                           <Button
                             type="button"
@@ -214,7 +180,11 @@ export default function CourseBuilderSection({
                             size="icon"
                             className="h-8 w-8"
                           >
-                            <Upload size={16} color="#637381" className="h-4 w-4" />
+                            <Upload
+                              size={16}
+                              color="#637381"
+                              className="h-4 w-4"
+                            />
                           </Button>
                           <Button
                             type="button"
@@ -222,7 +192,11 @@ export default function CourseBuilderSection({
                             size="icon"
                             className="h-8 w-8 text-red-600 hover:text-red-700"
                           >
-                            <Trash size={16} color="#637381" className="h-4 w-4" />
+                            <Trash
+                              size={16}
+                              color="#637381"
+                              className="h-4 w-4"
+                            />
                           </Button>
                         </div>
                       </div>
@@ -232,8 +206,9 @@ export default function CourseBuilderSection({
                     <div className="flex items-center space-x-2">
                       <Button
                         onClick={() => {
-                          setIsOpenModalCreateLesson(true)
-                          setModuleItem(chapter)
+                          setIsOpenModalCreateLesson(true);
+                          setModuleSelected(chapter);
+                          setLessonSelected(null);
                         }}
                         className="border-primary-main/48"
                         type="button"
@@ -249,8 +224,9 @@ export default function CourseBuilderSection({
                       </Button>
                       <Button
                         onClick={() => {
-                          setIsOpenModalCreateQuiz(true)
-                          setModuleItem(chapter)
+                          setIsOpenModalCreateQuiz(true);
+                          setModuleSelected(chapter);
+                          setLessonSelected(null);
                         }}
                         className="border-primary-main/48"
                         type="button"
@@ -266,8 +242,9 @@ export default function CourseBuilderSection({
                       </Button>
                       <Button
                         onClick={() => {
-                          setIsOpenModalCreateAssignmentCode(true)
-                          setModuleItem(chapter)
+                          setIsOpenModalCreateAssignmentCode(true);
+                          setModuleSelected(chapter);
+                          setLessonSelected(null);
                         }}
                         className="border-primary-main/48"
                         type="button"
@@ -283,7 +260,6 @@ export default function CourseBuilderSection({
                       </Button>
                     </div>
                     <Button
-                      onClick={() => setIsOpenModalCreateAssignment(true)}
                       className="border-primary-main/48"
                       size="sm"
                       type="button"
@@ -306,7 +282,10 @@ export default function CourseBuilderSection({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setIsModalOpen(true);
+                setModuleSelected(undefined);
+              }}
               className="w-full h-11 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg"
             >
               <Add size={30} color="#212B36" className="w-4 h-4 mr-0.5" />
@@ -317,34 +296,26 @@ export default function CourseBuilderSection({
       )}
       <UploadCodeAssignment
         isOpen={isOpenModalCreateAssignmentCode}
-        moduleItem={moduleItem}
         onClose={() => {
-          setModuleItem(null)
-          setIsOpenModalCreateAssignmentCode(false)
+          setModuleSelected(undefined);
+          setIsOpenModalCreateAssignmentCode(false);
         }}
         onSubmit={handleRefetch}
       />
-      <UploadArticleAssignment
-        isOpen={isOpenModalCreateAssignment}
-        onClose={() => setIsOpenModalCreateAssignment(false)}
-        onSubmit={handleSubmitCreateAssignment}
-      />
       <CreateLessonModal
         isOpen={isOpenModalCreateLesson}
-        moduleItem={moduleItem}
         onClose={() => {
-          setIsOpenModalCreateLesson(false)
-          setModuleItem(null)
+          setIsOpenModalCreateLesson(false);
+          setModuleSelected(undefined);
         }}
         onSubmit={handleRefetch}
       />
       <AddChapterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAddChapter={addNewChapter}
+        onAddChapter={handleRefetch}
       />
       <CreateQuizModal
-        module={moduleItem}
         isOpen={isOpenModalCreateQuiz}
         onSubmit={handleRefetch}
         onClose={() => setIsOpenModalCreateQuiz(false)}

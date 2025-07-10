@@ -1,5 +1,5 @@
 import { Sandpack } from "@codesandbox/sandpack-react";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface ExerciseData {
   title: string;

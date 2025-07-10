@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { IModule } from "@/hooks/queries/course/useModuleCourse";
-import { immer } from "zustand/middleware/immer";
 
 interface CourseState {
   lesson: any;
@@ -9,12 +8,10 @@ interface CourseState {
   setModule: (module: IModule) => void;
 }
 
-export const useCourseStore = create<CourseState>()(
-  (set) => ({
-    lesson: null,
-    module: null,
-    setLesson: (lesson) => set({ lesson }),
+export const useCourseStore = create<CourseState>()((set) => ({
+  lesson: null,
+  module: null,
+  setLesson: (lesson) => set({ lesson }),
 
-    setModule: (module) => set({ module }),
-  }),
-);
+  setModule: (module) => set({ module }),
+}));

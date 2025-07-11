@@ -61,7 +61,7 @@ export const CreateLessonModal = ({
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
 
-  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+  const { data: initValue, refetch } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
@@ -139,6 +139,7 @@ export const CreateLessonModal = ({
           onSuccess: () => {
             form.reset();
             onSubmit();
+            refetch();
             onClose();
           },
         });

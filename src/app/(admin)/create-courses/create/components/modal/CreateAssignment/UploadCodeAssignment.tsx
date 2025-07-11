@@ -62,7 +62,7 @@ export const UploadCodeAssignment = ({
   const { courseData, lessonSelected, moduleSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
-  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+  const { data: initValue, refetch } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
 
 
   const form = useForm<UploadAssignmentFormData>({
@@ -145,6 +145,7 @@ export const UploadCodeAssignment = ({
     if (isEdit) {
       updatePractice.mutate(formRequest as any, {
         onSuccess: (res) => {
+          refetch()
           onSubmit(res);
           handleClose();
         },

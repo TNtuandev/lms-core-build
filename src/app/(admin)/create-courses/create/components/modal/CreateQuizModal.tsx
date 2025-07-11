@@ -87,7 +87,7 @@ export const CreateQuizModal = ({
   const { courseData, moduleSelected, lessonSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
-  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+  const { data: initValue, refetch } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
   // Đảm bảo chỉ truyền id khi đã có courseData và module
   const createLessonQuiz = useCreateLessonQuiz(
     courseData?.id || "",
@@ -187,6 +187,7 @@ export const CreateQuizModal = ({
       updateLessonQuiz.mutate(data, {
         onSuccess: () => {
           onSubmit();
+          refetch();
           handleClose();
         },
       })

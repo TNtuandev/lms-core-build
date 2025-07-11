@@ -4,7 +4,6 @@ import IconUser from "../../../../public/icons/IconUser";
 import { Edit } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Routes } from "@/lib/routes/routes";
 
 interface CourseCardProps {
   badge?: string;

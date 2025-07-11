@@ -37,6 +37,7 @@ export const useModules = (courseId: string) => {
   });
 };
 
+
 export const useCreateModule = (courseId: string, onSuccessCallback?: (data: any) => void) => {
   return useMutation({
     mutationFn: (moduleData: IRequestModule) => courseAPI.createModule(courseId, moduleData),

@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/select";
 import ToggleSwitch from "../ToggleSwitch";
 import {
-  useCreateLessonQuiz,
+  useCreateLessonQuiz, useGetLessonById,
   useUpdateLessonQuiz,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
@@ -87,7 +87,7 @@ export const CreateQuizModal = ({
   const { courseData, moduleSelected, lessonSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
-
+  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
   // Đảm bảo chỉ truyền id khi đã có courseData và module
   const createLessonQuiz = useCreateLessonQuiz(
     courseData?.id || "",
@@ -140,16 +140,16 @@ export const CreateQuizModal = ({
     // Reset step and forms when modal opens
     if (lessonSelected) {
       setStep(1);
-      form.reset(lessonSelected);
-      settingsForm.reset(lessonSelected);
-      setQuestions(lessonSelected?.questions || []);
+      form.reset(initValue);
+      settingsForm.reset(initValue);
+      setQuestions(initValue?.questions || []);
     } else {
       form.reset();
       settingsForm.reset();
       setQuestions([]);
       setStep(1);
     }
-  }, [lessonSelected]);
+  }, [lessonSelected, initValue]);
 
   const handleNext = async () => {
     if (step === 1) {

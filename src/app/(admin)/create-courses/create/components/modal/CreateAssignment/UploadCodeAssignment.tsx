@@ -37,7 +37,7 @@ import {
 } from "../../../schemas";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import {
-  useCreateLessonPractice,
+  useCreateLessonPractice, useGetLessonById,
   useUpdateLessonPractice,
 } from "@/hooks/queries/course/useLessonCourse";
 
@@ -62,6 +62,8 @@ export const UploadCodeAssignment = ({
   const { courseData, lessonSelected, moduleSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
+  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+
 
   const form = useForm<UploadAssignmentFormData>({
     resolver: zodResolver(uploadAssignmentSchema),
@@ -83,7 +85,7 @@ export const UploadCodeAssignment = ({
 
   useEffect(() => {
     if (lessonSelected) {
-      form.reset(lessonSelected);
+      form.reset(initValue);
       setInputDataFile(null);
       setOutputDataFile(null);
       setAttachmentFile(null);
@@ -106,7 +108,7 @@ export const UploadCodeAssignment = ({
       setOutputDataFile(null);
       setAttachmentFile(null);
     }
-  }, [lessonSelected]);
+  }, [lessonSelected, initValue]);
 
   const practiceType = form.watch("practiceType");
 

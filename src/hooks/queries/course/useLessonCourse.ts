@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { courseAPI } from "@/api/endpoints/course.api";
 import toast from "react-hot-toast";
 import { courseKeys } from "@/hooks/queries/course/useCourses";
+import {CourseFilters} from "@/api/types/course.type";
 
 export interface IRequestArticles {
     duration?: number
@@ -55,6 +56,18 @@ export interface IRequestPractices {
     practiceType: string
     notes?: string
 }
+export const lessonKeys = {
+    all: ["lesson"] as const,
+    lists: () => [...lessonKeys.all, "list"] as const,
+    list: (filters?: CourseFilters) => [...lessonKeys.lists(), filters] as const,
+    details: () => [...lessonKeys.all, "detail"] as const,
+    detail: (id: string) => [...lessonKeys.details(), id] as const,
+    related: (courseId: string) => [...lessonKeys.all, "related", courseId] as const,
+    faqs: (courseId: string) => [...lessonKeys.all, "faqs", courseId] as const,
+    modules: (courseId: string) => [...lessonKeys.all, "modules", courseId] as const,
+    review: (courseId: string) => [...lessonKeys.all, "review", courseId] as const,
+    instructor: (courseId: string) => [...lessonKeys.all, "instructor", courseId] as const,
+};
 
 export const useGetLessonByModule = (courseId: string, moduleId: string) => {
   return useQuery({
@@ -63,6 +76,15 @@ export const useGetLessonByModule = (courseId: string, moduleId: string) => {
     enabled: !!courseId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+};
+
+export const useGetLessonById = (courseId: string, moduleId: string, lessonId: string) => {
+    return useQuery({
+        queryKey: courseKeys.detail(lessonId),
+        queryFn: () => courseAPI.getLessonById(courseId, moduleId, lessonId),
+        enabled: !!lessonId,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 };
 
 export const useCreateLessonArticle = (courseId: string, moduleId: string, onSuccessCallback?: (data: any) => void) => {

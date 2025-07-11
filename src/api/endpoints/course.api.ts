@@ -132,6 +132,11 @@ export const courseAPI = {
     return data;
   },
 
+  getLessonById: async (courseId: string, moduleId: string, lessonId: string): Promise<any> => {
+    const { data } = await api.get(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`);
+    return data;
+  },
+
   createLessonArticle: async (courseId: string, moduleId: string, data: any): Promise<any> => {
     const { data: res } = await api.post(`/cms/courses/${courseId}/modules/${moduleId}/lessons/articles`, data);
     return res;

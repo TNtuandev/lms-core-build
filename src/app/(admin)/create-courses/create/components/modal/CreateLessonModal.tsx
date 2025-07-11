@@ -36,7 +36,7 @@ import {
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   useCreateLessonArticle,
-  useCreateLessonVideo,
+  useCreateLessonVideo, useGetLessonById,
   useUpdateLessonArticle,
   useUpdateLessonVideo,
 } from "@/hooks/queries/course/useLessonCourse";
@@ -60,6 +60,9 @@ export const CreateLessonModal = ({
   const { courseData, lessonSelected, moduleSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
+
+  const { data: initValue } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
@@ -77,7 +80,7 @@ export const CreateLessonModal = ({
 
   useEffect(() => {
     if (lessonSelected) {
-      form.reset(lessonSelected);
+      form.reset(initValue);
       setThumbnailFile(null);
       setAttachmentFile(null);
     } else {
@@ -93,7 +96,7 @@ export const CreateLessonModal = ({
         isPreviewable: true,
       });
     }
-  }, [lessonSelected]);
+  }, [lessonSelected, initValue]);
 
   const handleClose = () => {
     setThumbnailFile(null);

@@ -2,8 +2,19 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuthStore } from "@/store/slices/auth.slice";
+import { useQueryClient } from "@tanstack/react-query";
+import { LearnerProfile } from "@/api/types/intructor.type";
+import { formatDateToCustomString } from "@/until";
 
 function ProfilePage() {
+  const user = useAuthStore.getState().user;
+  const queryClient = useQueryClient();
+  const data: LearnerProfile | undefined = queryClient.getQueryData([
+    "studentId",
+    user?.id,
+  ]);
+
   return (
     <Card className="bg-white border-0 rounded-xl shadow-sm">
       <CardContent className="p-6">
@@ -13,7 +24,9 @@ function ProfilePage() {
             <div className="space-y-2">
               <label className="block text-gray-500">Ngày đăng ký</label>
               <div className="text-gray-800 font-medium">
-                25/04/2025 06:00 am
+                {data?.data?._auditInfo?._createdAt
+                  ? formatDateToCustomString(data?.data?._auditInfo?._createdAt)
+                  : "Chưa có thông tin"}
               </div>
             </div>
 
@@ -35,7 +48,7 @@ function ProfilePage() {
             <div className="space-y-2">
               <label className="block text-gray-500">Email</label>
               <div className="text-gray-800 font-medium">
-                chrishemsworth@gmail.com
+                {user?.email}
               </div>
             </div>
 
@@ -54,9 +67,7 @@ function ProfilePage() {
             <div className="space-y-2 sm:col-span-2">
               <label className="block text-gray-500">Giới thiệu</label>
               <div className="text-gray-800">
-                I&#39;m the Front-End Developer for #Rainbow IT in Bangladesh, OR. I
-                have serious passion for UI effects, animations and creating
-                intuitive, dynamic user experiences
+                {data?.data?._bio ?? "Chưa có thông tin"}
               </div>
             </div>
           </div>

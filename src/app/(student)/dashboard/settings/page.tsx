@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Camera } from "lucide-react";
 
 type TabType = "profile" | "security";
@@ -174,19 +173,19 @@ function SettingsPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Hiển thị tên công khai</label>
-              <Select value={profileData.displayName} onValueChange={(value) => handleProfileChange("displayName", value)}>
-                <SelectTrigger className="border border-gray-200 h-12">
-                  <SelectValue placeholder="Chọn tên hiển thị" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200">
-                  <SelectItem value="Chris Hemsworth">Chris Hemsworth</SelectItem>
-                  <SelectItem value="Chris">Chris</SelectItem>
-                  <SelectItem value="Hemsworth">Hemsworth</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/*<div className="space-y-2">*/}
+            {/*  <label className="block text-sm font-medium text-gray-700">Hiển thị tên công khai</label>*/}
+            {/*  <Select value={profileData.displayName} onValueChange={(value) => handleProfileChange("displayName", value)}>*/}
+            {/*    <SelectTrigger className="border border-gray-200 h-12">*/}
+            {/*      <SelectValue placeholder="Chọn tên hiển thị" />*/}
+            {/*    </SelectTrigger>*/}
+            {/*    <SelectContent className="bg-white border border-gray-200">*/}
+            {/*      <SelectItem value="Chris Hemsworth">Chris Hemsworth</SelectItem>*/}
+            {/*      <SelectItem value="Chris">Chris</SelectItem>*/}
+            {/*      <SelectItem value="Hemsworth">Hemsworth</SelectItem>*/}
+            {/*    </SelectContent>*/}
+            {/*  </Select>*/}
+            {/*</div>*/}
           </div>
 
           <div className="space-y-2">

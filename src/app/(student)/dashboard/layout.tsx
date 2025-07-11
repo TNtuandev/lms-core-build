@@ -33,8 +33,6 @@ export default function DashboardLayout({
     user?.id || "",
   );
 
-  console.log(learnerProfileData?.data, "---learnerProfileData");
-
   const isActive = (path: string) => {
     return pathname === path;
   };
@@ -70,7 +68,7 @@ export default function DashboardLayout({
                 <div className="flex items-center mt-2 gap-2 text-white">
                   <IconBookWhite />
                   <span className="text-sm text-white">
-                    30 Khóa học đã đăng ký
+                    {learnerProfileData?.data._totalCoursesEnrolled} Khóa học đã đăng ký
                   </span>
                 </div>
               </div>

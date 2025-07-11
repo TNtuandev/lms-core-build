@@ -6,8 +6,18 @@ import IconBookDashBoard from "../../../../public/icons/dashboard/IconBookDashBo
 import IconBookOrange from "../../../../public/icons/dashboard/IconBookOrange";
 import IconBookGreen from "../../../../public/icons/dashboard/IconBookGreen";
 import TableMyCourse from "@/components/dashboard/component/TableMyCourse";
+import { useAuthStore } from "@/store/slices/auth.slice";
+import { useQueryClient } from "@tanstack/react-query";
+import { LearnerProfile } from "@/api/types/intructor.type";
 
 function DashboardPage() {
+  const user = useAuthStore.getState().user;
+  const queryClient = useQueryClient();
+  const data: LearnerProfile | undefined = queryClient.getQueryData([
+    "studentId",
+    user?.id,
+  ]);
+
   return (
     <>
       <div className="bg-white shadow h-max rounded-2xl">
@@ -23,10 +33,8 @@ function DashboardPage() {
               <div className="w-24 h-24 flex items-center justify-center bg-blue-100 rounded-xl mb-4">
                 <IconBookDashBoard />
               </div>
-              <h3 className="text-5xl font-bold text-blue-500">30</h3>
-              <p className="mt-2 text-sm text-center">
-                Khóa học đã đăng ký
-              </p>
+              <h3 className="text-5xl font-bold text-blue-500">{data?.data._totalCoursesEnrolled}</h3>
+              <p className="mt-2 text-sm text-center">Khóa học đã đăng ký</p>
             </CardContent>
           </Card>
 
@@ -36,7 +44,7 @@ function DashboardPage() {
               <div className="w-24 h-24 flex items-center justify-center bg-amber-100 rounded-xl mb-4">
                 <IconBookOrange />
               </div>
-              <h3 className="text-5xl font-bold text-amber-500">12</h3>
+              <h3 className="text-5xl font-bold text-amber-500">{data?.data._totalCoursesInProgress}</h3>
               <p className="mt-2 text-sm text-center">Khóa học Đang học</p>
             </CardContent>
           </Card>
@@ -47,10 +55,8 @@ function DashboardPage() {
               <div className="w-24 h-24 flex items-center justify-center bg-green-100 rounded-xl mb-4">
                 <IconBookGreen />
               </div>
-              <h3 className="text-5xl font-bold text-green-500">18</h3>
-              <p className="mt-2 text-sm text-center">
-                Khóa học Hoàn thành
-              </p>
+              <h3 className="text-5xl font-bold text-green-500">{data?.data._totalCoursesCompleted}</h3>
+              <p className="mt-2 text-sm text-center">Khóa học Hoàn thành</p>
             </CardContent>
           </Card>
         </div>

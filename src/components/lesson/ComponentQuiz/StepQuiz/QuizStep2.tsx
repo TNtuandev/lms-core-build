@@ -3,82 +3,128 @@ import {
   CloseCircle,
   ArrowRotateLeft,
 } from "iconsax-react";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 
-const quizData = [
-  {
-    question:
-      "Bước đầu tiên để tiếp cận bất kỳ kịch bản phân tích kinh doanh nào là xây dựng bản sắc doanh nghiệp rõ ràng.",
-    answers: ["Đúng", "Sai"],
-    correct: 0,
-    explanation:
-      "Đúng! Xác định doanh nghiệp là bước đầu tiên trong phân tích doanh nghiệp, sau đó là xác định các nhu cầu kinh doanh chính.",
-  },
-  {
-    question:
-      "Hoàn thành câu sau: nhu cầu kinh doanh cơ bản thường dựa trên....",
-    answers: [
-      "hoạt động kinh doanh hằng ngày",
-      "nhận dạng doanh nghiệp rõ ràng",
-      "các dự án thuê ngoài",
-      "quyết định quản lý",
-    ],
-    correct: 1,
-    explanation:
-      "Đúng! Xác định doanh nghiệp là bước đầu tiên trong phân tích doanh nghiệp, sau đó là xác định các nhu cầu kinh doanh chính.",
-  },
-  {
-    question: "Các tính năng chính của Next.js là gì?",
-    answers: [],
-    correct: null,
-    explanation:
-      "Đúng! Xác định doanh nghiệp là bước đầu tiên trong phân tích doanh nghiệp, sau đó là xác định các nhu cầu kinh doanh chính.",
-  },
-];
+interface QuizOption {
+  id: string;
+  content: string;
+  isCorrect: boolean;
+  explanation: string;
+  questionId: string;
+}
 
-const currentAttempt = 1;
-const timeLimit = "Không giới hạn";
+interface QuizQuestion {
+  id: string;
+  lessonId: string;
+  content: string;
+  type: "MULTIPLE_CHOICE" | "SINGLE_CHOICE" | "SHORT_ANSWER";
+  order: number;
+  status: string;
+  points: number;
+  description?: string;
+  correctExplanation?: string;
+  incorrectHint?: string;
+  isRandom: boolean;
+  isRequiredAnswer: boolean;
+  correctAnswer?: string | null;
+  options?: QuizOption[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface LessonData {
+  id: string;
+  moduleId: string;
+  title: string;
+  duration?: number;
+  maxAttempts?: number;
+  passingScore?: number;
+  maxScore?: number;
+  shortAnswerCharLimit?: number;
+  questions?: QuizQuestion[];
+}
 
 type QuizState = "init" | "submitted";
 type AnswerState = {
-  selected: number | null;
+  selected: string[] | null; // Changed to string[] to handle multiple selections
   text: string;
   isCorrect: boolean | null;
+  score: number; // Add score for this question
 };
 
 export interface IQuizStepProps {
   changeTab: (tab: string) => void;
   dataCourse: any
-  dataLesson: any
+  dataLesson: LessonData
 }
 
 export default function QuizStep2({dataLesson}: IQuizStepProps) {
+  // Sort questions by order
+  const sortedQuestions = useMemo(() => {
+    if (!dataLesson?.questions) return [];
+    return [...dataLesson.questions].sort((a, b) => a.order - b.order);
+  }, [dataLesson?.questions]);
+
   const [quizState, setQuizState] = useState<QuizState>("init");
-  const [answers, setAnswers] = useState<AnswerState[]>(
-    quizData.map(() => ({ selected: null, text: "", isCorrect: null })),
-  );
+  const [answers, setAnswers] = useState<AnswerState[]>([]);
 
-  // Tính điểm
-  const score = answers.filter(
-    (a, idx) =>
-      quizData[idx].answers.length > 0 && a.selected === quizData[idx].correct,
-  ).length;
-  const total = quizData.filter((q) => q.answers.length > 0).length;
-  const passed = score / total >= 0.8;
+  // Initialize answers when questions change
+  useEffect(() => {
+    setAnswers(
+      sortedQuestions.map(() => ({ 
+        selected: null, 
+        text: "", 
+        isCorrect: null,
+        score: 0
+      }))
+    );
+  }, [sortedQuestions]);
 
-  // Xử lý chọn đáp án
-  const handleSelect = (qIdx: number, aIdx: number) => {
+  const currentAttempt = 1;
+  const timeLimit = dataLesson?.duration ? `${dataLesson.duration} phút` : "Không giới hạn";
+
+  // Calculate score
+  const totalScore = answers.reduce((sum, answer) => sum + answer.score, 0);
+  const maxPossibleScore = sortedQuestions.reduce((sum, question) => sum + (question.points || 0), 0);
+  const passed = (totalScore / maxPossibleScore) * 100 >= (dataLesson?.passingScore || 80);
+
+  // Handle answer selection for multiple choice and single choice
+  const handleSelect = (qIdx: number, optionId: string) => {
     if (quizState === "submitted") return;
+    
+    const question = sortedQuestions[qIdx];
+    
     setAnswers((prev) =>
-      prev.map((a, idx) =>
-        idx === qIdx
-          ? { ...a, selected: aIdx, isCorrect: aIdx === quizData[qIdx].correct }
-          : a,
-      ),
+      prev.map((a, idx) => {
+        if (idx !== qIdx) return a;
+        
+        let newSelected: string[];
+        
+        if (question.type === "MULTIPLE_CHOICE") {
+          // For multiple choice, toggle selection
+          const currentSelected = a.selected || [];
+          if (currentSelected.includes(optionId)) {
+            newSelected = currentSelected.filter((id: string) => id !== optionId);
+          } else {
+            newSelected = [...currentSelected, optionId];
+          }
+        } else {
+          // For single choice, replace selection
+          newSelected = [optionId];
+        }
+        
+        return {
+          ...a,
+          selected: newSelected,
+          // Don't calculate score until submit
+          isCorrect: null,
+          score: 0
+        };
+      }),
     );
   };
 
-  // Xử lý nhập tự luận
+  // Handle text input for short answer
   const handleText = (qIdx: number, value: string) => {
     if (quizState === "submitted") return;
     setAnswers((prev) =>
@@ -86,40 +132,102 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
     );
   };
 
-  // Nộp bài
+  // Calculate score for a question
+  const calculateQuestionScore = (question: QuizQuestion, answer: AnswerState): number => {
+    if (question.type === "MULTIPLE_CHOICE") {
+      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
+      const correctOptionIds = correctOptions.map((opt: QuizOption) => opt.id);
+      const selected = answer.selected || [];
+      
+      // For multiple choice: all correct answers must be selected, no incorrect answers
+      const allCorrectSelected = correctOptionIds.every((id: string) => selected.includes(id));
+      const noIncorrectSelected = selected.every((id: string) => correctOptionIds.includes(id));
+      
+      return allCorrectSelected && noIncorrectSelected && correctOptionIds.length > 0 ? question.points : 0;
+    } 
+    else if (question.type === "SINGLE_CHOICE") {
+      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
+      const correctOptionIds = correctOptions.map((opt: QuizOption) => opt.id);
+      const selected = answer.selected || [];
+      
+      // For single choice: exactly one correct answer
+      return selected.length === 1 && correctOptionIds.includes(selected[0]) ? question.points : 0;
+    }
+    else if (question.type === "SHORT_ANSWER") {
+      const userAnswer = answer.text.trim().toLowerCase();
+      if (!userAnswer) return 0;
+      
+      // Check if answer matches any of the correct options
+      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
+      if (correctOptions.length === 0) {
+        // If no correct options defined, give full points for any non-empty answer
+        return question.points;
+      }
+      
+      // Check if user answer matches any correct option (case-insensitive)
+      const isCorrect = correctOptions.some((opt: QuizOption) => 
+        opt.content.toLowerCase().trim() === userAnswer
+      );
+      
+      return isCorrect ? question.points : 0;
+    }
+    
+    return 0;
+  };
+
+  // Submit quiz
   const handleSubmit = () => {
+    // Calculate scores for all questions
+    setAnswers((prev) =>
+      prev.map((answer, idx) => {
+        const question = sortedQuestions[idx];
+        const score = calculateQuestionScore(question, answer);
+        return {
+          ...answer,
+          score,
+          isCorrect: score > 0
+        };
+      })
+    );
     setQuizState("submitted");
   };
 
-  // Làm lại
+  // Retry quiz
   const handleRetry = () => {
     setAnswers(
-      quizData.map(() => ({ selected: null, text: "", isCorrect: null })),
+      sortedQuestions.map(() => ({ 
+        selected: null, 
+        text: "", 
+        isCorrect: null,
+        score: 0
+      })),
     );
     setQuizState("init");
   };
 
-  // Màu trạng thái điểm
-  const scoreColor =
-    quizState === "submitted" ? (passed ? "green" : "red") : "gray";
-  const scoreBg =
-    scoreColor === "green"
-      ? "bg-green-50"
-      : scoreColor === "red"
-        ? "bg-red-50"
-        : "bg-gray-50";
-  const scoreText =
-    scoreColor === "green"
-      ? "text-green-600"
-      : scoreColor === "red"
-        ? "text-red-600"
-        : "text-gray-600";
-  const scoreBorder =
-    scoreColor === "green"
-      ? "border-green-200"
-      : scoreColor === "red"
-        ? "border-red-200"
-        : "border-gray-200";
+  // Check if quiz can be submitted
+  const canSubmit = sortedQuestions.every((question, idx) => {
+    const answer = answers[idx];
+    if (!answer) return false;
+    if (!question.isRequiredAnswer) return true;
+    
+    if (question.type === "SHORT_ANSWER") {
+      return answer.text.trim() !== "";
+    } else {
+      return answer.selected && answer.selected.length > 0;
+    }
+  });
+
+  // Prevent errors when answers array is not ready
+  if (answers.length !== sortedQuestions.length) {
+    return <div>Loading...</div>;
+  }
+
+  // Score styling
+  const scoreColor = quizState === "submitted" ? (passed ? "green" : "red") : "gray";
+  const scoreBg = scoreColor === "green" ? "bg-green-50" : scoreColor === "red" ? "bg-red-50" : "bg-gray-50";
+  const scoreText = scoreColor === "green" ? "text-green-600" : scoreColor === "red" ? "text-red-600" : "text-gray-600";
+  const scoreBorder = scoreColor === "green" ? "border-green-200" : scoreColor === "red" ? "border-red-200" : "border-gray-200";
 
   return (
     <div className="flex flex-col items-center py-10 overflow-hidden">
@@ -129,12 +237,12 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
           <div className="flex gap-6 text-sm text-gray-700">
             <span>
               Số câu hỏi:{" "}
-              <span className="font-semibold text-black">{dataLesson?.questions?.length}</span>
+              <span className="font-semibold text-black">{sortedQuestions.length}</span>
             </span>
             <span>
               Số lần thử:{" "}
               <span className="font-semibold text-black">
-                {currentAttempt}/{dataLesson?.maxAttempts}
+                {currentAttempt}/{dataLesson?.maxAttempts || 1}
               </span>
             </span>
           </div>
@@ -146,9 +254,9 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
           </div>
         </div>
 
-        {/* Card lớn */}
+        {/* Main card */}
         <div className="bg-white rounded-b-2xl shadow-xl px-8 py-8">
-          {/* Kết quả */}
+          {/* Results */}
           {quizState === "submitted" && (
             <div
               className={`flex items-center justify-between px-6 py-4 mb-8 rounded-xl border ${scoreBorder} ${scoreBg} shadow-sm`}
@@ -157,11 +265,14 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
                 <div className={`font-semibold text-lg`}>
                   Điểm của bạn:{" "}
                   <span className={`font-bold text-2xl ${scoreText}`}>
-                    {score}/{total}
+                    {totalScore}/{maxPossibleScore}
+                  </span>
+                  <span className={`text-sm ml-2 ${scoreText}`}>
+                    ({maxPossibleScore > 0 ? ((totalScore / maxPossibleScore) * 100).toFixed(1) : 0}%)
                   </span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
-                  Bạn cần ít nhất 80% điểm để vượt qua
+                  Bạn cần ít nhất {dataLesson?.passingScore || 80}% điểm để vượt qua
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -189,31 +300,41 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
             </div>
           )}
 
-          {/* Danh sách câu hỏi */}
+          {/* Questions list */}
           <div className="space-y-8">
-            {quizData.map((q, idx) => (
-              <div key={idx} className="">
-                {/* Câu hỏi */}
+            {sortedQuestions.map((question, idx) => (
+              <div key={question.id} className="">
+                {/* Question */}
                 <div className="flex items-start gap-2 mb-2">
                   <span className="font-semibold text-base text-gray-900 select-none">
                     {idx + 1}.
                   </span>
                   <span className="font-medium text-base text-gray-900">
-                    {q.question}
+                    {question.content}
+                  </span>
+                  <span className="text-sm text-gray-500 ml-auto">
+                    ({question.points} điểm)
                   </span>
                 </div>
-                {/* Đáp án trắc nghiệm */}
-                {q.answers.length > 0 && (
+                
+                {/* Description */}
+                {question.description && (
+                  <div className="text-sm text-gray-600 ml-6 mb-3">
+                    {question.description}
+                  </div>
+                )}
+
+                {/* Multiple choice / Single choice answers */}
+                {(question.type === "MULTIPLE_CHOICE" || question.type === "SINGLE_CHOICE") && (
                   <div className="flex flex-col gap-2 mt-2">
-                    {q.answers.map((ans, aIdx) => {
-                      const isSelected = answers[idx].selected === aIdx;
-                      const isCorrect =
-                        quizState === "submitted" && q.correct === aIdx;
-                      const isWrong =
-                        quizState === "submitted" && isSelected && !isCorrect;
+                    {question.options?.map((option: QuizOption) => {
+                      const isSelected = answers[idx].selected?.includes(option.id) || false;
+                      const isCorrect = quizState === "submitted" && option.isCorrect;
+                      const isWrong = quizState === "submitted" && isSelected && !option.isCorrect;
+                      
                       return (
                         <label
-                          key={aIdx}
+                          key={option.id}
                           className={`flex items-center gap-3 px-4 py-2 rounded-lg border cursor-pointer transition-all
                             ${isSelected ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white"}
                             ${isCorrect ? "border-green-500 bg-green-50" : ""}
@@ -223,23 +344,30 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
                           `}
                         >
                           <input
-                            type="radio"
+                            type={question.type === "MULTIPLE_CHOICE" ? "checkbox" : "radio"}
                             name={`q${idx}`}
                             checked={isSelected}
                             disabled={quizState === "submitted"}
-                            onChange={() => handleSelect(idx, aIdx)}
-                            className="form-radio h-5 w-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            onChange={() => handleSelect(idx, option.id)}
+                            className="form-checkbox h-5 w-5 text-blue-600 border-gray-300 focus:ring-blue-500"
                           />
                           <span className="font-medium text-gray-900 flex-1">
-                            {ans}
+                            {option.content}
                           </span>
+                          {quizState === "submitted" && isCorrect && (
+                            <TickCircle size={20} className="text-green-500" />
+                          )}
+                          {quizState === "submitted" && isWrong && (
+                            <CloseCircle size={20} className="text-red-500" />
+                          )}
                         </label>
                       );
                     })}
                   </div>
                 )}
-                {/* Đáp án tự luận */}
-                {q.answers.length === 0 && (
+
+                {/* Short answer */}
+                {question.type === "SHORT_ANSWER" && (
                   <div className="mt-2">
                     <textarea
                       className="w-full min-h-[48px] rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-400 resize-none"
@@ -247,47 +375,40 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
                       value={answers[idx].text}
                       disabled={quizState === "submitted"}
                       onChange={(e) => handleText(idx, e.target.value)}
+                      maxLength={dataLesson?.shortAnswerCharLimit || 100}
                     />
+                    {dataLesson?.shortAnswerCharLimit && (
+                      <div className="text-xs text-gray-500 mt-1">
+                        {answers[idx].text.length}/{dataLesson.shortAnswerCharLimit} ký tự
+                      </div>
+                    )}
                   </div>
                 )}
-                {/* Giải thích */}
+
+                {/* Explanation */}
                 {quizState === "submitted" && (
-                  <div
-                    className={`mt-2 flex items-start gap-2 text-sm ${q.answers.length > 0 ? (answers[idx].isCorrect ? "text-green-700" : "text-red-700") : "text-gray-700"}`}
-                  >
-                    {q.answers.length > 0 &&
-                      (answers[idx].isCorrect ? (
-                        <TickCircle
-                          size={18}
-                          className="mt-0.5 text-green-500"
-                        />
-                      ) : (
-                        <CloseCircle
-                          size={18}
-                          className="mt-0.5 text-red-500"
-                        />
-                      ))}
-                    <span>{q.explanation}</span>
+                  <div className="mt-2 flex items-start gap-2 text-sm">
+                    {answers[idx].isCorrect ? (
+                      <TickCircle size={18} className="mt-0.5 text-green-500" />
+                    ) : (
+                      <CloseCircle size={18} className="mt-0.5 text-red-500" />
+                    )}
+                    <span className={answers[idx].isCorrect ? "text-green-700" : "text-red-700"}>
+                      {answers[idx].isCorrect ? question.correctExplanation : question.incorrectHint}
+                    </span>
                   </div>
                 )}
               </div>
             ))}
           </div>
         </div>
+        
+        {/* Submit button */}
         {quizState === "init" && (
           <div className="flex justify-end mt-10">
             <button
               onClick={handleSubmit}
-              disabled={
-                answers.some(
-                  (a, idx) =>
-                    quizData[idx].answers.length > 0 && a.selected === null,
-                ) ||
-                answers.some(
-                  (a, idx) =>
-                    quizData[idx].answers.length === 0 && !a.text.trim(),
-                )
-              }
+              disabled={!canSubmit}
               className="flex items-center gap-2 px-8 py-3 rounded-lg bg-gray-900 text-white font-semibold shadow hover:bg-gray-800 transition disabled:opacity-60"
             >
               Nộp bài

@@ -2,10 +2,20 @@ import React, { useState } from "react";
 import QuizStep1 from "@/components/lesson/ComponentQuiz/StepQuiz/QuizStep1";
 import QuizStep2 from "@/components/lesson/ComponentQuiz/StepQuiz/QuizStep2";
 import { useQuizStore } from "@/store/slices/lesson.slice";
+import { useTrackingQuiz } from "@/hooks/queries/tracking/useTracking";
 
-export default function QuizLesson() {
+interface QuizLessonProps {
+  dataCourse: any;
+  dataLesson: any;
+}
+
+export default function QuizLesson({ dataCourse, dataLesson }: QuizLessonProps) {
   const [tab, setTab] = useState("quizStep1");
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
+  const { data: dataTracking } = useTrackingQuiz(dataCourse?.id as string, dataLesson?.id as string)
+
+  console.log(dataTracking, "---dataTracking");
+
 
   const tabList = {
     quizStep1: {
@@ -22,6 +32,8 @@ export default function QuizLesson() {
       <div>
         {React.createElement(tabList[tab as keyof typeof tabList].component, {
           changeTab: setTab,
+          dataCourse: dataCourse,
+          dataLesson: dataLesson,
         })}
       </div>
     </div>

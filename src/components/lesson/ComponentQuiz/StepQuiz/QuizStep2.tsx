@@ -36,9 +36,7 @@ const quizData = [
   },
 ];
 
-const totalQuestions = 10;
 const currentAttempt = 1;
-const maxAttempt = 3;
 const timeLimit = "Không giới hạn";
 
 type QuizState = "init" | "submitted";
@@ -48,7 +46,13 @@ type AnswerState = {
   isCorrect: boolean | null;
 };
 
-export default function QuizStep2() {
+export interface IQuizStepProps {
+  changeTab: (tab: string) => void;
+  dataCourse: any
+  dataLesson: any
+}
+
+export default function QuizStep2({dataLesson}: IQuizStepProps) {
   const [quizState, setQuizState] = useState<QuizState>("init");
   const [answers, setAnswers] = useState<AnswerState[]>(
     quizData.map(() => ({ selected: null, text: "", isCorrect: null })),
@@ -125,12 +129,12 @@ export default function QuizStep2() {
           <div className="flex gap-6 text-sm text-gray-700">
             <span>
               Số câu hỏi:{" "}
-              <span className="font-semibold text-black">{totalQuestions}</span>
+              <span className="font-semibold text-black">{dataLesson?.questions?.length}</span>
             </span>
             <span>
               Số lần thử:{" "}
               <span className="font-semibold text-black">
-                {currentAttempt}/{maxAttempt}
+                {currentAttempt}/{dataLesson?.maxAttempts}
               </span>
             </span>
           </div>

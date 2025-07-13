@@ -14,6 +14,7 @@ import ContentTab from "@/components/lesson/ContentTab";
 import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
 import { useSearchParams } from "next/navigation";
 import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
+import { useGetLessonById } from "@/hooks/queries/course/useLessonCourse";
 
 // Interface compatible with LessonSidebar
 interface SidebarLesson {
@@ -40,12 +41,12 @@ interface ExtendedLesson extends SidebarLesson {
   isPreviewable: boolean;
   description: string;
   attachmentUrl: string | null;
+  sampleImageUrl: string;
 }
 
 export function LessonClient() {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
-  const [quizCode, ] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
   const slug = searchParams.get("course");
@@ -54,6 +55,7 @@ export function LessonClient() {
 
   const { data: courseDetail } = useCourseBySlug(slug as string);
   const { data: moduleData } = useModule(courseDetail?.id || "");
+  const { data: initValue } = useGetLessonById(courseDetail?.id as string, moduleId as string, lessonId as string)
 
   const [sections, setSections] = useState<SidebarSection[]>([]);
   const [lessonsData, setLessonsData] = useState<ExtendedLesson[]>([]); // Store extended lesson data
@@ -61,7 +63,7 @@ export function LessonClient() {
   const [isMobileView, setIsMobileView] = useState(false);
   const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(null);
 
-  const courseTitle = courseDetail?.title || "";
+  console.log(initValue, "---initValue");
 
   // Map lesson type from BE to frontend
   const mapLessonType = (type: string) => {
@@ -111,6 +113,7 @@ export function LessonClient() {
                 isPreviewable: lesson.isPreviewable,
                 description: lesson.description,
                 attachmentUrl: lesson.attachmentUrl,
+                sampleImageUrl: lesson?.sampleImageUrl,
                 active: false
               };
               
@@ -245,7 +248,6 @@ export function LessonClient() {
   };
 
   const toggleSidebar = () => {
-    console.log("Toggle sidebar visibility");
     setIsSidebarVisible(!isSidebarVisible);
   };
 
@@ -254,16 +256,16 @@ export function LessonClient() {
       case "video":
         return (
           <VideoPlayer
-            src={currentLesson?.attachmentUrl || "/videos/lesson.mp4"}
+            src={initValue?.sampleImageUrl || "/videos/lesson.mp4"}
             poster="/images/lesson-thumbnail.jpg"
           />
         );
       case "doc":
-        return <DocumentLesson data={currentLesson} />;
+        return <DocumentLesson data={initValue} />;
       case "quiz":
-        return <QuizLesson />;
+        return <QuizLesson dataLesson={initValue} dataCourse={courseDetail} />;
       case "exercise":
-        return <ExerciseLesson />;
+        return <ExerciseLesson dataLesson={initValue} dataCourse={courseDetail} />;
       default:
         return null;
     }
@@ -321,7 +323,7 @@ export function LessonClient() {
                 <IconToggleSidebarActive />
               )}
             </button>
-            <h1 className="text-lg font-medium truncate">{courseTitle}</h1>
+            <h1 className="text-lg font-medium truncate">{courseDetail?.title}</h1>
           </div>
           <div className="flex items-center gap-6 mt-2 md:mt-0">
             <div className="font-bold cursor-pointer flex items-center gap-1">
@@ -335,7 +337,7 @@ export function LessonClient() {
           </div>
         </div>
 
-        {quizCode ? (
+        {initValue?.practiceType === "coding" ? (
           <StudyCode exercise={defaultJavaExercise} />
         ) : (
           <>
@@ -343,7 +345,7 @@ export function LessonClient() {
 
             {!isQuizStarted && (
               <ContentTab
-                courseTitle={courseTitle}
+                courseTitle={courseDetail?.title}
                 currentLesson={courseDetail}
               />
             )}

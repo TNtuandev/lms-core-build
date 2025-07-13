@@ -3,31 +3,31 @@ import { useQuizStore } from "@/store/slices/lesson.slice";
 
 interface ItemQuizProps {
   changeTab: (tab: string) => void;
-  type?: "quiz" | "exercise";
+  type?: "QUIZ" | "exercise";
+  data?: any; // Adjust type as needed
 }
 
-export default function ItemQuiz({changeTab, type}: ItemQuizProps) {
+export default function ItemQuiz({changeTab, type, data}: ItemQuizProps) {
   const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
-  console.log("ItemQuiz rendered", type);
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md border border-gray-100 flex-shrink-0">
       <div className="flex justify-between flex-shrink-0">
         <div>
-          <div className="text-lg font-semibold">Bài tập</div>
-          <div className="text-sm font-normal text-secondary">Bài tập</div>
+          <div className="text-lg font-semibold">{data?.title}</div>
+          <div className="text-sm font-normal text-secondary">Bạn cần ít nhất {type === "exercise" ? data?.passingScore :((data?.passingScore / data?.maxScore)*100).toFixed(0)}% điểm để vượt qua.</div>
           <div className="flex items-center gap-8 mt-4">
             <div>
               <div className="text-sm font-semibold text-gray-700">
                 Điểm tối đa
               </div>
-              <div className="text-sm font-normal text-gray-500">30 phút</div>
+              <div className="text-sm font-normal text-gray-500">{type === "exercise" ? 100 : data?.maxScore} điểm</div>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-700">
                 Thời gian
               </div>
-              <div className="text-sm font-normal text-gray-500">30 phút</div>
+              <div className="text-sm font-normal text-gray-500">{data?.duration} phút</div>
             </div>
           </div>
         </div>

@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 
 interface Module {
   title: string;
-  id: string
+  id: string;
+  lessons?: {
+    id: string;
+  }[];
 }
 
 interface CourseContentProps {
@@ -17,6 +20,8 @@ interface CourseContentProps {
 export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }) => {
   const router = useRouter();
 
+  console.log(moduleData, "---moduleData");
+
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-100 mb-8">
       <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>
@@ -28,7 +33,7 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }
               role="presentation"
               className="p-4 rounded-lg bg-gray-50 cursor-pointer"
               key={item.id}
-              onClick={() => router.push(`/lesson?course=${slug}&module=${item.id}`)}
+              onClick={() => router.push(`/lesson?course=${slug}&module=${item.id}&lesson=${item?.lessons?.[0]?.id}`)}
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

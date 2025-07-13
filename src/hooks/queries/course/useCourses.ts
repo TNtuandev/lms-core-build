@@ -12,6 +12,7 @@ export const courseKeys = {
   related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
   modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
+  modulesDetail: (courseId: string) => [...courseKeys.all, "modulesDetail", courseId] as const,
   review: (courseId: string) => [...courseKeys.all, "review", courseId] as const,
   instructor: (courseId: string) => [...courseKeys.all, "instructor", courseId] as const,
 };

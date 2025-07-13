@@ -88,8 +88,6 @@ export default function StudyCode({
   // Java compiler iframe ref
   const javaIframeRef = useRef<HTMLIFrameElement>(null);
 
-
-
   // Handle code changes from Sandpack
   // const handleCodeChange = useCallback((newCode: string) => {
   //   setCurrentCode(newCode);
@@ -282,26 +280,7 @@ export default function StudyCode({
   const renderCodeEditor = () => {
     if (exercise.language === 'java') {
       return (
-        <div className="flex-1 relative border-2 border-[#7c4dff] m-2 rounded">
-          <div className="absolute top-2 right-2 z-10 flex gap-2">
-            <button
-              onClick={loadJavaCode}
-              className="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Load Code
-            </button>
-            <button
-              onClick={() => {
-                if (javaIframeRef.current) {
-                  javaIframeRef.current.src = javaIframeRef.current.src;
-                  setTimeout(loadJavaCode, 2000);
-                }
-              }}
-              className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600"
-            >
-              Reload
-            </button>
-          </div>
+        <div className="relative border-2 border-[#7c4dff] m-2 rounded">
           <iframe
             ref={javaIframeRef}
             src="https://onecompiler.com/embed/java?listenToEvents=true&codeChangeEvent=true&theme=dark"
@@ -310,6 +289,7 @@ export default function StudyCode({
             frameBorder="0"
             title="Java Compiler"
             onLoad={handleIframeLoad}
+            style={{height: "50vh"}}
           />
         </div>
       );
@@ -379,7 +359,7 @@ export default function StudyCode({
   };
 
   return (
-    <div className="flex bg-[#1e1e1e] h-full">
+    <div className="flex bg-[#1e1e1e] h-screen">
       {/* Left Panel - Navigation & Content */}
       <div className="w-[380px] bg-[#2d2d30] border-r border-gray-600 flex flex-col">
         {/* Top Navigation Tabs */}
@@ -634,7 +614,7 @@ export default function StudyCode({
               <div className="text-sm text-gray-300">
                 {activeResultTab === "test-cases" && (
                   <div>
-                    <p>Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra</p>
+                    <p className="text-white">Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra</p>
                     {testResult && (
                       <div className="mt-2 space-y-2">
                         <div
@@ -672,7 +652,7 @@ export default function StudyCode({
                 )}
                 {activeResultTab === "content" && (
                   <div>
-                    <p>Kết quả sẽ hiển thị ở đây...</p>
+                    <p className="text-white">Kết quả sẽ hiển thị ở đây...</p>
                   </div>
                 )}
               </div>

@@ -8,13 +8,13 @@ export default function ItemResult(props: ItemResultProps) {
   const renderClassName = () => {
     switch (status) {
       case "overview":
-        return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4";
+        return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4 shadow";
       case "submit":
-        return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4";
+        return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4 shadow";
       case "submit-active":
-        return "w-full p-6 bg-[#4CAF5014] rounded-2xl border border-dashed border-success mt-4";
+        return "w-full p-6 bg-[#4CAF5014] rounded-2xl border border-dashed border-success mt-4 shadow";
       case "submit-not-active":
-        return "w-full p-6 bg-[#F4433614] rounded-2xl border border-dashed border-error-main mt-4";
+        return "w-full p-6 bg-[#F4433614] rounded-2xl border border-dashed border-error-main mt-4 shadow";
       default:
         return "";
     }

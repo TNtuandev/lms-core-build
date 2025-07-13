@@ -3,13 +3,15 @@ import ItemResult from "@/components/lesson/ComponentQuiz/ItemResult";
 
 export interface IQuizStepProps {
   changeTab: (tab: string) => void;
+  dataCourse: any
+  dataLesson: any
 }
 
-export default function QuizStep1({changeTab}: IQuizStepProps) {
+export default function QuizStep1({changeTab, dataCourse, dataLesson}: IQuizStepProps) {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Bài tập 1</h1>
-      <ItemQuiz changeTab={changeTab} type="quiz" />
+      <h1 className="text-2xl font-bold mb-4">{dataCourse?.title}</h1>
+      <ItemQuiz changeTab={changeTab} type={dataLesson?.type} data={dataLesson} />
       <ItemResult />
     </div>
   )

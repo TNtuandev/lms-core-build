@@ -3,7 +3,12 @@ import { useQuizStore } from "@/store/slices/lesson.slice";
 import StepsExercise1 from "@/components/lesson/ComponentExercise/StepsExercise1";
 import StepsExercise2 from "@/components/lesson/ComponentExercise/StepsExercise2";
 
-export default function ExerciseLesson() {
+interface QuizLessonProps {
+  dataCourse: any;
+  dataLesson: any;
+}
+
+export default function ExerciseLesson({ dataCourse, dataLesson }: QuizLessonProps) {
   const [tab, setTab] = useState("stepsExercise1");
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
 
@@ -21,6 +26,8 @@ export default function ExerciseLesson() {
       <div>
         {React.createElement(tabList[tab as keyof typeof tabList].component, {
           changeTab: setTab,
+          dataCourse: dataCourse,
+          dataLesson: dataLesson,
         })}
       </div>
     </div>

@@ -81,6 +81,8 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  console.log(src);
+
   return (
     <div 
       className={`relative w-full aspect-video bg-black video-container ${className}`}

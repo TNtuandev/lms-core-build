@@ -60,6 +60,11 @@ export const courseAPI = {
     return data;
   },
 
+  getModuleDetail: async (courseId: string, moduleId: string): Promise<ModuleResponse> => {
+    const { data } = await api.get(`/courses/${courseId}/modules/${moduleId}`);
+    return data;
+  },
+
   getReview: async (courseId: string): Promise<ReviewFAQsResponse> => {
     const { data } = await api.get(`/products/${courseId}/reviews`);
     return data;

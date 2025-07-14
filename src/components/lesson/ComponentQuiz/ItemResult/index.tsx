@@ -1,15 +1,30 @@
+import { useEffect, useState } from "react";
+
 interface ItemResultProps {
-  status?: "overview" | "submit" | "submit-active" | "submit-not-active";
+  status?: "overview" | "submit-active" | "submit-not-active";
+  dataTracking?: {
+    maxScore: number;
+    maxScoreAttempt: number;
+    totalAttempt: number;
+    status: string
+  };
 }
 
 export default function ItemResult(props: ItemResultProps) {
-  const { status = "overview" } = props;
+  const { dataTracking } = props;
+  const [status, setStatus] = useState<string>("overview");
+
+  useEffect(() => {
+    if (dataTracking) {
+      if (dataTracking?.status) {
+        setStatus(dataTracking.status)
+      }
+    }
+  }, [dataTracking]);
 
   const renderClassName = () => {
     switch (status) {
       case "overview":
-        return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4 shadow";
-      case "submit":
         return "w-full p-6 bg-white rounded-2xl border border-dashed border-gray-100 mt-4 shadow";
       case "submit-active":
         return "w-full p-6 bg-[#4CAF5014] rounded-2xl border border-dashed border-success mt-4 shadow";
@@ -26,7 +41,7 @@ export default function ItemResult(props: ItemResultProps) {
         <div>
           <div className="text-lg font-semibold">Điểm của bạn</div>
           <div className="text-sm font-normal text-secondary">
-            {status === "submit-active" || status === "submit-not-active"
+            {dataTracking?.totalAttempt && dataTracking.totalAttempt > 0
               ? "Chúng tôi sẽ lưu lại điểm cao nhất của bạn."
               : "Bạn chưa nộp bài này"}
           </div>
@@ -34,11 +49,13 @@ export default function ItemResult(props: ItemResultProps) {
             <div
               className={`text-3xl font-bold ${status === "submit-active" && "text-success"} ${status === "submit-not-active" && "text-error-main"}`}
             >
-              --
+              {dataTracking?.maxScoreAttempt && dataTracking?.maxScore
+                ? `${dataTracking.maxScoreAttempt}/${dataTracking.maxScore}`
+                : "--"}
             </div>
           </div>
         </div>
-        {status !== "overview" && (
+        {dataTracking?.totalAttempt && dataTracking.totalAttempt > 0 && (
           <div
             role="presentation"
             className="cursor-pointer border border-gray-200 h-max px-4 py-2 rounded-xl font-semibold text-sm"

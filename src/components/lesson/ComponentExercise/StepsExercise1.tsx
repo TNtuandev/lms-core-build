@@ -11,7 +11,7 @@ export default function StepsExercise1({changeTab, dataCourse, dataLesson}: IQui
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">{dataCourse?.title}</h1>
-      <ItemQuiz changeTab={changeTab} type="exercise" data={dataLesson} />
+      <ItemQuiz changeTab={changeTab} type="PRACTICE" data={dataLesson} />
       <ItemResult />
     </div>
   )

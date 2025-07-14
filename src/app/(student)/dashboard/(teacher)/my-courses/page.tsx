@@ -3,6 +3,8 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CourseCard from "@/components/courses/course-card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const TABS = [
   { label: "Xuất bản", value: "published" },
@@ -55,7 +57,14 @@ function MyCoursePage() {
   return (
     <div className="p-6 bg-[#f9f6ff] min-h-screen">
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Khóa học của tôi</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold mb-4">Khóa học của tôi</h2>
+          <Button className="text-white">
+            <Link
+              href="/create-courses"
+            >Tạo khoá học mới</Link>
+          </Button>
+        </div>
         <Tabs defaultValue="published" className="w-full">
           <TabsList className="mb-6">
             {TABS.map((tab) => (

@@ -56,9 +56,14 @@ export interface IQuizStepProps {
   changeTab: (tab: string) => void;
   dataCourse: any
   dataLesson: LessonData
+  dataTracking: {
+    maxScore: number;
+    maxScoreAttempt: number;
+    totalAttempt: number
+  }
 }
 
-export default function QuizStep2({dataLesson}: IQuizStepProps) {
+export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
   // Sort questions by order
   const sortedQuestions = useMemo(() => {
     if (!dataLesson?.questions) return [];
@@ -242,7 +247,7 @@ export default function QuizStep2({dataLesson}: IQuizStepProps) {
             <span>
               Số lần thử:{" "}
               <span className="font-semibold text-black">
-                {currentAttempt}/{dataLesson?.maxAttempts || 1}
+                {dataTracking?.totalAttempt}/{dataLesson?.maxAttempts || 1}
               </span>
             </span>
           </div>

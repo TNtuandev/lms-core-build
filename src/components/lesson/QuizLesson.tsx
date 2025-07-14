@@ -14,8 +14,6 @@ export default function QuizLesson({ dataCourse, dataLesson }: QuizLessonProps) 
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
   const { data: dataTracking } = useTrackingQuiz(dataCourse?.id as string, dataLesson?.id as string)
 
-  console.log(dataTracking, "---dataTracking");
-
 
   const tabList = {
     quizStep1: {
@@ -34,6 +32,7 @@ export default function QuizLesson({ dataCourse, dataLesson }: QuizLessonProps) 
           changeTab: setTab,
           dataCourse: dataCourse,
           dataLesson: dataLesson,
+          dataTracking: dataTracking
         })}
       </div>
     </div>

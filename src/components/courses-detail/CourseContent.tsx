@@ -20,8 +20,6 @@ interface CourseContentProps {
 export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }) => {
   const router = useRouter();
 
-  console.log(moduleData, "---moduleData");
-
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-100 mb-8">
       <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>

@@ -1,40 +1,65 @@
 import { ArrowRight } from "lucide-react";
 import { useQuizStore } from "@/store/slices/lesson.slice";
+import { useCreateAttemptsQuiz } from "@/hooks/queries/tracking/useTracking";
 
 interface ItemQuizProps {
   changeTab: (tab: string) => void;
-  type?: "QUIZ" | "exercise";
+  type?: "QUIZ" | "PRACTICE";
   data?: any; // Adjust type as needed
+  dataTracking?: any
+  dataCourse?: any
 }
 
-export default function ItemQuiz({changeTab, type, data}: ItemQuizProps) {
+export default function ItemQuiz({ changeTab, type, data, dataCourse }: ItemQuizProps) {
   const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
+
+  const createLessonQuiz = useCreateAttemptsQuiz(
+    dataCourse?.id as string,
+    data?.id || "",
+  );
+
+  const handleStartQuiz = () => {
+    if (type !== "PRACTICE") {
+      createLessonQuiz.mutate()
+    }
+  }
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md border border-gray-100 flex-shrink-0">
       <div className="flex justify-between flex-shrink-0">
         <div>
           <div className="text-lg font-semibold">{data?.title}</div>
-          <div className="text-sm font-normal text-secondary">Bạn cần ít nhất {type === "exercise" ? data?.passingScore :((data?.passingScore / data?.maxScore)*100).toFixed(0)}% điểm để vượt qua.</div>
+          <div className="text-sm font-normal text-secondary">
+            Bạn cần ít nhất{" "}
+            {type === "PRACTICE"
+              ? data?.passingScore
+              : ((data?.passingScore / data?.maxScore) * 100).toFixed(0)}
+            % điểm để vượt qua.
+          </div>
           <div className="flex items-center gap-8 mt-4">
             <div>
               <div className="text-sm font-semibold text-gray-700">
                 Điểm tối đa
               </div>
-              <div className="text-sm font-normal text-gray-500">{type === "exercise" ? 100 : data?.maxScore} điểm</div>
+              <div className="text-sm font-normal text-gray-500">
+                {type === "PRACTICE" ? 100 : data?.maxScore} điểm
+              </div>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-700">
                 Thời gian
               </div>
-              <div className="text-sm font-normal text-gray-500">{data?.duration} phút</div>
+              <div className="text-sm font-normal text-gray-500">
+                {data?.duration} phút
+              </div>
             </div>
           </div>
         </div>
         <div
           onClick={() => {
+            handleStartQuiz()
             setQuizStarted(true);
-            if (type === "exercise") {
+            if (type === "PRACTICE") {
               changeTab("stepsExercise2");
             } else {
               changeTab("quizStep2");

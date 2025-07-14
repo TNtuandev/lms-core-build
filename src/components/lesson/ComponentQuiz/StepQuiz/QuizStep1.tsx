@@ -5,14 +5,15 @@ export interface IQuizStepProps {
   changeTab: (tab: string) => void;
   dataCourse: any
   dataLesson: any
+  dataTracking: any
 }
 
-export default function QuizStep1({changeTab, dataCourse, dataLesson}: IQuizStepProps) {
+export default function QuizStep1({changeTab, dataCourse, dataLesson, dataTracking}: IQuizStepProps) {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">{dataCourse?.title}</h1>
-      <ItemQuiz changeTab={changeTab} type={dataLesson?.type} data={dataLesson} />
-      <ItemResult />
+      <ItemQuiz dataCourse={dataCourse} changeTab={changeTab} type={dataLesson?.type} data={dataLesson} dataTracking={dataTracking} />
+      <ItemResult dataTracking={dataTracking} />
     </div>
   )
 }

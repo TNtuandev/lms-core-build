@@ -177,6 +177,8 @@ export const CreateQuizModal = ({
     const data = {
       ...form.getValues(),
       ...settingsForm.getValues(),
+      duration: Number(settingsForm.getValues().duration),
+      timeLimitMin: Number(settingsForm.getValues().duration),
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
     } as any;

@@ -8,9 +8,10 @@ interface ItemQuizProps {
   data?: any; // Adjust type as needed
   dataTracking?: any
   dataCourse?: any
+  setAttemptId?: any
 }
 
-export default function ItemQuiz({ changeTab, type, data, dataCourse }: ItemQuizProps) {
+export default function ItemQuiz({ changeTab, type, data, dataCourse, setAttemptId }: ItemQuizProps) {
   const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
 
   const createLessonQuiz = useCreateAttemptsQuiz(
@@ -20,7 +21,16 @@ export default function ItemQuiz({ changeTab, type, data, dataCourse }: ItemQuiz
 
   const handleStartQuiz = () => {
     if (type !== "PRACTICE") {
-      createLessonQuiz.mutate()
+      createLessonQuiz.mutate(undefined, {
+        onSuccess: (data) => {
+          setAttemptId(data.id)
+          setQuizStarted(true);
+          changeTab("quizStep2");
+        }
+      })
+    } else {
+      setQuizStarted(true);
+      changeTab("stepsExercise2");
     }
   }
 
@@ -58,12 +68,6 @@ export default function ItemQuiz({ changeTab, type, data, dataCourse }: ItemQuiz
         <div
           onClick={() => {
             handleStartQuiz()
-            setQuizStarted(true);
-            if (type === "PRACTICE") {
-              changeTab("stepsExercise2");
-            } else {
-              changeTab("quizStep2");
-            }
           }}
           role="presentation"
           className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"

@@ -12,7 +12,8 @@ interface QuizLessonProps {
 export default function QuizLesson({ dataCourse, dataLesson }: QuizLessonProps) {
   const [tab, setTab] = useState("quizStep1");
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
-  const { data: dataTracking } = useTrackingQuiz(dataCourse?.id as string, dataLesson?.id as string)
+  const { data: dataTracking } = useTrackingQuiz(dataCourse?.id as string, dataLesson?.id as string);
+  const [attemptId, setAttemptId] = useState<string | null>(null);
 
 
   const tabList = {
@@ -32,7 +33,9 @@ export default function QuizLesson({ dataCourse, dataLesson }: QuizLessonProps) 
           changeTab: setTab,
           dataCourse: dataCourse,
           dataLesson: dataLesson,
-          dataTracking: dataTracking
+          dataTracking: dataTracking,
+          setAttemptId: setAttemptId,
+          attemptId: attemptId
         })}
       </div>
     </div>

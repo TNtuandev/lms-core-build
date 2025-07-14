@@ -4,6 +4,10 @@ import {
   ArrowRotateLeft,
 } from "iconsax-react";
 import { useState, useMemo, useEffect } from "react";
+import { useSubmitQuiz } from "@/hooks/queries/tracking/useTracking";
+import { useQuizStore } from "@/store/slices/lesson.slice";
+import { ArrowRight } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface QuizOption {
   id: string;
@@ -61,9 +65,10 @@ export interface IQuizStepProps {
     maxScoreAttempt: number;
     totalAttempt: number
   }
+  attemptId: any
 }
 
-export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
+export default function QuizStep2({dataLesson, dataTracking, dataCourse, attemptId, changeTab}: IQuizStepProps) {
   // Sort questions by order
   const sortedQuestions = useMemo(() => {
     if (!dataLesson?.questions) return [];
@@ -72,6 +77,10 @@ export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
 
   const [quizState, setQuizState] = useState<QuizState>("init");
   const [answers, setAnswers] = useState<AnswerState[]>([]);
+  const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
+
+  const submitQuiz = useSubmitQuiz(dataCourse?.id as string, dataLesson?.id as string, attemptId as string);
+  const queryClient = useQueryClient()
 
   // Initialize answers when questions change
   useEffect(() => {
@@ -85,7 +94,6 @@ export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
     );
   }, [sortedQuestions]);
 
-  const currentAttempt = 1;
   const timeLimit = dataLesson?.duration ? `${dataLesson.duration} phút` : "Không giới hạn";
 
   // Calculate score
@@ -182,6 +190,16 @@ export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
 
   // Submit quiz
   const handleSubmit = () => {
+    const dataSubmit = {
+
+    }
+
+    submitQuiz.mutate(dataSubmit, {
+      onSuccess: (data) => {
+        console.log(data);
+
+      }
+    })
     // Calculate scores for all questions
     setAnswers((prev) =>
       prev.map((answer, idx) => {
@@ -233,6 +251,12 @@ export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
   const scoreBg = scoreColor === "green" ? "bg-green-50" : scoreColor === "red" ? "bg-red-50" : "bg-gray-50";
   const scoreText = scoreColor === "green" ? "text-green-600" : scoreColor === "red" ? "text-red-600" : "text-gray-600";
   const scoreBorder = scoreColor === "green" ? "border-green-200" : scoreColor === "red" ? "border-red-200" : "border-gray-200";
+
+  const handleContinue = () => {
+    setQuizStarted(false);
+    queryClient.invalidateQueries({ queryKey: ["courseId", dataCourse?.id, dataLesson?.id] })
+    changeTab("quizStep1");
+  }
 
   return (
     <div className="flex flex-col items-center py-10 overflow-hidden">
@@ -294,13 +318,24 @@ export default function QuizStep2({dataLesson, dataTracking}: IQuizStepProps) {
                     variant="Bold"
                   />
                 )}
-                <button
-                  onClick={handleRetry}
-                  className="ml-4 flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer border border-gray-200 bg-[#2F57EF] text-white font-semibold transition"
-                >
-                  <ArrowRotateLeft size="20" color="white" />
-                  Thử lại
-                </button>
+                {scoreColor === "green" ? (
+                  <button
+                    onClick={handleContinue}
+                    className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
+                  >
+                    Tiếp theo
+                    <ArrowRight size="20" color="#fff" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleRetry}
+                    className="ml-4 flex items-center gap-2 px-4 py-2 rounded-xl cursor-pointer border border-gray-200 bg-gray-100 text-gray-700 font-semibold transition hover:bg-gray-200"
+                  >
+                    <ArrowRotateLeft size="20" color="gray" />
+                    Thử lại
+                  </button>
+                )}
+
               </div>
             </div>
           )}

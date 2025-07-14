@@ -4,7 +4,7 @@ import {
   ArrowRotateLeft,
 } from "iconsax-react";
 import { useState, useMemo, useEffect } from "react";
-import { useSubmitQuiz } from "@/hooks/queries/tracking/useTracking";
+import { useCreateAttemptsQuiz, useSubmitQuiz } from "@/hooks/queries/tracking/useTracking";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import { ArrowRight } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -56,6 +56,27 @@ type AnswerState = {
   score: number; // Add score for this question
 };
 
+// BE response types
+interface QuizSubmitResponse {
+  attempt: {
+    attemptId: string;
+    score: number;
+    isPassed: boolean;
+    passedAt: string;
+  };
+  answers: {
+    questionId: string;
+    type: "SINGLE_CHOICE" | "MULTIPLE_CHOICE" | "SHORT_ANSWER";
+    content: string;
+    isCorrect: boolean;
+    selectedOptionContent: string;
+    correctOptionIds: string[];
+    correctOptionContents: string[];
+    explanations: string[];
+    selectedOptionIds: string[];
+  }[];
+}
+
 export interface IQuizStepProps {
   changeTab: (tab: string) => void;
   dataCourse: any
@@ -66,9 +87,10 @@ export interface IQuizStepProps {
     totalAttempt: number
   }
   attemptId: any
+  setAttemptId: any
 }
 
-export default function QuizStep2({dataLesson, dataTracking, dataCourse, attemptId, changeTab}: IQuizStepProps) {
+export default function QuizStep2({dataLesson, dataTracking, dataCourse, attemptId, changeTab, setAttemptId}: IQuizStepProps) {
   // Sort questions by order
   const sortedQuestions = useMemo(() => {
     if (!dataLesson?.questions) return [];
@@ -77,9 +99,14 @@ export default function QuizStep2({dataLesson, dataTracking, dataCourse, attempt
 
   const [quizState, setQuizState] = useState<QuizState>("init");
   const [answers, setAnswers] = useState<AnswerState[]>([]);
+  const [quizResult, setQuizResult] = useState<QuizSubmitResponse | null>(null);
   const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
 
   const submitQuiz = useSubmitQuiz(dataCourse?.id as string, dataLesson?.id as string, attemptId as string);
+  const createLessonQuiz = useCreateAttemptsQuiz(
+    dataCourse?.id as string,
+    dataLesson?.id || "",
+  );
   const queryClient = useQueryClient()
 
   // Initialize answers when questions change
@@ -96,10 +123,10 @@ export default function QuizStep2({dataLesson, dataTracking, dataCourse, attempt
 
   const timeLimit = dataLesson?.duration ? `${dataLesson.duration} phút` : "Không giới hạn";
 
-  // Calculate score
-  const totalScore = answers.reduce((sum, answer) => sum + answer.score, 0);
+  // Calculate score - use BE data if available, otherwise use frontend calculation
+  const totalScore = quizResult ? quizResult.attempt.score : answers.reduce((sum, answer) => sum + answer.score, 0);
   const maxPossibleScore = sortedQuestions.reduce((sum, question) => sum + (question.points || 0), 0);
-  const passed = (totalScore / maxPossibleScore) * 100 >= (dataLesson?.passingScore || 80);
+  const passed = quizResult ? quizResult.attempt.isPassed : (totalScore / maxPossibleScore) * 100 >= (dataLesson?.passingScore || 80);
 
   // Handle answer selection for multiple choice and single choice
   const handleSelect = (qIdx: number, optionId: string) => {
@@ -145,87 +172,61 @@ export default function QuizStep2({dataLesson, dataTracking, dataCourse, attempt
     );
   };
 
-  // Calculate score for a question
-  const calculateQuestionScore = (question: QuizQuestion, answer: AnswerState): number => {
-    if (question.type === "MULTIPLE_CHOICE") {
-      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
-      const correctOptionIds = correctOptions.map((opt: QuizOption) => opt.id);
-      const selected = answer.selected || [];
-      
-      // For multiple choice: all correct answers must be selected, no incorrect answers
-      const allCorrectSelected = correctOptionIds.every((id: string) => selected.includes(id));
-      const noIncorrectSelected = selected.every((id: string) => correctOptionIds.includes(id));
-      
-      return allCorrectSelected && noIncorrectSelected && correctOptionIds.length > 0 ? question.points : 0;
-    } 
-    else if (question.type === "SINGLE_CHOICE") {
-      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
-      const correctOptionIds = correctOptions.map((opt: QuizOption) => opt.id);
-      const selected = answer.selected || [];
-      
-      // For single choice: exactly one correct answer
-      return selected.length === 1 && correctOptionIds.includes(selected[0]) ? question.points : 0;
-    }
-    else if (question.type === "SHORT_ANSWER") {
-      const userAnswer = answer.text.trim().toLowerCase();
-      if (!userAnswer) return 0;
-      
-      // Check if answer matches any of the correct options
-      const correctOptions = question.options?.filter((opt: QuizOption) => opt.isCorrect) || [];
-      if (correctOptions.length === 0) {
-        // If no correct options defined, give full points for any non-empty answer
-        return question.points;
-      }
-      
-      // Check if user answer matches any correct option (case-insensitive)
-      const isCorrect = correctOptions.some((opt: QuizOption) => 
-        opt.content.toLowerCase().trim() === userAnswer
-      );
-      
-      return isCorrect ? question.points : 0;
-    }
-    
-    return 0;
-  };
-
   // Submit quiz
   const handleSubmit = () => {
+    // Create submit data according to BE format
     const dataSubmit = {
-
-    }
-
-    submitQuiz.mutate(dataSubmit, {
-      onSuccess: (data) => {
-        console.log(data);
-
-      }
-    })
-    // Calculate scores for all questions
-    setAnswers((prev) =>
-      prev.map((answer, idx) => {
-        const question = sortedQuestions[idx];
-        const score = calculateQuestionScore(question, answer);
+      answers: sortedQuestions.map((question, idx) => {
+        const answer = answers[idx];
         return {
-          ...answer,
-          score,
-          isCorrect: score > 0
+          questionId: question.id,
+          selectedOptionIds: answer.selected || [],
+          textResponse: answer.text || ""
         };
       })
-    );
-    setQuizState("submitted");
+    };
+
+    submitQuiz.mutate(dataSubmit, {
+      onSuccess: (data: QuizSubmitResponse) => {
+        console.log(data);
+        // Store the result from BE
+        setQuizResult(data);
+        
+        // Update answers state with results from BE
+        setAnswers((prev) =>
+          prev.map((answer, idx) => {
+            const questionResult = data.answers.find(
+              result => result.questionId === sortedQuestions[idx].id
+            );
+            return {
+              ...answer,
+              isCorrect: questionResult?.isCorrect || false,
+              score: questionResult?.isCorrect ? (sortedQuestions[idx].points || 0) : 0
+            };
+          })
+        );
+        setQuizState("submitted");
+      }
+    });
   };
 
   // Retry quiz
   const handleRetry = () => {
-    setAnswers(
-      sortedQuestions.map(() => ({ 
-        selected: null, 
-        text: "", 
-        isCorrect: null,
-        score: 0
-      })),
-    );
-    setQuizState("init");
+    createLessonQuiz.mutate(undefined, {
+      onSuccess: (data) => {
+        setAttemptId(data.id)
+        setAnswers(
+          sortedQuestions.map(() => ({
+            selected: null,
+            text: "",
+            isCorrect: null,
+            score: 0
+          })),
+        );
+        setQuizResult(null);
+        setQuizState("init");
+      }
+    })
   };
 
   // Check if quiz can be submitted
@@ -433,9 +434,22 @@ export default function QuizStep2({dataLesson, dataTracking, dataCourse, attempt
                     ) : (
                       <CloseCircle size={18} className="mt-0.5 text-red-500" />
                     )}
-                    <span className={answers[idx].isCorrect ? "text-green-700" : "text-red-700"}>
-                      {answers[idx].isCorrect ? question.correctExplanation : question.incorrectHint}
-                    </span>
+                    <div className={answers[idx].isCorrect ? "text-green-700" : "text-red-700"}>
+                      {quizResult && quizResult.answers.length > 0 ? (
+                        // Use explanation from BE response
+                        (() => {
+                          const questionResult = quizResult.answers.find(
+                            result => result.questionId === question.id
+                          );
+                          return questionResult?.explanations && questionResult.explanations.length > 0 
+                            ? questionResult.explanations.join(", ")
+                            : (answers[idx].isCorrect ? question.correctExplanation : question.incorrectHint);
+                        })()
+                      ) : (
+                        // Fallback to frontend data
+                        answers[idx].isCorrect ? question.correctExplanation : question.incorrectHint
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

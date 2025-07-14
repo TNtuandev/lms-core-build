@@ -40,6 +40,25 @@ export const courseAPI = {
     return data;
   },
 
+  getCoursesCMS: async (filters?: CourseFilters): Promise<CoursesResponse> => {
+    const params = new URLSearchParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          if (Array.isArray(value)) {
+            value.forEach((item) => params.append(key, item.toString()));
+          } else {
+            params.append(key, value.toString());
+          }
+        }
+      });
+    }
+
+    const { data } = await api.get(`/cms/courses?${params.toString()}`);
+    return data;
+  },
+
   getCourseCMSBySlug: async (slug: string): Promise<CourseDetail> => {
     const { data } = await api.get(`/cms/courses/${slug}`);
     return data;
@@ -74,7 +93,6 @@ export const courseAPI = {
     const { data } = await api.post(`/products/${dataReview.productId}/reviews`, dataReview.data);
     return data;
   },
-
 
   createCourse: async (courseData: ICreateCourseRequest): Promise<any> => {
     const { data } = await api.post("/cms/courses", courseData);

@@ -59,4 +59,5 @@ export enum EStatusCourse {
   PUBLIC = "PUBLIC",
   DRAFT = "DRAFT",
   ARCHIVED = "ARCHIVED",
+  PUBLISHED = "PUBLISHED",
 }

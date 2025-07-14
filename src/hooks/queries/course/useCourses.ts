@@ -25,6 +25,14 @@ export const useCourses = (filters?: CourseFilters) => {
   });
 };
 
+export const useCoursesCMS = (filters?: CourseFilters) => {
+  return useQuery({
+    queryKey: courseKeys.list(filters),
+    queryFn: () => courseAPI.getCoursesCMS(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
 export const useCourseById = (id: string) => {
   return useQuery({
     queryKey: courseKeys.detail(id),

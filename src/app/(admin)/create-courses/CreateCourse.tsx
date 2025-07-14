@@ -119,7 +119,7 @@ function CreateCourse() {
       case EStatusCourse.DRAFT:
         draftCourse.mutate(courseData?.id || "");
         break;
-      case EStatusCourse.PUBLIC:
+      case EStatusCourse.PUBLISHED:
         publishCourse.mutate(courseData?.id || "");
         break;
     }

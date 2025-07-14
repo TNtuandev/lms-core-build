@@ -54,7 +54,7 @@ function CourseCard({
   const onNavigateEditCourse = (event: any) => {
     event.stopPropagation();
     event.preventDefault();
-    router.push(`create-courses?slug=${slug}`);
+    router.push(`/create-courses?slug=${slug}`);
   };
 
   return (

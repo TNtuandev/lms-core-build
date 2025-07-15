@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSubmitPracticeCode } from "@/hooks/queries/course/useSubmitPractice";
 import { useSearchParams } from "next/navigation";
 import { CourseDetail } from "@/api/types/course.type";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ExerciseData {
   title: string;
@@ -100,6 +101,14 @@ export default function StudyCode({
   //   setCurrentCode(newCode);
   // }, []);
 
+  const queryClient = useQueryClient();
+
+  const refetchPracticeTracking = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['PracticeTracking', course?.id, lessonId],
+    });
+  };
+
   const submitCode = useSubmitPracticeCode(
     course?.id as string,
     lessonId as string,
@@ -113,23 +122,11 @@ export default function StudyCode({
       },
       {
         onSuccess: (data) => {
-          console.log("Code submitted successfully:", data);
-          setTestResult({
-            success: true,
-            output: "Code submitted successfully",
-            testsPassed: 1,
-            testsTotal: 1,
-          });
+          console.log("Code submittxed successfully:", data);
+          refetchPracticeTracking()
         },
         onError: (error) => {
           console.error("Error submitting code:", error);
-          setTestResult({
-            success: false,
-            output: "Error submitting code",
-            error: error.message,
-            testsPassed: 0,
-            testsTotal: 1,
-          });
         },
       },
     );

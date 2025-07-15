@@ -346,4 +346,24 @@ export const courseAPI = {
     );
     return res;
   },
+
+  // UPLOAD FILE API
+  uploadFile: async (formData: FormData): Promise<any> => {
+    const { data } = await api.post("/attachments/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data;
+  },
+
+  // UPLOAD MULTIPLE FILES API
+  uploadMultipleFiles: async (formData: FormData): Promise<any> => {
+    const { data } = await api.post("/attachments/upload-multiple", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data;
+  },
 };

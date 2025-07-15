@@ -40,6 +40,7 @@ import {
   useCreateLessonPractice, useGetLessonById,
   useUpdateLessonPractice,
 } from "@/hooks/queries/course/useLessonCourse";
+import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
@@ -129,6 +130,22 @@ export const UploadCodeAssignment = ({
     setAttachmentFile(null);
     onClose();
   };
+
+  const { uploadFile } = useUploadFile();
+
+  const handleUploadFile = (file: File, field: any) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        field.onChange(response.url); // Assuming the API returns the file URL
+      },
+      onError: (error) => {
+        console.error("Error uploading file:", error);
+      },
+    })
+  }
+
 
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
@@ -261,7 +278,7 @@ export const UploadCodeAssignment = ({
                           className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => inputDataInputRef.current?.click()}
                         >
-                          {!inputDataFile ? (
+                          {!field.value ? (
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
                                 <Image
@@ -285,7 +302,7 @@ export const UploadCodeAssignment = ({
                           ) : (
                             <div className="flex flex-col items-center">
                               <p className="text-sm text-gray-500 mb-2">
-                                {inputDataFile.name}
+                                {inputDataFile?.name}
                               </p>
                               <Button
                                 variant="outline"
@@ -306,13 +323,13 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept=".txt,.json"
+                            accept="/*"
                             ref={inputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 setInputDataFile(file);
-                                field.onChange(file);
+                                handleUploadFile(file,  field);
                               }
                             }}
                             className="hidden"
@@ -346,7 +363,7 @@ export const UploadCodeAssignment = ({
                           className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => outputDataInputRef.current?.click()}
                         >
-                          {!outputDataFile ? (
+                          {!field.value ? (
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
                                 <Image
@@ -370,7 +387,7 @@ export const UploadCodeAssignment = ({
                           ) : (
                             <div className="flex flex-col items-center">
                               <p className="text-sm text-gray-500 mb-2">
-                                {outputDataFile.name}
+                                {outputDataFile?.name}
                               </p>
                               <Button
                                 variant="outline"
@@ -391,13 +408,13 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept=".txt,.json"
+                            accept="/*"
                             ref={outputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 setOutputDataFile(file);
-                                field.onChange(file);
+                                handleUploadFile(file,  field)
                               }
                             }}
                             className="hidden"
@@ -493,7 +510,7 @@ export const UploadCodeAssignment = ({
                           className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => attachmentInputRef.current?.click()}
                         >
-                          {!attachmentFile ? (
+                          {!field?.value ? (
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
                                 <Image
@@ -517,7 +534,7 @@ export const UploadCodeAssignment = ({
                           ) : (
                             <div className="flex flex-col items-center">
                               <p className="text-sm text-gray-500 mb-2">
-                                {attachmentFile.name}
+                                {attachmentFile?.name}
                               </p>
                               <Button
                                 variant="outline"
@@ -538,13 +555,13 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept=".pdf,.doc,.docx,.txt"
+                            accept="/*"
                             ref={attachmentInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 setAttachmentFile(file);
-                                field.onChange(file);
+                                handleUploadFile(file, field);
                               }
                             }}
                             className="hidden"

@@ -14,6 +14,7 @@ export interface CourseFilters {
   include_archived?: boolean;
   owner_id?: string;
   status?: EStatusCourse;
+  perPage?: number
 }
 
 export enum DifficultyLevel {

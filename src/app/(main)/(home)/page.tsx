@@ -9,6 +9,7 @@ import { WhyUsSection } from "@/components/home/WhyUsSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import {Feedback} from "@/components/home/Feedback";
 import NewsletterSection from "@/components/abouts/NewsLetterSection";
+import CourseTabComponent from "@/components/courses/components/CourseTabComponent";
 
 function HomePage() {
   return (
@@ -23,7 +24,7 @@ function HomePage() {
       />
       <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center gap-10 lg:gap-20 px-6">
         <CourseIntro />
-        <CourseTab />
+        <CourseTabComponent />
         <Explore />
         <div className="lg:pt-32 pt-16">
           <WhyUsSection />

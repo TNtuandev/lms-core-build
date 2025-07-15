@@ -20,4 +20,15 @@ export const trackingAPI = {
     const { data: res } = await api.post(`/api/courses/${courseId}/lessons/quizzes/${lessonId}/attempts/${attemptId}/submit`, data);
     return res;
   },
+
+  submitPracticeWriting: async (courseId: string, lessonId: string, data: any): Promise<any> => {
+    const { data: res } = await api.post(`/courses/${courseId}/lessons/practice-submissions/${lessonId}/writing`, data);
+    return res;
+  },
+
+  submitPracticeFile: async (courseId: string, lessonId: string, data: any): Promise<any> => {
+    const { data: res } = await api.post(`/courses/${courseId}/lessons/practice-submissions/${lessonId}/file`, data);
+    return res;
+  },
+
 };

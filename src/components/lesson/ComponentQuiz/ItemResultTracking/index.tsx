@@ -84,7 +84,7 @@ export default function ItemResultTracking(props: ItemResultProps) {
             >
               {dataLesson?.practiceType === "upload_file"
                 ? dataTracking?.file?.score || "--"
-                : dataTracking?.writing.score || "--"}
+                : dataTracking?.writing?.score || "--"}
             </div>
           </div>
         </div>

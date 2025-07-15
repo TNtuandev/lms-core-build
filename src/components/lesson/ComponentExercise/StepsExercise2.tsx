@@ -112,7 +112,6 @@ export default function StepsExercise2() {
                 }}
               />
             </div>
-
           </div>
         </div>
         <div className="flex justify-end mt-10">

@@ -6,6 +6,11 @@ export const trackingAPI = {
     return data;
   },
 
+  getPracticeTracking: async (courseId: string, lessonId: string): Promise<any> => {
+    const { data } = await api.get(`/courses/${courseId}/lessons/practice-submissions/${lessonId}`);
+    return data;
+  },
+
   createQuizAttempts: async (courseId: string, lessonId: string): Promise<any> => {
     const { data: res } = await api.post(`/api/courses/${courseId}/lessons/quizzes/${lessonId}/attempts`);
     return res;

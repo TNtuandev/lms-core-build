@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactPlayer from "react-player";
+import { useQuizStore } from "@/store/slices/lesson.slice";
 
 interface VideoPlayerProps {
   src: string;
@@ -17,6 +18,11 @@ const VideoPlayer = ({ src, poster, className = "" }: VideoPlayerProps) => {
   const [volume, setVolume] = useState(1);
   const [showControls, setShowControls] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
+
+  useEffect(() => {
+    setQuizStarted(false)
+  }, []);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);

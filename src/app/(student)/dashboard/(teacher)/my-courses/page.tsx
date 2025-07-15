@@ -16,7 +16,7 @@ const TABS = [
 ];
 
 function MyCoursePage() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const [tabActive, setTabActive] = useState(EStatusCourse.PUBLISHED);
 
   const apiFilters: CourseFilters = useMemo(() => {

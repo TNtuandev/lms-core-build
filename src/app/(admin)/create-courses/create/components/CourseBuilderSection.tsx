@@ -218,7 +218,7 @@ export default function CourseBuilderSection() {
                           >
                             <Upload
                               size={16}
-                              color="#637381"
+                              color={lesson?.status === "PUBLISHED" ? "#2F57EF" : "#637381"}
                               className="h-4 w-4"
                             />
                           </Button>

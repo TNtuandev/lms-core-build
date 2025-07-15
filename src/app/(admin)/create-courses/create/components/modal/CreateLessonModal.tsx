@@ -88,7 +88,7 @@ export const CreateLessonModal = ({
         description: "",
         type: "VIDEO",
         videoUrl: null,
-        duration: 0,
+        duration: '0',
         htmlContent: "",
         sampleImageUrl: "",
         attachmentUrl: null,

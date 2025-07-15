@@ -25,8 +25,10 @@ import {
   videoIntroSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import { Button } from "@/components/ui/button";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
+import Image from "next/image";
 
 const typeSource = [
   {
@@ -52,6 +54,7 @@ export default function VideoIntroSection({
 }: VideoIntroSectionProps) {
   const [isExpanded, setIsExpand] = useState(true);
   const [type, setTypeSource] = useState(typeSource[0].value);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<VideoIntroFormData>({
     resolver: zodResolver(videoIntroSchema),
@@ -69,6 +72,22 @@ export default function VideoIntroSection({
     console.log("Step 4 form data:", data);
     onNext(data);
   };
+
+  const { uploadFile } = useUploadFile();
+
+  const handleUploadFile = (file: File, field: any) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        field.onChange(response.url); // Assuming the API returns the file URL
+      },
+      onError: (error) => {
+        console.error("Error uploading file:", error);
+      },
+    })
+  }
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -153,26 +172,78 @@ export default function VideoIntroSection({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Thêm URL Hình ảnh của bạn
+                      Thêm hình ảnh video của bạn
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Thêm URL Video của bạn"
-                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
-                      />
+                      <div
+                        className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                        onClick={() => inputRef.current?.click()}
+                      >
+                        {!field?.value ? (
+                          <div className="flex flex-col items-center">
+                            <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                              <Image
+                                width={64}
+                                height={64}
+                                alt="image"
+                                src="/images/upload.png"
+                              />
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              Thả hoặc chọn tệp tin
+                            </h3>
+                            <p className="text-sm text-gray-500 mb-4">
+                              Thả tệp tin vào đây hoặc nhấp để{" "}
+                              <span className="text-blue-600 hover:underline cursor-pointer">
+                          duyệt
+                        </span>{" "}
+                              từ máy tính
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center">
+                            <Image
+                              src={field?.value}
+                              alt="Thumbnail Preview"
+                              width={1000}
+                              height={600}
+                              className="rounded-lg mb-4"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                field.onChange(null);
+                                if (inputRef.current) {
+                                  inputRef.current.value = "";
+                                }
+                              }}
+                            >
+                              Xóa
+                            </Button>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={inputRef}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleUploadFile(file, field);
+                            }
+                          }}
+                          className="hidden"
+                          id="thumbnail-upload"
+                        />
+                      </div>
                     </FormControl>
-                    <p className="text-xs text-gray-500 flex items-center">
-                      <InfoCircle
-                        size={16}
-                        color="#637381"
-                        variant="Bold"
-                        className="mr-1"
-                      />
-                      Ví dụ:{" "}
-                      <a className="text-blue-500">
-                        https://www.youtube.com/watch?v=yourvideoid
-                      </a>
+                    <p className="text-xs text-gray-500">
+                      <span className="font-medium">Kích thước:</span> 700x430 pixel,{" "}
+                      <span className="font-medium">Hỗ trợ tệp:</span> JPG, JPEG, PNG,
+                      GIF, WEBP
                     </p>
                     <FormMessage />
                   </FormItem>

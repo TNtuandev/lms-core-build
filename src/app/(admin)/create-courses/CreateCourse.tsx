@@ -66,6 +66,7 @@ function CreateCourse() {
     setFormData((prev: any) => ({ ...prev, ...finalData }));
     if (currentStep === STEP_SUBMIT_CREATE_COURSE) {
       handleFinalSubmit(finalData);
+      return;
     }
     setCurrentStep((prev) => prev + 1);
   };
@@ -74,7 +75,7 @@ function CreateCourse() {
     setCourseData(data);
   };
 
-  const { createCourse } = useCreateCourse(handleSetCourseData);
+  const { createCourse } = useCreateCourse();
   const updateCourse = useUpdateCourse(courseData?.id as string);
 
   const { archiveCourse, draftCourse, publishCourse } =
@@ -108,7 +109,15 @@ function CreateCourse() {
       });
       return;
     }
-    createCourse.mutate(request);
+    createCourse.mutate(request, {
+      onSuccess: (data) => {
+        setCourseData(data);
+        setCurrentStep((prev) => prev + 1);
+      },
+      onError: (error) => {
+        console.error("Error creating course:", error);
+      },
+    });
   };
 
   const handleOnChangeStatus = (value: string) => {
@@ -119,7 +128,7 @@ function CreateCourse() {
       case EStatusCourse.DRAFT:
         draftCourse.mutate(courseData?.id || "");
         break;
-      case EStatusCourse.PUBLIC:
+      case EStatusCourse.PUBLISHED:
         publishCourse.mutate(courseData?.id || "");
         break;
     }
@@ -129,11 +138,13 @@ function CreateCourse() {
     {
       label: "Tạo khóa học",
       stepIndex: 1,
+      disabled: false,
       component: <Step1Form onNext={handleStepNext} initialData={formData} />,
     },
     {
       label: "Thêm thông tin",
       stepIndex: 2,
+      disabled: !courseData && currentStep < 2,
       component: (
         <CourseInfoSection
           onNext={handleStepNext}
@@ -145,6 +156,7 @@ function CreateCourse() {
     {
       label: "Cài đặt khoá học",
       stepIndex: 3,
+      disabled: !courseData && currentStep < 3,
       component: (
         <CourseSettingsSection
           onNext={handleStepNext}
@@ -156,6 +168,7 @@ function CreateCourse() {
     {
       label: "Video giới thiệu",
       stepIndex: 4,
+      disabled: !courseData && currentStep < 4,
       component: (
         <VideoIntroSection
           onNext={handleStepNext}
@@ -167,6 +180,7 @@ function CreateCourse() {
     {
       label: "Giá khoá học",
       stepIndex: 5,
+      disabled: !courseData && currentStep < 5,
       component: (
         <CoursePricingSection
           onNext={handleStepNext}
@@ -178,11 +192,13 @@ function CreateCourse() {
     {
       label: "Xây dựng khoá học",
       stepIndex: 6,
+      disabled: !courseData && currentStep < 6,
       component: <CourseBuilderSection />,
     },
     {
       label: "FAQ khoá học",
       stepIndex: 7,
+      disabled: !courseData && currentStep < 7,
       component: <CourseFAQ />,
     },
 
@@ -275,16 +291,26 @@ function CreateCourse() {
               <nav className="space-y-2">
                 {stepsList.map((item, index) => (
                   <div
-                    onClick={() => setCurrentStep(item.stepIndex)}
+                    onClick={() => {
+                      if (item.disabled) {
+                        return;
+                      }
+                      setCurrentStep(item.stepIndex);
+                    }}
                     key={index}
                     className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
                       item.stepIndex === currentStep
                         ? "bg-blue-50 text-blue-600 border border-blue-200"
                         : "text-gray-600 hover:bg-gray-50"
                     }`}
+                    style={{
+                      cursor: item.disabled ? "not-allowed" : "pointer",
+                    }}
                   >
-                    <span className="font-medium">{item.label}</span>
-                    <ChevronRight className="w-4 h-4" />
+                    <span className={
+                      `font-medium ${item.disabled ? "text-gray-400" : ""}`
+                    }>{item.label}</span>
+                    <ChevronRight color={item.disabled ? "gray" : "black"} className="w-4 h-4" />
                   </div>
                 ))}
               </nav>

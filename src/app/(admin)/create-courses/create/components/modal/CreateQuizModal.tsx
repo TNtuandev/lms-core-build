@@ -145,7 +145,20 @@ export const CreateQuizModal = ({
       setQuestions(initValue?.questions || []);
     } else {
       form.reset();
-      settingsForm.reset();
+      settingsForm.reset({
+        duration: "00",
+        durationUnit: "second",
+        isViewTimeLimit: false,
+        feedbackMode: "default",
+        passingScore: "50",
+        maxAttempts: "10",
+        autoStart: false,
+        showQuestionCount: false,
+        questionLayout: "random",
+        questionViewMode: "single",
+        shortAnswerCharLimit: "200",
+        essayCharLimit: "500",
+      });
       setQuestions([]);
       setStep(1);
     }
@@ -177,6 +190,8 @@ export const CreateQuizModal = ({
     const data = {
       ...form.getValues(),
       ...settingsForm.getValues(),
+      duration: Number(settingsForm.getValues().duration),
+      timeLimitMin: Number(settingsForm.getValues().duration),
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
     } as any;

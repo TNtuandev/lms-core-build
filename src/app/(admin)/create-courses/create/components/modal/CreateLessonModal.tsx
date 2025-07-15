@@ -41,6 +41,7 @@ import {
   useUpdateLessonVideo,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
@@ -53,7 +54,6 @@ export const CreateLessonModal = ({
   onClose,
   onSubmit,
 }: CreateLessonModalProps) => {
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +69,7 @@ export const CreateLessonModal = ({
       title: lessonSelected?.title || "",
       description: lessonSelected?.description || "",
       type: lessonSelected?.type || "VIDEO",
-      videoUrl: lessonSelected?.videoUrl || "",
+      videoUrl: lessonSelected?.videoUrl || null,
       duration: lessonSelected?.duration || 0,
       htmlContent: lessonSelected?.htmlContent || "",
       sampleImageUrl: lessonSelected?.sampleImageUrl || "",
@@ -81,14 +81,13 @@ export const CreateLessonModal = ({
   useEffect(() => {
     if (lessonSelected) {
       form.reset(initValue);
-      setThumbnailFile(null);
       setAttachmentFile(null);
     } else {
       form.reset({
         title: "",
         description: "",
         type: "VIDEO",
-        videoUrl: "",
+        videoUrl: null,
         duration: "0",
         htmlContent: "",
         sampleImageUrl: "",
@@ -99,7 +98,6 @@ export const CreateLessonModal = ({
   }, [lessonSelected, initValue]);
 
   const handleClose = () => {
-    setThumbnailFile(null);
     setAttachmentFile(null);
     form.reset();
     onClose();
@@ -130,8 +128,8 @@ export const CreateLessonModal = ({
         description: data.description,
         videoUrl: data.videoUrl,
         duration: Number(data.duration),
-        attachmentUrl: "https://example.com/attachment.pdf",
-        sampleImageUrl: "https://example.com/sample-image.jpg",
+        attachmentUrl: data.attachmentUrl,
+        sampleImageUrl: data.sampleImageUrl,
         isPreviewable: data.isPreviewable,
       };
       if (isEdit) {
@@ -157,7 +155,8 @@ export const CreateLessonModal = ({
         title: data.title,
         description: data.description,
         htmlContent: data.htmlContent,
-        sampleImageUrl: "https://example.com/sample-image.jpg",
+        sampleImageUrl: data.sampleImageUrl,
+        duration: Number(data.duration),
       };
       if (isEdit) {
         updateLessonArticle.mutate(formData, {
@@ -179,6 +178,23 @@ export const CreateLessonModal = ({
     }
   };
   const lessonType = form.watch("type");
+
+  console.log("Bài học tài liệu", form.formState.validatingFields)
+
+  const { uploadFile } = useUploadFile();
+
+  const handleUploadFile = (file: File, field: any) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        field.onChange(response.url); // Assuming the API returns the file URL
+      },
+      onError: (error) => {
+        console.error("Error uploading file:", error);
+      },
+    })
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -275,14 +291,14 @@ export const CreateLessonModal = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-gray-700">
-                    Hình ảnh đặc trưng
+                    Hình thu nhỏ
                   </FormLabel>
                   <FormControl>
                     <div
                       className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                       onClick={() => thumbnailInputRef.current?.click()}
                     >
-                      {!thumbnailFile ? (
+                      {!field?.value ? (
                         <div className="flex flex-col items-center">
                           <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
                             <Image
@@ -292,36 +308,32 @@ export const CreateLessonModal = ({
                               src="/images/upload.png"
                             />
                           </div>
-                          <h3 className="text-lg font-mediteum text-gray-900 mb-2">
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">
                             Thả hoặc chọn tệp tin
                           </h3>
                           <p className="text-sm text-gray-500 mb-4">
                             Thả tệp tin vào đây hoặc nhấp để{" "}
                             <span className="text-blue-600 hover:underline cursor-pointer">
-                              duyệt
-                            </span>{" "}
+                          duyệt
+                        </span>{" "}
                             từ máy tính
                           </p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
                           <Image
-                            src={URL.createObjectURL(thumbnailFile)}
+                            src={field?.value}
                             alt="Thumbnail Preview"
                             width={1000}
                             height={600}
                             className="rounded-lg mb-4"
                           />
-                          <p className="text-sm text-gray-500 mb-2">
-                            {thumbnailFile.name}
-                          </p>
                           <Button
                             variant="outline"
                             size="sm"
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setThumbnailFile(null);
                               field.onChange(null);
                               if (thumbnailInputRef.current) {
                                 thumbnailInputRef.current.value = "";
@@ -339,8 +351,7 @@ export const CreateLessonModal = ({
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            setThumbnailFile(file);
-                            field.onChange(file);
+                            handleUploadFile(file, field);
                           }
                         }}
                         className="hidden"
@@ -349,47 +360,47 @@ export const CreateLessonModal = ({
                     </div>
                   </FormControl>
                   <p className="text-xs text-gray-500">
-                    <span className="font-medium">Kích thước:</span> 700x430
-                    pixel, <span className="font-medium">Hỗ trợ tệp:</span> JPG,
-                    JPEG, PNG, GIF, WEBP
+                    <span className="font-medium">Kích thước:</span> 700x430 pixel,{" "}
+                    <span className="font-medium">Hỗ trợ tệp:</span> JPG, JPEG, PNG,
+                    GIF, WEBP
                   </p>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Thời gian phát lại video
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="00"
+                        className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-xs text-gray-500 flex items-center">
+                      <InfoCircle
+                        variant="Bold"
+                        size={16}
+                        color="#637381"
+                      />
+                      <span className="ml-1">Giờ</span>
+                    </p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             {/* Thêm URL Video */}
             {lessonType === "VIDEO" && (
               <>
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="duration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">
-                          Thời gian phát lại video
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="00"
-                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            {...field}
-                          />
-                        </FormControl>
-                        <p className="text-xs text-gray-500 flex items-center">
-                          <InfoCircle
-                            variant="Bold"
-                            size={16}
-                            color="#637381"
-                          />
-                          <span className="ml-1">Giờ</span>
-                        </p>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
                 <FormField control={form.control} name="videoUrl" render={({ field }) => (
                   <FormItem>
@@ -425,7 +436,7 @@ export const CreateLessonModal = ({
                           className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => attachmentInputRef.current?.click()}
                         >
-                          {!attachmentFile ? (
+                          {!field?.value ? (
                             <div className="flex flex-col items-center">
                               <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
                                 <Image
@@ -449,7 +460,7 @@ export const CreateLessonModal = ({
                           ) : (
                             <div className="flex flex-col items-center">
                               <p className="text-sm text-gray-500 mb-2">
-                                {attachmentFile.name}
+                                {attachmentFile?.name}
                               </p>
                               <Button
                                 variant="outline"
@@ -470,13 +481,13 @@ export const CreateLessonModal = ({
                           )}
                           <input
                             type="file"
-                            accept=".pdf,.zip,.rar"
+                            accept="/*"
                             ref={attachmentInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 setAttachmentFile(file);
-                                field.onChange(file);
+                                handleUploadFile(file,  field)
                               }
                             }}
                             className="hidden"

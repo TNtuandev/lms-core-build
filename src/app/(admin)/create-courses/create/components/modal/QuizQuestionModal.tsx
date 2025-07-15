@@ -39,11 +39,14 @@ export enum QuestionType {
 }
 
 const answerSchema = z.object({
-  content: z.string().min(1, "Không được để trống"),
+  content: z.string().optional(),
   isCorrect: z.boolean().optional(),
+}).refine((data) => data.content && data.content.trim().length > 0, {
+  message: "Nội dung đáp án không được để trống",
+  path: ["content"],
 });
 
-const questionSchema = z
+export const questionSchema = z
   .object({
     content: z.string().min(1, "Câu hỏi không được để trống"),
     type: z.string().min(1, "Chọn loại câu hỏi"),
@@ -51,37 +54,37 @@ const questionSchema = z
     isRandom: z.boolean().optional(),
     isRequiredAnswer: z.boolean().optional(),
     description: z.string().optional(),
-    options: z.array(answerSchema),
+    options: z.array(answerSchema).optional(),
     correctExplanation: z.string().optional(),
     answer: z.string().optional(),
     incorrectHint: z.string().optional(),
   })
-  .refine(
-    (data) => {
-      // Validation cho loại câu hỏi multiple
+  .superRefine((data, ctx) => {
+    // Chỉ validate options khi có options và là loại câu hỏi cần options
+    if (data.options && Array.isArray(data.options) && data.options.length > 0) {
       if (data.type === QuestionType.MULTIPLE_CHOICE) {
-        return data.options.filter((option) => option.isCorrect).length >= 2;
+        const correctOptions = data.options.filter((option) => option.isCorrect);
+        if (correctOptions.length < 2) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Câu hỏi nhiều đáp án cần ít nhất 2 đáp án",
+            path: ["options"],
+          });
+        }
       }
-      return true;
-    },
-    {
-      message: "Câu hỏi nhiều đáp án cần ít nhất 2 đáp án",
-      path: ["options"],
-    },
-  )
-  .refine(
-    (data) => {
-      // Validation cho loại câu hỏi single
+
       if (data.type === "SINGLE_CHOICE") {
-        return data.options.filter((option) => option.isCorrect).length === 1;
+        const correctOptions = data.options.filter((option) => option.isCorrect);
+        if (correctOptions.length !== 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Có 1 đáp án đúng cho câu hỏi này",
+            path: ["options"],
+          });
+        }
       }
-      return true;
-    },
-    {
-      message: "Chỉ có 1 đáp án đúng cho câu hỏi này",
-      path: ["options"],
-    },
-  )
+    }
+  })
   .refine(
     (data) => {
       // Validation cho loại câu hỏi short
@@ -120,7 +123,7 @@ export default function QuizQuestionModal({
       isRandom: false,
       isRequiredAnswer: false,
       description: "",
-      options: [{ content: "", isCorrect: true }],
+      options: [],
       correctExplanation: "",
       incorrectHint: "",
     },
@@ -131,14 +134,21 @@ export default function QuizQuestionModal({
     name: "options",
   });
 
+  console.log("QuizQuestionModal defaultValues:", form.formState.errors, form.getValues());
+
   const handleSubmit = (value: QuestionFormData) => {
     onSubmit(value);
     onClose();
     form.reset();
   };
 
+  const handleClose = () => {
+    onClose();
+    form.reset();
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[700px] bg-white p-0 rounded-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="p-6 pb-4 border-b border-[#919EAB52] text-left">
           <DialogTitle className="text-lg text-left font-medium text-gray-900">

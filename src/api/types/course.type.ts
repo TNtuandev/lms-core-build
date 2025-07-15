@@ -13,6 +13,7 @@ export interface CourseFilters {
   include_draft?: boolean;
   include_archived?: boolean;
   owner_id?: string;
+  status?: EStatusCourse;
 }
 
 export enum DifficultyLevel {

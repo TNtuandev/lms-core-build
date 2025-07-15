@@ -20,19 +20,6 @@ export const useGetPracticeSubmission = (courseId: string, lessonId: string) => 
   });
 };
 
-export const useSubmitPracticeFile = (courseId: string, lessonId: string, onSuccessCallback?: (data: any) => void) => {
-  return useMutation({
-    mutationFn: (formData: FormData) => trackingAPI.submitPracticeFile(courseId, lessonId, formData),
-    onSuccess: (data) => {
-      toast.success("Nộp bài thực hành dạng file thành công!");
-      onSuccessCallback?.(data);
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi nộp bài thực hành dạng file.");
-    },
-  });
-};
-
 export const useSubmitPracticeCode = (courseId: string, lessonId: string, onSuccessCallback?: (data: any) => void) => {
   return useMutation({
     mutationFn: (data: any) => trackingAPI.submitPracticeCode(courseId, lessonId, data),
@@ -42,19 +29,6 @@ export const useSubmitPracticeCode = (courseId: string, lessonId: string, onSucc
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi nộp bài thực hành dạng code.");
-    },
-  });
-};
-
-export const useSubmitPracticeWriting = (courseId: string, lessonId: string, onSuccessCallback?: (data: any) => void) => {
-  return useMutation({
-    mutationFn: (data: any) => trackingAPI.submitPracticeWriting(courseId, lessonId, data),
-    onSuccess: (data) => {
-      toast.success("Nộp bài thực hành dạng viết thành công!");
-      onSuccessCallback?.(data);
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi nộp bài thực hành dạng viết.");
     },
   });
 };

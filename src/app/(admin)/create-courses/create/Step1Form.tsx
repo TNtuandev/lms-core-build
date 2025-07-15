@@ -25,10 +25,9 @@ import { Step1FormData, step1Schema } from "./schemas";
 import { z } from "zod";
 import { useCategory } from "@/hooks/queries/category/useCategory";
 import { Card } from "@/components/ui/card";
-import { InfoCircle } from "iconsax-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
-import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
+import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -43,7 +42,6 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
   const form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
   });
-  
 
   useEffect(() => {
     form.reset({
@@ -53,7 +51,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
       slug: initialData?.slug || "",
       shortDescription: initialData?.shortDescription || "",
       thumbnail: initialData?.thumbnail || "",
-    })
+    });
   }, [initialData]);
 
   const onSubmit = (data: Step1FormData) => {
@@ -73,8 +71,8 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
       onError: (error) => {
         console.error("Error uploading file:", error);
       },
-    })
-  }
+    });
+  };
 
   return (
     <Form {...form}>
@@ -123,10 +121,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                     Danh mục
                   </FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Danh mục" />
                       </SelectTrigger>
@@ -274,8 +269,8 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                         <p className="text-sm text-gray-500 mb-4">
                           Thả tệp tin vào đây hoặc nhấp để{" "}
                           <span className="text-blue-600 hover:underline cursor-pointer">
-                          duyệt
-                        </span>{" "}
+                            duyệt
+                          </span>{" "}
                           từ máy tính
                         </p>
                       </div>
@@ -320,9 +315,9 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   </div>
                 </FormControl>
                 <p className="text-xs text-gray-500">
-                  <span className="font-medium">Kích thước:</span> 700x430 pixel,{" "}
-                  <span className="font-medium">Hỗ trợ tệp:</span> JPG, JPEG, PNG,
-                  GIF, WEBP
+                  <span className="font-medium">Kích thước:</span> 700x430
+                  pixel, <span className="font-medium">Hỗ trợ tệp:</span> JPG,
+                  JPEG, PNG, GIF, WEBP
                 </p>
                 <FormMessage />
               </FormItem>

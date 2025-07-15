@@ -55,13 +55,19 @@ export function LessonClient() {
 
   const { data: courseDetail } = useCourseBySlug(slug as string);
   const { data: moduleData } = useModule(courseDetail?.id || "");
-  const { data: initValue } = useGetLessonById(courseDetail?.id as string, moduleId as string, lessonId as string)
+  const { data: initValue } = useGetLessonById(
+    courseDetail?.id as string,
+    moduleId as string,
+    lessonId as string,
+  );
 
   const [sections, setSections] = useState<SidebarSection[]>([]);
   const [lessonsData, setLessonsData] = useState<ExtendedLesson[]>([]); // Store extended lesson data
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMobileView, setIsMobileView] = useState(false);
-  const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(null);
+  const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(
+    null,
+  );
 
   console.log(initValue, "---initValue");
 
@@ -86,14 +92,14 @@ export function LessonClient() {
     if (duration === 0) return "00:00";
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
   // Transform BE data to frontend sections
   useEffect(() => {
     if (moduleData?.data) {
       const allLessonsData: ExtendedLesson[] = [];
-      
+
       const transformedSections = moduleData.data
         .filter((module: any) => module.status === "PUBLISHED")
         .sort((a: any, b: any) => a.order - b.order)
@@ -114,18 +120,18 @@ export function LessonClient() {
                 description: lesson.description,
                 attachmentUrl: lesson.attachmentUrl,
                 sampleImageUrl: lesson?.sampleImageUrl,
-                active: false
+                active: false,
               };
-              
+
               allLessonsData.push(extendedLesson);
-              
+
               // Return sidebar-compatible lesson
               return {
                 id: lesson.id,
                 title: lesson.title,
                 duration: formatDuration(lesson.duration),
                 type: mapLessonType(lesson.type),
-                active: false
+                active: false,
               };
             });
 
@@ -134,7 +140,7 @@ export function LessonClient() {
             title: module.title,
             expanded: module.id === moduleId, // Expand section if it matches URL moduleId
             lessons: publishedLessons,
-            progress: `0/${publishedLessons.length}`
+            progress: `0/${publishedLessons.length}`,
           };
         });
 
@@ -147,12 +153,16 @@ export function LessonClient() {
 
         if (lessonId) {
           // Find lesson by lessonId
-          lessonToSelect = allLessonsData.find((lesson: ExtendedLesson) => lesson.id === lessonId);
+          lessonToSelect = allLessonsData.find(
+            (lesson: ExtendedLesson) => lesson.id === lessonId,
+          );
         }
 
         if (!lessonToSelect && moduleId) {
           // Find first lesson in the specified module
-          lessonToSelect = allLessonsData.find((lesson: ExtendedLesson) => lesson.moduleId === moduleId);
+          lessonToSelect = allLessonsData.find(
+            (lesson: ExtendedLesson) => lesson.moduleId === moduleId,
+          );
         }
 
         if (!lessonToSelect) {
@@ -163,14 +173,14 @@ export function LessonClient() {
         if (lessonToSelect) {
           setCurrentLesson(lessonToSelect);
           // Update sections to mark the selected lesson as active
-          setSections(prevSections => 
-            prevSections.map(section => ({
+          setSections((prevSections) =>
+            prevSections.map((section) => ({
               ...section,
-              lessons: section.lessons.map(lesson => ({
+              lessons: section.lessons.map((lesson) => ({
                 ...lesson,
-                active: lesson.id === lessonToSelect!.id
-              }))
-            }))
+                active: lesson.id === lessonToSelect!.id,
+              })),
+            })),
           );
         }
       }
@@ -217,16 +227,16 @@ export function LessonClient() {
 
   const selectLesson = (lesson: SidebarLesson) => {
     // Find the extended lesson data
-    const extendedLesson = lessonsData.find(l => l.id === lesson.id);
+    const extendedLesson = lessonsData.find((l) => l.id === lesson.id);
     if (!extendedLesson) return;
 
     // Create a new sections array with the active lesson updated
-    const newSections = sections.map(section => ({
+    const newSections = sections.map((section) => ({
       ...section,
-      lessons: section.lessons.map(l => ({
+      lessons: section.lessons.map((l) => ({
         ...l,
-        active: l.id === lesson.id
-      }))
+        active: l.id === lesson.id,
+      })),
     }));
 
     // Set the updated sections
@@ -242,9 +252,13 @@ export function LessonClient() {
 
     // Update URL params to reflect current lesson
     const newSearchParams = new URLSearchParams(searchParams.toString());
-    newSearchParams.set('lesson', lesson.id);
-    newSearchParams.set('module', extendedLesson.moduleId);
-    window.history.replaceState({}, '', `${window.location.pathname}?${newSearchParams}`);
+    newSearchParams.set("lesson", lesson.id);
+    newSearchParams.set("module", extendedLesson.moduleId);
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}?${newSearchParams}`,
+    );
   };
 
   const toggleSidebar = () => {
@@ -265,7 +279,9 @@ export function LessonClient() {
       case "quiz":
         return <QuizLesson dataLesson={initValue} dataCourse={courseDetail} />;
       case "exercise":
-        return <ExerciseLesson dataLesson={initValue} dataCourse={courseDetail} />;
+        return (
+          <ExerciseLesson dataLesson={initValue} dataCourse={courseDetail} />
+        );
       default:
         return null;
     }
@@ -323,7 +339,9 @@ export function LessonClient() {
                 <IconToggleSidebarActive />
               )}
             </button>
-            <h1 className="text-lg font-medium truncate">{courseDetail?.title}</h1>
+            <h1 className="text-lg font-medium truncate">
+              {courseDetail?.title}
+            </h1>
           </div>
           <div className="flex items-center gap-6 mt-2 md:mt-0">
             <div className="font-bold cursor-pointer flex items-center gap-1">
@@ -338,7 +356,10 @@ export function LessonClient() {
         </div>
 
         {initValue?.practiceType === "coding" ? (
-          <StudyCode exercise={defaultJavaExercise} />
+          <StudyCode
+            exercise={defaultJavaExercise}
+            course={courseDetail}
+          />
         ) : (
           <>
             {renderLessonBody(currentLesson.type)}

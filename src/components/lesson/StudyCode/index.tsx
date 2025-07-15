@@ -1,5 +1,8 @@
 import { Sandpack } from "@codesandbox/sandpack-react";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSubmitPracticeCode } from "@/hooks/queries/course/useSubmitPractice";
+import { useSearchParams } from "next/navigation";
+import { CourseDetail } from "@/api/types/course.type";
 
 interface ExerciseData {
   title: string;
@@ -8,7 +11,7 @@ interface ExerciseData {
   objectives: string[];
   initialCode: string;
   testCases: string[];
-  language?: 'java' | 'cpp' | 'javascript'; // Add language property
+  language?: "java" | "cpp" | "javascript"; // Add language property
 }
 
 interface TestResult {
@@ -48,7 +51,7 @@ struct Tester
 
 }`,
   testCases: ["Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra"],
-  language: 'cpp',
+  language: "cpp",
 };
 
 // Java default exercise
@@ -69,13 +72,15 @@ const defaultJavaExercise: ExerciseData = {
     }
 }`,
   testCases: ["Test 1: In ra Hello, World!"],
-  language: 'java',
+  language: "java",
 };
 
 export default function StudyCode({
   exercise = defaultExercise,
+  course,
 }: {
   exercise?: ExerciseData;
+  course?: CourseDetail;
 }) {
   const [currentCode, setCurrentCode] = useState(exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
@@ -85,6 +90,8 @@ export default function StudyCode({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
 
+  const searchParams = useSearchParams();
+  const lessonId = searchParams.get("lesson");
   // Java compiler iframe ref
   const javaIframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -93,16 +100,54 @@ export default function StudyCode({
   //   setCurrentCode(newCode);
   // }, []);
 
+  const submitCode = useSubmitPracticeCode(
+    course?.id as string,
+    lessonId as string,
+  );
+
+  const handleSubmitCoding = () => {
+    submitCode.mutate(
+      {
+        codeSnippet: currentCode,
+        language: exercise.language?.toUpperCase(),
+      },
+      {
+        onSuccess: (data) => {
+          console.log("Code submitted successfully:", data);
+          setTestResult({
+            success: true,
+            output: "Code submitted successfully",
+            testsPassed: 1,
+            testsTotal: 1,
+          });
+        },
+        onError: (error) => {
+          console.error("Error submitting code:", error);
+          setTestResult({
+            success: false,
+            output: "Error submitting code",
+            error: error.message,
+            testsPassed: 0,
+            testsTotal: 1,
+          });
+        },
+      },
+    );
+  };
+
   const handleRunTest = useCallback(async () => {
     setIsRunning(true);
     setAttemptCount((prev) => prev + 1);
 
-    if (exercise.language === 'java') {
+    if (exercise.language === "java") {
       // For Java, trigger run in OneCompiler iframe
       if (javaIframeRef.current) {
-        javaIframeRef.current.contentWindow?.postMessage({
-          eventType: 'triggerRun'
-        }, '*');
+        javaIframeRef.current.contentWindow?.postMessage(
+          {
+            eventType: "triggerRun",
+          },
+          "*",
+        );
       }
 
       setTimeout(() => {
@@ -136,21 +181,26 @@ export default function StudyCode({
 
   // Load initial code into Java iframe
   const loadJavaCode = useCallback(() => {
-    if (javaIframeRef.current && exercise.language === 'java') {
-      console.log('Loading Java code:', currentCode);
-      javaIframeRef.current.contentWindow?.postMessage({
-        eventType: 'populateCode',
-        language: 'java',
-        files: [{
-          name: 'Main.java',
-          content: currentCode
-        }]
-      }, '*');
+    if (javaIframeRef.current && exercise.language === "java") {
+      console.log("Loading Java code:", currentCode);
+      javaIframeRef.current.contentWindow?.postMessage(
+        {
+          eventType: "populateCode",
+          language: "java",
+          files: [
+            {
+              name: "Main.java",
+              content: currentCode,
+            },
+          ],
+        },
+        "*",
+      );
     }
   }, [currentCode, exercise.language]);
 
   useEffect(() => {
-    if (exercise.language === 'java') {
+    if (exercise.language === "java") {
       // Delay to ensure iframe is loaded
       const timer = setTimeout(() => {
         loadJavaCode();
@@ -162,11 +212,11 @@ export default function StudyCode({
 
   // Listen for iframe load event
   const handleIframeLoad = useCallback(() => {
-    console.log('Java iframe loaded');
-    if (exercise.language === 'java') {
+    console.log("Java iframe loaded");
+    if (exercise.language === "java") {
       // Load code when iframe is ready
       setTimeout(() => {
-        console.log('Attempting to load code after iframe load');
+        console.log("Attempting to load code after iframe load");
         loadJavaCode();
       }, 500);
     }
@@ -175,25 +225,25 @@ export default function StudyCode({
   useEffect(() => {
     // Listen for messages from OneCompiler iframe for Java
     const handleMessage = (event: MessageEvent) => {
-      console.log('Received message:', event.data);
+      console.log("Received message:", event.data);
 
-      if (event.data && event.data.language === 'java') {
-        console.log('Java code changed:', event.data);
+      if (event.data && event.data.language === "java") {
+        console.log("Java code changed:", event.data);
         if (event.data.files && event.data.files[0]) {
           setCurrentCode(event.data.files[0].content);
         }
       }
 
       // OneCompiler ready signal
-      if (event.data && event.data.eventType === 'ready') {
-        console.log('OneCompiler is ready, loading code...');
+      if (event.data && event.data.eventType === "ready") {
+        console.log("OneCompiler is ready, loading code...");
         setTimeout(loadJavaCode, 100);
       }
     };
 
-    if (exercise.language === 'java') {
-      window.addEventListener('message', handleMessage);
-      return () => window.removeEventListener('message', handleMessage);
+    if (exercise.language === "java") {
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
     }
   }, [exercise.language, loadJavaCode]);
 
@@ -278,7 +328,7 @@ export default function StudyCode({
   // }, [handleRunTest]);
 
   const renderCodeEditor = () => {
-    if (exercise.language === 'java') {
+    if (exercise.language === "java") {
       return (
         <div className="relative border-2 border-[#7c4dff] m-2 rounded">
           <iframe
@@ -289,7 +339,7 @@ export default function StudyCode({
             frameBorder="0"
             title="Java Compiler"
             onLoad={handleIframeLoad}
-            style={{height: "50vh"}}
+            style={{ height: "50vh" }}
           />
         </div>
       );
@@ -392,7 +442,11 @@ export default function StudyCode({
             </svg>
           </button>
           <button
-            onClick={() => setActiveTab("dap-an")}
+            onClick={() => {
+              setActiveTab("dap-an")
+              return;
+              handleRunTest();
+            }}
             className={`px-4 py-3 text-sm flex items-center space-x-2 border-b-2 transition-colors ${
               activeTab === "dap-an"
                 ? "border-white text-white bg-[#1e1e1e]"
@@ -445,10 +499,9 @@ export default function StudyCode({
               {/* Main Content */}
               <div className="text-sm text-white space-y-4">
                 <p className="text-sm text-white">
-                  {exercise.language === 'java'
+                  {exercise.language === "java"
                     ? "Viết chương trình Java theo yêu cầu bài tập."
-                    : "Tuy thuộc vào chiến lược báo cáo lỗi đã được tuân theo, bạn cần xử lý lỗi và nếu không có lỗi, hãy báo cáo nội dung tệp."
-                  }
+                    : "Tuy thuộc vào chiến lược báo cáo lỗi đã được tuân theo, bạn cần xử lý lỗi và nếu không có lỗi, hãy báo cáo nội dung tệp."}
                 </p>
 
                 <p className="text-white">
@@ -464,10 +517,9 @@ export default function StudyCode({
                 </ol>
 
                 <p className="text-sm text-white">
-                  {exercise.language === 'java'
+                  {exercise.language === "java"
                     ? "Đảm bảo code Java của bạn có thể compile và chạy thành công."
-                    : "Nếu bạn có gắng báo cáo một kết quả mà bạn không nên báo cáo hoặc trả về mã sai từ hàm 'run_test', các bài kiểm tra sẽ không thành công."
-                  }
+                    : "Nếu bạn có gắng báo cáo một kết quả mà bạn không nên báo cáo hoặc trả về mã sai từ hàm 'run_test', các bài kiểm tra sẽ không thành công."}
                 </p>
 
                 <div>
@@ -504,13 +556,14 @@ export default function StudyCode({
                       🔓 Gợi ý đã mở khóa:
                     </h4>
                     <div className="space-y-2">
-                      {exercise.language === 'java' ? (
+                      {exercise.language === "java" ? (
                         <>
                           <p className="text-white">
                             • Đảm bảo class name trùng với tên file
                           </p>
                           <p className="text-white">
-                            • Method main phải có signature chính xác: public static void main(String[] args)
+                            • Method main phải có signature chính xác: public
+                            static void main(String[] args)
                           </p>
                           <p className="text-white">
                             • Sử dụng System.out.println() để in ra console
@@ -522,7 +575,8 @@ export default function StudyCode({
                       ) : (
                         <>
                           <p className="text-white">
-                            • Đảm bảo bạn có đầy đủ header guards (#ifndef, #define)
+                            • Đảm bảo bạn có đầy đủ header guards (#ifndef,
+                            #define)
                           </p>
                           <p className="text-white">
                             • Struct Tester cần có virtual destructor
@@ -560,7 +614,7 @@ export default function StudyCode({
         {/* Header */}
         <div className="bg-[#2d2d30] border-b border-gray-600 px-4 py-3 flex items-center justify-between">
           <h1 className="text-white font-medium">
-            Bài tập {exercise.language === 'java' ? '(Java)' : '(C++)'}
+            Bài tập {exercise.language === "java" ? "(Java)" : "(C++)"}
           </h1>
         </div>
 
@@ -597,7 +651,7 @@ export default function StudyCode({
               </div>
             </div>
             <button
-              onClick={handleRunTest}
+              onClick={handleSubmitCoding}
               disabled={isRunning}
               className={`px-4 py-1 text-sm bg-white text-black rounded transition-colors hover:bg-gray-200 ${
                 isRunning ? "opacity-50 cursor-not-allowed" : ""
@@ -614,7 +668,9 @@ export default function StudyCode({
               <div className="text-sm text-gray-300">
                 {activeResultTab === "test-cases" && (
                   <div>
-                    <p className="text-white">Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra</p>
+                    <p className="text-white">
+                      Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra
+                    </p>
                     {testResult && (
                       <div className="mt-2 space-y-2">
                         <div

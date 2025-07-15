@@ -57,8 +57,14 @@ function CourseCard({
     router.push(`/create-courses?slug=${slug}`);
   };
 
+  const handleCourseClick = (courseId: string) => {
+    router.push(`/course/${courseId}`);
+  };
+
   return (
-    <div className="p-2 bg-white flex flex-col rounded-2xl overflow-hidden shadow-md">
+    <div
+      onClick={() => handleCourseClick(slug as string)}
+      className="p-2 bg-white flex cursor-pointer flex-col rounded-2xl overflow-hidden shadow-md">
       {/* Card Title with Image */}
       <div className="relative rounded-xl overflow-hidden">
         {/* Course image */}

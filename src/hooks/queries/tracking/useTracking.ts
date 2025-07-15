@@ -43,7 +43,7 @@ export const useSubmitPracticeWriting = (courseId: string, lessonId: string) => 
   return useMutation({
     mutationFn: (data: any) => trackingAPI.submitPracticeWriting(courseId, lessonId, data),
     onSuccess: () => {
-      toast.success("Submit quiz thành công!");
+      toast.success("Submit bài học thành công!");
     },
   });
 };
@@ -52,7 +52,7 @@ export const useSubmitPracticeFile = (courseId: string, lessonId: string) => {
   return useMutation({
     mutationFn: (data: any) => trackingAPI.submitPracticeFile(courseId, lessonId, data),
     onSuccess: () => {
-      toast.success("Submit quiz thành công!");
+      toast.success("Submit bài học thành công!");
     },
   });
 };

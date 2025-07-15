@@ -30,5 +30,4 @@ export const trackingAPI = {
     const { data: res } = await api.post(`/courses/${courseId}/lessons/practice-submissions/${lessonId}/file`, data);
     return res;
   },
-
 };

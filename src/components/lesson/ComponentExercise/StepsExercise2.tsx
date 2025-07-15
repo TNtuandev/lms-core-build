@@ -1,10 +1,17 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
+import React, { useRef, useState } from "react";
 import IconDownload from "../../../../public/icons/lessson/IconDownload";
 import IconUpload from "../../../../public/icons/lessson/IconUpload";
 import IconNoti from "../../../../public/icons/lessson/IconNoti";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
-import { useSubmitPracticeFile, useSubmitPracticeWriting } from "@/hooks/queries/tracking/useTracking";
+import {
+  useSubmitPracticeFile,
+  useSubmitPracticeWriting,
+} from "@/hooks/queries/tracking/useTracking";
+import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface IStepsExercise2Props {
   changeTab: (tab: string) => void;
@@ -13,12 +20,138 @@ export interface IStepsExercise2Props {
   dataTracking: any;
 }
 
-export default function StepsExercise2({ dataLesson, dataCourse}: IStepsExercise2Props) {
-  const submitPracticeWriting = useSubmitPracticeWriting(dataCourse?.id as string, dataLesson?.id as string);
-  const submitPracticeFile = useSubmitPracticeFile(dataCourse?.id as string, dataLesson?.id as string);
+export default function StepsExercise2({
+  dataLesson,
+  dataCourse,
+  changeTab,
+}: IStepsExercise2Props) {
+  const [fileData, setFileData] = useState<{
+    fileUrl: string;
+    fileName: string;
+  } | null>(null);
+  const [writingContent, setWritingContent] = useState<string>("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  console.log(dataLesson, "---dataLesson");
+  const submitPracticeWriting = useSubmitPracticeWriting(
+    dataCourse?.id as string,
+    dataLesson?.id as string,
+  );
+  const submitPracticeFile = useSubmitPracticeFile(
+    dataCourse?.id as string,
+    dataLesson?.id as string,
+  );
+  const { uploadFile } = useUploadFile();
+  const queryClient = useQueryClient();
 
+  const handleUploadFile = (file: File) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        setFileData({
+          fileUrl: response.url,
+          fileName: file.name,
+        });
+        setUploadedFile(file);
+        setIsUploading(false);
+      },
+      onError: (error) => {
+        console.error("Error uploading file:", error);
+        setIsUploading(false);
+        toast.error("Lỗi khi upload file!");
+      },
+    });
+  };
+
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file size (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Kích thước file không được vượt quá 10MB!");
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = [".pdf", ".zip", ".rar"];
+      const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+      if (!allowedTypes.includes(fileExtension)) {
+        toast.error("Chỉ hỗ trợ file PDF, ZIP, RAR!");
+        return;
+      }
+
+      handleUploadFile(file);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setFileData(null);
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSubmit = () => {
+    if (dataLesson?.practiceType === "upload_file") {
+      // Submit file practice
+      if (!fileData) {
+        toast.error("Vui lòng chọn file để nộp bài!");
+        return;
+      }
+
+      submitPracticeFile.mutate(fileData, {
+        onSuccess: () => {
+          // Reset form
+          setFileData(null);
+          setUploadedFile(null);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+          queryClient.invalidateQueries({
+            queryKey: ["PracticeTracking", dataCourse?.id, dataLesson?.id],
+          });
+          changeTab("stepsExercise1");
+        },
+        onError: (error: any) => {
+          console.error("Error submitting file practice:", error);
+          toast.error("Lỗi khi nộp bài!");
+        },
+      });
+    } else {
+      // Submit writing practice
+      if (!writingContent.trim()) {
+        toast.error("Vui lòng nhập nội dung bài viết!");
+        return;
+      }
+
+      submitPracticeWriting.mutate(
+        { content: writingContent },
+        {
+          onSuccess: () => {
+            // Reset form
+            setWritingContent("");
+            queryClient.invalidateQueries({
+              queryKey: ["PracticeTracking", dataCourse?.id, dataLesson?.id],
+            });
+            changeTab("stepsExercise1");
+          },
+          onError: (error: any) => {
+            console.error("Error submitting writing practice:", error);
+            toast.error("Lỗi khi nộp bài!");
+          },
+        },
+      );
+    }
+  };
 
   const renderContentTab = (value: string) => {
     switch (value) {
@@ -27,9 +160,7 @@ export default function StepsExercise2({ dataLesson, dataCourse}: IStepsExercise
           <div className="w-full">
             <div>
               <div className="font-semibold mb-2">{dataLesson?.title}</div>
-              <p className="text-gray-700">
-                {dataLesson?.description}
-              </p>
+              <p className="text-gray-700">{dataLesson?.description}</p>
             </div>
           </div>
         );
@@ -87,18 +218,49 @@ export default function StepsExercise2({ dataLesson, dataCourse}: IStepsExercise
             </div>
             {dataLesson?.practiceType === "upload_file" ? (
               <>
-                <div className="bg-[#919EAB14] border border-dashed border-[#919EAB52] p-10 rounded-xl mt-3 flex flex-col items-center">
-                  <IconUpload />
-                  <div className="mt-6 font-semibold mb-2">
-                    Thả hoặc chọn tệp tin
-                  </div>
-                  <span>
-                    Thả tệp tin vào đây hoặc nhấp để{" "}
-                    <span className="underline text-blue-600 cursor-pointer">
-                      duyệt
-                    </span>{" "}
-                    từ máy tính
-                  </span>
+                <div
+                  className="bg-[#919EAB14] border border-dashed border-[#919EAB52] p-10 rounded-xl mt-3 flex flex-col items-center cursor-pointer hover:border-[#919EAB] transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {!uploadedFile ? (
+                    <>
+                      <IconUpload />
+                      <div className="mt-6 font-semibold mb-2">
+                        Thả hoặc chọn tệp tin
+                      </div>
+                      <span>
+                        Thả tệp tin vào đây hoặc nhấp để{" "}
+                        <span className="underline text-blue-600 cursor-pointer">
+                          duyệt
+                        </span>{" "}
+                        từ máy tính
+                      </span>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <div className="text-sm text-gray-500 mb-2">
+                        {uploadedFile.name}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveFile();
+                        }}
+                      >
+                        Xóa
+                      </Button>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileInputChange}
+                    accept=".pdf,.zip,.rar"
+                    className="hidden"
+                  />
                 </div>
                 <span className="flex items-center gap-2 text-[#637381] mt-3">
                   <IconNoti />
@@ -116,9 +278,9 @@ export default function StepsExercise2({ dataLesson, dataCourse}: IStepsExercise
               <div className="mt-6">
                 <CKEditorWrapper
                   placeholder="Viết gì đó..."
-                  value={""}
-                  onChange={function (data: string): void {
-                    console.log("Editor content changed:", data);
+                  value={writingContent}
+                  onChange={(data: string) => {
+                    setWritingContent(data);
                   }}
                 />
               </div>
@@ -126,9 +288,24 @@ export default function StepsExercise2({ dataLesson, dataCourse}: IStepsExercise
           </div>
         </div>
         <div className="flex justify-end mt-10">
-          <button className="flex items-center gap-2 px-8 py-3 rounded-lg bg-gray-900 text-white font-semibold shadow hover:bg-gray-800 transition disabled:opacity-60">
-            Nộp bài
-          </button>
+          <Button
+            onClick={handleSubmit}
+            disabled={
+              isUploading ||
+              submitPracticeFile.isPending ||
+              submitPracticeWriting.isPending ||
+              (dataLesson?.practiceType === "upload_file" && !fileData) ||
+              (dataLesson?.practiceType !== "upload_file" &&
+                !writingContent.trim())
+            }
+            className="flex items-center gap-2 px-8 py-3 rounded-lg bg-gray-900 text-white font-semibold shadow hover:bg-gray-800 transition disabled:opacity-60"
+          >
+            {isUploading ||
+            submitPracticeFile.isPending ||
+            submitPracticeWriting.isPending
+              ? "Đang xử lý..."
+              : "Nộp bài"}
+          </Button>
         </div>
       </div>
     </div>

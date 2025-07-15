@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CodeSubmission {
   submittedAt: string; // ISO date string
@@ -44,7 +44,7 @@ interface ItemResultProps {
 
 export default function ItemResultTracking(props: ItemResultProps) {
   const { dataTracking, dataLesson } = props;
-  const [status] = useState<string>("overview");
+  const [status, setStatus] = useState<string>("overview");
 
   useEffect(() => {
     if (dataTracking) {

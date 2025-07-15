@@ -38,3 +38,21 @@ export const useSubmitQuiz = (courseId: string, lessonId: string, attemptId: str
     },
   });
 };
+
+export const useSubmitPracticeWriting = (courseId: string, lessonId: string) => {
+  return useMutation({
+    mutationFn: (data: any) => trackingAPI.submitPracticeWriting(courseId, lessonId, data),
+    onSuccess: () => {
+      toast.success("Submit bài học thành công!");
+    },
+  });
+};
+
+export const useSubmitPracticeFile = (courseId: string, lessonId: string) => {
+  return useMutation({
+    mutationFn: (data: any) => trackingAPI.submitPracticeFile(courseId, lessonId, data),
+    onSuccess: () => {
+      toast.success("Submit bài học thành công!");
+    },
+  });
+};

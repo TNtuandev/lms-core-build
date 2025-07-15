@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CodeSubmission {
   submittedAt: string; // ISO date string
@@ -33,6 +33,7 @@ interface LessonSubmission {
   code: CodeSubmission[];
   file: FileSubmission;
   writing: WritingSubmission;
+  status?: "overview" | "submit-active" | "submit-not-active";
 }
 
 interface ItemResultProps {
@@ -43,17 +44,15 @@ interface ItemResultProps {
 
 export default function ItemResultTracking(props: ItemResultProps) {
   const { dataTracking, dataLesson } = props;
-  const [status] = useState<string>("overview");
+  const [status, setStatus] = useState<string>("overview");
 
-  // useEffect(() => {
-  //   if (dataTracking) {
-  //     if (dataTracking?.status) {
-  //       setStatus(dataTracking.status)
-  //     }
-  //   }
-  // }, [dataTracking]);
-
-  console.log(dataTracking, "---dataTracking");
+  useEffect(() => {
+    if (dataTracking) {
+      if (dataTracking?.status) {
+        setStatus(dataTracking.status)
+      }
+    }
+  }, [dataTracking]);
 
   const renderClassName = () => {
     switch (status) {
@@ -84,18 +83,18 @@ export default function ItemResultTracking(props: ItemResultProps) {
             >
               {dataLesson?.practiceType === "upload_file"
                 ? dataTracking?.file?.score || "--"
-                : dataTracking?.writing.score || "--"}
+                : dataTracking?.writing?.score || "--"}
             </div>
           </div>
         </div>
-        {/*{dataTracking?.totalAttempt && dataTracking.totalAttempt > 0 && (*/}
-        {/*  <div*/}
-        {/*    role="presentation"*/}
-        {/*    className="cursor-pointer border border-gray-200 h-max px-4 py-2 rounded-xl font-semibold text-sm"*/}
-        {/*  >*/}
-        {/*    Xem lại bài*/}
-        {/*  </div>*/}
-        {/*)}*/}
+        {dataTracking?.status !== "overview" && (
+          <div
+            role="presentation"
+            className="cursor-pointer border border-gray-200 h-max px-4 py-2 rounded-xl font-semibold text-sm"
+          >
+            Xem lại bài
+          </div>
+        )}
       </div>
     </div>
   );

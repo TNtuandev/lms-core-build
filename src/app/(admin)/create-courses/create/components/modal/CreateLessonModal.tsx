@@ -88,7 +88,7 @@ export const CreateLessonModal = ({
         description: "",
         type: "VIDEO",
         videoUrl: null,
-        duration: "0",
+        duration: 0,
         htmlContent: "",
         sampleImageUrl: "",
         attachmentUrl: null,
@@ -375,10 +375,11 @@ export const CreateLessonModal = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Thời gian phát lại video
+                      Thời gian học
                     </FormLabel>
                     <FormControl>
                       <Input
+                        type="number"
                         placeholder="00"
                         className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         {...field}

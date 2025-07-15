@@ -58,20 +58,20 @@ const quizSchema = z.object({
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  duration: z.string().min(1, "Vui lòng nhập thời gian tối đa"),
+  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số"),
   durationUnit: z.enum(["second", "minute", "hour"]),
   isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "show", "retry"]),
-  passingScore: z.string().min(1, "Vui lòng nhập điểm đạt"),
-  maxAttempts: z.string().min(1, "Vui lòng nhập số lần trả lời"),
+  passingScore: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập điểm đạt"),
+  maxAttempts: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập số lần trả lời"),
   autoStart: z.boolean(),
   showQuestionCount: z.boolean(),
   questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
   questionViewMode: z.enum(["single", "paginated", "scrollable"]),
   shortAnswerCharLimit: z
-    .string()
+    .string().regex(/^\d+$/, "Chỉ được nhập số")
     .min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
-  essayCharLimit: z.string().min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
+  essayCharLimit: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
@@ -218,6 +218,16 @@ export const CreateQuizModal = ({
   };
 
   const handleSubmitCreateQuiz = (value: QuestionFormData) => {
+    if (editIndex) {
+      setQuestions((prev) => {
+        const updatedQuestions = [...prev];
+        updatedQuestions[editIndex] = value;
+        return updatedQuestions;
+      });
+      setEditIndex(null);
+      return;
+    }
+
     setQuestions((prev) => {
       return [...prev, value];
     });
@@ -387,6 +397,7 @@ export const CreateQuizModal = ({
                         <FormItem>
                           <FormControl>
                             <Input
+                              type={"number"}
                               className="flex-1"
                               placeholder="00"
                               {...field}
@@ -522,7 +533,7 @@ export const CreateQuizModal = ({
                     <FormItem>
                       <FormLabel className="mb-1 block">Điểm đạt (%)</FormLabel>
                       <FormControl>
-                        <Input className="flex-1" placeholder="50" {...field} />
+                        <Input type="number" className="flex-1" placeholder="50" {...field} />
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
@@ -542,7 +553,7 @@ export const CreateQuizModal = ({
                         Câu hỏi tối đa được phép trả lời
                       </FormLabel>
                       <FormControl>
-                        <Input className="flex-1" placeholder="10" {...field} />
+                        <Input type="number" className="flex-1" placeholder="10" {...field} />
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
@@ -673,7 +684,7 @@ export const CreateQuizModal = ({
                             <FormItem>
                               <FormLabel>Giới hạn ký tự trả lời ngắn</FormLabel>
                               <FormControl>
-                                <Input placeholder="200" {...field} />
+                                <Input type="number" placeholder="200" {...field} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -687,7 +698,7 @@ export const CreateQuizModal = ({
                                 Giới hạn ký tự trả lời câu hỏi mở/Bình luận
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="500" {...field} />
+                                <Input type="number" placeholder="500" {...field} />
                               </FormControl>
                             </FormItem>
                           )}

@@ -11,9 +11,9 @@ export const step1Schema = z.object({
 });
 
 export const infoCourseSchema = z.object({
-  description: z.string().min(10, "Mô tả chi tiết không được để trống"),
-  requirements: z.string().min(1, "Yêu cầu không được để trống"),
-  learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
+  description: z.string().min(10, "Mô tả chi tiết phải có ít nhất 10 ký tự"),
+  requirements: z.string().min(10, "Yêu cầu phải có ít nhất 10 ký tự"),
+  learningOutcomes: z.string().min(10, "Kết quả học tập phải có ít nhất 10 ký tự"),
   hourCourse: z.any().optional(),
   minutesCourse: z.any().optional(),
   label: z.string().optional(),
@@ -48,7 +48,7 @@ export const lessonSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   description: z.string().min(1, "Tóm tắt không được để trống"),
   videoUrl: z.string().url("URL video không hợp lệ").optional().nullable(),
-  duration: z.string().optional(),
+  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số").optional(),
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
@@ -63,7 +63,7 @@ export const uploadAssignmentSchema = z.object({
   description: z.string().min(1, "Mô tả không được để trống"),
   attachmentUrl: z.any().optional(),
   passingScore: z.number().optional(),
-  duration: z.string().optional(),
+  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số").optional(),
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),

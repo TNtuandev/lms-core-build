@@ -61,7 +61,7 @@ function RegisterPage() {
       id: "",
       name: data.name.trim(),
       email: data.email.trim(),
-    }, "")
+    } as any, "")
     register(dataToRegister);
   };
 

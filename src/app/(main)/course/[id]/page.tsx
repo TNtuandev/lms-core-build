@@ -10,7 +10,7 @@ import {
   useFAQs,
   useModule,
   useReview,
-  useInstructorProfile,
+  useInstructorProfile, useReviewSummary
 } from "@/hooks/queries/course/useCourses";
 import { useCreateReview } from "@/hooks/queries/course/useCreateRview";
 import {
@@ -66,11 +66,13 @@ export default function CourseDetailPage() {
   // Fetch FAQs when we have course detail
   const { data: moduleData } = useModule(courseDetail?.id || "");
   const { data: reviewData } = useReview(courseDetail?.id || "");
+  const { data: reviewSummaryData, refetch } = useReviewSummary(courseDetail?.id || "");
   const { data: instructorProfileData } = useInstructorProfile(
     courseDetail?.owner?.id || "",
   );
 
   console.log(reviewData, "--reviewData");
+  console.log(reviewSummaryData, "--reviewSummaryData");
   console.log(instructorProfileData?.data, "--instructorProfileData");
 
   // Add state for active tab
@@ -192,13 +194,17 @@ export default function CourseDetailPage() {
       productId: courseDetail.id,
     };
 
-    createReview.mutate(reviewData);
+    createReview.mutate(reviewData, {
+      onSuccess: () => {
+        refetch()
+      }
+    });
   };
 
   return (
     <div className="bg-white">
       {/* Header */}
-      <CourseHeader courseDetail={courseDetail} />
+      <CourseHeader courseDetail={courseDetail} reviewSummaryData={reviewSummaryData} />
 
       {/* Sidebar */}
       <CourseSidebar 
@@ -268,9 +274,10 @@ export default function CourseDetailPage() {
             <div ref={reviewsRef}>
               <CourseReviews 
                 courseDetail={courseDetail}
-                reviewData={reviewData}
+                reviewData={reviewData as any}
                 isCreatingReview={isCreatingReview}
                 onUpdateReview={handleUpdateReview}
+                reviewSummaryData={reviewSummaryData}
               />
             </div>
 

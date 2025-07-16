@@ -12,6 +12,12 @@ interface Review {
   title?: string;
   createdAt: string;
   status: string;
+  auditInfo: {
+    createdAt: string;
+  }
+  user: {
+    fullName: string;
+  }
 }
 
 interface CourseReviewsProps {
@@ -24,40 +30,36 @@ interface CourseReviewsProps {
   };
   isCreatingReview: boolean;
   onUpdateReview: (rating: number, comment: string, title?: string) => void;
+  reviewSummaryData?: any;
 }
 
 export const CourseReviews: React.FC<CourseReviewsProps> = ({
-  courseDetail,
   reviewData,
   isCreatingReview,
   onUpdateReview,
+  reviewSummaryData,
 }) => {
   const [showMoreReviews, setShowMoreReviews] = useState(false);
   const [openReview, setOpenReview] = useState(false);
 
-  // Helper function to calculate rating distribution
-  const calculateRatingStats = () => {
-    const reviews =
-      reviewData?.data?.filter((review) => review.status === "approved") || [];
-    const totalReviews = reviews.length;
-
-    if (totalReviews === 0) {
+  // Helper function to get rating distribution from reviewSummaryData
+  const getRatingStats = () => {
+    if (!reviewSummaryData) {
       return { ratingCounts: [0, 0, 0, 0, 0], totalReviews: 0 };
     }
 
-    const ratingCounts = [0, 0, 0, 0, 0]; // Index 0 = 1 star, Index 4 = 5 stars
-    reviews.forEach((review) => {
-      if (review.rating >= 1 && review.rating <= 5) {
-        ratingCounts[review.rating - 1]++;
-      }
-    });
+    const ratingCounts = [
+      reviewSummaryData.distribution["1"] || 0,
+      reviewSummaryData.distribution["2"] || 0,
+      reviewSummaryData.distribution["3"] || 0,
+      reviewSummaryData.distribution["4"] || 0,
+      reviewSummaryData.distribution["5"] || 0,
+    ];
 
-    return { ratingCounts, totalReviews };
-  };
-
-  // Helper function to format user display name
-  const formatUserDisplayName = (userId: string) => {
-    return `Người dùng ***${userId.slice(-4)}`;
+    return {
+      ratingCounts,
+      totalReviews: reviewSummaryData.totalCount || 0,
+    };
   };
 
   // Helper function to render star rating
@@ -65,7 +67,9 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
     return (
       <div className="flex ">
         {Array.from({ length: rating }, (_, i) => (
-          <span className="text-[#FFB145]" key={i}>★</span>
+          <span className="text-[#FFB145]" key={i}>
+            ★
+          </span>
         ))}
         {Array.from({ length: 5 - rating }, (_, i) => (
           <span key={i} className="text-gray-300">
@@ -76,7 +80,11 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
     );
   };
 
-  const handleUpdateReview = (rating: number, comment: string, title?: string) => {
+  const handleUpdateReview = (
+    rating: number,
+    comment: string,
+    title?: string,
+  ) => {
     onUpdateReview(rating, comment, title);
     setOpenReview(false);
   };
@@ -106,10 +114,10 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
         <div className="flex flex-col md:flex-row gap-8">
           <div className="bg-[#FFF8EE] p-6 rounded-lg text-center min-w-[200px]">
             <div className="text-6xl font-bold text-[#212B36] mb-2">
-              {courseDetail.ratingAvg || 0}
+              {reviewSummaryData?.averageRating || 0}
             </div>
             <div className="text-sm text-gray-500">
-              {courseDetail.ratingCnt?.toLocaleString() || 0}
+              {reviewSummaryData?.totalCount?.toLocaleString() || 0}
               <br />
               Lượt đánh giá
             </div>
@@ -117,15 +125,7 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
 
           <div className="flex-1 space-y-3">
             {(() => {
-              const { ratingCounts, totalReviews } = calculateRatingStats();
-
-              if (totalReviews === 0) {
-                return (
-                  <div className="text-gray-500">
-                    Chưa có đánh giá nào
-                  </div>
-                );
-              }
+              const { ratingCounts, totalReviews } = getRatingStats();
 
               return [5, 4, 3, 2, 1].map((star) => {
                 const count = ratingCounts[star - 1];
@@ -187,24 +187,20 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-[#212B36]">
-                        {formatUserDisplayName(review.userId)}
+                        {review.user.fullName}
                       </h4>
                       <div className="flex text-[#FFB145] mt-1">
                         {renderStarRating(review.rating)}
                       </div>
                       <div className="text-sm text-gray-500 mt-1">
-                        {new Date(review.createdAt).toLocaleDateString(
-                          "vi-VN",
-                        )}
+                        {new Date(review?.auditInfo?.createdAt).toLocaleDateString("vi-VN")}
                       </div>
                       {review.title && (
                         <h5 className="font-medium text-[#212B36] mt-2">
                           {review.title}
                         </h5>
                       )}
-                      <p className="text-gray-600 mt-2">
-                        {review.content}
-                      </p>
+                      <p className="text-gray-600 mt-2">{review.content}</p>
                     </div>
                   </div>
                 </div>
@@ -235,4 +231,4 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
       </div>
     </>
   );
-}; 
+};

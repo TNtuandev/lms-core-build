@@ -89,6 +89,11 @@ export const courseAPI = {
     return data;
   },
 
+  getReviewSummary: async (courseId: string): Promise<ReviewFAQsResponse> => {
+    const { data } = await api.get(`/products/${courseId}/reviews/summary`);
+    return data;
+  },
+
   createReview: async (dataReview: ICreateReviewRequest): Promise<any> => {
     const { data } = await api.post(`/products/${dataReview.productId}/reviews`, dataReview.data);
     return data;

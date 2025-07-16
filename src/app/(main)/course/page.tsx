@@ -176,7 +176,7 @@ function CoursePage() {
               Khóa học thiết kế
             </div>
             <div className="mt-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
-              🎉 {courseTabData?.meta?.total || 0} Khóa học
+              🎉 {coursesData?.data?.length || 0} Khóa học
             </div>
           </div>
           <p className="text-[#212B36] mt-2">

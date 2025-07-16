@@ -15,9 +15,10 @@ interface CourseHeaderProps {
     owner: { fullName: string };
     updatedAt: string;
   };
+  reviewSummaryData?: any
 }
 
-export const CourseHeader: React.FC<CourseHeaderProps> = ({ courseDetail }) => {
+export const CourseHeader: React.FC<CourseHeaderProps> = ({ courseDetail, reviewSummaryData }) => {
   return (
     <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full py-12 md:py-20 md:mt-20 h-max">
       <div className="container mx-auto px-4 py-8 h-full flex flex-col justify-end w-full">
@@ -37,22 +38,36 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ courseDetail }) => {
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1">
               <span className="text-xl md:text-2xl font-medium text-[#FFB145]">
-                {courseDetail.ratingAvg || 0}
+                {reviewSummaryData?.averageRating || 0}
               </span>
               <div className="flex">
-                {[1, 2, 3, 4].map((_, index) => (
-                  <span
-                    key={index}
-                    className="text-[#FFB145] text-xl md:text-2xl"
-                  >
-                    ★
-                  </span>
-                ))}
-                <span className="text-[#D9D9D9] text-xl md:text-2xl">★</span>
+                {Array.from({ length: 5 }).map((_, index) => {
+                  const rating = reviewSummaryData?.averageRating || 0;
+                  if (index + 1 <= Math.floor(rating)) {
+                    // Sao vàng đầy
+                    return (
+                      <span key={index} className="text-[#FFB145] text-xl md:text-2xl">★</span>
+                    );
+                  } else if (
+                    index < rating &&
+                    rating < index + 1 &&
+                    rating % 1 >= 0.5
+                  ) {
+                    // Sao nửa vàng (có thể thay bằng biểu tượng riêng nếu muốn)
+                    return (
+                      <span key={index} className="text-[#FFB145] text-xl md:text-2xl">★</span>
+                    );
+                  } else {
+                    // Sao xám
+                    return (
+                      <span key={index} className="text-[#D9D9D9] text-xl md:text-2xl">★</span>
+                    );
+                  }
+                })}
               </div>
             </div>
             <span className="text-gray-500 bg-[#F4F6F8] text-sm md:text-base px-3 py-1 rounded-md whitespace-nowrap">
-              {courseDetail.ratingCnt.toLocaleString()} Đánh giá
+              {reviewSummaryData?.totalCount} Đánh giá
             </span>
           </div>
           <div className="flex items-center gap-2">

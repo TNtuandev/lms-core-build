@@ -25,7 +25,7 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }
       <h3 className="text-xl font-bold mb-6">Nội dung khóa học</h3>
       <div className="space-y-2">
         {moduleData?.data &&
-          moduleData.data?.length > 0 &&
+          moduleData.data?.length > 0 ?
           moduleData.data.map((item) => (
             <div
               role="presentation"
@@ -45,7 +45,9 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }
                 <ArrowRight2 size="24" color="black" />
               </div>
             </div>
-          ))}
+          )) : (
+            <div>Hiện chưa có bài học nào!</div>
+          )}
       </div>
     </div>
   );

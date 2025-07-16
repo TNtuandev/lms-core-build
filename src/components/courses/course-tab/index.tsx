@@ -95,9 +95,9 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
                 : "bg-white text-[#637381] border border-gray-200 hover:bg-gray-50"
             }`}
           >
-            <span className="text-[10px] right-2.5 top-2 absolute text-[#919EABCC]">
-              {tab.numberLesson}
-            </span>
+            {/*<span className="text-[10px] right-2.5 top-2 absolute text-[#919EABCC]">*/}
+            {/*  {tab.numberLesson}*/}
+            {/*</span>*/}
             <span
               className={`text-sm font-medium ${getActiveTabId() === tab.id ? "text-white" : "text-gray-700"}`}
             >

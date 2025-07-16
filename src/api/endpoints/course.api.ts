@@ -70,7 +70,7 @@ export const courseAPI = {
   },
 
   getFAQs: async (courseId: string): Promise<FAQ[]> => {
-    const { data } = await api.get(`/courses/${courseId}/faqs`);
+    const { data } = await api.get(`/cms/courses/${courseId}/faqs`);
     return data;
   },
 
@@ -314,7 +314,7 @@ export const courseAPI = {
 
   // FAQ API
   createFAQ: async (courseId: string, data: any): Promise<any> => {
-    const { data: res } = await api.post(`/courses/${courseId}/faqs`, data);
+    const { data: res } = await api.post(`/cms/courses/${courseId}/faqs`, data);
     return res;
   },
   updateFAQ: async (
@@ -323,26 +323,26 @@ export const courseAPI = {
     data: any,
   ): Promise<any> => {
     const { data: res } = await api.patch(
-      `/courses/${courseId}/faqs/${faqId}`,
+      `/cms/courses/${courseId}/faqs/${faqId}`,
       data,
     );
     return res;
   },
   deleteFAQ: async (courseId: string, faqId: string): Promise<any> => {
     const { data: res } = await api.delete(
-      `/courses/${courseId}/faqs/${faqId}`,
+      `/cms/courses/${courseId}/faqs/${faqId}`,
     );
     return res;
   },
   publishFAQ: async (courseId: string, faqId: string): Promise<any> => {
     const { data: res } = await api.post(
-      `/courses/${courseId}/faqs/${faqId}/publish`,
+      `/cms/courses/${courseId}/faqs/${faqId}/publish`,
     );
     return res;
   },
   draftFAQ: async (courseId: string, faqId: string): Promise<any> => {
     const { data: res } = await api.post(
-      `/courses/${courseId}/faqs/${faqId}/draft`,
+      `/cms/courses/${courseId}/faqs/${faqId}/draft`,
     );
     return res;
   },

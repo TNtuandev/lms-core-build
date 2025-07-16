@@ -48,7 +48,7 @@ export const lessonSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   description: z.string().min(1, "Tóm tắt không được để trống"),
   videoUrl: z.string().url("URL video không hợp lệ").optional().nullable(),
-  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số").optional(),
+  duration: z.string().optional(),
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
@@ -63,12 +63,12 @@ export const uploadAssignmentSchema = z.object({
   description: z.string().min(1, "Mô tả không được để trống"),
   attachmentUrl: z.any().optional(),
   passingScore: z.number().optional(),
-  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số").optional(),
+  duration: z.string().optional(),
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),
-  sampleData: z.string().optional(),
-  answer: z.string().optional(),
+  // sampleData: z.string().optional(),
+  // answer: z.string().optional(),
 });
 
 // Type definitions

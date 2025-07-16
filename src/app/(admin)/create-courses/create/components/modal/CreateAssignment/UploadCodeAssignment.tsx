@@ -29,18 +29,17 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { InfoCircle } from "iconsax-react";
-import CodeMirror from "@uiw/react-codemirror";
-import { cpp } from "@codemirror/lang-cpp";
 import {
   UploadAssignmentFormData,
   uploadAssignmentSchema,
 } from "../../../schemas";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import {
-  useCreateLessonPractice, useGetLessonById,
+  useCreateLessonPractice,
+  useGetLessonById,
   useUpdateLessonPractice,
 } from "@/hooks/queries/course/useLessonCourse";
-import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
+import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
@@ -63,8 +62,11 @@ export const UploadCodeAssignment = ({
   const { courseData, lessonSelected, moduleSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
-  const { data: initValue, refetch } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
-
+  const { data: initValue, refetch } = useGetLessonById(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+    lessonSelected?.id as string,
+  );
 
   const form = useForm<UploadAssignmentFormData>({
     resolver: zodResolver(uploadAssignmentSchema),
@@ -76,8 +78,8 @@ export const UploadCodeAssignment = ({
       inputFile: undefined,
       outputFile: undefined,
       suggestion: "",
-      sampleData: "",
-      answer: "",
+      // sampleData: "",
+      // answer: "",
       attachmentUrl: undefined,
       passingScore: 0,
       duration: "",
@@ -99,8 +101,8 @@ export const UploadCodeAssignment = ({
         inputFile: undefined,
         outputFile: undefined,
         suggestion: "",
-        sampleData: "",
-        answer: "",
+        // sampleData: "",
+        // answer: "",
         attachmentUrl: undefined,
         passingScore: 0,
         duration: "",
@@ -110,6 +112,8 @@ export const UploadCodeAssignment = ({
       setAttachmentFile(null);
     }
   }, [lessonSelected, initValue]);
+
+  console.log("UploadCodeAssignment render", form.formState.errors);
 
   const practiceType = form.watch("practiceType");
 
@@ -143,9 +147,8 @@ export const UploadCodeAssignment = ({
       onError: (error) => {
         console.error("Error uploading file:", error);
       },
-    })
-  }
-
+    });
+  };
 
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
@@ -153,16 +156,12 @@ export const UploadCodeAssignment = ({
       inputFile: "input.txt",
       outputFile: "output.txt",
       attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
-      duration: data.duration
-        ? Number(data.duration)
-        : 0,
+      duration: data.duration ? Number(data.duration) : 0,
     };
-    delete formRequest.sampleData;
-    delete formRequest.answer;
     if (isEdit) {
       updatePractice.mutate(formRequest as any, {
         onSuccess: (res) => {
-          refetch()
+          refetch();
           onSubmit(res);
           handleClose();
         },
@@ -237,7 +236,7 @@ export const UploadCodeAssignment = ({
                   <FormLabel>Nội dung</FormLabel>
                   <FormControl>
                     <CKEditorWrapper
-                      value={field?.value ?? ''}
+                      value={field?.value ?? ""}
                       onChange={field.onChange}
                       placeholder="Viết gì đó..."
                     />
@@ -329,7 +328,7 @@ export const UploadCodeAssignment = ({
                               const file = e.target.files?.[0];
                               if (file) {
                                 setInputDataFile(file);
-                                handleUploadFile(file,  field);
+                                handleUploadFile(file, field);
                               }
                             }}
                             className="hidden"
@@ -414,7 +413,7 @@ export const UploadCodeAssignment = ({
                               const file = e.target.files?.[0];
                               if (file) {
                                 setOutputDataFile(file);
-                                handleUploadFile(file,  field)
+                                handleUploadFile(file, field);
                               }
                             }}
                             className="hidden"
@@ -449,47 +448,47 @@ export const UploadCodeAssignment = ({
                   )}
                 />
                 {/* Dữ liệu mẫu */}
-                <FormField
-                  control={form.control}
-                  name="sampleData"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>
-                      <FormControl>
-                        <CodeMirror
-                          value={field.value || ""}
-                          height="200px"
-                          extensions={[cpp()]}
-                          theme="light"
-                          onChange={field.onChange}
-                          basicSetup={{ lineNumbers: true }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/*<FormField*/}
+                {/*  control={form.control}*/}
+                {/*  name="sampleData"*/}
+                {/*  render={({ field }) => (*/}
+                {/*    <FormItem>*/}
+                {/*      <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>*/}
+                {/*      <FormControl>*/}
+                {/*        <CodeMirror*/}
+                {/*          value={field.value || ""}*/}
+                {/*          height="200px"*/}
+                {/*          extensions={[cpp()]}*/}
+                {/*          theme="light"*/}
+                {/*          onChange={field.onChange}*/}
+                {/*          basicSetup={{ lineNumbers: true }}*/}
+                {/*        />*/}
+                {/*      </FormControl>*/}
+                {/*      <FormMessage />*/}
+                {/*    </FormItem>*/}
+                {/*  )}*/}
+                {/*/>*/}
                 {/* Đáp án */}
-                <FormField
-                  control={form.control}
-                  name="answer"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Đáp án</FormLabel>
-                      <FormControl>
-                        <CodeMirror
-                          value={field.value || ""}
-                          height="200px"
-                          extensions={[cpp()]}
-                          theme="light"
-                          onChange={field.onChange}
-                          basicSetup={{ lineNumbers: true }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/*<FormField*/}
+                {/*  control={form.control}*/}
+                {/*  name="answer"*/}
+                {/*  render={({ field }) => (*/}
+                {/*    <FormItem>*/}
+                {/*      <FormLabel>Đáp án</FormLabel>*/}
+                {/*      <FormControl>*/}
+                {/*        <CodeMirror*/}
+                {/*          value={field.value || ""}*/}
+                {/*          height="200px"*/}
+                {/*          extensions={[cpp()]}*/}
+                {/*          theme="light"*/}
+                {/*          onChange={field.onChange}*/}
+                {/*          basicSetup={{ lineNumbers: true }}*/}
+                {/*        />*/}
+                {/*      </FormControl>*/}
+                {/*      <FormMessage />*/}
+                {/*    </FormItem>*/}
+                {/*  )}*/}
+                {/*/>*/}
               </>
             )}
 

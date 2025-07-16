@@ -6,8 +6,16 @@ import 'swiper/css';
 import 'swiper/css/effect-cards';
 import CourseCard from "@/components/courses/course-card";
 import React from "react";
+import {useCourses} from "@/hooks/queries/course";
 
 export default function EffectCardSwiper() {
+  const { data: coursesData, isLoading, error } = useCourses({
+    page: 1,
+    perPage: 3,
+  });
+
+  console.log("coursesData---", coursesData)
+
   return (
     <Swiper
       effect={"cards"}
@@ -15,19 +23,28 @@ export default function EffectCardSwiper() {
       modules={[EffectCards]}
       className="mySwiper"
     >
-      {[1,2,3].map((item) => (
-        <SwiperSlide className="rounded-2xl" key={item}>
+      {coursesData?.data?.map((course) => (
+        <SwiperSlide className="rounded-2xl" key={course.slug}>
           <CourseCard
-            badge="NEW"
-            title="Difficult Things About Education."
-            imageUrl="/images/banner-sign-in.png"
-            category="Khóa học Thiết kế"
-            courseName="Thiết kế giao diện người dùng và trải nghiệm (UI/UX)"
-            instructor="Anh Tuấn, Quang Anh"
-            lessonCount={12}
-            studentCount={768}
-            currentPrice="529,000"
-            originalPrice="1,769,000"
+            slug={course.slug}
+            title={course.title}
+            imageUrl={course.thumbnail}
+            category="Khóa học"
+            courseName={course.title}
+            instructor={`Giảng viên: ${course?.owner.fullName}`}
+            lessonCount={course.totalLesion}
+            badge={course.label}
+            studentCount={course.enrollmentCnt}
+            currentPrice={
+              course.pricing.discounted
+                ? course.pricing.discounted.toLocaleString()
+                : course.pricing.regular.toLocaleString()
+            }
+            originalPrice={
+              course.pricing.discounted
+                ? course.pricing.regular.toLocaleString()
+                : ""
+            }
           />
         </SwiperSlide>
       ))}

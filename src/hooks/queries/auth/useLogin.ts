@@ -15,10 +15,10 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authAPI.login(credentials),
     onSuccess: (data) => {
-      setAuth(data as unknown as User, data?.accessToken);
+      setAuth(data as any, data?.accessToken);
       userQuery.refetch().then(pis => {
         if (pis?.data) {
-          setAuth(pis.data, data?.accessToken);
+          setAuth(pis.data as any, data?.accessToken);
           if (pis.data.isEmailVerified) {
             router.push("/dashboard");
           } else {

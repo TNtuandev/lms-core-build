@@ -31,6 +31,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash } from "iconsax-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import {useEffect} from "react";
 
 export enum QuestionType {
   SINGLE_CHOICE = "SINGLE_CHOICE",
@@ -133,6 +134,24 @@ export default function QuizQuestionModal({
     control: form.control,
     name: "options",
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues)
+    } else {
+      form.reset({
+        content: "",
+        type: "SINGLE_CHOICE",
+        point: "10",
+        isRandom: false,
+        isRequiredAnswer: false,
+        description: "",
+        options: [],
+        correctExplanation: "",
+        incorrectHint: "",
+      });
+    }
+  }, [defaultValues]);
 
   console.log("QuizQuestionModal defaultValues:", form.formState.errors, form.getValues());
 

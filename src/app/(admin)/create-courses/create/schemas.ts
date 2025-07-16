@@ -11,9 +11,9 @@ export const step1Schema = z.object({
 });
 
 export const infoCourseSchema = z.object({
-  description: z.string().min(10, "Mô tả chi tiết không được để trống"),
-  requirements: z.string().min(1, "Yêu cầu không được để trống"),
-  learningOutcomes: z.string().min(1, "Kết quả học tập không được để trống"),
+  description: z.string().min(10, "Mô tả chi tiết phải có ít nhất 10 ký tự"),
+  requirements: z.string().min(10, "Yêu cầu phải có ít nhất 10 ký tự"),
+  learningOutcomes: z.string().min(10, "Kết quả học tập phải có ít nhất 10 ký tự"),
   hourCourse: z.any().optional(),
   minutesCourse: z.any().optional(),
   label: z.string().optional(),
@@ -67,8 +67,8 @@ export const uploadAssignmentSchema = z.object({
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),
-  sampleData: z.string().optional(),
-  answer: z.string().optional(),
+  // sampleData: z.string().optional(),
+  // answer: z.string().optional(),
 });
 
 // Type definitions

@@ -41,15 +41,19 @@ export default function CourseBuilderSection() {
 
   useEffect(() => {
     if (initialChapters) {
-      setChapters(
-        initialChapters?.data.map((c) => ({
-          id: c.id,
-          title: c.title,
-          shortDescription: c.shortDescription,
-          isExpanded: false,
-          lessons: c.lessons,
-        })),
-      );
+      setChapters((prevState) => {
+        // If prevState is empty, initialize with initialChapters
+        return initialChapters.data.map((c) => {
+          const findNodeModuleConfig = prevState.find((item) => item.id === c.id);
+          return {
+            id: c.id,
+            title: c.title,
+            shortDescription: c.shortDescription,
+            isExpanded: findNodeModuleConfig?.isExpanded ?? false,
+            lessons: c.lessons,
+          }
+        });
+      });
     }
   }, [initialChapters]);
 

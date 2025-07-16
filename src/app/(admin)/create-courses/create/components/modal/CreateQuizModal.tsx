@@ -194,6 +194,7 @@ export const CreateQuizModal = ({
       timeLimitMin: Number(settingsForm.getValues().duration),
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
+      deadline: new Date(Date.now() + 24 * 60 * 60 * 1000)
     } as any;
     delete data.durationUnit;
     delete data.passScore;

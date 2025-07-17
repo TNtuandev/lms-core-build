@@ -31,12 +31,7 @@ function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-gray-500">Tên</label>
-              <div className="text-gray-800 font-medium">Chris</div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-gray-500">Họ</label>
+              <label className="block text-gray-500">Họ & tên</label>
               <div className="text-gray-800 font-medium">Hemsworth</div>
             </div>
 

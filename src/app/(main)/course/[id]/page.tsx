@@ -7,10 +7,11 @@ import { Loader2 } from "lucide-react";
 import {
   useCourseBySlug,
   useRelatedCourses,
-  useFAQs,
   useModule,
   useReview,
-  useInstructorProfile, useReviewSummary
+  useInstructorProfile,
+  useReviewSummary,
+  useFAQUser,
 } from "@/hooks/queries/course/useCourses";
 import { useCreateReview } from "@/hooks/queries/course/useCreateRview";
 import {
@@ -46,7 +47,7 @@ export default function CourseDetailPage() {
     courseDetail?.id,
     () => {
       // Review creation success callback
-    }
+    },
   );
 
   // Fetch related courses when we have course detail
@@ -61,12 +62,14 @@ export default function CourseDetailPage() {
     data: faqsData,
     isLoading: isLoadingFAQs,
     error: errorFAQs,
-  } = useFAQs(courseDetail?.id || "");
+  } = useFAQUser(courseDetail?.id || "");
 
   // Fetch FAQs when we have course detail
   const { data: moduleData } = useModule(courseDetail?.id || "");
   const { data: reviewData } = useReview(courseDetail?.id || "");
-  const { data: reviewSummaryData, refetch } = useReviewSummary(courseDetail?.id || "");
+  const { data: reviewSummaryData, refetch } = useReviewSummary(
+    courseDetail?.id || "",
+  );
   const { data: instructorProfileData } = useInstructorProfile(
     courseDetail?.owner?.id || "",
   );
@@ -179,7 +182,11 @@ export default function CourseDetailPage() {
     router.push(Routes.checkout);
   };
 
-  const handleUpdateReview = (rating: number, comment: string, title?: string) => {
+  const handleUpdateReview = (
+    rating: number,
+    comment: string,
+    title?: string,
+  ) => {
     if (!courseDetail?.id) {
       console.error("Course ID not available");
       return;
@@ -196,20 +203,23 @@ export default function CourseDetailPage() {
 
     createReview.mutate(reviewData, {
       onSuccess: () => {
-        refetch()
-      }
+        refetch();
+      },
     });
   };
 
   return (
     <div className="bg-white">
       {/* Header */}
-      <CourseHeader courseDetail={courseDetail} reviewSummaryData={reviewSummaryData} />
+      <CourseHeader
+        courseDetail={courseDetail}
+        reviewSummaryData={reviewSummaryData}
+      />
 
       {/* Sidebar */}
-      <CourseSidebar 
-        courseDetail={courseDetail} 
-        onCheckoutCourse={handleCheckoutCourse} 
+      <CourseSidebar
+        courseDetail={courseDetail}
+        onCheckoutCourse={handleCheckoutCourse}
       />
 
       {/* Course Content */}
@@ -259,20 +269,20 @@ export default function CourseDetailPage() {
             <div ref={contentRef}>
               <CourseContent moduleData={moduleData} slug={slug} />
             </div>
-            
+
             <div ref={detailsRef}>
               <CourseDetails courseDetail={courseDetail} />
             </div>
 
             <div ref={instructorRef}>
-              <CourseInstructor 
-                courseDetail={courseDetail} 
-                instructorProfileData={instructorProfileData} 
+              <CourseInstructor
+                courseDetail={courseDetail}
+                instructorProfileData={instructorProfileData}
               />
             </div>
 
             <div ref={reviewsRef}>
-              <CourseReviews 
+              <CourseReviews
                 courseDetail={courseDetail}
                 reviewData={reviewData as any}
                 isCreatingReview={isCreatingReview}
@@ -281,13 +291,13 @@ export default function CourseDetailPage() {
               />
             </div>
 
-            <CourseFAQ 
+            <CourseFAQ
               faqsData={faqsData}
               isLoadingFAQs={isLoadingFAQs}
               errorFAQs={errorFAQs}
             />
 
-            <OtherCourses 
+            <OtherCourses
               instructorName={courseDetail.owner.fullName}
               instructorId={courseDetail.owner.id}
               currentCourseId={courseDetail.id}
@@ -296,8 +306,8 @@ export default function CourseDetailPage() {
           </div>
         </div>
       </div>
-      
-      <RelatedCourses 
+
+      <RelatedCourses
         relatedCoursesData={relatedCoursesData}
         isLoadingRelated={isLoadingRelated}
         errorRelated={errorRelated}

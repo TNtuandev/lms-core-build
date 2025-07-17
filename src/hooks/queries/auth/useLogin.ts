@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useRouter } from "next/navigation";
-import { LoginCredentials, User } from "@/api/types/auth.type";
+import { LoginCredentials } from "@/api/types/auth.type";
 import { authAPI } from "@/api/endpoints/auth.api";
 import { useMe } from "@/hooks/queries/auth/useMe";
 import { useGetOtp } from "@/hooks/queries/auth/useGetOtp";

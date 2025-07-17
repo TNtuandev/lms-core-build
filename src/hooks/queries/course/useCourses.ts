@@ -11,6 +11,7 @@ export const courseKeys = {
   detail: (id: string) => [...courseKeys.details(), id] as const,
   related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
+  faqsUser: (courseId: string) => [...courseKeys.all, "faqsUser", courseId] as const,
   modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
   modulesDetail: (courseId: string) => [...courseKeys.all, "modulesDetail", courseId] as const,
   review: (courseId: string) => [...courseKeys.all, "review", courseId] as const,
@@ -74,6 +75,15 @@ export const useFAQs = (courseId: string) => {
   return useQuery({
     queryKey: courseKeys.faqs(courseId),
     queryFn: () => courseAPI.getFAQs(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useFAQUser = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.faqs(courseId),
+    queryFn: () => courseAPI.getFAQsUser(courseId),
     enabled: !!courseId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

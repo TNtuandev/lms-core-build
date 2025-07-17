@@ -74,6 +74,11 @@ export const courseAPI = {
     return data;
   },
 
+  getFAQsUser: async (courseId: string): Promise<FAQ[]> => {
+    const { data } = await api.get(`/courses/${courseId}/faqs`);
+    return data;
+  },
+
   getModule: async (courseId: string): Promise<ModuleResponse> => {
     const { data } = await api.get(`/courses/${courseId}/modules`);
     return data;

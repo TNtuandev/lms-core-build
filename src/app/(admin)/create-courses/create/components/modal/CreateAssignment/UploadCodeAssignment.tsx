@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   Select,
@@ -96,6 +96,7 @@ export const UploadCodeAssignment = ({
       form.reset({
         title: "",
         practiceType: "coding",
+        lang: "JAVA", // Default language
         htmlContent: "",
         description: "",
         inputFile: undefined,
@@ -116,6 +117,7 @@ export const UploadCodeAssignment = ({
   console.log("UploadCodeAssignment render", form.formState.errors);
 
   const practiceType = form.watch("practiceType");
+  const lang = form.watch("lang");
 
   const createPractice = useCreateLessonPractice(
     courseData?.id as string,
@@ -175,8 +177,16 @@ export const UploadCodeAssignment = ({
     });
   };
 
-  console.log("UploadCodeAssignment formState", form.formState.errors);
-  console.log("UploadCodeAssignment formState", form.getValues());
+  const acceptFiles = useMemo(() => {
+    switch (lang) {
+      case "C++":
+        return ".cpp,.h";
+      case "JAVA":
+        return ".java";
+      default:
+        return ".txt,.json"; // Default for other languages
+    }
+  }, [lang])
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -265,6 +275,30 @@ export const UploadCodeAssignment = ({
             {/* Fields cho practiceType = "coding" */}
             {practiceType === "coding" && (
               <>
+                {/*Ngôn ngữ*/}
+                <FormField
+                  control={form.control}
+                  name="lang"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ngôn ngữ</FormLabel>
+                      <FormControl>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger className="h-12">
+                            <SelectValue placeholder="Ngôn ngữ" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="C++">C++</SelectItem>
+                            <SelectItem value="JAVA">
+                              JAVA
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 {/* Dữ liệu đầu vào */}
                 <FormField
                   control={form.control}
@@ -324,7 +358,7 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept="/*"
+                            accept={acceptFiles}
                             ref={inputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
@@ -409,7 +443,7 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept="/*"
+                            accept={acceptFiles}
                             ref={outputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];

@@ -60,6 +60,7 @@ export const lessonSchema = z.object({
 export const uploadAssignmentSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   practiceType: z.string().min(1, "Vui lòng chọn loại bài tập"),
+  lang: z.string().min(1, "Vui lòng chọn ngôn ngữ"),
   htmlContent: z.string().optional(),
   description: z.string().min(1, "Mô tả không được để trống"),
   attachmentUrl: z.any().optional(),

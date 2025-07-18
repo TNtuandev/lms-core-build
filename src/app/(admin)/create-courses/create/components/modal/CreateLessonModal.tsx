@@ -179,8 +179,6 @@ export const CreateLessonModal = ({
   };
   const lessonType = form.watch("type");
 
-  console.log("Bài học tài liệu", form.formState.validatingFields)
-
   const { uploadFile } = useUploadFile();
 
   const handleUploadFile = (file: File, field: any) => {

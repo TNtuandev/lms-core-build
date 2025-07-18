@@ -45,82 +45,98 @@ function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex w-full flex-col md:flex-row flex-shrink-0">
-      <Image
-        src={bannerSignIn}
-        alt="banner"
-        className="h-screen w-full object-cover hidden md:block"
-      />
-      <div className="flex flex-col justify-center items-center w-full md:w-[30%] px-6 md:px-8 flex-shrink-0">
+    <div className="flex w-full min-h-screen flex-col lg:flex-row">
+      {/* Banner Image - Hidden on mobile, visible on large screens */}
+      <div className="hidden lg:block lg:w-[70%] xl:w-[75%]">
         <Image
-          src={logoMini}
-          alt="logmini"
-          className="block m-4 md:mt-10 mt-[144px] h-[56px] w-[180px]"
+          src={bannerSignIn}
+          alt="banner"
+          className="h-screen w-full object-cover"
         />
-        <div className="text-[#212B36] font-semibold text-2xl md:text-3xl mb-3">
-          Quên mật khẩu
-        </div>
-        <div className="flex gap-2 text-sm text-[#212B36]">
-          <div className="text-center">Vui lòng nhập địa chỉ email được liên kết với tài khoản của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.</div>
-        </div>
+      </div>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full mt-[40px] space-y-4"
-          >
-            {/* Display API Error */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error.message ||
-                  "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
-              </div>
-            )}
+      {/* Forgot Password Form Section */}
+      <div className="flex flex-col justify-center items-center w-full lg:w-[30%] xl:w-[25%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
+        {/* Content Container */}
+        <div className="w-full max-w-md mx-auto">
+          <Image
+            src={logoMini}
+            alt="logmini"
+            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
+          />
+          
+          {/* Title and Description */}
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-[#212B36] font-semibold text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mb-4 sm:mb-6">
+              Quên mật khẩu
+            </h1>
+            <p className="text-[#637381] text-sm sm:text-base leading-relaxed">
+              Vui lòng nhập địa chỉ email được liên kết với tài khoản của bạn và chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
+            </p>
+          </div>
 
-            {/* Email Field */}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
-                      disabled={isPending}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl mt-4 w-full h-12"
+          {/* Form */}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full space-y-4 sm:space-y-5"
             >
-              {isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Đang gửi yêu cầu...
-                </>
-              ) : (
-                "Gửi yêu cầu"
+              {/* Display API Error */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                  {error.message ||
+                    "Đã xảy ra lỗi khi gửi yêu cầu. Vui lòng thử lại."}
+                </div>
               )}
-            </Button>
-          </form>
-        </Form>
-        <button
-          onClick={() => router.push("/login")}
-          className="mt-4 text-sm hover:text-[#2F57EF] cursor-pointer flex items-center gap-1"
-          disabled={isPending}
-        >
-          ← Quay lại đăng nhập
-        </button>
 
+              {/* Email Field */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
+                        disabled={isPending}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang gửi yêu cầu...
+                  </>
+                ) : (
+                  "Gửi yêu cầu"
+                )}
+              </Button>
+            </form>
+          </Form>
+
+          {/* Back to Login Button */}
+          <button
+            onClick={() => router.push("/login")}
+            className="mt-6 sm:mt-8 text-sm sm:text-base text-[#637381] hover:text-[#2F57EF] cursor-pointer flex items-center justify-center gap-2 w-full transition-colors"
+            disabled={isPending}
+          >
+            <span>←</span>
+            Quay lại đăng nhập
+          </button>
+        </div>
       </div>
     </div>
   );

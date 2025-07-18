@@ -9,12 +9,10 @@ import React from "react";
 import {useCourses} from "@/hooks/queries/course";
 
 export default function EffectCardSwiper() {
-  const { data: coursesData, isLoading, error } = useCourses({
+  const { data: coursesData } = useCourses({
     page: 1,
     perPage: 3,
   });
-
-  console.log("coursesData---", coursesData)
 
   return (
     <Swiper

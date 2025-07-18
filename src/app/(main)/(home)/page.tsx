@@ -1,7 +1,6 @@
 import React from "react";
 import "./index.css";
 import Image from "next/image";
-import { CourseTab } from "@/components/courses/course-tab";
 import { Banner } from "@/components/home/Banner";
 import { CourseIntro } from "@/components/home/CourseIntro";
 import { Explore } from "@/components/home/Explore";

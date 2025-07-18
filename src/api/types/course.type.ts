@@ -100,6 +100,7 @@ export interface CourseDetail {
   updatedAt: string;
   totalLessons: number;
   duration: number;
+  overview: string[]
 }
 
 export interface CoursesResponse {

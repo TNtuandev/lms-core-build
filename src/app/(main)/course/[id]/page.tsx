@@ -263,7 +263,7 @@ export default function CourseDetailPage() {
 
             {/* Tab Content */}
             <div ref={overviewRef}>
-              <CourseOverview />
+              <CourseOverview courseDetail={courseDetail.overview} />
             </div>
 
             <div ref={contentRef}>

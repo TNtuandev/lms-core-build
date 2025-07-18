@@ -60,137 +60,157 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex w-full flex-col md:flex-row flex-shrink-0">
-      <Image
-        src={bannerSignIn}
-        alt="banner"
-        className="h-screen w-full object-cover hidden md:block"
-      />
-      <div className="flex flex-col justify-center items-center w-full md:w-[30%] px-6 md:px-8 flex-shrink-0">
+    <div className="flex w-full min-h-screen flex-col lg:flex-row">
+      {/* Banner Image - Hidden on mobile, visible on large screens */}
+      <div className="hidden lg:block lg:w-[70%] xl:w-[75%]">
         <Image
-          src={logoMini}
-          alt="logmini"
-          className="block m-4 md:mt-10 mt-[144px] h-[56px] w-[180px]"
+          src={bannerSignIn}
+          alt="banner"
+          className="h-screen w-full object-cover"
         />
-        <div className="text-[#212B36] font-semibold text-2xl md:text-3xl mb-3">
-          Chào mừng bạn trở lại
-        </div>
-        <div className="flex gap-2 text-sm text-[#212B36]">
-          <div>Bạn chưa phải là thành viên?</div>
-          <div
-            className="text-[#2F57EF] cursor-pointer hover:underline"
-            onClick={() => router.push("/register")}
-          >
-            Đăng ký
+      </div>
+
+      {/* Login Form Section */}
+      <div className="flex flex-col justify-center items-center w-full lg:w-[30%] xl:w-[25%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
+        {/* Logo */}
+        <div className="w-full max-w-md mx-auto">
+          <Image
+            src={logoMini}
+            alt="logmini"
+            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
+          />
+          
+          {/* Welcome Text */}
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-[#212B36] font-semibold text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mb-3 sm:mb-4">
+              Chào mừng bạn trở lại
+            </h1>
+            <div className="flex justify-center gap-2 text-sm sm:text-base text-[#212B36]">
+              <span>Bạn chưa phải là thành viên?</span>
+              <span
+                className="text-[#2F57EF] cursor-pointer hover:underline font-medium"
+                onClick={() => router.push("/register")}
+              >
+                Đăng ký
+              </span>
+            </div>
           </div>
-        </div>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full mt-[40px] space-y-4"
-          >
-            {/* Display API Error */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                {error.message ||
-                  "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
-              </div>
-            )}
-
-            {/* Email Field */}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 focus:border-blue-500 focus:ring-blue-500"
-                      disabled={isPending}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+          {/* Login Form */}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full space-y-4 sm:space-y-5"
+            >
+              {/* Display API Error */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                  {error.message ||
+                    "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
+                </div>
               )}
-            />
 
-            {/* Password Field */}
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
+              {/* Email Field */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
                       <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-12 pr-12 focus:border-blue-500 focus:ring-blue-500"
+                        type="email"
+                        placeholder="Email"
+                        className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
                         disabled={isPending}
                         {...field}
                       />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                        disabled={isPending}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="flex justify-end items-end w-full">
-              <div onClick={() => router.push("/forgot-password")} className="underline mt-4 text-xs cursor-pointer hover:text-blue-600">
-                Quên mật khẩu?
+              {/* Password Field */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Password"
+                          className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 pr-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
+                          disabled={isPending}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          disabled={isPending}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+                          ) : (
+                            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Forgot Password Link */}
+              <div className="flex justify-end">
+                <div 
+                  onClick={() => router.push("/forgot-password")} 
+                  className="underline text-xs sm:text-sm cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  Quên mật khẩu?
+                </div>
               </div>
-            </div>
 
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl mt-4 w-full h-12"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Đang đăng nhập...
-                </>
-              ) : (
-                "Đăng nhập"
-              )}
-            </Button>
-          </form>
-        </Form>
+              {/* Login Button */}
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang đăng nhập...
+                  </>
+                ) : (
+                  "Đăng nhập"
+                )}
+              </Button>
+            </form>
+          </Form>
 
-        <div className="text-center text-[#637381] text-sm my-5">Hoặc</div>
+          {/* Divider */}
+          <div className="text-center text-[#637381] text-sm my-5 sm:my-6">Hoặc</div>
 
-        <Button
-          type="button"
-          onClick={handleGoogleLogin}
-          disabled={isPending}
-          variant="outline"
-          className="font-normal text-primary bg-[#919EAB14]  disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-12 flex justify-center items-center gap-2 border-none"
-        >
-          <Image
-            src={logoGoogle}
-            alt="Google logo"
-            className="h-6 w-6 object-cover"
-          />
-          Đăng nhập với Google
-        </Button>
+          {/* Google Login Button */}
+          <Button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isPending}
+            variant="outline"
+            className="font-normal text-primary bg-[#919EAB14] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 flex justify-center items-center gap-2 border-none text-sm sm:text-base transition-colors"
+          >
+            <Image
+              src={logoGoogle}
+              alt="Google logo"
+              className="h-5 w-5 sm:h-6 sm:w-6 object-cover"
+            />
+            Đăng nhập với Google
+          </Button>
+        </div>
       </div>
     </div>
   );

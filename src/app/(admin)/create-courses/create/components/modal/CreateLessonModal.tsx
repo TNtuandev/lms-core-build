@@ -88,7 +88,7 @@ export const CreateLessonModal = ({
         description: "",
         type: "VIDEO",
         videoUrl: null,
-        duration: '0',
+        duration: undefined,
         htmlContent: "",
         sampleImageUrl: "",
         attachmentUrl: null,
@@ -383,6 +383,10 @@ export const CreateLessonModal = ({
                         placeholder="00"
                         className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         {...field}
+                        value={field.value || undefined}
+                        onChange={(event) => {
+                          field.onChange(Number(event.target.value));
+                        }}
                       />
                     </FormControl>
                     <p className="text-xs text-gray-500 flex items-center">

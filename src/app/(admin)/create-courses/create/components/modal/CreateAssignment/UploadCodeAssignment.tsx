@@ -81,8 +81,8 @@ export const UploadCodeAssignment = ({
       // sampleData: "",
       // answer: "",
       attachmentUrl: undefined,
-      passingScore: 0,
-      duration: "",
+      passingScore: undefined,
+      duration: undefined,
     },
   });
 
@@ -104,8 +104,8 @@ export const UploadCodeAssignment = ({
         // sampleData: "",
         // answer: "",
         attachmentUrl: undefined,
-        passingScore: 0,
-        duration: "",
+        passingScore: undefined,
+        duration: undefined,
       });
       setInputDataFile(null);
       setOutputDataFile(null);
@@ -153,10 +153,9 @@ export const UploadCodeAssignment = ({
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
       ...data,
-      inputFile: "input.txt",
-      outputFile: "output.txt",
-      attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
+      attachmentUrl: data.attachmentUrl || "",
       duration: data.duration ? Number(data.duration) : 0,
+      passingScore: data.passingScore ? Number(data.passingScore) : 0,
     };
     if (isEdit) {
       updatePractice.mutate(formRequest as any, {
@@ -175,6 +174,9 @@ export const UploadCodeAssignment = ({
       },
     });
   };
+
+  console.log("UploadCodeAssignment formState", form.formState.errors);
+  console.log("UploadCodeAssignment formState", form.getValues());
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -589,9 +591,13 @@ export const UploadCodeAssignment = ({
                       <FormLabel>Thời gian tối đa (phút)</FormLabel>
                       <FormControl>
                         <Input
+                          {...field}
                           type="number"
                           placeholder="Nhập thời gian tối đa"
-                          {...field}
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -610,9 +616,10 @@ export const UploadCodeAssignment = ({
                           type="number"
                           placeholder="Nhập điểm đạt"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

@@ -40,7 +40,8 @@ import {
 } from "@/components/ui/select";
 import ToggleSwitch from "../ToggleSwitch";
 import {
-  useCreateLessonQuiz, useGetLessonById,
+  useCreateLessonQuiz,
+  useGetLessonById,
   useUpdateLessonQuiz,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
@@ -58,20 +59,18 @@ const quizSchema = z.object({
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  duration: z.string().regex(/^\d+$/, "Chỉ được nhập số"),
-  durationUnit: z.enum(["second", "minute", "hour"]),
+  duration: z.number().optional().nullable(),
+  durationUnit: z.string().optional().nullable(),
   isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "show", "retry"]),
-  passingScore: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập điểm đạt"),
-  maxAttempts: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập số lần trả lời"),
+  passingScore: z.number().optional().nullable(),
+  maxAttempts: z.number().optional().nullable(),
   autoStart: z.boolean(),
   showQuestionCount: z.boolean(),
   questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
   questionViewMode: z.enum(["single", "paginated", "scrollable"]),
-  shortAnswerCharLimit: z
-    .string().regex(/^\d+$/, "Chỉ được nhập số")
-    .min(1, "Vui lòng nhập giới hạn ký tự trả lời ngắn"),
-  essayCharLimit: z.string().regex(/^\d+$/, "Chỉ được nhập số").min(1, "Vui lòng nhập giới hạn ký tự trả lời mở"),
+  shortAnswerCharLimit: z.number().optional().nullable(),
+  essayCharLimit: z.number().optional().nullable(),
 });
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
@@ -87,7 +86,11 @@ export const CreateQuizModal = ({
   const { courseData, moduleSelected, lessonSelected } =
     useCreateCourseContext();
   const isEdit = Boolean(lessonSelected?.id);
-  const { data: initValue, refetch } = useGetLessonById(courseData?.id as string, moduleSelected?.id as string, lessonSelected?.id as string)
+  const { data: initValue, refetch } = useGetLessonById(
+    courseData?.id as string,
+    moduleSelected?.id as string,
+    lessonSelected?.id as string,
+  );
   // Đảm bảo chỉ truyền id khi đã có courseData và module
   const createLessonQuiz = useCreateLessonQuiz(
     courseData?.id || "",
@@ -99,11 +102,6 @@ export const CreateQuizModal = ({
     moduleSelected?.id || "",
     lessonSelected?.id || "",
   );
-
-  useEffect(() => {
-    setQuestions([]);
-  }, [isOpen]);
-
   const form = useForm<QuizFormData>({
     resolver: zodResolver(quizSchema),
     defaultValues: {
@@ -115,18 +113,18 @@ export const CreateQuizModal = ({
   const settingsForm = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      duration: "00",
+      duration: undefined,
       durationUnit: "second",
       isViewTimeLimit: false,
       feedbackMode: "default",
-      passingScore: "50",
-      maxAttempts: "10",
+      passingScore: undefined,
+      maxAttempts: undefined,
       autoStart: false,
       showQuestionCount: false,
       questionLayout: "random",
       questionViewMode: "single",
-      shortAnswerCharLimit: "200",
-      essayCharLimit: "500",
+      shortAnswerCharLimit: 200,
+      essayCharLimit: 500,
     },
   });
 
@@ -146,23 +144,26 @@ export const CreateQuizModal = ({
     } else {
       form.reset();
       settingsForm.reset({
-        duration: "00",
+        duration: undefined,
         durationUnit: "second",
         isViewTimeLimit: false,
         feedbackMode: "default",
-        passingScore: "50",
-        maxAttempts: "10",
+        passingScore: undefined,
+        maxAttempts: undefined,
         autoStart: false,
         showQuestionCount: false,
         questionLayout: "random",
         questionViewMode: "single",
-        shortAnswerCharLimit: "200",
-        essayCharLimit: "500",
+        shortAnswerCharLimit: 200,
+        essayCharLimit: 500,
       });
       setQuestions([]);
       setStep(1);
     }
-  }, [lessonSelected, initValue]);
+  }, [lessonSelected, initValue, isOpen]);
+
+  console.log("form---", questions);
+  console.log("settingsForm---", settingsForm.formState.errors);
 
   const handleNext = async () => {
     if (step === 1) {
@@ -188,25 +189,31 @@ export const CreateQuizModal = ({
 
   const handleSubmit = async () => {
     const data = {
-      ...form.getValues(),
-      ...settingsForm.getValues(),
+      title: form.getValues().title.trim(),
+      description: form.getValues().description.trim(),
+      isViewTimeLimit: settingsForm.getValues().isViewTimeLimit,
+      feedbackMode: settingsForm.getValues().feedbackMode,
+      autoStart: settingsForm.getValues().autoStart,
+      showQuestionCount: settingsForm.getValues().showQuestionCount,
+      questionLayout: settingsForm.getValues().questionLayout,
+      questionViewMode: settingsForm.getValues().questionViewMode,
+      shortAnswerCharLimit: settingsForm.getValues().shortAnswerCharLimit,
+      essayCharLimit: settingsForm.getValues().essayCharLimit,
       duration: Number(settingsForm.getValues().duration),
       timeLimitMin: Number(settingsForm.getValues().duration),
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
-      deadline: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
     } as any;
-    delete data.durationUnit;
-    delete data.passScore;
 
-    if(isEdit) {
+    if (isEdit) {
       updateLessonQuiz.mutate(data, {
         onSuccess: () => {
           onSubmit();
           refetch();
           handleClose();
         },
-      })
+      });
       return;
     }
 
@@ -402,6 +409,10 @@ export const CreateQuizModal = ({
                               className="flex-1"
                               placeholder="00"
                               {...field}
+                              value={field.value || undefined}
+                              onChange={(event) => {
+                                field.onChange(Number(event.target.value));
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -415,7 +426,7 @@ export const CreateQuizModal = ({
                         <FormItem>
                           <FormControl>
                             <Select
-                              value={field.value}
+                              value={field.value || undefined}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger
@@ -534,7 +545,16 @@ export const CreateQuizModal = ({
                     <FormItem>
                       <FormLabel className="mb-1 block">Điểm đạt (%)</FormLabel>
                       <FormControl>
-                        <Input type="number" className="flex-1" placeholder="50" {...field} />
+                        <Input
+                          type="number"
+                          className="flex-1"
+                          placeholder="50"
+                          {...field}
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
@@ -554,7 +574,16 @@ export const CreateQuizModal = ({
                         Câu hỏi tối đa được phép trả lời
                       </FormLabel>
                       <FormControl>
-                        <Input type="number" className="flex-1" placeholder="10" {...field} />
+                        <Input
+                          type="number"
+                          className="flex-1"
+                          placeholder="10"
+                          {...field}
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                       <p className="text-xs text-gray-500 mt-2 flex items-center">
@@ -685,7 +714,15 @@ export const CreateQuizModal = ({
                             <FormItem>
                               <FormLabel>Giới hạn ký tự trả lời ngắn</FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="200" {...field} />
+                                <Input
+                                  type="number"
+                                  placeholder="200"
+                                  {...field}
+                                  value={field.value || undefined}
+                                  onChange={(event) => {
+                                    field.onChange(Number(event.target.value));
+                                  }}
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -699,7 +736,15 @@ export const CreateQuizModal = ({
                                 Giới hạn ký tự trả lời câu hỏi mở/Bình luận
                               </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="500" {...field} />
+                                <Input
+                                  type="number"
+                                  placeholder="500"
+                                  {...field}
+                                  value={field.value || undefined}
+                                  onChange={(event) => {
+                                    field.onChange(Number(event.target.value));
+                                  }}
+                                />
                               </FormControl>
                             </FormItem>
                           )}

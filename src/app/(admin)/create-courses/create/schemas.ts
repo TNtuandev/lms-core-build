@@ -8,6 +8,7 @@ export const step1Schema = z.object({
   slug: z.string().min(1, "Liên kết cố định không được để trống"),
   shortDescription: z.string().min(1, "Giới thiệu không được để trống"),
   thumbnail: z.any().optional(),
+  overview: z.any().optional()
 });
 
 export const infoCourseSchema = z.object({

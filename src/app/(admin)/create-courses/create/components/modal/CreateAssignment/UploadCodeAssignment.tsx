@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   Select,
@@ -81,8 +81,8 @@ export const UploadCodeAssignment = ({
       // sampleData: "",
       // answer: "",
       attachmentUrl: undefined,
-      passingScore: 0,
-      duration: "",
+      passingScore: undefined,
+      duration: undefined,
     },
   });
 
@@ -96,6 +96,7 @@ export const UploadCodeAssignment = ({
       form.reset({
         title: "",
         practiceType: "coding",
+        lang: "JAVA", // Default language
         htmlContent: "",
         description: "",
         inputFile: undefined,
@@ -104,8 +105,8 @@ export const UploadCodeAssignment = ({
         // sampleData: "",
         // answer: "",
         attachmentUrl: undefined,
-        passingScore: 0,
-        duration: "",
+        passingScore: undefined,
+        duration: undefined,
       });
       setInputDataFile(null);
       setOutputDataFile(null);
@@ -116,6 +117,7 @@ export const UploadCodeAssignment = ({
   console.log("UploadCodeAssignment render", form.formState.errors);
 
   const practiceType = form.watch("practiceType");
+  const lang = form.watch("lang");
 
   const createPractice = useCreateLessonPractice(
     courseData?.id as string,
@@ -153,10 +155,9 @@ export const UploadCodeAssignment = ({
   const handleSubmit = (data: UploadAssignmentFormData) => {
     const formRequest = {
       ...data,
-      inputFile: "input.txt",
-      outputFile: "output.txt",
-      attachmentUrl: data.attachmentUrl || "https://example.com/attachment.pdf",
+      attachmentUrl: data.attachmentUrl || "",
       duration: data.duration ? Number(data.duration) : 0,
+      passingScore: data.passingScore ? Number(data.passingScore) : 0,
     };
     if (isEdit) {
       updatePractice.mutate(formRequest as any, {
@@ -175,6 +176,17 @@ export const UploadCodeAssignment = ({
       },
     });
   };
+
+  const acceptFiles = useMemo(() => {
+    switch (lang) {
+      case "C++":
+        return ".cpp,.h";
+      case "JAVA":
+        return ".java";
+      default:
+        return ".txt,.json"; // Default for other languages
+    }
+  }, [lang])
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -263,6 +275,30 @@ export const UploadCodeAssignment = ({
             {/* Fields cho practiceType = "coding" */}
             {practiceType === "coding" && (
               <>
+                {/*Ngôn ngữ*/}
+                <FormField
+                  control={form.control}
+                  name="lang"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ngôn ngữ</FormLabel>
+                      <FormControl>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger className="h-12">
+                            <SelectValue placeholder="Ngôn ngữ" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="C++">C++</SelectItem>
+                            <SelectItem value="JAVA">
+                              JAVA
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 {/* Dữ liệu đầu vào */}
                 <FormField
                   control={form.control}
@@ -322,7 +358,7 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept="/*"
+                            accept={acceptFiles}
                             ref={inputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
@@ -407,7 +443,7 @@ export const UploadCodeAssignment = ({
                           )}
                           <input
                             type="file"
-                            accept="/*"
+                            accept={acceptFiles}
                             ref={outputDataInputRef}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
@@ -589,9 +625,13 @@ export const UploadCodeAssignment = ({
                       <FormLabel>Thời gian tối đa (phút)</FormLabel>
                       <FormControl>
                         <Input
+                          {...field}
                           type="number"
                           placeholder="Nhập thời gian tối đa"
-                          {...field}
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -610,9 +650,10 @@ export const UploadCodeAssignment = ({
                           type="number"
                           placeholder="Nhập điểm đạt"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          value={field.value || undefined}
+                          onChange={(event) => {
+                            field.onChange(Number(event.target.value));
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

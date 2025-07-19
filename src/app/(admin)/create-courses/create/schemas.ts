@@ -8,6 +8,7 @@ export const step1Schema = z.object({
   slug: z.string().min(1, "Liên kết cố định không được để trống"),
   shortDescription: z.string().min(1, "Giới thiệu không được để trống"),
   thumbnail: z.any().optional(),
+  overview: z.any().optional()
 });
 
 export const infoCourseSchema = z.object({
@@ -48,7 +49,7 @@ export const lessonSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   description: z.string().min(1, "Tóm tắt không được để trống"),
   videoUrl: z.string().url("URL video không hợp lệ").optional().nullable(),
-  duration: z.string().optional(),
+  duration: z.number().optional().nullable(),
   attachmentUrl: z.any().optional(),
   isPreviewable: z.boolean().optional(),
   htmlContent: z.any().optional(),
@@ -59,11 +60,12 @@ export const lessonSchema = z.object({
 export const uploadAssignmentSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   practiceType: z.string().min(1, "Vui lòng chọn loại bài tập"),
+  lang: z.string().min(1, "Vui lòng chọn ngôn ngữ"),
   htmlContent: z.string().optional(),
   description: z.string().min(1, "Mô tả không được để trống"),
   attachmentUrl: z.any().optional(),
-  passingScore: z.number().optional(),
-  duration: z.string().optional(),
+  passingScore: z.number().optional().nullable(),
+  duration: z.number().optional().nullable(),
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),

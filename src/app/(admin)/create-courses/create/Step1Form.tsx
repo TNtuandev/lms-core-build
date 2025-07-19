@@ -28,6 +28,8 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
+import { Select as SelectMode } from 'antd';
+
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -51,8 +53,11 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
       slug: initialData?.slug || "",
       shortDescription: initialData?.shortDescription || "",
       thumbnail: initialData?.thumbnail || "",
+      overview: initialData?.overview || [],
     });
   }, [initialData]);
+
+  console.log("form-values", form.formState.errors);
 
   const onSubmit = (data: Step1FormData) => {
     console.log(";Submitted data:", data);
@@ -182,6 +187,29 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                     https://kicaacademy.com/{field.value || "khoa-hoc-moi"}
                   </span>
                 </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="overview"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium text-gray-700">
+                  Overview
+                </FormLabel>
+                <FormControl>
+                  <SelectMode
+                    mode="tags"
+                    size="large"
+                    style={{ width: '100%' }}
+                    placeholder="Tags Mode"
+                    onChange={(value) => field.onChange(value)}
+                    options={[]}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

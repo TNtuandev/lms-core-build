@@ -100,6 +100,7 @@ function CreateCourse() {
       difficulty: data.difficulty,
       regularPrice: data.regularPrice,
       discountedPrice: data.discountedPrice,
+      overview: data.overview,
     };
     if (isEdit) {
       updateCourse.mutate(request, {

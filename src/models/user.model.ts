@@ -3,6 +3,7 @@ export type User = {
   email: string;
   name: string;
   type: UserType
+  username: string
 };
 
 export enum UserType {

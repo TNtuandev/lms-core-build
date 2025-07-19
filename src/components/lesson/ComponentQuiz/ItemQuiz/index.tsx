@@ -1,17 +1,25 @@
 import { ArrowRight } from "lucide-react";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import { useCreateAttemptsQuiz } from "@/hooks/queries/tracking/useTracking";
+import { ArrowRotateLeft } from "iconsax-react";
 
 interface ItemQuizProps {
   changeTab: (tab: string) => void;
   type?: "QUIZ" | "PRACTICE";
   data?: any; // Adjust type as needed
-  dataTracking?: any
-  dataCourse?: any
-  setAttemptId?: any
+  dataTracking?: any;
+  dataCourse?: any;
+  setAttemptId?: any;
 }
 
-export default function ItemQuiz({ changeTab, type, data, dataCourse, setAttemptId }: ItemQuizProps) {
+export default function ItemQuiz({
+  changeTab,
+  type,
+  data,
+  dataCourse,
+  setAttemptId,
+  dataTracking,
+}: ItemQuizProps) {
   const setQuizStarted = useQuizStore((state) => state.setQuizStarted);
 
   const createLessonQuiz = useCreateAttemptsQuiz(
@@ -23,16 +31,16 @@ export default function ItemQuiz({ changeTab, type, data, dataCourse, setAttempt
     if (type !== "PRACTICE") {
       createLessonQuiz.mutate(undefined, {
         onSuccess: (data) => {
-          setAttemptId(data.id)
+          setAttemptId(data.id);
           setQuizStarted(true);
           changeTab("quizStep2");
-        }
-      })
+        },
+      });
     } else {
       setQuizStarted(true);
       changeTab("stepsExercise2");
     }
-  }
+  };
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md border border-gray-100 flex-shrink-0">
@@ -67,13 +75,17 @@ export default function ItemQuiz({ changeTab, type, data, dataCourse, setAttempt
         </div>
         <div
           onClick={() => {
-            handleStartQuiz()
+            handleStartQuiz();
           }}
           role="presentation"
-          className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
+          className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max gap-1 flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
         >
-          Bắt đầu
-          <ArrowRight size="20" color="#fff" />
+          {dataTracking?.totalAttempt > 0 ? "Thử lại" : "Bắt đầu"}
+          {dataTracking?.totalAttempt > 0 ? (
+            <ArrowRotateLeft size="20" color="#fff" />
+          ) : (
+            <ArrowRight size="20" color="#fff" />
+          )}
         </div>
       </div>
     </div>

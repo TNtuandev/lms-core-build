@@ -26,7 +26,7 @@ export default function QuizStep1({changeTab, dataCourse, dataLesson, dataTracki
     <div>
       <h1 className="text-2xl font-bold mb-4">{dataCourse?.title}</h1>
       <ItemQuiz setAttemptId={setAttemptId} dataCourse={dataCourse} changeTab={changeTab} type={dataLesson?.type} data={dataLesson} dataTracking={dataTracking} />
-      <ItemResult dataTracking={dataTracking} />
+      <ItemResult dataTracking={dataTracking} changeTab={changeTab} />
     </div>
   )
 }

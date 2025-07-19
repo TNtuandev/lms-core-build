@@ -36,5 +36,6 @@ export interface LearnerProfile {
     _totalCoursesInProgress: number;
     _totalCoursesCompleted: number;
     _auditInfo: AuditInfo;
+    _mobilePhone: string;
   };
 }

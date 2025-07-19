@@ -37,7 +37,7 @@ function ProfilePage() {
 
             <div className="space-y-2">
               <label className="block text-gray-500">Tên người dùng</label>
-              <div className="text-gray-800 font-medium">chrishemsworth</div>
+              <div className="text-gray-800 font-medium">{user?.username}</div>
             </div>
 
             <div className="space-y-2">
@@ -49,13 +49,13 @@ function ProfilePage() {
 
             <div className="space-y-2">
               <label className="block text-gray-500">Số điện thoại</label>
-              <div className="text-gray-800 font-medium">+ 84 345226268</div>
+              <div className="text-gray-800 font-medium">{data?.data?._mobilePhone ?? "Chưa có thông tin"}</div>
             </div>
 
             <div className="space-y-2">
               <label className="block text-gray-500">Kỹ năng/Nghề nghiệp</label>
               <div className="text-gray-800 font-medium">
-                Nhà phát triển ứng dụng
+                {user?.type === "learner" ? "Học viên" : "Giáo viên"}
               </div>
             </div>
 

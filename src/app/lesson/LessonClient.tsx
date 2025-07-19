@@ -270,7 +270,7 @@ export function LessonClient() {
       case "video":
         return (
           <VideoPlayer
-            src={initValue?.sampleImageUrl || "/videos/lesson.mp4"}
+            src={initValue?.videoUrl || "/videos/lesson.mp4"}
             poster="/images/lesson-thumbnail.jpg"
           />
         );

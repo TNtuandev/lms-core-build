@@ -20,13 +20,14 @@ import { useCartStore } from "@/store/slices/cart.slice";
 import { MenuMobile } from "@/components/layout/navbar/MenuMobile";
 import {useAuthContext} from "@/context/AuthProvider";
 import { ICategory } from "@/api/types/category";
+import {useCreateCart, useGetCart} from "@/hooks/queries/cart/useCartApi";
 
 function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, categories } = useAuthContext();
-  const { pushToCart } = useCartStore();
+  const { count: countCart, setListCart, setCartId } = useCartStore();
   const [timeLeft, setTimeLeft] = useState(3300);
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
@@ -79,16 +80,37 @@ function Navbar() {
   const navigateToFlashSale = () => {};
 
   const navigateToCheckout = () => {
-    pushToCart({
-      id: "1",
-      name: "Sản phẩm mẫu",
-      price: 100000,
-      salesPrice: 80000,
-      originalPrice: 120000,
-      imageUrl: "/images/banner-sign-in.png", // Thay bằng đường dẫn hình ảnh thực tế
-    });
     router.push(Routes.checkout);
   };
+
+  const { refetch } = useGetCart(!isAuthenticated);
+  const createCartItemDto = useCreateCart();
+
+  const handleCreateCart = () => {
+    createCartItemDto.mutate({}, {
+      onSuccess: (res) => {
+        if (res) {
+          console.log("Cart created successfully:", res);
+          setCartId(res._id)
+        }
+        // setListCart(res.data);
+      },
+      onError: (error) => {
+        console.error("Error creating cart:", error);
+      },
+    })
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      handleCreateCart()
+      refetch().then((res) => {
+        if (res.data) {
+          setListCart(res.data);
+        }
+      });
+    }
+  }, [isAuthenticated]);
 
   const navigateToProfile = () => {
     router.push(Routes.dashboard);
@@ -256,7 +278,7 @@ function Navbar() {
                   {/*<Button size="lg" type="button" variant="ghost">*/}
                   {/*  <Heart size="24" color="#71717B" />*/}
                   {/*</Button>*/}
-                  <NotificationBadge label={"1"}>
+                  <NotificationBadge label={countCart.toString()}>
                     <Button
                       style={{ padding: 8 }}
                       size="lg"

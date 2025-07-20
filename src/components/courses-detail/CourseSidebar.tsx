@@ -21,11 +21,13 @@ interface CourseSidebarProps {
     language?: string;
   };
   onCheckoutCourse: () => void;
+  handlePushToCart: () => void;
 }
 
 export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   courseDetail,
   onCheckoutCourse,
+  handlePushToCart,
 }) => {
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
@@ -76,7 +78,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         </div>
 
         <button
-          onClick={onCheckoutCourse}
+          onClick={handlePushToCart}
           className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
         >
           Thêm vào giỏ hàng
@@ -97,7 +99,9 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
             <div className="text-secondary font-semibold">Thời lượng</div>
             <div className="bg-[#919EAB29] px-2 rounded">
               <span className="text-xs text-gray-500 font-semibold">
-                {courseDetail?.duration? formatToHourUnit(courseDetail.duration): "0"}
+                {courseDetail?.duration
+                  ? formatToHourUnit(courseDetail.duration)
+                  : "0"}
               </span>
             </div>
           </div>
@@ -135,9 +139,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 </div>
               </div>
               <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">
-                <div className="text-secondary font-semibold">
-                  Bài kiểm tra
-                </div>
+                <div className="text-secondary font-semibold">Bài kiểm tra</div>
                 <div className="bg-[#919EAB29] px-2 rounded">
                   <span className="text-xs text-gray-500 font-semibold">
                     {courseDetail?.totalLessons}
@@ -177,4 +179,4 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
       </div>
     </div>
   );
-}; 
+};

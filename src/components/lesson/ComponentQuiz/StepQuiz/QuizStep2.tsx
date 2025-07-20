@@ -8,7 +8,6 @@ import {
   useCreateAttemptsQuiz,
   useHistoryTrackingQuiz,
   useSubmitQuiz,
-  useTrackingQuiz
 } from "@/hooks/queries/tracking/useTracking";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import { ArrowRight } from "lucide-react";

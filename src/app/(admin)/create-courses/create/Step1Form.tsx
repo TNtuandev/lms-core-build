@@ -57,8 +57,6 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     });
   }, [initialData]);
 
-  console.log("form-values", form.formState.errors);
-
   const onSubmit = (data: Step1FormData) => {
     console.log(";Submitted data:", data);
     onNext(data as any);

@@ -1,0 +1,33 @@
+import api from "@/api/api";
+
+export const orderAPI = {
+  // Tạo order mới
+  createOrder: async (data: any): Promise<any> => {
+    const { data: res } = await api.post(`/orders`, data);
+    return res;
+  },
+
+  // Lấy danh sách orders
+  getOrders: async (): Promise<any> => {
+    const { data: res } = await api.get(`/orders`);
+    return res;
+  },
+
+  // Lấy chi tiết order theo ID
+  getOrderById: async (orderId: string): Promise<any> => {
+    const { data: res } = await api.get(`/orders/${orderId}`);
+    return res;
+  },
+
+  // Cập nhật order
+  updateOrder: async (orderId: string, data: any): Promise<any> => {
+    const { data: res } = await api.patch(`/orders/${orderId}`, data);
+    return res;
+  },
+
+  // Xóa order
+  deleteOrder: async (orderId: string): Promise<any> => {
+    const { data: res } = await api.delete(`/orders/${orderId}`);
+    return res;
+  },
+}; 

@@ -2,23 +2,29 @@ import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
-import { ICart, useCartStore } from "@/store/slices/cart.slice";
+import { useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
 import { Trash } from "iconsax-react";
-import {ArrowLeft} from "lucide-react";
-import {Input} from "@/components/ui/input";
+import { ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CourseDetail } from "@/api/types/course.type";
+import {useRemoveCartItem} from "@/hooks/queries/cart/useCartApi";
+import {useCreateOrder} from "@/hooks/queries/order/useOrder";
 
 interface ICheckoutStepOneDesktopProps {
   setStep: Dispatch<SetStateAction<number>>;
-  cartData?: ICart[];
+  cartData?: CourseDetail[];
 }
 export default function CheckoutStepOneDesktop({
   setStep,
   cartData,
 }: ICheckoutStepOneDesktopProps) {
-  const { setQrCodeUrl, setOrderId, setVoucher } = useCartStore();
+  const { setQrCodeUrl, setOrderId, setVoucher, cartId, removeFromCart } = useCartStore();
   const router = useRouter();
   const [selectedVoucher] = useState<string | null>(null);
+
+  const deleteItem = useRemoveCartItem()
+  const orderCart = useCreateOrder()
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);
@@ -26,18 +32,41 @@ export default function CheckoutStepOneDesktop({
 
   const handleDeleteItem = (id: string) => {
     console.log("Delete item with id:", id);
+    deleteItem.mutate({
+      cartId,
+      cartItemId: id
+    }, {
+      onSuccess: () => {
+        console.log("Item deleted successfully");
+        removeFromCart(id);
+      }
+    })
+    removeFromCart(id);
   };
 
   const handleOrder = () => {
-    setOrderId("1");
-    setQrCodeUrl("momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0");
-    setStep(1);
-    setVoucher("");
+    orderCart.mutate({
+      cartId,
+      paymentMethod: 'manual'
+    }, {
+      onSuccess: (data) => {
+        console.log("Order created successfully:", data);
+        setOrderId("1");
+        setQrCodeUrl(
+          "momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0",
+        );
+        setStep(1);
+        setVoucher("");
+      },
+      onError: (error) => {
+        console.error("Error creating order:", error);
+      },
+    })
   };
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + item?.price;
+      return total + Number(item?.discountedPrice || 0);
     }, 0);
   }, [cartData]);
 
@@ -76,21 +105,24 @@ export default function CheckoutStepOneDesktop({
                       <div className="flex gap-4 items-center font-semibold">
                         <img
                           className="h-12 w-16 rounded-sm"
-                          src={transaction.imageUrl}
-                         alt=""/>
-                        <div className="text-sm text-primary-contrastText font-light">{transaction?.name}</div>
+                          src={transaction.thumbnail}
+                          alt=""
+                        />
+                        <div className="text-sm text-primary-contrastText font-light">
+                          {transaction?.title}
+                        </div>
                       </div>
                     </td>
                     <td className="py-3 px-4 font-semibold text-sm">
                       <div>
-                        <div>{formatCurrency(transaction?.price)}đ</div>
+                        <div>{formatCurrency(transaction?.discountedPrice)}đ</div>
                         <div className="font-normal text-[#71717B] line-through">
-                          {formatCurrency(transaction?.originalPrice)}đ
+                          {formatCurrency(transaction?.regularPrice)}đ
                         </div>
                       </div>
                     </td>
                     <td className="py-3 px-4 font-semibold text-primary-main text-sm">
-                      {formatCurrency(transaction?.price)}đ
+                      {formatCurrency(transaction?.discountedPrice)}đ
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button
@@ -109,10 +141,7 @@ export default function CheckoutStepOneDesktop({
             className="text-black my-4 flex cursor-pointer"
             onClick={handleNavigateToHome}
           >
-            <ArrowLeft
-              size="20"
-              color="#212B36"
-            />
+            <ArrowLeft size="20" color="#212B36" />
             <span className="ml-2">Tiếp tục mua hàng</span>
           </button>
         </div>
@@ -143,15 +172,18 @@ export default function CheckoutStepOneDesktop({
         </div>
 
         <div className="bg-[#F4F4F5] mt-6 p-[24px] flex justify-between rounded-xl mb-16 lg:mb-0">
-            <div className="w-full">
-              <div className="text-lg font-semibold">Khuyến mại</div>
-              <div className="flex gap-4 mt-2">
-                <Input className="h-10 flex-1" placeholder="Mã khuyến mại"/>
-                <Button variant="default" className="h-10 px-4 rounded-xl text-white">
-                  Áp dụng
-                </Button>
-              </div>
+          <div className="w-full">
+            <div className="text-lg font-semibold">Khuyến mại</div>
+            <div className="flex gap-4 mt-2">
+              <Input className="h-10 flex-1" placeholder="Mã khuyến mại" />
+              <Button
+                variant="default"
+                className="h-10 px-4 rounded-xl text-white"
+              >
+                Áp dụng
+              </Button>
             </div>
+          </div>
         </div>
       </div>
     </div>

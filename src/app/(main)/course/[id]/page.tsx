@@ -26,6 +26,8 @@ import {
   RelatedCourses,
   OtherCourses,
 } from "@/components/courses-detail";
+import {useAddItemToCart} from "@/hooks/queries/cart/useCartApi";
+import toast from "react-hot-toast";
 
 // interface PageProps {
 //   params: {
@@ -37,7 +39,7 @@ export default function CourseDetailPage() {
   const router = useRouter();
   const params = useParams();
   const slug = params?.id as string;
-  const { pushToCart } = useCartStore();
+  const { pushToCart, cartId, isItemAdded } = useCartStore();
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
@@ -74,10 +76,6 @@ export default function CourseDetailPage() {
     courseDetail?.owner?.id || "",
   );
 
-  console.log(reviewData, "--reviewData");
-  console.log(reviewSummaryData, "--reviewSummaryData");
-  console.log(instructorProfileData?.data, "--instructorProfileData");
-
   // Add state for active tab
   const [activeTab, setActiveTab] = useState<
     "overview" | "content" | "details" | "instructor" | "reviews"
@@ -89,6 +87,8 @@ export default function CourseDetailPage() {
   const detailsRef = useRef<HTMLDivElement>(null);
   const instructorRef = useRef<HTMLDivElement>(null);
   const reviewsRef = useRef<HTMLDivElement>(null);
+
+  const addToCart = useAddItemToCart();
 
   // Function to scroll to section
   const scrollToSection = (
@@ -170,17 +170,45 @@ export default function CourseDetailPage() {
   };
 
   const handleCheckoutCourse = () => {
-    pushToCart({
-      id: courseDetail.id,
-      name: courseDetail.title,
-      price: courseDetail.discountedPrice || courseDetail.regularPrice,
-      salesPrice: courseDetail.discountedPrice || courseDetail.regularPrice,
-      originalPrice: courseDetail.regularPrice,
-      imageUrl: courseDetail.thumbnail,
-    });
+    const checkItem = isItemAdded(courseDetail.id);
+    if (checkItem) {
+      router.push(Routes.checkout);
+      return;
+    }
 
-    router.push(Routes.checkout);
+    addToCart.mutate({
+      cartId,
+      data: {
+        productId: courseDetail.id,
+        quantity: 1,
+      },
+    }, {
+      onSuccess: () => {
+        pushToCart(courseDetail)
+        router.push(Routes.checkout);
+      }
+    })
   };
+
+  const handlePushToCart = () => {
+    const checkItem = isItemAdded(courseDetail.id);
+    if (checkItem) {
+      toast.error("Khóa học đã có trong giỏ hàng");
+      return;
+    }
+    addToCart.mutate({
+      cartId,
+      data: {
+        productId: courseDetail.id,
+        quantity: 1,
+      },
+    }, {
+      onSuccess: () => {
+        pushToCart(courseDetail)
+      }
+    })
+
+  }
 
   const handleUpdateReview = (
     rating: number,
@@ -220,6 +248,7 @@ export default function CourseDetailPage() {
       <CourseSidebar
         courseDetail={courseDetail}
         onCheckoutCourse={handleCheckoutCourse}
+        handlePushToCart={handlePushToCart}
       />
 
       {/* Course Content */}

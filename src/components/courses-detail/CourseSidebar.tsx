@@ -16,6 +16,9 @@ interface CourseSidebarProps {
     regularPrice: number;
     duration?: number;
     totalLessons?: number;
+    certification?: boolean;
+    totalCompletedLessons?: number;
+    language?: string;
   };
   onCheckoutCourse: () => void;
 }
@@ -127,7 +130,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 <div className="text-secondary font-semibold">Ngôn ngữ</div>
                 <div className="bg-[#919EAB29] px-2 rounded">
                   <span className="text-xs text-gray-500 font-semibold">
-                    Tiếng Việt
+                    {courseDetail?.language || "Tiếng Việt"}
                   </span>
                 </div>
               </div>
@@ -137,7 +140,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 </div>
                 <div className="bg-[#919EAB29] px-2 rounded">
                   <span className="text-xs text-gray-500 font-semibold">
-                    10
+                    {courseDetail?.totalLessons}
                   </span>
                 </div>
               </div>
@@ -145,7 +148,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 <div className="text-secondary font-semibold">Chứng chỉ</div>
                 <div className="bg-[#919EAB29] px-2 rounded">
                   <span className="text-xs text-gray-500 font-semibold">
-                    Có
+                    {courseDetail?.certification ? "Có" : "Không"}
                   </span>
                 </div>
               </div>
@@ -153,7 +156,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 <div className="text-secondary font-semibold">Hoàn thành</div>
                 <div className="bg-[#919EAB29] px-2 rounded">
                   <span className="text-xs text-gray-500 font-semibold">
-                    95
+                    {courseDetail?.totalCompletedLessons}
                   </span>
                 </div>
               </div>

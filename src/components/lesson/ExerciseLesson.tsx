@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuizStore } from "@/store/slices/lesson.slice";
 import StepsExercise1 from "@/components/lesson/ComponentExercise/StepsExercise1";
 import StepsExercise2 from "@/components/lesson/ComponentExercise/StepsExercise2";
@@ -22,6 +22,10 @@ export default function ExerciseLesson({ dataCourse, dataLesson }: QuizLessonPro
       component: StepsExercise2,
     },
   };
+
+  useEffect(() => {
+    setTab("stepsExercise1");
+  }, []);
 
   return(
     <div className={`md:mx-20 mx-4 ${isQuizStarted ? 'h-full' : 'h-[60vh] overflow-auto'}`}>

@@ -11,6 +11,15 @@ export const useTrackingQuiz = (courseId: string, lessonId: string) => {
   });
 };
 
+export const useHistoryTrackingQuiz = (courseId: string, lessonId: string, attemptId: string) => {
+  return useQuery({
+    queryKey: ["courseId", courseId, lessonId, attemptId],
+    queryFn: () => trackingAPI.getHistoryQuizTracking(courseId, lessonId, attemptId),
+    enabled: !!courseId && !!lessonId && !!attemptId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 export const usePracticeTracking = (courseId: string, lessonId: string) => {
   return useQuery({
     queryKey: ["PracticeTracking", courseId, lessonId],

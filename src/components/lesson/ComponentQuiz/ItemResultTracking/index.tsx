@@ -40,10 +40,11 @@ interface ItemResultProps {
   status?: "overview" | "submit-active" | "submit-not-active";
   dataTracking?: LessonSubmission;
   dataLesson: any;
+  changeTab: (tab: string) => void;
 }
 
 export default function ItemResultTracking(props: ItemResultProps) {
-  const { dataTracking, dataLesson } = props;
+  const { dataTracking, dataLesson, changeTab } = props;
   const [status, setStatus] = useState<string>("overview");
 
   useEffect(() => {
@@ -89,6 +90,7 @@ export default function ItemResultTracking(props: ItemResultProps) {
         </div>
         {dataTracking?.status !== "overview" && (
           <div
+            onClick={() => changeTab("stepsExercise2")}
             role="presentation"
             className="cursor-pointer border border-gray-200 h-max px-4 py-2 rounded-xl font-semibold text-sm"
           >

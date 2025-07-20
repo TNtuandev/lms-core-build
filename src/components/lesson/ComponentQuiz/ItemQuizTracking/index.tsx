@@ -34,6 +34,7 @@ export default function ItemQuizTracking({ changeTab, type, data, dataCourse, se
       changeTab("stepsExercise2");
     }
   }
+  console.log(dataTracking);
 
   return (
     <div className="w-full p-6 bg-white rounded-2xl shadow-md border border-gray-100 flex-shrink-0">

@@ -23,7 +23,7 @@ export default function StepsExercise1({changeTab, dataCourse, dataLesson, dataT
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">{dataCourse?.title}</h1>
-      <ItemQuizTracking changeTab={changeTab} type="PRACTICE" data={dataLesson} dataCourse={dataCourse} />
+      <ItemQuizTracking changeTab={changeTab} type="PRACTICE" data={dataLesson} dataCourse={dataCourse} dataTracking={dataTracking} />
       <ItemResultTracking dataTracking={dataTracking} dataLesson={dataLesson} />
     </div>
   )

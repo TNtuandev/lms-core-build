@@ -1,37 +1,37 @@
 import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import ExpandItem from "@/components/checkout/CheckoutStepTwo/expand-item";
-import { ICart, useCartStore } from "@/store/slices/cart.slice";
-import {formatCurrency} from "@/lib/utils";
+import { useCartStore } from "@/store/slices/cart.slice";
+import { formatCurrency } from "@/lib/utils";
+import { CourseDetail } from "@/api/types/course.type";
 
 interface ICheckoutStepTwoDesktopProps {
   setStep: Dispatch<SetStateAction<number>>;
-  cartData?: ICart[];
+  cartData?: CourseDetail[];
 }
 
 export default function CheckoutStepTwoDesktop({
   setStep,
   cartData,
 }: ICheckoutStepTwoDesktopProps) {
-
-  const {voucher} = useCartStore();
+  const { voucher } = useCartStore();
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + item?.price;
+      return total + (item?.discountedPrice || 0);
     }, 0);
   }, [cartData]);
 
   const voucherSale = useMemo(() => {
-    return 0
-  }, [totalPrice, voucher])
+    return 0;
+  }, [totalPrice, voucher]);
 
   const totalSale = useMemo(() => {
     if (voucherSale && totalPrice) {
-      return totalPrice - voucherSale
+      return totalPrice - voucherSale;
     }
     return totalPrice;
-  }, [voucherSale, totalPrice])
+  }, [voucherSale, totalPrice]);
 
   return (
     <div className="flex gap-[40px] w-full px-[5%] mb-[100px] lg:flex-row flex-col">
@@ -49,12 +49,15 @@ export default function CheckoutStepTwoDesktop({
                 <div className="flex gap-4 items-center">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={it.imageUrl}
-                    alt=""/>
-                  <div className="text-sm text-primary-contrastText flex-1">{it?.name}</div>
+                    src={it.thumbnail}
+                    alt=""
+                  />
+                  <div className="text-sm text-primary-contrastText flex-1">
+                    {it?.title}
+                  </div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-primary-main text-sm">
-                  {formatCurrency(it?.price)}đ
+                  {formatCurrency(it?.discountedPrice)}đ
                 </div>
               </div>
             ))}
@@ -93,7 +96,9 @@ export default function CheckoutStepTwoDesktop({
             <span>{formatCurrency(voucherSale)}đ</span>
           </div>
           <div className="flex justify-between mt-4 gap-2">
-            <span className="text-primary-contrastText font-semibold">Tổng cộng</span>
+            <span className="text-primary-contrastText font-semibold">
+              Tổng cộng
+            </span>
             <span className="text-secondary-main font-semibold">
               {formatCurrency(totalSale)}đ
             </span>

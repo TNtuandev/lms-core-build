@@ -1,12 +1,12 @@
 import CheckoutStepFinalDesktop from "@/components/checkout/CheckoutStepFinal/desktop";
-import {ICart} from "@/store/slices/cart.slice";
+import { CourseDetail } from "@/api/types/course.type";
 
 interface ICheckoutStepFinalProps {
-  cartData?: ICart[];
+  cartData?: CourseDetail[];
 }
 
 export default function CheckoutStepFinal({
   cartData,
 }: ICheckoutStepFinalProps) {
-  return <CheckoutStepFinalDesktop cartData={cartData} />
+  return <CheckoutStepFinalDesktop cartData={cartData} />;
 }

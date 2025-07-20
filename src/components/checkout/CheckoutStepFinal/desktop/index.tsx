@@ -2,12 +2,13 @@ import React, { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
-import { QRCodeSVG } from 'qrcode.react';
-import { ICart, useCartStore } from "@/store/slices/cart.slice";
-import {formatCurrency} from "@/lib/utils";
+import { QRCodeSVG } from "qrcode.react";
+import { useCartStore } from "@/store/slices/cart.slice";
+import { formatCurrency } from "@/lib/utils";
+import { CourseDetail } from "@/api/types/course.type";
 
 interface ICheckoutStep {
-  cartData?: ICart[];
+  cartData?: CourseDetail[];
 }
 
 export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
@@ -20,7 +21,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + item?.price;
+      return total + (item?.discountedPrice || 0);
     }, 0);
   }, [cartData]);
 
@@ -75,15 +76,16 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                 <div className="flex gap-2 items-center font-semibold">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={it.imageUrl}
-                    alt=""/>
-                  <div className="text-sm">{it?.name}</div>
+                    src={it.thumbnail}
+                    alt=""
+                  />
+                  <div className="text-sm">{it?.title}</div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-[#27272A] text-sm">
                   <div>
-                    <div>{formatCurrency(it?.price)}</div>
+                    <div>{formatCurrency(it?.discountedPrice)}</div>
                     <div className="font-normal text-[#71717B] line-through">
-                      {formatCurrency(it?.originalPrice)}
+                      {formatCurrency(it?.regularPrice)}
                     </div>
                   </div>
                 </div>
@@ -112,7 +114,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
               <span className="font-bold">Quét mã</span>
             </span>
             <div className="flex gap-[32px] mt-4 justify-center items-center flex-col md:flex-row">
-              {            qrCodeUrl && (
+              {qrCodeUrl && (
                 <>
                   <QRCodeSVG
                     value={qrCodeUrl}
@@ -130,13 +132,21 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                     }}
                   />
                 </>
-
               )}
               <div className="flex flex-col gap-3">
-                <span>Tài khoản VP Bank: <span className="font-semibold">03363826286</span></span>
-                <span>Tên: <span className="font-semibold">Amerian Study</span></span>
-                <span>Số tiền: <span className="font-semibold">198.000đ</span></span>
-                <span>Lời nhắn: <span className="font-semibold">YZ6GJ</span></span>
+                <span>
+                  Tài khoản VP Bank:{" "}
+                  <span className="font-semibold">03363826286</span>
+                </span>
+                <span>
+                  Tên: <span className="font-semibold">Amerian Study</span>
+                </span>
+                <span>
+                  Số tiền: <span className="font-semibold">198.000đ</span>
+                </span>
+                <span>
+                  Lời nhắn: <span className="font-semibold">YZ6GJ</span>
+                </span>
               </div>
             </div>
           </div>

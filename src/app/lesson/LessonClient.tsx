@@ -359,6 +359,7 @@ export function LessonClient() {
           <StudyCode
             exercise={defaultJavaExercise}
             course={courseDetail}
+            initValue={initValue}
           />
         ) : (
           <>

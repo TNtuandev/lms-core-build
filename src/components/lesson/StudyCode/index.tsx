@@ -1,4 +1,3 @@
-import { Sandpack } from "@codesandbox/sandpack-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSubmitPracticeCode } from "@/hooks/queries/course/useSubmitPractice";
 import { useSearchParams } from "next/navigation";
@@ -79,9 +78,11 @@ const defaultJavaExercise: ExerciseData = {
 export default function StudyCode({
   exercise = defaultExercise,
   course,
+  initValue,
 }: {
   exercise?: ExerciseData;
   course?: CourseDetail;
+  initValue?: any;
 }) {
   const [currentCode, setCurrentCode] = useState(exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
@@ -96,16 +97,11 @@ export default function StudyCode({
   // Java compiler iframe ref
   const javaIframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Handle code changes from Sandpack
-  // const handleCodeChange = useCallback((newCode: string) => {
-  //   setCurrentCode(newCode);
-  // }, []);
-
   const queryClient = useQueryClient();
 
   const refetchPracticeTracking = () => {
     queryClient.invalidateQueries({
-      queryKey: ['PracticeTracking', course?.id, lessonId],
+      queryKey: ["PracticeTracking", course?.id, lessonId],
     });
   };
 
@@ -123,7 +119,7 @@ export default function StudyCode({
       {
         onSuccess: (data) => {
           console.log("Code submittxed successfully:", data);
-          refetchPracticeTracking()
+          refetchPracticeTracking();
         },
         onError: (error) => {
           console.error("Error submitting code:", error);
@@ -319,11 +315,6 @@ export default function StudyCode({
     };
   };
 
-  // const handleSubmit = useCallback(() => {
-  //   setIsSubmitted(true);
-  //   handleRunTest();
-  // }, [handleRunTest]);
-
   const renderCodeEditor = () => {
     if (exercise.language === "java") {
       return (
@@ -341,68 +332,6 @@ export default function StudyCode({
         </div>
       );
     }
-
-    // Original Sandpack for C++/other languages
-    return (
-      <div className="flex-1 relative border-2 border-[#7c4dff] m-2 rounded">
-        <Sandpack
-          template="vanilla"
-          files={{
-            "exercise.h": {
-              code: currentCode,
-              active: true,
-            },
-          }}
-          options={{
-            showNavigator: false,
-            showTabs: true,
-            showLineNumbers: true,
-            showInlineErrors: true,
-            wrapContent: false,
-            editorHeight: "50vh",
-            layout: "preview",
-            showConsole: false,
-            showConsoleButton: false,
-          }}
-          theme={{
-            colors: {
-              surface1: "#1e1e1e",
-              surface2: "#2d2d30",
-              surface3: "#3e3e42",
-              clickable: "#999999",
-              base: "#cccccc",
-              disabled: "#999999",
-              hover: "#4e4e50",
-              accent: "#7c4dff",
-              error: "#f44747",
-              errorSurface: "#5a1d1d",
-              warning: "#ffcc02",
-              warningSurface: "#332b00",
-            },
-            syntax: {
-              plain: "#cccccc",
-              comment: "#6a9955",
-              keyword: "#569cd6",
-              tag: "#569cd6",
-              punctuation: "#cccccc",
-              definition: "#4ec9b0",
-              property: "#9cdcfe",
-              static: "#4fc1ff",
-              string: "#ce9178",
-            },
-            font: {
-              body: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
-              mono: '"Fira Code", "Fira Mono", Consolas, Menlo, Monaco, "Courier New", monospace',
-              size: "14px",
-              lineHeight: "1.5",
-            },
-          }}
-          customSetup={{
-            dependencies: {},
-          }}
-        />
-      </div>
-    );
   };
 
   return (
@@ -440,7 +369,7 @@ export default function StudyCode({
           </button>
           <button
             onClick={() => {
-              setActiveTab("dap-an")
+              setActiveTab("dap-an");
               return;
               handleRunTest();
             }}
@@ -495,42 +424,12 @@ export default function StudyCode({
 
               {/* Main Content */}
               <div className="text-sm text-white space-y-4">
-                <p className="text-sm text-white">
-                  {exercise.language === "java"
-                    ? "Viết chương trình Java theo yêu cầu bài tập."
-                    : "Tuy thuộc vào chiến lược báo cáo lỗi đã được tuân theo, bạn cần xử lý lỗi và nếu không có lỗi, hãy báo cáo nội dung tệp."}
-                </p>
-
-                <p className="text-white">
-                  Cụ thể, mỗi phương thí nghiệm có hai &#34;nhiệm vụ&#34;:
-                </p>
-
-                <ol className="list-decimal list-inside space-y-2 ml-4 text-white">
-                  {exercise.requirements.map((req, index) => (
-                    <li key={index} className="text-sm text-white">
-                      {req}
-                    </li>
-                  ))}
-                </ol>
-
-                <p className="text-sm text-white">
-                  {exercise.language === "java"
-                    ? "Đảm bảo code Java của bạn có thể compile và chạy thành công."
-                    : "Nếu bạn có gắng báo cáo một kết quả mà bạn không nên báo cáo hoặc trả về mã sai từ hàm 'run_test', các bài kiểm tra sẽ không thành công."}
-                </p>
-
-                <div>
-                  <h3 className="font-medium text-white mb-2">
-                    Mục tiêu của phòng thí nghiệm là:
-                  </h3>
-                  <ol className="list-decimal list-inside space-y-2 ml-4">
-                    {exercise.objectives.map((obj, index) => (
-                      <li key={index} className="leading-relaxed text-white">
-                        {obj}
-                      </li>
-                    ))}
-                  </ol>
-                </div>
+                <p className="text-white">{initValue?.title}</p>
+                <div
+                  style={{ color: '#fff' }}
+                  className="text-white"
+                  dangerouslySetInnerHTML={{ __html: initValue?.htmlContent }}
+                />
               </div>
             </div>
           )}
@@ -553,42 +452,7 @@ export default function StudyCode({
                       🔓 Gợi ý đã mở khóa:
                     </h4>
                     <div className="space-y-2">
-                      {exercise.language === "java" ? (
-                        <>
-                          <p className="text-white">
-                            • Đảm bảo class name trùng với tên file
-                          </p>
-                          <p className="text-white">
-                            • Method main phải có signature chính xác: public
-                            static void main(String[] args)
-                          </p>
-                          <p className="text-white">
-                            • Sử dụng System.out.println() để in ra console
-                          </p>
-                          <p className="text-white">
-                            • Kiểm tra syntax và đóng mở ngoặc nhọn
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <p className="text-white">
-                            • Đảm bảo bạn có đầy đủ header guards (#ifndef,
-                            #define)
-                          </p>
-                          <p className="text-white">
-                            • Struct Tester cần có virtual destructor
-                          </p>
-                          <p className="text-white">
-                            • Method reportResult phải là pure virtual (= 0)
-                          </p>
-                          <p className="text-white">
-                            • Kiểm tra syntax của method signature
-                          </p>
-                          <p className="text-white">
-                            • Đừng quên đóng tất cả các dấu ngoặc nhọn
-                          </p>
-                        </>
-                      )}
+                      {initValue?.suggestion}
                     </div>
                   </div>
                 )}

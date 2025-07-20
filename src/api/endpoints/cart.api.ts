@@ -3,7 +3,7 @@ import api from "@/api/api";
 export const cartAPI = {
   // 0. Lấy thông tin cart
   getCart: async (): Promise<any> => {
-    const { data: res } = await api.get(`/cart`);
+    const { data: res } = await api.get(`/carts/active`);
     return res;
   },
 

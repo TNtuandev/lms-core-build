@@ -35,6 +35,11 @@ export const courseAPI = {
     return data;
   },
 
+  getCourseByUser: async (id: string): Promise<any> => {
+    const { data } = await api.get(`/courses/${id}`);
+    return data;
+  },
+
   getCourseBySlug: async (slug: string): Promise<CourseDetail> => {
     const { data } = await api.get(`/courses/${slug}`);
     return data;

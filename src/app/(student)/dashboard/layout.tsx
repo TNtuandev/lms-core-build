@@ -54,15 +54,15 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/banner-sign-in.png"
-                alt="Chris Hemsworth"
+                src={user?.avatarUrl ?? "https://i.pinimg.com/736x/00/7c/bb/007cbbb03fa1405a7bd2b8a353e16242.jpg"}
+                alt={user?.fullName}
                 width={120}
                 height={120}
                 className="rounded-full border-4 border-white h-[120px] w-[120px]"
               />
-              <div>
+              <div className="flex flex-col items-start">
                 <h1 className="text-2xl font-bold mt-4 text-white">
-                  Chris Hemsworth
+                  {user?.fullName}
                 </h1>
                 <div className="flex items-center mt-2 gap-2 text-white">
                   <IconBookWhite />
@@ -80,7 +80,7 @@ export default function DashboardLayout({
           {/* Sidebar Navigation */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="text-sm font-medium uppercase text-gray-500 mb-4">
-              CHÀO MỪNG, CHRIS HEMSWORTH
+              CHÀO MỪNG, {user?.fullName}
             </div>
 
             {user?.type === UserType.LEARNER && (

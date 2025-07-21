@@ -21,6 +21,7 @@ import { MenuMobile } from "@/components/layout/navbar/MenuMobile";
 import {useAuthContext} from "@/context/AuthProvider";
 import { ICategory } from "@/api/types/category";
 import {useCreateCart, useGetCart} from "@/hooks/queries/cart/useCartApi";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 function Navbar() {
   const pathname = usePathname();
@@ -32,6 +33,7 @@ function Navbar() {
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+  const user = useAuthStore.getState().user;
 
   useEffect(() => {
     // Hàm xử lý bắt phím
@@ -299,7 +301,7 @@ function Navbar() {
                 {isAuthenticated ? (
                   <Image
                     onClick={navigateToProfile}
-                    src={"/images/banner-sign-in.png"} // Đường dẫn đến avatar
+                    src={user?.avatarUrl ?? "https://i.pinimg.com/736x/00/7c/bb/007cbbb03fa1405a7bd2b8a353e16242.jpg"} // Đường dẫn đến avatar
                     alt="Avatar"
                     width={40}
                     height={40}

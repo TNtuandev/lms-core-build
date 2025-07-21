@@ -370,8 +370,6 @@ export default function StudyCode({
           <button
             onClick={() => {
               setActiveTab("dap-an");
-              return;
-              handleRunTest();
             }}
             className={`px-4 py-3 text-sm flex items-center space-x-2 border-b-2 transition-colors ${
               activeTab === "dap-an"

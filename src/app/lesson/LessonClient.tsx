@@ -46,7 +46,6 @@ interface ExtendedLesson extends SidebarLesson {
 }
 
 export function LessonClient() {
-  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const isQuizStarted = useQuizStore((state) => state.isQuizStarted);
 
   const searchParams = useSearchParams();
@@ -207,14 +206,6 @@ export function LessonClient() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const toggleLessonCompletion = (lessonId: string) => {
-    if (completedLessons.includes(lessonId)) {
-      setCompletedLessons(completedLessons.filter((id) => id !== lessonId));
-    } else {
-      setCompletedLessons([...completedLessons, lessonId]);
-    }
-  };
 
   const toggleSection = (sectionId: string) => {
     setSections(

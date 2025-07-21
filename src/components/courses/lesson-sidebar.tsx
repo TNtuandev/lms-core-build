@@ -16,6 +16,7 @@ interface Lesson {
   duration: string;
   type: string;
   active?: boolean;
+  isCompleted?: boolean;
 }
 
 interface Section {
@@ -28,16 +29,12 @@ interface Section {
 
 interface LessonSidebarProps {
   sections: Section[];
-  completedLessons: string[];
-  onToggleCompletion: (lessonId: string) => void;
   onToggleSection: (sectionId: string) => void;
   onSelectLesson: (lesson: Lesson) => void;
 }
 
 const LessonSidebar: React.FC<LessonSidebarProps> = ({
   sections,
-  completedLessons,
-  onToggleCompletion,
   onToggleSection,
   onSelectLesson,
 }) => {
@@ -55,6 +52,8 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
         return null;
     }
   }
+
+  console.log(sections);
 
   return (
     <div className="w-[350px] bg-white border-r border-gray-200 overflow-y-auto">
@@ -147,16 +146,12 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
                         <div className="mr-3 flex-shrink-0">
                           <div
                             className={`w-5 h-5 rounded-full border flex items-center justify-center cursor-pointer ${
-                              completedLessons.includes(lesson.id)
+                              lesson?.isCompleted
                                 ? "bg-green-500 border-green-500"
                                 : "border-gray-300"
                             }`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onToggleCompletion(lesson.id);
-                            }}
                           >
-                            {completedLessons.includes(lesson.id) && (
+                            {lesson?.isCompleted && (
                               <svg
                                 className="w-3 h-3 text-white"
                                 fill="white"

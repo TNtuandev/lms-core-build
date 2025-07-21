@@ -13,6 +13,7 @@ export const courseKeys = {
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
   faqsUser: (courseId: string) => [...courseKeys.all, "faqsUser", courseId] as const,
   modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
+  modulesForUser: (courseId: string) => [...courseKeys.all, "modulesForUser", courseId] as const,
   modulesDetail: (courseId: string) => [...courseKeys.all, "modulesDetail", courseId] as const,
   review: (courseId: string) => [...courseKeys.all, "review", courseId] as const,
   reviewSummary: (courseId: string) => [...courseKeys.all, "reviewSummary", courseId] as const,
@@ -93,6 +94,15 @@ export const useModule = (courseId: string) => {
   return useQuery({
     queryKey: courseKeys.modules(courseId),
     queryFn: () => courseAPI.getModule(courseId),
+    enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useModuleForUser = (courseId: string) => {
+  return useQuery({
+    queryKey: courseKeys.modulesForUser(courseId),
+    queryFn: () => courseAPI.getModuleForUser(courseId),
     enabled: !!courseId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

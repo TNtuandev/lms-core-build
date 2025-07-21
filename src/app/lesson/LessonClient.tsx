@@ -13,7 +13,7 @@ import { useQuizStore } from "@/store/slices/lesson.slice";
 import ContentTab from "@/components/lesson/ContentTab";
 import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
 import { useSearchParams } from "next/navigation";
-import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
+import { useCourseBySlug, useModuleForUser } from "@/hooks/queries/course/useCourses";
 import { useGetLessonById } from "@/hooks/queries/course/useLessonCourse";
 
 // Interface compatible with LessonSidebar
@@ -42,6 +42,7 @@ interface ExtendedLesson extends SidebarLesson {
   description: string;
   attachmentUrl: string | null;
   sampleImageUrl: string;
+  isCompleted: boolean
 }
 
 export function LessonClient() {
@@ -54,7 +55,7 @@ export function LessonClient() {
   const lessonId = searchParams.get("lesson");
 
   const { data: courseDetail } = useCourseBySlug(slug as string);
-  const { data: moduleData } = useModule(courseDetail?.id || "");
+  const { data: moduleData } = useModuleForUser(courseDetail?.id || "");
   const { data: initValue } = useGetLessonById(
     courseDetail?.id as string,
     moduleId as string,
@@ -68,8 +69,6 @@ export function LessonClient() {
   const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(
     null,
   );
-
-  console.log(initValue, "---initValue");
 
   // Map lesson type from BE to frontend
   const mapLessonType = (type: string) => {
@@ -121,6 +120,7 @@ export function LessonClient() {
                 attachmentUrl: lesson.attachmentUrl,
                 sampleImageUrl: lesson?.sampleImageUrl,
                 active: false,
+                isCompleted: lesson?.isCompleted
               };
 
               allLessonsData.push(extendedLesson);
@@ -132,6 +132,7 @@ export function LessonClient() {
                 duration: formatDuration(lesson.duration),
                 type: mapLessonType(lesson.type),
                 active: false,
+                isCompleted: lesson?.isCompleted
               };
             });
 
@@ -309,8 +310,6 @@ export function LessonClient() {
         >
           <LessonSidebar
             sections={sections}
-            completedLessons={completedLessons}
-            onToggleCompletion={toggleLessonCompletion}
             onToggleSection={toggleSection}
             onSelectLesson={selectLesson}
           />

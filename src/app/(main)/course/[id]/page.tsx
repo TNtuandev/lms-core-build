@@ -1,33 +1,35 @@
 "use client";
-import React, { useState, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import React, { useRef, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useCartStore } from "@/store/slices/cart.slice";
 import { Routes } from "@/lib/routes/routes";
 import { Loader2 } from "lucide-react";
 import {
   useCourseBySlug,
-  useRelatedCourses,
-  useModule,
-  useReview,
-  useInstructorProfile,
-  useReviewSummary,
   useFAQUser,
+  useInstructorProfile,
+  useModule,
+  useRelatedCourses,
+  useReview,
+  useReviewSummary,
 } from "@/hooks/queries/course/useCourses";
 import { useCreateReview } from "@/hooks/queries/course/useCreateRview";
 import {
-  CourseHeader,
-  CourseSidebar,
-  CourseOverview,
   CourseContent,
   CourseDetails,
-  CourseInstructor,
-  CourseReviews,
   CourseFAQ,
-  RelatedCourses,
+  CourseHeader,
+  CourseInstructor,
+  CourseOverview,
+  CourseReviews,
+  CourseSidebar,
   OtherCourses,
+  RelatedCourses,
 } from "@/components/courses-detail";
-import {useAddItemToCart} from "@/hooks/queries/cart/useCartApi";
-import toast from "react-hot-toast";
+import {
+  useAddItemToCart,
+  useRefetchCart,
+} from "@/hooks/queries/cart/useCartApi";
 
 // interface PageProps {
 //   params: {
@@ -39,7 +41,7 @@ export default function CourseDetailPage() {
   const router = useRouter();
   const params = useParams();
   const slug = params?.id as string;
-  const { pushToCart, cartId, isItemAdded } = useCartStore();
+  const { cartId } = useCartStore();
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
@@ -87,6 +89,7 @@ export default function CourseDetailPage() {
   const detailsRef = useRef<HTMLDivElement>(null);
   const instructorRef = useRef<HTMLDivElement>(null);
   const reviewsRef = useRef<HTMLDivElement>(null);
+  const { refetchCart } = useRefetchCart();
 
   const addToCart = useAddItemToCart();
 
@@ -170,45 +173,39 @@ export default function CourseDetailPage() {
   };
 
   const handleCheckoutCourse = () => {
-    const checkItem = isItemAdded(courseDetail.id);
-    if (checkItem) {
-      router.push(Routes.checkout);
-      return;
-    }
-
-    addToCart.mutate({
-      cartId,
-      data: {
-        productId: courseDetail.id,
-        quantity: 1,
+    addToCart.mutate(
+      {
+        cartId,
+        data: {
+          productId: courseDetail.id,
+          quantity: 1,
+        },
       },
-    }, {
-      onSuccess: () => {
-        pushToCart(courseDetail)
-        router.push(Routes.checkout);
-      }
-    })
+      {
+        onSuccess: () => {
+          refetchCart();
+          router.push(Routes.checkout);
+        },
+      },
+    );
   };
 
   const handlePushToCart = () => {
-    const checkItem = isItemAdded(courseDetail.id);
-    if (checkItem) {
-      toast.error("Khóa học đã có trong giỏ hàng");
-      return;
-    }
-    addToCart.mutate({
-      cartId,
-      data: {
-        productId: courseDetail.id,
-        quantity: 1,
+    addToCart.mutate(
+      {
+        cartId,
+        data: {
+          productId: courseDetail.id,
+          quantity: 1,
+        },
       },
-    }, {
-      onSuccess: () => {
-        pushToCart(courseDetail)
-      }
-    })
-
-  }
+      {
+        onSuccess: () => {
+          refetchCart();
+        },
+      },
+    );
+  };
 
   const handleUpdateReview = (
     rating: number,

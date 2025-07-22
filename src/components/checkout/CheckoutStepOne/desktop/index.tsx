@@ -2,29 +2,30 @@ import React, { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
-import { useCartStore } from "@/store/slices/cart.slice";
+import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
 import { Trash } from "iconsax-react";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { CourseDetail } from "@/api/types/course.type";
-import {useRemoveCartItem} from "@/hooks/queries/cart/useCartApi";
-import {useCreateOrder} from "@/hooks/queries/order/useOrder";
+import {useRefetchCart, useRemoveCartItem} from "@/hooks/queries/cart/useCartApi";
+import { useCreateOrder } from "@/hooks/queries/order/useOrder";
 
 interface ICheckoutStepOneDesktopProps {
   setStep: Dispatch<SetStateAction<number>>;
-  cartData?: CourseDetail[];
+  cartData?: CartItem[];
 }
 export default function CheckoutStepOneDesktop({
   setStep,
   cartData,
 }: ICheckoutStepOneDesktopProps) {
-  const { setQrCodeUrl, setOrderId, setVoucher, cartId, removeFromCart } = useCartStore();
+  const { setQrCodeUrl, setOrderId, setVoucher, cartId } =
+    useCartStore();
+  const { refetchCart } = useRefetchCart();
   const router = useRouter();
   const [selectedVoucher] = useState<string | null>(null);
 
-  const deleteItem = useRemoveCartItem()
-  const orderCart = useCreateOrder()
+  const deleteItem = useRemoveCartItem();
+  const orderCart = useCreateOrder();
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);
@@ -32,41 +33,46 @@ export default function CheckoutStepOneDesktop({
 
   const handleDeleteItem = (id: string) => {
     console.log("Delete item with id:", id);
-    deleteItem.mutate({
-      cartId,
-      cartItemId: id
-    }, {
-      onSuccess: () => {
-        console.log("Item deleted successfully");
-        removeFromCart(id);
-      }
-    })
-    removeFromCart(id);
+    deleteItem.mutate(
+      {
+        cartId,
+        cartItemId: id,
+      },
+      {
+        onSuccess: () => {
+          console.log("Item deleted successfully");
+          refetchCart();
+        },
+      },
+    );
   };
 
   const handleOrder = () => {
-    orderCart.mutate({
-      cartId,
-      paymentMethod: 'manual'
-    }, {
-      onSuccess: (data) => {
-        console.log("Order created successfully:", data);
-        setOrderId("1");
-        setQrCodeUrl(
-          "momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0",
-        );
-        setStep(1);
-        setVoucher("");
+    orderCart.mutate(
+      {
+        cartId,
+        paymentMethod: "manual",
       },
-      onError: (error) => {
-        console.error("Error creating order:", error);
+      {
+        onSuccess: (data) => {
+          console.log("Order created successfully:", data);
+          setOrderId("1");
+          setQrCodeUrl(
+            "momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0",
+          );
+          setStep(1);
+          setVoucher("");
+        },
+        onError: (error) => {
+          console.error("Error creating order:", error);
+        },
       },
-    })
+    );
   };
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + Number(item?.discountedPrice || 0);
+      return total + Number(item?.product.course.discountedPrice * item?.quantity || 0);
     }, 0);
   }, [cartData]);
 
@@ -91,6 +97,7 @@ export default function CheckoutStepOneDesktop({
                 <tr className="bg-gray-100 text-left text-sm rounded-xl boxShadow">
                   <th className="py-3 px-4 text-secondary">Sản phẩm</th>
                   <th className="py-3 px-4 text-secondary">Giá</th>
+                  <th className="py-3 px-4 text-secondary">Số lượng</th>
                   <th className="py-3 px-4 text-secondary">Tổng</th>
                   <th className="py-3 px-4 text-secondary text-right"></th>
                 </tr>
@@ -105,24 +112,29 @@ export default function CheckoutStepOneDesktop({
                       <div className="flex gap-4 items-center font-semibold">
                         <img
                           className="h-12 w-16 rounded-sm"
-                          src={transaction.thumbnail}
+                          src={transaction.product.thumbnail}
                           alt=""
                         />
                         <div className="text-sm text-primary-contrastText font-light">
-                          {transaction?.title}
+                          {transaction?.product.title}
                         </div>
                       </div>
                     </td>
                     <td className="py-3 px-4 font-semibold text-sm">
                       <div>
-                        <div>{formatCurrency(transaction?.discountedPrice)}đ</div>
+                        <div>
+                          {formatCurrency(transaction?.product.course.discountedPrice)}đ
+                        </div>
                         <div className="font-normal text-[#71717B] line-through">
-                          {formatCurrency(transaction?.regularPrice)}đ
+                          {formatCurrency(transaction?.product.course.regularPrice)}đ
                         </div>
                       </div>
                     </td>
+                    <td className="py-3 px-4 font-semibold text-center text-sm">
+                      {transaction?.quantity}
+                    </td>
                     <td className="py-3 px-4 font-semibold text-primary-main text-sm">
-                      {formatCurrency(transaction?.discountedPrice)}đ
+                      {formatCurrency(transaction?.product.course.discountedPrice * transaction?.quantity)}đ
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button

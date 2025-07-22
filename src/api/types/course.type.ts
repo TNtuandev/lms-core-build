@@ -70,6 +70,7 @@ export interface Course {
 }
 
 export interface CourseDetail {
+  
   id: string;
   title: string;
   slug: string;

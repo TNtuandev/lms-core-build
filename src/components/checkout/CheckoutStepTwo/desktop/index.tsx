@@ -1,13 +1,12 @@
 import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import ExpandItem from "@/components/checkout/CheckoutStepTwo/expand-item";
-import { useCartStore } from "@/store/slices/cart.slice";
+import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
-import { CourseDetail } from "@/api/types/course.type";
 
 interface ICheckoutStepTwoDesktopProps {
   setStep: Dispatch<SetStateAction<number>>;
-  cartData?: CourseDetail[];
+  cartData?: CartItem[];
 }
 
 export default function CheckoutStepTwoDesktop({
@@ -18,7 +17,9 @@ export default function CheckoutStepTwoDesktop({
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + (item?.discountedPrice || 0);
+      return (
+        total + (item?.product.course.discountedPrice * item?.quantity || 0)
+      );
     }, 0);
   }, [cartData]);
 
@@ -41,7 +42,7 @@ export default function CheckoutStepTwoDesktop({
             Chi tiết đơn hàng
           </div>
           <div>
-            {cartData?.map((it, index) => (
+            {cartData?.map((transaction, index) => (
               <div
                 key={index}
                 className="flex justify-between items-center mb-2"
@@ -49,15 +50,15 @@ export default function CheckoutStepTwoDesktop({
                 <div className="flex gap-4 items-center">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={it.thumbnail}
+                    src={transaction.product.thumbnail}
                     alt=""
                   />
                   <div className="text-sm text-primary-contrastText flex-1">
-                    {it?.title}
+                    {transaction?.product.title}
                   </div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-primary-main text-sm">
-                  {formatCurrency(it?.discountedPrice)}đ
+                  {formatCurrency(transaction?.product.course.discountedPrice)}đ
                 </div>
               </div>
             ))}

@@ -1,44 +1,84 @@
 import { create } from "zustand";
-import {CourseDetail} from "@/api/types/course.type";
-import {persist} from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
-export interface ICart {
+export interface CartItem {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: any;
   id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  salesPrice?: number;
-  imageUrl: string;
-  description?: string;
+  cartId: string;
+  productId: string;
+  quantity: number;
+  addedAt: string;
+  product: Product;
 }
 
+export interface Product {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: any;
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  description: string;
+  type: string;
+  categoryId: string;
+  ownerId: string;
+  thumbnail: string;
+  label: string;
+  status: string;
+  ratingAvg: number;
+  ratingCnt: number;
+  enrollmentCnt: number;
+  course: Course;
+}
+
+export interface Course {
+  id: string;
+  regularPrice: number;
+  discountedPrice: number;
+  requirements: string;
+  learningOutcomes: string;
+  previewVideo: string;
+  previewImg: string;
+  difficulty: string;
+  maxEnrollment: number;
+  tags: any;
+  isAllowFaq: boolean;
+  isDripContent: boolean;
+  overview: any[];
+  language: string;
+  certification: boolean;
+  totalCompletedLessons: number;
+}
 interface CartState {
   count: number;
   orderId: string;
   cartId: string;
   setOrderId: (orderId: string) => void;
-  listCart: CourseDetail[];
+  listCart: CartItem[];
   setCount: (count: number) => void;
   setCartId: (idCart: string) => void;
-  setListCart: (list: CourseDetail[]) => void;
-  pushToCart: (product: CourseDetail) => void;
+  setListCart: (list: CartItem[]) => void;
+  pushToCart: (product: CartItem) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   qrCodeUrl: string;
   setQrCodeUrl: (url: string) => void;
   voucher: string;
   setVoucher: (voucher: string) => void;
-  isItemAdded: (productId: string) =>  boolean;
+  isItemAdded: (productId: string) => boolean;
 }
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       count: 0,
       listCart: [],
-      qrCodeUrl: '',
-      orderId: '',
-      voucher: '',
-      cartId: '',
+      qrCodeUrl: "",
+      orderId: "",
+      voucher: "",
+      cartId: "",
 
       setVoucher: (voucher: string) => set({ voucher }),
       setCartId: (cartId: string) => {
@@ -51,10 +91,11 @@ export const useCartStore = create<CartState>()(
       },
       setQrCodeUrl: (url: string) => set({ qrCodeUrl: url }),
       setCount: (count: number) => set({ count }),
-      setListCart: (list: CourseDetail[]) => {
+      setListCart: (list: CartItem[]) => {
+        console.log("setListCart---", list);
         set({ listCart: [...list], count: list?.length });
       },
-      pushToCart: (product: CourseDetail) =>
+      pushToCart: (product: CartItem) =>
         set((state) => ({
           listCart: [...state.listCart, product],
           count: state.count + 1,
@@ -66,11 +107,11 @@ export const useCartStore = create<CartState>()(
         })),
       clearCart: () => set({ listCart: [], count: 0 }),
       isItemAdded: (productId: string) => {
-        return get().listCart.some((item: CourseDetail) => item.id === productId);
+        return get().listCart.some((item: CartItem) => item.id === productId);
       },
     }),
     {
-      name: 'cart-storage', // key trong localStorage
+      name: "cart-storage", // key trong localStorage
       partialize: (state) => ({
         listCart: state.listCart,
         count: state.count,
@@ -79,6 +120,6 @@ export const useCartStore = create<CartState>()(
         voucher: state.voucher,
         qrCodeUrl: state.qrCodeUrl,
       }),
-    }
-  )
+    },
+  ),
 );

@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cartAPI } from "@/api/endpoints/cart.api";
 import toast from "react-hot-toast";
+import {CartItem, useCartStore} from "@/store/slices/cart.slice";
 
 // 0. Hook lấy thông tin cart
 export const useGetCart = (enabled: boolean = true) => {
@@ -11,6 +12,24 @@ export const useGetCart = (enabled: boolean = true) => {
     enabled: enabled,
   });
 };
+
+export const useRefetchCart = () => {
+  const queryClient = useQueryClient()
+  const {setListCart} = useCartStore()
+
+  const refetchCart = async () => {
+    try {
+      const result: {items: CartItem[]} = await queryClient.fetchQuery({
+        queryKey: ["cart"]
+      })
+      setListCart(result?.items || [])
+    } catch (err) {
+      console.log("err---", err)
+    }
+  }
+
+  return { refetchCart }
+}
 
 // 1. Hook tạo cart mới
 export const useCreateCart = () => {

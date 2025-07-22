@@ -3,12 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
 import { QRCodeSVG } from "qrcode.react";
-import { useCartStore } from "@/store/slices/cart.slice";
+import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
-import { CourseDetail } from "@/api/types/course.type";
 
 interface ICheckoutStep {
-  cartData?: CourseDetail[];
+  cartData?: CartItem[];
 }
 
 export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
@@ -21,7 +20,9 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
-      return total + (item?.discountedPrice || 0);
+      return (
+        total + (item?.product.course.discountedPrice * item?.quantity || 0)
+      );
     }, 0);
   }, [cartData]);
 
@@ -68,7 +69,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
             Mã đơn hàng: #RDF-00001
           </div>
           <div className="border-b pb-2 border-b-[#E4E4E7]">
-            {cartData?.map((it, index) => (
+            {cartData?.map((transaction, index) => (
               <div
                 key={index}
                 className="flex justify-between items-center mb-2"
@@ -76,16 +77,23 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                 <div className="flex gap-2 items-center font-semibold">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={it.thumbnail}
+                    src={transaction.product.thumbnail}
                     alt=""
                   />
-                  <div className="text-sm">{it?.title}</div>
+                  <div className="text-sm"> {transaction?.product.title}</div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-[#27272A] text-sm">
                   <div>
-                    <div>{formatCurrency(it?.discountedPrice)}</div>
+                    <div>
+                      {" "}
+                      {formatCurrency(
+                        transaction?.product.course.discountedPrice,
+                      )}
+                      đ
+                    </div>
                     <div className="font-normal text-[#71717B] line-through">
-                      {formatCurrency(it?.regularPrice)}
+                      {formatCurrency(transaction?.product.course.regularPrice)}
+                      đ
                     </div>
                   </div>
                 </div>

@@ -16,7 +16,7 @@ import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
 import Link from "next/link";
-import { useCartStore } from "@/store/slices/cart.slice";
+import {CartItem, useCartStore} from "@/store/slices/cart.slice";
 import { MenuMobile } from "@/components/layout/navbar/MenuMobile";
 import {useAuthContext} from "@/context/AuthProvider";
 import { ICategory } from "@/api/types/category";
@@ -108,7 +108,7 @@ function Navbar() {
       handleCreateCart()
       refetch().then((res) => {
         if (res.data) {
-          setListCart(res.data);
+          setListCart(res.data.items);
         }
       });
     }

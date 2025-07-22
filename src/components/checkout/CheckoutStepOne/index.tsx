@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction } from "react";
 import CheckoutStepOneDesktop from "./desktop";
-import { CourseDetail } from "@/api/types/course.type";
+import { CartItem } from "@/store/slices/cart.slice";
 
 interface ICheckoutStepOneProps {
   setStep: Dispatch<SetStateAction<number>>;
-  cartData?: CourseDetail[];
+  cartData?: CartItem[];
 }
 
 export default function CheckoutStepOne({

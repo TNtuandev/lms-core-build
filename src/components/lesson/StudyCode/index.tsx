@@ -341,7 +341,11 @@ export default function StudyCode({
         {/* Top Navigation Tabs */}
         <div className="flex border-b border-gray-600">
           <button
-            onClick={() => setActiveTab("noi-dung")}
+            onClick={() => {
+              setActiveTab("noi-dung")
+              return;
+              handleRunTest()
+            }}
             className={`px-4 py-3 text-sm flex items-center space-x-2 border-b-2 transition-colors ${
               activeTab === "noi-dung"
                 ? "border-white text-white bg-[#1e1e1e]"

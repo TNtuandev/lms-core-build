@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import IconDownload from "../../../../public/icons/lessson/IconDownload";
 import IconUpload from "../../../../public/icons/lessson/IconUpload";
 import IconNoti from "../../../../public/icons/lessson/IconNoti";
@@ -12,7 +12,7 @@ import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { TickCircle, CloseCircle } from "iconsax-react";
+import { CloseCircle, TickCircle } from "iconsax-react";
 
 // Interface for tracking data
 interface FileSubmission {
@@ -52,7 +52,7 @@ export default function StepsExercise2({
   dataLesson,
   dataCourse,
   changeTab,
-  dataTracking
+  dataTracking,
 }: IStepsExercise2Props) {
   const [fileData, setFileData] = useState<{
     fileUrl: string;
@@ -66,7 +66,7 @@ export default function StepsExercise2({
   // Determine if we're in history mode
   const isHistoryMode = useMemo(() => {
     if (!dataTracking) return false;
-    
+
     if (dataLesson?.practiceType === "upload_file") {
       return !!(dataTracking.file && dataTracking.file.submittedAt);
     } else {
@@ -76,9 +76,9 @@ export default function StepsExercise2({
 
   const currentSubmission = useMemo(() => {
     if (!isHistoryMode || !dataTracking) return null;
-    
-    return dataLesson?.practiceType === "upload_file" 
-      ? dataTracking.file 
+
+    return dataLesson?.practiceType === "upload_file"
+      ? dataTracking.file
       : dataTracking.writing;
   }, [isHistoryMode, dataTracking, dataLesson?.practiceType]);
 
@@ -96,12 +96,20 @@ export default function StepsExercise2({
           name: dataTracking.file.fileName,
           size: 0, // We don't have size info from history
         } as File);
-      } else if (dataLesson?.practiceType !== "upload_file" && dataTracking?.writing) {
+      } else if (
+        dataLesson?.practiceType !== "upload_file" &&
+        dataTracking?.writing
+      ) {
         // Load writing submission history
         setWritingContent(dataTracking.writing.content);
       }
     }
-  }, [isHistoryMode, currentSubmission, dataTracking, dataLesson?.practiceType]);
+  }, [
+    isHistoryMode,
+    currentSubmission,
+    dataTracking,
+    dataLesson?.practiceType,
+  ]);
 
   const submitPracticeWriting = useSubmitPracticeWriting(
     dataCourse?.id as string,
@@ -142,7 +150,7 @@ export default function StepsExercise2({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (isHistoryMode) return; // Don't allow file changes in history mode
-    
+
     const file = event.target.files?.[0];
     if (file) {
       // Validate file size (10MB)
@@ -165,7 +173,7 @@ export default function StepsExercise2({
 
   const handleRemoveFile = () => {
     if (isHistoryMode) return; // Don't allow file removal in history mode
-    
+
     setFileData(null);
     setUploadedFile(null);
     if (fileInputRef.current) {
@@ -175,7 +183,7 @@ export default function StepsExercise2({
 
   const handleSubmit = () => {
     if (isHistoryMode) return; // Don't allow submission in history mode
-    
+
     if (dataLesson?.practiceType === "upload_file") {
       // Submit file practice
       if (!fileData) {
@@ -257,7 +265,8 @@ export default function StepsExercise2({
   const scoreColor = currentSubmission?.isPassed ? "green" : "red";
   const scoreBg = scoreColor === "green" ? "bg-green-50" : "bg-red-50";
   const scoreText = scoreColor === "green" ? "text-green-600" : "text-red-600";
-  const scoreBorder = scoreColor === "green" ? "border-green-200" : "border-red-200";
+  const scoreBorder =
+    scoreColor === "green" ? "border-green-200" : "border-red-200";
 
   return (
     <div className="flex flex-col items-center py-10 overflow-hidden">
@@ -272,7 +281,9 @@ export default function StepsExercise2({
 
         {/* Results - Show when in history mode */}
         {isHistoryMode && currentSubmission && (
-          <div className={`flex items-center justify-between px-6 py-4 mt-6 mb-4 rounded-xl border ${scoreBorder} ${scoreBg} shadow-sm`}>
+          <div
+            className={`flex items-center justify-between px-6 py-4 mt-6 mb-4 rounded-xl border ${scoreBorder} ${scoreBg} shadow-sm`}
+          >
             <div>
               <div className={`font-semibold text-lg`}>
                 Điểm lịch sử:{" "}
@@ -280,11 +291,18 @@ export default function StepsExercise2({
                   {currentSubmission.score ?? "--"}/100
                 </span>
                 <span className={`text-sm ml-2 ${scoreText}`}>
-                  ({currentSubmission.score ? `${currentSubmission.score}%` : "Chưa chấm"})
+                  (
+                  {currentSubmission.score
+                    ? `${currentSubmission.score}%`
+                    : "Chưa chấm"}
+                  )
                 </span>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                Thời gian nộp bài: {new Date(currentSubmission.submittedAt).toLocaleString('vi-VN')}
+                Thời gian nộp bài:{" "}
+                {new Date(currentSubmission.submittedAt).toLocaleString(
+                  "vi-VN",
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -341,11 +359,15 @@ export default function StepsExercise2({
               <>
                 <div
                   className={`bg-[#919EAB14] border border-dashed border-[#919EAB52] p-10 rounded-xl mt-3 flex flex-col items-center transition-colors ${
-                    isHistoryMode 
-                      ? "cursor-default" 
+                    isHistoryMode
+                      ? "cursor-default"
                       : "cursor-pointer hover:border-[#919EAB]"
                   }`}
-                  onClick={!isHistoryMode ? () => fileInputRef.current?.click() : undefined}
+                  onClick={
+                    !isHistoryMode
+                      ? () => fileInputRef.current?.click()
+                      : undefined
+                  }
                 >
                   {!uploadedFile ? (
                     <>
@@ -369,7 +391,10 @@ export default function StepsExercise2({
                       {isHistoryMode && currentSubmission && (
                         <>
                           <div className="text-xs text-gray-500 mb-2">
-                            Nộp lúc: {new Date(currentSubmission.submittedAt).toLocaleString('vi-VN')}
+                            Nộp lúc:{" "}
+                            {new Date(
+                              currentSubmission.submittedAt,
+                            ).toLocaleString("vi-VN")}
                           </div>
                           <a
                             href={fileData?.fileUrl}
@@ -421,16 +446,25 @@ export default function StepsExercise2({
             ) : (
               <div className="mt-6">
                 <CKEditorWrapper
-                  placeholder={isHistoryMode ? "Nội dung đã nộp..." : "Viết gì đó..."}
+                  placeholder={
+                    isHistoryMode ? "Nội dung đã nộp..." : "Viết gì đó..."
+                  }
                   value={writingContent}
-                  onChange={!isHistoryMode ? (data: string) => {
-                    setWritingContent(data);
-                  } : undefined}
+                  onChange={(data: string) => {
+                    if (isHistoryMode) {
+                      return;
+                    } else {
+                      setWritingContent(data);
+                    }
+                  }}
                   disabled={isHistoryMode}
                 />
                 {isHistoryMode && currentSubmission && (
                   <div className="text-xs text-gray-500 mt-2">
-                    Nộp lúc: {new Date(currentSubmission.submittedAt).toLocaleString('vi-VN')}
+                    Nộp lúc:{" "}
+                    {new Date(currentSubmission.submittedAt).toLocaleString(
+                      "vi-VN",
+                    )}
                   </div>
                 )}
               </div>

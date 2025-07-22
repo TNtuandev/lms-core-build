@@ -80,13 +80,13 @@ function MyCoursePage() {
                       badge={course.label}
                       studentCount={course.enrollmentCnt}
                       currentPrice={
-                        course.pricing.discounted
-                          ? course.pricing.discounted.toLocaleString()
-                          : course.pricing.regular.toLocaleString()
+                        course.discountedPrice
+                          ? course.discountedPrice.toLocaleString()
+                          : course.regularPrice.toLocaleString()
                       }
                       originalPrice={
-                        course.pricing.discounted
-                          ? course.pricing.regular.toLocaleString()
+                        course?.discountedPrice
+                          ? course.regularPrice.toLocaleString()
                           : ""
                       }
                     />

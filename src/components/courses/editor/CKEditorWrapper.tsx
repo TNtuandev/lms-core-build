@@ -6,6 +6,7 @@ interface CKEditorWrapperProps {
   value: string;
   onChange: (data: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 // Type definitions for CKEditor
@@ -29,11 +30,11 @@ interface CKEditorProps {
 
 type CKEditorComponent = React.ComponentType<CKEditorProps>;
 
- 
 const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   value,
   onChange,
   placeholder = "Nhập nội dung...",
+  disabled,
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +42,8 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   const editorRef = useRef<any>(null);
   const CKEditorRef = useRef<CKEditorComponent | null>(null);
   const ClassicEditorRef = useRef<any>(null);
+
+  console.log("CKEditorWrapper disabled ", disabled);
 
   useEffect(() => {
     setIsClient(true);
@@ -63,7 +66,8 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
         if (!isMounted) return;
 
-        CKEditorRef.current = ckeditorReact.CKEditor as unknown as CKEditorComponent;
+        CKEditorRef.current =
+          ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
 
         console.log("CKEditor loaded successfully");
@@ -79,7 +83,6 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
     loadCKEditor();
 
-     
     return () => {
       isMounted = false;
     };
@@ -96,7 +99,8 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           import("@ckeditor/ckeditor5-build-classic"),
         ]);
 
-        CKEditorRef.current = ckeditorReact.CKEditor as unknown as CKEditorComponent;
+        CKEditorRef.current =
+          ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
         setIsLoaded(true);
         setError(null);
@@ -120,9 +124,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
   if (error) {
     return (
       <div className="border border-red-300 rounded p-4 bg-red-50">
-        <p className="text-red-600 mb-2 text-sm">
-          {error}
-        </p>
+        <p className="text-red-600 mb-2 text-sm">{error}</p>
         <div className="flex gap-2 justify-center mb-4">
           <Button variant="outline" size="sm" onClick={handleRetry}>
             Thử lại
@@ -141,7 +143,9 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           </p>
           <Textarea
             value={value}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              onChange(e.target.value)
+            }
             rows={8}
             className="w-full"
             placeholder={placeholder}
@@ -155,16 +159,14 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
     return (
       <div className="border border-gray-300 rounded p-4 text-center">
         <p className="text-sm text-gray-600">Đang tải trình soạn thảo...</p>
-        <p className="text-xs mt-2 text-gray-500">
-          Vui lòng đợi...
-        </p>
+        <p className="text-xs mt-2 text-gray-500">Vui lòng đợi...</p>
       </div>
     );
   }
 
   const CKEditor = CKEditorRef.current;
   const ClassicEditor = ClassicEditorRef.current;
-  
+
   return (
     <div className="border border-gray-300 rounded">
       <CKEditor

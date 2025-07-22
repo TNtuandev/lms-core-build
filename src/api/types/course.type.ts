@@ -65,6 +65,8 @@ export interface Course {
   };
   enrollmentCnt: number;
   status: EStatusCourse;
+  discountedPrice: number,
+  regularPrice: number
 }
 
 export interface CourseDetail {

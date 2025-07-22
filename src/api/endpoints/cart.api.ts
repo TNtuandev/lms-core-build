@@ -4,7 +4,7 @@ export const cartAPI = {
   // 0. Lấy thông tin cart
   getCart: async (): Promise<any> => {
     const { data: res } = await api.get(`/carts/active`);
-    return res;
+    return res.data;
   },
 
   // 1. Tạo cart mới

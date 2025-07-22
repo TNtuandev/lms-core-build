@@ -16,11 +16,11 @@ import { DropdownMenuItem } from "@/components/ui/menu";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 import SearchPopup from "@/components/layout/navbar/SearchPopup";
 import Link from "next/link";
-import {CartItem, useCartStore} from "@/store/slices/cart.slice";
+import { useCartStore } from "@/store/slices/cart.slice";
 import { MenuMobile } from "@/components/layout/navbar/MenuMobile";
-import {useAuthContext} from "@/context/AuthProvider";
+import { useAuthContext } from "@/context/AuthProvider";
 import { ICategory } from "@/api/types/category";
-import {useCreateCart, useGetCart} from "@/hooks/queries/cart/useCartApi";
+import { useCreateCart, useGetCart } from "@/hooks/queries/cart/useCartApi";
 import { useAuthStore } from "@/store/slices/auth.slice";
 
 function Navbar() {
@@ -32,7 +32,9 @@ function Navbar() {
   const [timeLeft, setTimeLeft] = useState(3300);
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null,
+  );
   const user = useAuthStore.getState().user;
 
   useEffect(() => {
@@ -89,23 +91,26 @@ function Navbar() {
   const createCartItemDto = useCreateCart();
 
   const handleCreateCart = () => {
-    createCartItemDto.mutate({}, {
-      onSuccess: (res) => {
-        if (res) {
-          console.log("Cart created successfully:", res);
-          setCartId(res.id)
-        }
-        // setListCart(res.data);
+    createCartItemDto.mutate(
+      {},
+      {
+        onSuccess: (res) => {
+          if (res) {
+            console.log("Cart created successfully:", res);
+            setCartId(res.id);
+          }
+          // setListCart(res.data);
+        },
+        onError: (error) => {
+          console.error("Error creating cart:", error);
+        },
       },
-      onError: (error) => {
-        console.error("Error creating cart:", error);
-      },
-    })
-  }
+    );
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
-      handleCreateCart()
+      handleCreateCart();
       refetch().then((res) => {
         if (res.data) {
           setListCart(res.data.items);
@@ -222,7 +227,9 @@ function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger className="hidden lg:block focus-visible:outline-none">
                   <div className="flex gap-2 items-center cursor-pointer">
-                    <div>{selectedCategory ? selectedCategory.title : "Khám phá"}</div>
+                    <div>
+                      {selectedCategory ? selectedCategory.title : "Khám phá"}
+                    </div>
                     <ArrowDown2 size={16} color="#27272A" />
                   </div>
                 </DropdownMenuTrigger>
@@ -301,7 +308,10 @@ function Navbar() {
                 {isAuthenticated ? (
                   <Image
                     onClick={navigateToProfile}
-                    src={user?.avatarUrl ?? "https://i.pinimg.com/736x/00/7c/bb/007cbbb03fa1405a7bd2b8a353e16242.jpg"} // Đường dẫn đến avatar
+                    src={
+                      user?.avatarUrl ??
+                      "https://i.pinimg.com/736x/00/7c/bb/007cbbb03fa1405a7bd2b8a353e16242.jpg"
+                    } // Đường dẫn đến avatar
                     alt="Avatar"
                     width={40}
                     height={40}

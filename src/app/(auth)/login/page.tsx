@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { bannerSignIn, logoGoogle, logoMini } from "@/contants/images";
 import { useLogin } from "@/hooks/queries/auth/useLogin";
+import { useGoogleLogin } from "@/hooks/queries/auth/useGoogleLogin";
 import {
   Form,
   FormControl,
@@ -35,6 +36,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
+  const { handleGoogleLogin: googleLogin, isPending: isGooglePending, error: googleError } = useGoogleLogin();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -50,9 +52,12 @@ function LoginPage() {
     login(data);
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Implement Google login
-    console.log("Google login clicked");
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (error) {
+      console.error("Google login failed:", error);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -103,9 +108,9 @@ function LoginPage() {
               className="w-full space-y-4 sm:space-y-5"
             >
               {/* Display API Error */}
-              {error && (
+              {(error || googleError) && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error.message ||
+                  {error?.message || googleError?.message ||
                     "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
                 </div>
               )}
@@ -199,16 +204,25 @@ function LoginPage() {
           <Button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={isPending}
+            disabled={isPending || isGooglePending}
             variant="outline"
             className="font-normal text-primary bg-[#919EAB14] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 flex justify-center items-center gap-2 border-none text-sm sm:text-base transition-colors"
           >
-            <Image
-              src={logoGoogle}
-              alt="Google logo"
-              className="h-5 w-5 sm:h-6 sm:w-6 object-cover"
-            />
-            Đăng nhập với Google
+            {isGooglePending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Đang đăng nhập...
+              </>
+            ) : (
+              <>
+                <Image
+                  src={logoGoogle}
+                  alt="Google logo"
+                  className="h-5 w-5 sm:h-6 sm:w-6 object-cover"
+                />
+                Đăng nhập với Google
+              </>
+            )}
           </Button>
         </div>
       </div>

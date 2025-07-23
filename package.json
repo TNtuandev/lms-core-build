@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.12.1",
+    "google-auth-library": "^10.1.0",
     "he": "^1.2.0",
     "iconsax-react": "^0.0.8",
     "input-otp": "^1.4.2",

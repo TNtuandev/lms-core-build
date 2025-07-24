@@ -1,5 +1,3 @@
-import { Env } from "@/config/environment";
-
 declare global {
   interface Window {
     google: any;
@@ -45,7 +43,7 @@ export const initializeGoogleAuth = async (): Promise<void> => {
   
   return new Promise((resolve) => {
     window.google.accounts.id.initialize({
-      client_id: "hehe-key",
+      client_id: "331793075292-5dtrs02otoc2miakm437mb2r75l1mkbb.apps.googleusercontent.com",
       callback: () => {}, // Will be handled by the login function
     });
     resolve();
@@ -57,7 +55,7 @@ export const signInWithGoogle = (): Promise<GoogleAuthResponse> => {
   return new Promise((resolve, reject) => {
     try {
       window.google.accounts.oauth2.initCodeClient({
-        client_id: "hehe-key",
+        client_id: "331793075292-5dtrs02otoc2miakm437mb2r75l1mkbb.apps.googleusercontent.com",
         scope: 'email profile openid',
         ux_mode: 'popup',
         callback: async (response: any) => {
@@ -70,7 +68,7 @@ export const signInWithGoogle = (): Promise<GoogleAuthResponse> => {
                   'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                  client_id: "hehe-key",
+                  client_id: "331793075292-5dtrs02otoc2miakm437mb2r75l1mkbb.apps.googleusercontent.com",
                   code: response.code,
                   grant_type: 'authorization_code',
                   redirect_uri: window.location.origin,
@@ -108,39 +106,3 @@ export const signInWithGoogle = (): Promise<GoogleAuthResponse> => {
     }
   });
 };
-
-// Alternative simpler implementation using Google Identity Services
-export const signInWithGooglePopup = (): Promise<GoogleAuthResponse> => {
-  return new Promise((resolve, reject) => {
-    window.google.accounts.id.initialize({
-      client_id: "hehe-key",
-      callback: (response: any) => {
-        try {
-          // Decode the JWT token to get user info
-          const payload = JSON.parse(atob(response.credential.split('.')[1]));
-          
-          resolve({
-            access_token: response.credential,
-            id_token: response.credential,
-            user: {
-              id: payload.sub,
-              email: payload.email,
-              name: payload.name,
-              picture: payload.picture,
-              given_name: payload.given_name,
-              family_name: payload.family_name,
-            },
-          });
-        } catch (error) {
-          reject(new Error('Failed to decode Google response'));
-        }
-      },
-    });
-
-    window.google.accounts.id.prompt((notification: any) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        reject(new Error('Google login popup was blocked or dismissed'));
-      }
-    });
-  });
-}; 

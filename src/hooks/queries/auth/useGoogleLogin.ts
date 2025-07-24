@@ -2,10 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useRouter } from "next/navigation";
 import { GoogleAuthCredentials } from "@/api/types/auth.type";
-import { authAPI } from "@/api/endpoints/auth.api";
 import { useMe } from "@/hooks/queries/auth/useMe";
 import { useGetOtp } from "@/hooks/queries/auth/useGetOtp";
-import { initializeGoogleAuth, signInWithGooglePopup } from "@/until/google-auth";
+import { initializeGoogleAuth, signInWithGoogle } from "@/until/google-auth";
 import { useEffect } from "react";
 
 export const useGoogleLogin = () => {
@@ -55,7 +54,9 @@ export const useGoogleLogin = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const googleResponse = await signInWithGooglePopup();
+      const googleResponse = await signInWithGoogle();
+
+      console.log(googleResponse, "---googleResponse");
       
       // Send Google tokens to our backend
       googleLoginMutation.mutate({

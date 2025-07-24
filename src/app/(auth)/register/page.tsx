@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { bannerSignIn, logoGoogle, logoMini } from "@/contants/images";
 import { useRegister } from "@/hooks/queries/auth/useRegister";
-import { useGoogleLogin } from "@/hooks/queries/auth/useGoogleLogin";
 import {
   Form,
   FormControl,
@@ -38,7 +37,6 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 function RegisterPage() {
   const { mutate: register, isPending, error } = useRegister();
-  const { handleGoogleLogin: googleLogin, isPending: isGooglePending, error: googleError } = useGoogleLogin();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const setUserDraft = useAuthStore((state) => state.setUserDraft);
@@ -67,12 +65,9 @@ function RegisterPage() {
     register(dataToRegister);
   };
 
-  const handleGoogleRegister = async () => {
-    try {
-      await googleLogin();
-    } catch (error) {
-      console.error("Google registration failed:", error);
-    }
+  const handleGoogleRegister = () => {
+    // TODO: Implement Google registration
+    console.log("Google register clicked");
   };
 
   const togglePasswordVisibility = () => {
@@ -124,9 +119,9 @@ function RegisterPage() {
               className="w-full space-y-4"
             >
               {/* Display API Error */}
-              {(error || googleError) && (
+              {error && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error?.message || googleError?.message ||
+                  {error.message ||
                     "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại."}
                 </div>
               )}
@@ -244,25 +239,16 @@ function RegisterPage() {
           <Button
             type="button"
             onClick={handleGoogleRegister}
-            disabled={isPending || isGooglePending}
+            disabled={isPending}
             variant="outline"
             className="font-normal text-primary bg-[#919EAB14] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 flex justify-center items-center gap-2 border-none text-sm sm:text-base transition-colors"
           >
-            {isGooglePending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Đang đăng ký...
-              </>
-            ) : (
-              <>
-                <Image
-                  src={logoGoogle}
-                  alt="Google logo"
-                  className="h-5 w-5 sm:h-6 sm:w-6 object-cover"
-                />
-                Đăng ký với Google
-              </>
-            )}
+            <Image
+              src={logoGoogle}
+              alt="Google logo"
+              className="h-5 w-5 sm:h-6 sm:w-6 object-cover"
+            />
+            Đăng ký với Google
           </Button>
         </div>
       </div>

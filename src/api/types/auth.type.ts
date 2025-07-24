@@ -3,11 +3,6 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface GoogleAuthCredentials {
-  accessToken: string;
-  idToken: string;
-}
-
 export interface RegisterCredentials extends LoginCredentials {
   fullName: string;
   passwordConfirmation: string;

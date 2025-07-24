@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { bannerSignIn, logoGoogle, logoMini } from "@/contants/images";
-import { useLogin } from "@/hooks/queries/auth/useLogin";
+import { useLogin, useLoginGoogleMain } from "@/hooks/queries/auth/useLogin";
 import {
   Form,
   FormControl,
@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useGoogleLogin } from "@react-oauth/google";
 
 // Schema validation for Login
 const loginSchema = z.object({
@@ -35,6 +36,12 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 function LoginPage() {
   const { mutate: login, isPending, error } = useLogin();
+  const {
+    mutate: loginGoogle,
+    isPending: isPendingGoogle,
+    error: errorGoogle,
+  } = useLoginGoogleMain();
+
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -50,9 +57,28 @@ function LoginPage() {
     login(data);
   };
 
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      try {
+        // Google login success - call our API with access token
+        loginGoogle({
+          accessToken: response.access_token,
+          idToken: '',
+        });
+      } catch (error) {
+        console.error('Error processing Google login:', error);
+      }
+    },
+    onError: (error) => {
+      console.error('Google login error:', error);
+    },
+    scope: 'openid profile email',
+    flow: 'implicit',
+  });
+
   const handleGoogleLogin = () => {
-    // TODO: Implement Google login
-    console.log("Google login clicked");
+    googleLogin();
   };
 
   const togglePasswordVisibility = () => {
@@ -79,7 +105,7 @@ function LoginPage() {
             alt="logmini"
             className="mx-auto mb-8 sm:mb-10 md:mb-12 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
           />
-          
+
           {/* Welcome Text */}
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-[#212B36] font-semibold text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mb-3 sm:mb-4">
@@ -103,9 +129,10 @@ function LoginPage() {
               className="w-full space-y-4 sm:space-y-5"
             >
               {/* Display API Error */}
-              {error && (
+              {(error || errorGoogle) && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error.message ||
+                  {error?.message ||
+                    errorGoogle?.message ||
                     "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại."}
                 </div>
               )}
@@ -121,7 +148,7 @@ function LoginPage() {
                         type="email"
                         placeholder="Email"
                         className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                        disabled={isPending}
+                        disabled={isPending || isPendingGoogle}
                         {...field}
                       />
                     </FormControl>
@@ -142,14 +169,14 @@ function LoginPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="Password"
                           className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 pr-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                          disabled={isPending}
+                          disabled={isPending || isPendingGoogle}
                           {...field}
                         />
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                          disabled={isPending}
+                          disabled={isPending || isPendingGoogle}
                         >
                           {showPassword ? (
                             <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -166,8 +193,8 @@ function LoginPage() {
 
               {/* Forgot Password Link */}
               <div className="flex justify-end">
-                <div 
-                  onClick={() => router.push("/forgot-password")} 
+                <div
+                  onClick={() => router.push("/forgot-password")}
                   className="underline text-xs sm:text-sm cursor-pointer hover:text-blue-600 transition-colors"
                 >
                   Quên mật khẩu?
@@ -177,10 +204,10 @@ function LoginPage() {
               {/* Login Button */}
               <Button
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || isPendingGoogle}
                 className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors"
               >
-                {isPending ? (
+                {isPending || isPendingGoogle ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Đang đăng nhập...
@@ -193,13 +220,15 @@ function LoginPage() {
           </Form>
 
           {/* Divider */}
-          <div className="text-center text-[#637381] text-sm my-5 sm:my-6">Hoặc</div>
+          <div className="text-center text-[#637381] text-sm my-5 sm:my-6">
+            Hoặc
+          </div>
 
           {/* Google Login Button */}
           <Button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={isPending}
+            disabled={isPending || isPendingGoogle}
             variant="outline"
             className="font-normal text-primary bg-[#919EAB14] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 flex justify-center items-center gap-2 border-none text-sm sm:text-base transition-colors"
           >

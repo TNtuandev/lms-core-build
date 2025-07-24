@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useLoginGoogleMain } from "@/hooks/queries/auth/useLogin";
 
 // Schema validation for Register
 const registerSchema = z.object({
@@ -40,6 +42,11 @@ function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const setUserDraft = useAuthStore((state) => state.setUserDraft);
+  const {
+    mutate: loginGoogle,
+    isPending: isPendingGoogle,
+    error: errorGoogle,
+  } = useLoginGoogleMain();
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -65,9 +72,27 @@ function RegisterPage() {
     register(dataToRegister);
   };
 
-  const handleGoogleRegister = () => {
-    // TODO: Implement Google registration
-    console.log("Google register clicked");
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      try {
+        // Google login success - call our API with access token
+        loginGoogle({
+          accessToken: response.access_token,
+          idToken: '',
+        });
+      } catch (error) {
+        console.error('Error processing Google login:', error);
+      }
+    },
+    onError: (error) => {
+      console.error('Google login error:', error);
+    },
+    scope: 'openid profile email',
+    flow: 'implicit',
+  });
+
+  const handleGoogleLogin = () => {
+    googleLogin();
   };
 
   const togglePasswordVisibility = () => {
@@ -94,7 +119,7 @@ function RegisterPage() {
             alt="logmini"
             className="mx-auto mb-6 sm:mb-8 md:mb-10 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
           />
-          
+
           {/* Welcome Text */}
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-[#212B36] font-semibold text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mb-3 sm:mb-4">
@@ -119,10 +144,11 @@ function RegisterPage() {
               className="w-full space-y-4"
             >
               {/* Display API Error */}
-              {error && (
+              {(error || errorGoogle) && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error.message ||
-                    "Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại."}
+                  {error?.message ||
+                    errorGoogle?.message ||
+                    "Đã xảy ra lỗi khi đăng kí. Vui lòng thử lại."}
                 </div>
               )}
 
@@ -137,7 +163,7 @@ function RegisterPage() {
                         type="text"
                         placeholder="Họ và tên"
                         className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                        disabled={isPending}
+                        disabled={isPending || isPendingGoogle}
                         {...field}
                       />
                     </FormControl>
@@ -157,7 +183,7 @@ function RegisterPage() {
                         type="email"
                         placeholder="Email"
                         className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                        disabled={isPending}
+                        disabled={isPending || isPendingGoogle}
                         {...field}
                       />
                     </FormControl>
@@ -178,14 +204,14 @@ function RegisterPage() {
                           type={showPassword ? "text" : "password"}
                           placeholder="Password"
                           className="w-full border border-gray-200 rounded-[10px] px-4 py-2 h-11 sm:h-12 pr-12 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                          disabled={isPending}
+                          disabled={isPending || isPendingGoogle}
                           {...field}
                         />
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                          disabled={isPending}
+                          disabled={isPending || isPendingGoogle}
                         >
                           {showPassword ? (
                             <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -217,7 +243,7 @@ function RegisterPage() {
               {/* Register Button */}
               <Button
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || isPendingGoogle}
                 className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors mt-6"
               >
                 {isPending ? (
@@ -238,8 +264,8 @@ function RegisterPage() {
           {/* Google Register Button */}
           <Button
             type="button"
-            onClick={handleGoogleRegister}
-            disabled={isPending}
+            onClick={handleGoogleLogin}
+            disabled={isPending || isPendingGoogle}
             variant="outline"
             className="font-normal text-primary bg-[#919EAB14] disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 flex justify-center items-center gap-2 border-none text-sm sm:text-base transition-colors"
           >

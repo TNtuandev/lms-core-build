@@ -1,6 +1,6 @@
 import {
   AuthResponse, ForgotPasswordCredentials,
-  LoginCredentials,
+  LoginCredentials, LoginGoogleCredentials,
   RegisterCredentials,
   User, VerifyEmailCredentials
 } from "@/api/types/auth.type";
@@ -9,6 +9,11 @@ import api from "@/api/api";
 export const authAPI = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const { data } = await api.post("/auth/login", credentials);
+    return data;
+  },
+
+  loginGoogle: async (credentials: LoginGoogleCredentials): Promise<AuthResponse> => {
+    const { data } = await api.post("/auth/login-google", credentials);
     return data;
   },
 

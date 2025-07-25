@@ -51,12 +51,12 @@ export default function CheckoutStepOneDesktop({
     orderCart.mutate(
       {
         cartId,
-        paymentMethod: "manual",
+        paymentMethod: "momo",
       },
       {
         onSuccess: (data) => {
           console.log("Order created successfully:", data);
-          setOrderId("1");
+          setOrderId(data.id);
           setQrCodeUrl(
             "momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0",
           );

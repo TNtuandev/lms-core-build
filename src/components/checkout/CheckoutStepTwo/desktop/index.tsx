@@ -47,7 +47,7 @@ export default function CheckoutStepTwoDesktop({
                 key={index}
                 className="flex justify-between items-center mb-2"
               >
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-4 items-center flex-1">
                   <img
                     className="h-12 w-16 rounded-sm"
                     src={transaction.product.thumbnail}
@@ -57,8 +57,9 @@ export default function CheckoutStepTwoDesktop({
                     {transaction?.product.title}
                   </div>
                 </div>
-                <div className="py-3 px-4 font-semibold text-primary-main text-sm">
-                  {formatCurrency(transaction?.product.course.discountedPrice)}đ
+                <div className="py-3 px-4">{transaction?.quantity}</div>
+                <div className="py-3 px-4 font-semibold text-primary-main text-sm w-1/4 text-end">
+                  {formatCurrency(transaction?.product.course.discountedPrice * transaction.quantity)}đ
                 </div>
               </div>
             ))}

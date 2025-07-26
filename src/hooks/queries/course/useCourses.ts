@@ -13,6 +13,7 @@ export const courseKeys = {
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
   faqsUser: (courseId: string) => [...courseKeys.all, "faqsUser", courseId] as const,
   modules: (courseId: string) => [...courseKeys.all, "modules", courseId] as const,
+  notes: (courseId: string, lessonId: string) => [...courseKeys.all, "notes", courseId, lessonId] as const,
   modulesForUser: (courseId: string) => [...courseKeys.all, "modulesForUser", courseId] as const,
   modulesDetail: (courseId: string) => [...courseKeys.all, "modulesDetail", courseId] as const,
   review: (courseId: string) => [...courseKeys.all, "review", courseId] as const,
@@ -95,6 +96,15 @@ export const useModule = (courseId: string) => {
     queryKey: courseKeys.modules(courseId),
     queryFn: () => courseAPI.getModule(courseId),
     enabled: !!courseId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useNote = (courseId: string, lessonId: string) => {
+  return useQuery({
+    queryKey: courseKeys.notes(courseId, lessonId),
+    queryFn: () => courseAPI.getNote(courseId, lessonId),
+    enabled: !!courseId && !!lessonId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

@@ -1,6 +1,5 @@
 import IconWarning from "../../../public/icons/IconWarning";
 import IconStar from "../../../public/icons/IconStar";
-// import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import { Plus } from "lucide-react";
 import IconEditLesson from "../../../public/icons/lessson/IconEditLesson";
 import IconTrashLesson from "../../../public/icons/lessson/IconTrashLesson";
@@ -8,18 +7,25 @@ import IconDownload from "../../../public/icons/lessson/IconDownload";
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatToHourUnit, formatToVietnameseMonthYear } from "@/until";
+import { useNote } from "@/hooks/queries/course/useCourses";
 
 export interface ContentTabProps {
   courseTitle: string;
   currentLesson: any;
+  lessonId?: string;
+  courseId?: string
 }
 
 export default function ContentTab(props: ContentTabProps) {
-  const { courseTitle, currentLesson } = props;
+  const { courseTitle, currentLesson, lessonId, courseId } = props;
   const [newNote, setNewNote] = useState("");
   // const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
+
+  const { data: noteData } = useNote(courseId as string, lessonId as string);
+
+  console.log(noteData, "---noteData");
 
   // State cho notes
   const [notes, setNotes] = useState([

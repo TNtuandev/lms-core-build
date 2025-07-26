@@ -359,6 +359,8 @@ export function LessonClient() {
               <ContentTab
                 courseTitle={courseDetail?.title}
                 currentLesson={courseDetail}
+                lessonId={lessonId as string}
+                courseId={courseDetail?.id}
               />
             )}
           </>

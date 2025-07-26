@@ -6,7 +6,9 @@ import {
   FAQ,
   ModuleResponse,
   ReviewFAQsResponse,
-  RelatedCourse, ICreateReviewRequest
+  RelatedCourse,
+  ICreateReviewRequest,
+  ILessonNote,
 } from "@/api/types/course.type";
 import api from "@/api/api";
 
@@ -86,6 +88,11 @@ export const courseAPI = {
 
   getModule: async (courseId: string): Promise<ModuleResponse> => {
     const { data } = await api.get(`/courses/${courseId}/modules`);
+    return data;
+  },
+
+  getNote: async (courseId: string, lessonId: string): Promise<ILessonNote[]> => {
+    const { data } = await api.get(`/courses/${courseId}/lessons/videos/${lessonId}/notes`);
     return data;
   },
 

@@ -255,6 +255,16 @@ export interface ModuleResponse {
   data: Module[];
 }
 
+export interface ILessonNote {
+  id: string;
+  lessonId: string;
+  userId: string;
+  timestampSec: number;
+  content: string;
+  createdAt: string; // or Date if you parse it later
+  updatedAt: string; // or Date if you parse it later
+}
+
 export interface ICreateCourseRequest {
   title: string
   slug?: string

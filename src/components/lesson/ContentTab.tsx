@@ -6,7 +6,10 @@ import IconTrashLesson from "../../../public/icons/lessson/IconTrashLesson";
 import IconDownload from "../../../public/icons/lessson/IconDownload";
 import React, { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatToHourUnit, formatToVietnameseMonthYear } from "@/until";
+import {
+  formatToHourUnit,
+  formatToVietnameseMonthYear,
+} from "@/until";
 import {
   useNote,
   useCreateNote,
@@ -43,6 +46,171 @@ export default function ContentTab(props: ContentTabProps) {
     courseId as string,
     lessonId as string,
   );
+
+  async function autoDownload(url: string, filename?: string) {
+    const loadingToastId = toast.loading("Đang tải file...");
+    
+    try {
+      const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+      
+      // Method 1: Try using our proxy API first (Best for CORS + Auth)
+      try {
+        const proxyResponse = await fetch('/api/download-proxy', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          body: JSON.stringify({ url, filename })
+        });
+
+        if (proxyResponse.ok) {
+          const blob = await proxyResponse.blob();
+          
+          // Force download using blob URL
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.style.display = "none";
+          
+          // Get filename from response headers or use provided
+          let downloadFilename = filename;
+          const contentDisposition = proxyResponse.headers.get('content-disposition');
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+            if (filenameMatch && filenameMatch[1]) {
+              downloadFilename = filenameMatch[1];
+            }
+          }
+          
+          if (!downloadFilename) {
+            downloadFilename = url.split("/").pop()?.split("?")[0] || "download";
+          }
+          
+          a.download = decodeURIComponent(downloadFilename);
+          document.body.appendChild(a);
+          a.click();
+          
+          // Cleanup
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+          }, 100);
+          
+          toast.dismiss(loadingToastId);
+          toast.success(`Đã tải xuống: ${downloadFilename}`);
+          return;
+        }
+      } catch (proxyError) {
+        console.log("Proxy download failed:", proxyError);
+      }
+
+      // Method 2: Direct fetch with CORS (if allowed)
+      try {
+        const directResponse = await fetch(url, {
+          method: 'GET',
+          headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          mode: 'cors'
+        });
+        
+        if (directResponse.ok) {
+          const blob = await directResponse.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.style.display = "none";
+          a.download = filename || url.split("/").pop()?.split("?")[0] || "download";
+          
+          document.body.appendChild(a);
+          a.click();
+          
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+          }, 100);
+          
+          toast.dismiss(loadingToastId);
+          toast.success(`Đã tải xuống: ${a.download}`);
+          return;
+        }
+      } catch (directError) {
+        console.log("Direct download failed:", directError);
+      }
+
+      // Method 3: Force download using iframe trick
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 5000);
+        
+        toast.dismiss(loadingToastId);
+        toast.success("Đã khởi tạo tải file!");
+        return;
+      } catch (iframeError) {
+        console.log("Iframe download failed:", iframeError);
+      }
+
+      // Method 4: Final fallback with forced download attribute
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename || url.split("/").pop()?.split("?")[0] || "download";
+      link.style.display = "none";
+      
+      // Force download instead of opening
+      link.setAttribute('target', '_self');
+      link.setAttribute('rel', 'noopener');
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.dismiss(loadingToastId);
+      toast.success("Đã khởi tạo tải file!");
+      
+    } catch (error) {
+      console.error("Lỗi khi tải file:", error);
+      toast.dismiss(loadingToastId);
+      toast.error("Không thể tải file. Vui lòng thử lại!");
+    }
+  }
+
+
+  // Helper to get file extension from content type or URL
+  const getFileExtension = (url: string, contentType?: string): string => {
+    // Try to get extension from URL first
+    const urlExt = url.split('.').pop()?.toLowerCase();
+    if (urlExt && ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', 'mp4', 'mp3', 'jpg', 'jpeg', 'png', 'gif'].includes(urlExt)) {
+      return urlExt;
+    }
+    
+    // Fallback to content type mapping
+    const typeMap: Record<string, string> = {
+      'application/pdf': 'pdf',
+      'application/msword': 'doc',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+      'application/vnd.ms-excel': 'xls',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+      'application/vnd.ms-powerpoint': 'ppt',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+      'application/zip': 'zip',
+      'application/x-rar-compressed': 'rar',
+      'video/mp4': 'mp4',
+      'audio/mpeg': 'mp3',
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/gif': 'gif',
+    };
+    
+    return contentType ? typeMap[contentType] || 'file' : 'file';
+  };
 
   console.log(dataLesson, "---dataLesson");
 
@@ -324,10 +492,43 @@ export default function ContentTab(props: ContentTabProps) {
       case "download":
         return (
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <IconDownload />
-              <div className="text-[#1D7BF5]">File video.mp4</div>
-            </div>
+            {dataLesson?.videoUrl && (
+              <div
+                onClick={() => {
+                  const cleanTitle = dataLesson?.title?.replace(/[^\w\s-]/g, '') || "Video_Bai_Giang";
+                  const fileName = `${cleanTitle}.mp4`;
+                  autoDownload(dataLesson.videoUrl, fileName);
+                }}
+                role="presentation"
+                className="flex cursor-pointer items-center gap-2 mb-2 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              >
+                <IconDownload />
+                <div className="text-[#1D7BF5] hover:text-[#1557C3]">
+                  📹 {dataLesson?.title || "Video bài giảng"} <span className="text-gray-500 text-sm">(.mp4)</span>
+                </div>
+              </div>
+            )}
+            {dataLesson?.attachmentUrl && (
+              <div
+                onClick={() => {
+                  // Use helper to determine file extension
+                  const fileExtension = getFileExtension(dataLesson.attachmentUrl);
+                  const cleanTitle = dataLesson?.title?.replace(/[^\w\s-]/g, '') || "Tai_lieu_bai_hoc";
+                  const fileName = `${cleanTitle}.${fileExtension}`;
+                  autoDownload(dataLesson.attachmentUrl, fileName);
+                }}
+                role="presentation"
+                className="flex cursor-pointer items-center gap-2 mb-2 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              >
+                <IconDownload />
+                <div className="text-[#1D7BF5] hover:text-[#1557C3]">
+                  📄 {dataLesson?.title || "Tài liệu bài học"}
+                  <span className="text-gray-500 text-sm ml-1">
+                    (.{getFileExtension(dataLesson.attachmentUrl)})
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         );
       default:

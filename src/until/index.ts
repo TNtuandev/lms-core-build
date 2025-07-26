@@ -26,3 +26,28 @@ export function formatDateToCustomString(isoString: string): string {
 
   return `${day}/${month}/${year} ${hourStr}:${minutes} ${ampm}`;
 }
+
+export function downloadFileFromUrl(url: string, filename?: string) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.style.display = "none";
+
+  // Nếu không có filename, tự lấy tên từ URL
+  const urlParts = url.split("/");
+  const defaultName = urlParts[urlParts.length - 1].split("?")[0];
+  link.download = filename || decodeURIComponent(defaultName);
+
+  // Force download instead of navigation
+  link.setAttribute('target', '_self');
+  link.setAttribute('rel', 'noopener');
+
+  document.body.appendChild(link);
+  link.click();
+  
+  // Cleanup after a short delay
+  setTimeout(() => {
+    if (document.body.contains(link)) {
+      document.body.removeChild(link);
+    }
+  }, 100);
+}

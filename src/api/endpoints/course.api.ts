@@ -96,6 +96,21 @@ export const courseAPI = {
     return data;
   },
 
+  createNote: async (courseId: string, lessonId: string, noteData: { timestampSec: number; content: string }): Promise<any> => {
+    const { data } = await api.post(`/courses/${courseId}/lessons/videos/${lessonId}/notes`, noteData);
+    return data;
+  },
+
+  updateNote: async (courseId: string, lessonId: string, noteId: string, noteData: { content: string }): Promise<any> => {
+    const { data } = await api.patch(`/courses/${courseId}/lessons/videos/${lessonId}/notes/${noteId}`, noteData);
+    return data;
+  },
+
+  deleteNote: async (courseId: string, lessonId: string, noteId: string): Promise<any> => {
+    const { data } = await api.delete(`/courses/${courseId}/lessons/videos/${lessonId}/notes/${noteId}`);
+    return data;
+  },
+
   getModuleForUser: async (courseId: string): Promise<ModuleResponse> => {
     const { data } = await api.get(`/courses/${courseId}/modules/user`);
     return data;

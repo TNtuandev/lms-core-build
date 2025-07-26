@@ -4,75 +4,123 @@ import { Plus } from "lucide-react";
 import IconEditLesson from "../../../public/icons/lessson/IconEditLesson";
 import IconTrashLesson from "../../../public/icons/lessson/IconTrashLesson";
 import IconDownload from "../../../public/icons/lessson/IconDownload";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatToHourUnit, formatToVietnameseMonthYear } from "@/until";
-import { useNote } from "@/hooks/queries/course/useCourses";
+import {
+  useNote,
+  useCreateNote,
+  useUpdateNote,
+  useDeleteNote,
+} from "@/hooks/queries/course/useCourses";
+import toast from "react-hot-toast";
 
 export interface ContentTabProps {
   courseTitle: string;
   currentLesson: any;
   lessonId?: string;
-  courseId?: string
+  courseId?: string;
+  dataLesson?: any;
 }
 
 export default function ContentTab(props: ContentTabProps) {
-  const { courseTitle, currentLesson, lessonId, courseId } = props;
+  const { courseTitle, currentLesson, lessonId, courseId, dataLesson } = props;
   const [newNote, setNewNote] = useState("");
-  // const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data: noteData } = useNote(courseId as string, lessonId as string);
+  const createNoteMutation = useCreateNote(
+    courseId as string,
+    lessonId as string,
+  );
+  const updateNoteMutation = useUpdateNote(
+    courseId as string,
+    lessonId as string,
+  );
+  const deleteNoteMutation = useDeleteNote(
+    courseId as string,
+    lessonId as string,
+  );
 
-  console.log(noteData, "---noteData");
+  console.log(dataLesson, "---dataLesson");
 
-  // State cho notes
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      section: "2. Nghiên cứu người dùng",
-      sub: "2.2 Xây dựng chân dung người dùng (Persona)",
-      content: "Đoạn này cần lưu lại",
-    },
-    {
-      id: 2,
-      section: "2. Nghiên cứu người dùng",
-      sub: "2.1 Phương pháp nghiên cứu người dùng",
-      content: "Đoạn này cần lưu lại",
-    },
-  ]);
+  // Map noteData to display format
+  const notes = useMemo(() => {
+    if (!noteData || !Array.isArray(noteData)) return [];
+
+    return noteData.map((note) => ({
+      id: note.id,
+      section: currentLesson?.title || "Không xác định",
+      sub: currentLesson?.title || "Không xác định",
+      content: note.content,
+      timestamp: note.timestampSec,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+    }));
+  }, [noteData, currentLesson?.title]);
 
   // Thêm ghi chú mới
-  const handleAddNote = () => {
-    if (!newNote.trim()) return;
-    setNotes([
-      {
-        id: Date.now(),
-        section: currentLesson.title,
-        sub: currentLesson.title,
-        content: newNote,
-      },
-      ...notes,
-    ]);
-    setNewNote("");
+  const handleAddNote = async () => {
+    if (!newNote.trim()) {
+      toast.error("Vui lòng nhập nội dung ghi chú!");
+      return;
+    }
+
+    try {
+      await createNoteMutation.mutateAsync({
+        timestampSec: 1243,
+        content: newNote.trim(),
+      });
+      setNewNote("");
+      toast.success("Tạo ghi chú thành công!");
+    } catch (error) {
+      console.error("Error creating note:", error);
+      toast.error("Lỗi khi tạo ghi chú!");
+    }
   };
 
-  const handleDeleteNote = (id: number) => {
-    setNotes(notes.filter((n) => n.id !== id));
+  const handleDeleteNote = async (id: string) => {
+    if (!confirm("Bạn có chắc chắn muốn xóa ghi chú này không?")) {
+      return;
+    }
+
+    setDeletingId(id);
+    try {
+      await deleteNoteMutation.mutateAsync(id);
+      toast.success("Xóa ghi chú thành công!");
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      toast.error("Lỗi khi xóa ghi chú!");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  const handleEditNote = (id: number, content: string) => {
+  const handleEditNote = (id: string, content: string) => {
     setEditingId(id);
     setEditingContent(content);
   };
 
-  const handleSaveEdit = (id: number) => {
-    setNotes(
-      notes.map((n) => (n.id === id ? { ...n, content: editingContent } : n)),
-    );
-    setEditingId(null);
-    setEditingContent("");
+  const handleSaveEdit = async (id: string) => {
+    if (!editingContent.trim()) {
+      toast.error("Vui lòng nhập nội dung ghi chú!");
+      return;
+    }
+
+    try {
+      await updateNoteMutation.mutateAsync({
+        noteId: id,
+        content: editingContent.trim(),
+      });
+      setEditingId(null);
+      setEditingContent("");
+      toast.success("Cập nhật ghi chú thành công!");
+    } catch (error) {
+      console.error("Error updating note:", error);
+      toast.error("Lỗi khi cập nhật ghi chú!");
+    }
   };
 
   const handleCancelEdit = () => {
@@ -91,7 +139,10 @@ export default function ContentTab(props: ContentTabProps) {
             <div className="flex gap-2 items-center mb-3">
               <IconWarning />
               <div className="text-secondary">
-                Cập nhật lần cuối: {currentLesson?.updatedAt ? formatToVietnameseMonthYear(currentLesson?.updatedAt) : "Chưa cập nhật"}
+                Cập nhật lần cuối:{" "}
+                {currentLesson?.updatedAt
+                  ? formatToVietnameseMonthYear(currentLesson?.updatedAt)
+                  : "Chưa cập nhật"}
               </div>
             </div>
             <div className="flex gap-8 pb-6 border-b border-dashed border-b-gray-200 mb-4">
@@ -100,18 +151,26 @@ export default function ContentTab(props: ContentTabProps) {
                   {currentLesson?.ratingAvg}
                   <IconStar />
                 </div>
-                <div className="text-secondary text-xs">{currentLesson?.ratingCnt} Đánh giá</div>
+                <div className="text-secondary text-xs">
+                  {currentLesson?.ratingCnt} Đánh giá
+                </div>
               </div>
               <div>
                 <div className="text-primary font-semibold">800,664</div>
                 <div className="text-secondary text-xs">Học sinh</div>
               </div>
               <div>
-                <div className="text-primary font-semibold">{currentLesson?.duration ? formatToHourUnit(currentLesson.duration) : "0"}</div>
+                <div className="text-primary font-semibold">
+                  {currentLesson?.duration
+                    ? formatToHourUnit(currentLesson.duration)
+                    : "0"}
+                </div>
                 <div className="text-secondary text-xs">Tổng</div>
               </div>
               <div>
-                <div className="text-primary font-semibold">{currentLesson?.totalLessons}</div>
+                <div className="text-primary font-semibold">
+                  {currentLesson?.totalLessons}
+                </div>
                 <div className="text-secondary text-xs">Bài giảng</div>
               </div>
               <div>
@@ -120,44 +179,39 @@ export default function ContentTab(props: ContentTabProps) {
               </div>
             </div>
             <div className="text-primary font-semibold mb-4">Mô tả</div>
-            <p className="mb-4">
-              {currentLesson?.description}
-            </p>
-
-            {/*<button*/}
-            {/*  onClick={() => setShowMoreCardProduct(!showMoreCardProduct)}*/}
-            {/*  className="text-[#2F57EF] flex items-center cursor-pointer gap-2 mt-4 font-medium"*/}
-            {/*>*/}
-            {/*  {!showMoreCardProduct ? "Hiển thị thêm" : "Ẩn bớt"}*/}
-            {/*  {!showMoreCardProduct ? (*/}
-            {/*    <ArrowDown2 size="20" color="#2F57EF" />*/}
-            {/*  ) : (*/}
-            {/*    <ArrowUp2 size="20" color="#2F57EF" />*/}
-            {/*  )}*/}
-            {/*</button>*/}
+            <p className="mb-4">{currentLesson?.description}</p>
           </>
         );
       case "notes":
         return (
           <div className="w-full">
             {/* Input tạo ghi chú mới */}
-            <div className="flex items-center gap-2 relative mb-6">
-              <input
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                placeholder="Tạo mới ghi chú"
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddNote();
-                }}
-              />
-              <button
-                className="bg-[#637381] cursor-pointer absolute right-2 text-white rounded-lg p-1 flex items-center justify-center"
-                onClick={handleAddNote}
-                aria-label="Thêm ghi chú"
-              >
-                <Plus size={20} color="white" />
-              </button>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 relative">
+                <input
+                  className="flex-1 px-4 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  placeholder="Tạo mới ghi chú"
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !createNoteMutation.isPending)
+                      handleAddNote();
+                  }}
+                  disabled={createNoteMutation.isPending}
+                />
+                <button
+                  className="bg-[#637381] cursor-pointer absolute right-2 text-white rounded-lg p-1 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleAddNote}
+                  disabled={createNoteMutation.isPending}
+                  aria-label="Thêm ghi chú"
+                >
+                  {createNoteMutation.isPending ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <Plus size={20} color="white" />
+                  )}
+                </button>
+              </div>
             </div>
             {/* Danh sách ghi chú */}
             <div className="space-y-6">
@@ -175,21 +229,42 @@ export default function ContentTab(props: ContentTabProps) {
                       </div>
                       <div className="flex-1 text-xs text-gray-500">
                         {note.sub}
+                        {/*{note.timestamp && (*/}
+                        {/*  <span className=" ml-2 text-blue-500">*/}
+                        {/*    • Thời gian: {formatTimestamp(note.timestamp)}*/}
+                        {/*  </span>*/}
+                        {/*)}*/}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleEditNote(note.id, note.content)}
+                        disabled={
+                          deletingId === note.id ||
+                          updateNoteMutation.isPending ||
+                          createNoteMutation.isPending
+                        }
                         aria-label="Sửa ghi chú"
+                        className="disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <IconEditLesson />
                       </button>
                       <button
                         onClick={() => handleDeleteNote(note.id)}
+                        disabled={
+                          deletingId === note.id ||
+                          updateNoteMutation.isPending ||
+                          createNoteMutation.isPending
+                        }
                         aria-label="Xóa ghi chú"
+                        className="disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                       >
-                        <IconTrashLesson />
+                        {deletingId === note.id ? (
+                          <div className="w-4 h-4 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin"></div>
+                        ) : (
+                          <IconTrashLesson />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -203,14 +278,22 @@ export default function ContentTab(props: ContentTabProps) {
                       />
                       <div className="flex gap-2">
                         <button
-                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => handleSaveEdit(note.id)}
+                          disabled={
+                            updateNoteMutation.isPending ||
+                            createNoteMutation.isPending
+                          }
                         >
-                          Lưu
+                          {updateNoteMutation.isPending ? "Đang lưu..." : "Lưu"}
                         </button>
                         <button
-                          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={handleCancelEdit}
+                          disabled={
+                            updateNoteMutation.isPending ||
+                            createNoteMutation.isPending
+                          }
                         >
                           Huỷ
                         </button>
@@ -219,6 +302,18 @@ export default function ContentTab(props: ContentTabProps) {
                   ) : (
                     <div className="bg-gray-100 rounded-lg px-4 py-3 mt-2 text-gray-700">
                       {note.content}
+                      {note.createdAt && (
+                        <div className="text-xs text-gray-400 mt-2">
+                          Tạo: {formatToVietnameseMonthYear(note.createdAt)}
+                          {note.updatedAt !== note.createdAt && (
+                            <span>
+                              {" "}
+                              • Cập nhật:{" "}
+                              {formatToVietnameseMonthYear(note.updatedAt)}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -245,8 +340,12 @@ export default function ContentTab(props: ContentTabProps) {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="mb-2">
           <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-          <TabsTrigger value="notes">Ghi chú</TabsTrigger>
-          <TabsTrigger value="download">Tải xuống</TabsTrigger>
+          {dataLesson?.type === "VIDEO" && (
+            <TabsTrigger value="notes">Ghi chú</TabsTrigger>
+          )}
+          {dataLesson?.type === "VIDEO" && (
+            <TabsTrigger value="download">Tải xuống</TabsTrigger>
+          )}
         </TabsList>
         <TabsContent
           value="overview"

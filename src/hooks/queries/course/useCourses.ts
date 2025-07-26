@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { courseAPI } from "@/api/endpoints/course.api";
 import { CourseFilters } from "@/api/types/course.type";
 import { instructorAPI } from "@/api/endpoints/Instructor.api";
@@ -142,5 +142,50 @@ export const useInstructorProfile = (userId: string) => {
     queryFn: () => instructorAPI.getInstructorProfile(userId),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useUpdateNote = (courseId: string, lessonId: string) => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ noteId, content }: { noteId: string; content: string }) =>
+      courseAPI.updateNote(courseId, lessonId, noteId, { content }),
+    onSuccess: () => {
+      // Invalidate and refetch notes
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.notes(courseId, lessonId)
+      });
+    },
+  });
+};
+
+export const useCreateNote = (courseId: string, lessonId: string) => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (noteData: { timestampSec: number; content: string }) =>
+      courseAPI.createNote(courseId, lessonId, noteData),
+    onSuccess: () => {
+      // Invalidate and refetch notes
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.notes(courseId, lessonId)
+      });
+    },
+  });
+};
+
+export const useDeleteNote = (courseId: string, lessonId: string) => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (noteId: string) =>
+      courseAPI.deleteNote(courseId, lessonId, noteId),
+    onSuccess: () => {
+      // Invalidate and refetch notes
+      queryClient.invalidateQueries({
+        queryKey: courseKeys.notes(courseId, lessonId)
+      });
+    },
   });
 };

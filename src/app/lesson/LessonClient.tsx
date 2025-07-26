@@ -361,6 +361,7 @@ export function LessonClient() {
                 currentLesson={courseDetail}
                 lessonId={lessonId as string}
                 courseId={courseDetail?.id}
+                dataLesson={initValue}
               />
             )}
           </>

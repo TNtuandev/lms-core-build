@@ -56,9 +56,9 @@ export default function CheckoutStepOneDesktop({
       {
         onSuccess: (data) => {
           console.log("Order created successfully:", data);
-          setOrderId(data.id);
+          setOrderId(data.data.id);
           setQrCodeUrl(
-            "momo://app?action=payWithApp&isScanQR=true&serviceType=qr&sid=TU9NT3xSREZfMTc0ODc5NjAxMjc1N18wMDAwMDAxMg&v=3.0",
+            data?.data.payment?.gatewayPayment?.qrCodeUrl,
           );
           setStep(1);
           setVoucher("");

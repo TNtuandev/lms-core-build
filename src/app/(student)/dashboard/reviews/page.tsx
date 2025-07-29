@@ -3,6 +3,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Star } from "lucide-react";
+import { useAuthStore } from "@/store/slices/auth.slice";
+import { useReviewUser } from "@/hooks/queries/dashboard/useStudent";
 
 interface Review {
   id: number;
@@ -44,6 +46,11 @@ function ReviewsPage() {
       status: "Good",
     },
   ];
+
+  const user = useAuthStore.getState().user;
+  const { data: reviewUserData } = useReviewUser(user?.id || "");
+
+  console.log(reviewUserData);
 
   const handleEdit = (reviewId: number) => {
     console.log("Edit review:", reviewId);

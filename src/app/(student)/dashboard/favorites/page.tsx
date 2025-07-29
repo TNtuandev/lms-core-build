@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import EnrolledCourseCard from "@/components/courses/enrolled-course-card";
 import Pagination from "@/components/ui/pagination";
+import { useWishList } from "@/hooks/queries/dashboard/useStudent";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 function FavoritesPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,6 +146,10 @@ function FavoritesPage() {
       status: "in-progress" as const,
     },
   ];
+  const user = useAuthStore.getState().user;
+  const { data: wishListData } = useWishList(user?.id || "");
+  console.log(wishListData, "----wishListData");
+
 
   // Calculate pagination
   const totalPages = Math.ceil(favoriteCourses.length / coursesPerPage);

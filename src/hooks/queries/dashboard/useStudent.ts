@@ -27,3 +27,21 @@ export const useReviewUser = (studentId: string) => {
     staleTime: 5 * 60 * 1000,
   });
 };
+
+export const useAttemptsUser = (studentId: string) => {
+  return useQuery({
+    queryKey: ["attempts", studentId],
+    queryFn: () => studentAPI.getAttemptsUser(studentId),
+    enabled: !!studentId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useSubmissionUser = (studentId: string) => {
+  return useQuery({
+    queryKey: ["Submission", studentId],
+    queryFn: () => studentAPI.getSubmissionUser(studentId),
+    enabled: !!studentId,
+    staleTime: 5 * 60 * 1000,
+  });
+};

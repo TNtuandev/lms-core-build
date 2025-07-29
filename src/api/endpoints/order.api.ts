@@ -1,4 +1,5 @@
 import api from "@/api/api";
+import {OrderPayment} from "@/hooks/queries/order/order.type";
 
 export const orderAPI = {
   // Tạo order mới
@@ -14,7 +15,7 @@ export const orderAPI = {
   },
 
   // Lấy chi tiết order theo ID
-  getOrderById: async (orderId: string): Promise<any> => {
+  getOrderById: async (orderId: string): Promise<OrderPayment> => {
     const { data: res } = await api.get(`/orders/${orderId}`);
     return res;
   },

@@ -6,6 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
 import {useGetOrderById} from "@/hooks/queries/order/useOrder";
+import {useAuthStore} from "@/store/slices/auth.slice";
 
 interface ICheckoutStep {
   cartData?: CartItem[];
@@ -15,20 +16,48 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
   const { qrCodeUrl, orderId } = useCartStore();
   const router = useRouter();
   const { data: orderDetail } = useGetOrderById(orderId, !!orderId);
-
-  console.log("CheckoutStepFinalDesktop orderDetail====>", orderDetail);
-
+  console.log("orderDetail", orderDetail);
+  const { user } = useAuthStore()
   const handleNavigateToHome = () => {
     router.push(Routes.home);
   };
 
+  console.log('cartData', cartData);
+
   const totalPrice = useMemo(() => {
-    return cartData?.reduce((total, item) => {
+    return orderDetail?.items?.reduce((total, item) => {
       return (
-        total + (item?.product.course.discountedPrice * item?.quantity || 0)
+        total + (item?.discountedPrice * item?.quantity || 0)
       );
     }, 0);
-  }, [cartData]);
+  }, [orderDetail]);
+
+  const renderStatusPayment = useMemo(() => {
+    switch (orderDetail?.payment.status) {
+      case "pending":
+        return (
+          <div className="font-semibold text-[#EFB100] bg-[#EFB10029] p-2 rounded-lg">
+            Chờ giải quyết
+          </div>
+        )
+      case "completed":
+        return (
+          <div className="font-semibold text-[#22C55E] bg-[#22C55E14] p-2 rounded-lg">
+            Thành công
+          </div>
+        )
+      case "failed":
+        return (
+          <div className="font-semibold text-[#EF4444] bg-[#EF444414] p-2 rounded-lg">
+            Thất bại
+          </div>
+        )
+      default:
+        return (
+          <></>
+        )
+    }
+  }, [orderDetail])
 
   return (
     <div className="flex gap-[40px] w-full px-[5%] mb-[100px] lg:flex-row flex-col">
@@ -40,7 +69,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
           <div className="text-sm">
             <div className="flex gap-[20px] items-center mb-2">
               <div className="w-[100px] text-[#71717B]">Tên</div>
-              <div className="font-semibold">Trần Lâm</div>
+              <div className="font-semibold">{user?.fullName}</div>
             </div>
             <div className="flex items-center gap-[20px] mb-2">
               <div className="w-[100px] text-[#71717B]">Điện thoại</div>
@@ -48,7 +77,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
             </div>
             <div className="flex items-center gap-[20px] mb-2">
               <div className="w-[100px] text-[#71717B]">Email</div>
-              <div className="font-semibold">tranlam.designer@gmail.com</div>
+              <div className="font-semibold">{user?.email}</div>
             </div>
             <div className="flex items-center gap-[20px] mb-2">
               <div className="w-[100px] text-[#71717B]">
@@ -62,9 +91,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
               <div className="w-[100px] text-[#71717B]">
                 Trạng thái thanh toán
               </div>
-              <div className="font-semibold text-[#EFB100] bg-[#EFB10029] p-2 rounded-lg">
-                Chờ giải quyết
-              </div>
+              {renderStatusPayment}
             </div>
           </div>
         </div>
@@ -73,7 +100,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
             Mã đơn hàng: #RDF-00001
           </div>
           <div className="border-b pb-2 border-b-[#E4E4E7]">
-            {cartData?.map((transaction, index) => (
+            {orderDetail?.items?.map((transaction, index) => (
               <div
                 key={index}
                 className="flex justify-between items-center mb-2"
@@ -81,22 +108,22 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                 <div className="flex gap-2 items-center font-semibold">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={transaction.product.thumbnail}
+                    src={transaction?.thumbnail}
                     alt=""
                   />
-                  <div className="text-sm"> {transaction?.product.title}</div>
+                  <div className="text-sm"> {transaction?.title}</div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-[#27272A] text-sm">
                   <div>
                     <div>
                       {" "}
                       {formatCurrency(
-                        transaction?.product.course.discountedPrice,
+                        transaction?.discountedPrice,
                       )}
                       đ
                     </div>
                     <div className="font-normal text-[#71717B] line-through">
-                      {formatCurrency(transaction?.product.course.regularPrice)}
+                      {formatCurrency(transaction?.regularPrice)}
                       đ
                     </div>
                   </div>
@@ -154,7 +181,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                   Tên: <span className="font-semibold">Amerian Study</span>
                 </span>
                 <span>
-                  Số tiền: <span className="font-semibold">198.000đ</span>
+                  Số tiền: <span className="font-semibold">{formatCurrency(totalPrice)}đ</span>
                 </span>
                 <span>
                   Lời nhắn: <span className="font-semibold">YZ6GJ</span>

@@ -13,7 +13,7 @@ export default function CheckoutStepTwoDesktop({
   setStep,
   cartData,
 }: ICheckoutStepTwoDesktopProps) {
-  const { voucher } = useCartStore();
+  const { voucher, clearCart } = useCartStore();
 
   const totalPrice = useMemo(() => {
     return cartData?.reduce((total, item) => {
@@ -33,6 +33,11 @@ export default function CheckoutStepTwoDesktop({
     }
     return totalPrice;
   }, [voucherSale, totalPrice]);
+
+  const handleSubmit = () => {
+    setStep(2);
+    clearCart()
+  }
 
   return (
     <div className="flex gap-[40px] w-full px-[5%] mb-[100px] lg:flex-row flex-col">
@@ -108,7 +113,7 @@ export default function CheckoutStepTwoDesktop({
           <div className="flex flex-col mt-[16px]">
             <Button
               className="text-white px-4 py-2 rounded-lg"
-              onClick={() => setStep(2)}
+              onClick={handleSubmit}
             >
               Đã chuyển khoản
             </Button>

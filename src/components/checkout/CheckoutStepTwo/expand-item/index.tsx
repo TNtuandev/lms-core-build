@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCartStore } from "@/store/slices/cart.slice";
 import IconPaypal from "../../../../../public/icons/IconPaypal";
+import {formatCurrency} from "@/lib/utils";
 
 export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -104,7 +105,7 @@ export default function ExpandItem({totalPrice}: { totalPrice?: number }) {
             <div className="flex flex-col gap-2">
               <span>Tài khoản VP Bank: <span className="font-semibold">03363826286</span></span>
               <span>Tên: <span className="font-semibold">Amerian Study</span></span>
-              <span>Số tiền: <span className="font-semibold">198.000đ</span></span>
+              <span>Số tiền: <span className="font-semibold">{formatCurrency(totalPrice)}đ</span></span>
               <span>Lời nhắn: <span className="font-semibold">YZ6GJ</span></span>
             </div>
           </div>

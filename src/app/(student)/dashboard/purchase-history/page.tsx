@@ -1,8 +1,12 @@
 "use client";
 
-import React from "react";
+import React, {useCallback, useMemo} from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash } from "iconsax-react";
+import dayjs from "dayjs";
+import { useGetOrders } from "@/hooks/queries/order/useOrder";
+import {OrderPayment} from "@/hooks/queries/order/order.type";
+import {formatCurrency} from "@/lib/utils";
 
 interface PurchaseOrder {
   id: string;
@@ -13,59 +17,51 @@ interface PurchaseOrder {
 }
 
 function PurchaseHistoryPage() {
-  // Mock data for purchase history
-  const purchaseOrders: PurchaseOrder[] = [
-    {
-      id: "#5478",
-      courseName: "App Development",
-      purchaseDate: "06/04/2025 09:41 am",
-      price: "529,000đ",
-      status: "Thành công",
-    },
-    {
-      id: "#5477",
-      courseName: "App Development",
-      purchaseDate: "06/04/2025 09:41 am",
-      price: "529,000đ",
-      status: "Đang xử lý",
-    },
-    {
-      id: "#5476",
-      courseName: "App Development",
-      purchaseDate: "06/04/2025 09:41 am",
-      price: "529,000đ",
-      status: "Đang chờ",
-    },
-    {
-      id: "#5475",
-      courseName: "App Development",
-      purchaseDate: "06/04/2025 09:41 am",
-      price: "529,000đ",
-      status: "Đã hủy",
-    },
-  ];
+  const { data } = useGetOrders();
+
+  console.log("data---", data);
+
+  const totalPrice = (orderDetail: OrderPayment) => {
+    return orderDetail?.items?.reduce((total, item) => {
+      return (
+        total + (item?.discountedPrice * item?.quantity || 0)
+      );
+    }, 0);
+  }
 
   const handleEdit = (orderId: string) => {
     console.log("Edit order:", orderId);
   };
 
-  const handleDelete = (orderId: string) => {
-    console.log("Delete order:", orderId);
-  };
+  // const handleDelete = (orderId: string) => {
+  //   console.log("Delete order:", orderId);
+  // };
 
-  const renderStatusBadge = (status: PurchaseOrder["status"]) => {
+  const renderNameStatusBadge = useCallback((status: 'pending' | 'completed' | 'failed') => {
+    switch (status) {
+      case "completed":
+        return "Thành công";
+      case "pending":
+        return "Đang chờ";
+      case "failed":
+        return "Thất bại";
+      default:
+        return ;
+    }
+  }, [])
+
+  const renderStatusBadge = (status: 'pending' | 'completed' | 'failed') => {
     const statusConfig = {
-      "Thành công": "bg-green-100 text-green-800",
-      "Đang xử lý": "bg-blue-100 text-blue-800",
-      "Đang chờ": "bg-yellow-100 text-yellow-800",
-      "Đã hủy": "bg-red-100 text-red-800",
+      "completed": "bg-green-100 text-green-800",
+      "pending": "bg-yellow-100 text-yellow-800",
+      "failed": "bg-red-100 text-red-800",
     };
 
     return (
       <span
         className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[status]}`}
       >
-        {status}
+        {renderNameStatusBadge(status)}
       </span>
     );
   };
@@ -97,35 +93,41 @@ function PurchaseHistoryPage() {
             </tr>
           </thead>
           <tbody>
-            {purchaseOrders.map((order) => (
+            {data?.map((order) => (
               <tr key={order.id} className="border-b border-gray-100">
                 <td className="py-6 px-2">
                   <span className="text-gray-900 font-medium">
-                    {order.id}
+                    #{order.id.split("-")[0]}
                   </span>
                 </td>
                 <td className="py-6 px-2">
-                  <span className="text-gray-900 font-medium">
-                    {order.courseName}
-                  </span>
+                  {order.items.map((item, index) => (
+                    <div key={index} className="text-gray-900 font-medium">
+                      {index+1}: {item.product.title}
+                    </div>
+                  ))}
                 </td>
                 <td className="py-6 px-2">
                   <div>
                     <div className="text-gray-900">
-                      {order.purchaseDate.split(' ')[0]}
+                      {dayjs(order.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
+                        "DD/MM/YYYY",
+                      )}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {order.purchaseDate.split(' ').slice(1).join(' ')}
+                      {dayjs(order.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
+                        "HH:mm",
+                      )}
                     </div>
                   </div>
                 </td>
                 <td className="py-6 px-2">
                   <span className="text-gray-900 font-medium">
-                    {order.price}
+                    {formatCurrency(order.payment.amount)}đ
                   </span>
                 </td>
                 <td className="py-6 px-2 text-center">
-                  {renderStatusBadge(order.status)}
+                  {renderStatusBadge(order.payment.status)}
                 </td>
                 <td className="py-6 px-2">
                   <div className="flex items-center justify-end gap-2">
@@ -135,19 +137,16 @@ function PurchaseHistoryPage() {
                       onClick={() => handleEdit(order.id)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
-                      <Eye
-                        size="20"
-                        color="#2F57EF"
-                      />
+                      <Eye size="20" color="#2F57EF" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(order.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash size={20} color="#F44336"/>
-                    </Button>
+                    {/*<Button*/}
+                    {/*  variant="ghost"*/}
+                    {/*  size="sm"*/}
+                    {/*  onClick={() => handleDelete(order.id)}*/}
+                    {/*  className="text-red-600 hover:text-red-700 hover:bg-red-50"*/}
+                    {/*>*/}
+                    {/*  <Trash size={20} color="#F44336" />*/}
+                    {/*</Button>*/}
                   </div>
                 </td>
               </tr>
@@ -157,7 +156,7 @@ function PurchaseHistoryPage() {
       </div>
 
       {/* Empty State */}
-      {purchaseOrders.length === 0 && (
+      {data?.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500">Chưa có lịch sử mua hàng nào.</p>
         </div>

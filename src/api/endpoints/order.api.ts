@@ -1,5 +1,6 @@
 import api from "@/api/api";
 import {OrderPayment} from "@/hooks/queries/order/order.type";
+import _ from "lodash";
 
 export const orderAPI = {
   // Tạo order mới
@@ -9,9 +10,9 @@ export const orderAPI = {
   },
 
   // Lấy danh sách orders
-  getOrders: async (): Promise<any> => {
+  getOrders: async (): Promise<OrderPayment[]> => {
     const { data: res } = await api.get(`/orders`);
-    return res;
+    return _.orderBy(res, ['createdAt'], ['desc']);
   },
 
   // Lấy chi tiết order theo ID

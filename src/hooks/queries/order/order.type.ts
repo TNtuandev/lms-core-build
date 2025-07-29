@@ -27,9 +27,49 @@ export interface Item {
   discountedPrice: number
   discountAmount: number
   quantity: number
-  thumbnail: string
-  title: string
+  product: Product
 }
+
+export interface Product {
+  createdAt: string
+  updatedAt: string
+  deletedAt: any
+  id: string
+  title: string
+  slug: string
+  shortDescription: string
+  description: string
+  type: string
+  categoryId: string
+  ownerId: string
+  thumbnail: string
+  label: string
+  status: string
+  ratingAvg: number
+  ratingCnt: number
+  enrollmentCnt: number
+  course: Course
+}
+
+export interface Course {
+  id: string
+  regularPrice: number
+  discountedPrice: number
+  requirements: string
+  learningOutcomes: string
+  previewVideo: string
+  previewImg: string
+  difficulty: string
+  maxEnrollment: number
+  tags: any
+  isAllowFaq: boolean
+  isDripContent: boolean
+  overview: any
+  language: any
+  certification: any
+  totalCompletedLessons: number
+}
+
 
 export interface Payment {
   createdAt: string
@@ -41,7 +81,7 @@ export interface Payment {
   amount: number
   currency: string
   method: string
-  status: string
+  status: 'pending' | 'completed' | 'failed'
   notes: any
   manualPayment: any
   gatewayPayment: GatewayPayment

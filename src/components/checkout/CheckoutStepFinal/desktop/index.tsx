@@ -5,14 +5,18 @@ import { Routes } from "@/lib/routes/routes";
 import { QRCodeSVG } from "qrcode.react";
 import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
+import {useGetOrderById} from "@/hooks/queries/order/useOrder";
 
 interface ICheckoutStep {
   cartData?: CartItem[];
 }
 
 export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
-  const { qrCodeUrl } = useCartStore();
+  const { qrCodeUrl, orderId } = useCartStore();
   const router = useRouter();
+  const { data: orderDetail } = useGetOrderById(orderId, !!orderId);
+
+  console.log("CheckoutStepFinalDesktop orderDetail====>", orderDetail);
 
   const handleNavigateToHome = () => {
     router.push(Routes.home);

@@ -1,7 +1,6 @@
 import api from "@/api/api";
 import { LearnerProfile } from "@/api/types/intructor.type";
 import {
-  IEnrollmentCourseWishListResponsive,
   ILessonAttemptResponsive,
   ILessonSubmissionResponsive
 } from "@/api/types/dashboard.type";

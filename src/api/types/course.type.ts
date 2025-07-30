@@ -49,7 +49,7 @@ export interface Course {
   thumbnail: string;
   difficulty: string;
   label?: string;
-  totalLesion: number;
+  totalLesson: number;
   owner: {
     id: string;
     email: string;

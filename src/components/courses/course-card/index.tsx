@@ -4,7 +4,7 @@ import IconUser from "../../../../public/icons/IconUser";
 import { Edit } from "iconsax-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import {useAuthStore} from "@/store/slices/auth.slice";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 interface CourseCardProps {
   badge?: string;
@@ -15,8 +15,8 @@ interface CourseCardProps {
   instructor: string;
   lessonCount: number;
   studentCount: number;
-  currentPrice: string;
-  originalPrice: string;
+  currentPrice?: string;
+  originalPrice?: string;
   gridNUmber?: number;
   slug?: string;
 }
@@ -36,7 +36,7 @@ function CourseCard({
   gridNUmber = 3,
 }: CourseCardProps) {
   const router = useRouter();
-  const user = useAuthStore()
+  const user = useAuthStore();
 
   const getBadgeColor = () => {
     switch (badge) {
@@ -66,7 +66,8 @@ function CourseCard({
   return (
     <div
       onClick={() => handleCourseClick(slug as string)}
-      className="p-2 bg-white flex cursor-pointer flex-col rounded-2xl overflow-hidden shadow-md">
+      className="p-2 bg-white flex cursor-pointer flex-col rounded-2xl overflow-hidden shadow-md"
+    >
       {/* Card Title with Image */}
       <div className="relative rounded-xl overflow-hidden">
         {/* Course image */}
@@ -108,12 +109,17 @@ function CourseCard({
           </div>
         </div>
         <div className="flex items-center">
-          <span className="text-lg font-medium mr-2">{currentPrice}₫</span>
-          <span className="text-gray-400 line-through text-sm">
-            {originalPrice}₫
-          </span>
+          {currentPrice && (
+            <span className="text-lg font-medium mr-2">{currentPrice}₫</span>
+          )}
+
+          {originalPrice && (
+            <span className="text-gray-400 line-through text-sm">
+              {originalPrice}₫
+            </span>
+          )}
         </div>
-        {user?.user?.type=== "instructor" && (
+        {user?.user?.type === "instructor" && (
           <Button
             onClick={(event) => onNavigateEditCourse(event)}
             className="mt-4 hover:bg-secondary/24 cursor-pointer flex items-center w-fit  min-w-6 h-6 gap-2 bg-secondary/16 rounded-lg px-2"

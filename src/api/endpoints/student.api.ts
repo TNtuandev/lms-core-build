@@ -1,6 +1,10 @@
 import api from "@/api/api";
 import { LearnerProfile } from "@/api/types/intructor.type";
-import { ILessonAttemptResponsive, ILessonSubmissionResponsive } from "@/api/types/dashboard.type";
+import {
+  IEnrollmentCourseWishListResponsive,
+  ILessonAttemptResponsive,
+  ILessonSubmissionResponsive
+} from "@/api/types/dashboard.type";
 
 export const studentAPI = {
   getStudentProfile: async (userId: string): Promise<LearnerProfile> => {
@@ -8,7 +12,7 @@ export const studentAPI = {
     return data;
   },
 
-  getWishList: async (userId: string): Promise<any> => {
+  getWishList: async (userId: string): Promise<IEnrollmentCourseWishListResponsive> => {
     const { data } = await api.get(`/wishlists`, {
       params: {
         userId: userId,

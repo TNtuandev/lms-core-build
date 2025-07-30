@@ -12,7 +12,7 @@ export const useStudent = (studentId: string) => {
 
 export const useWishList = (studentId: string) => {
   return useQuery({
-    queryKey: ["studentId", studentId],
+    queryKey: ["useWishList", studentId],
     queryFn: () => studentAPI.getWishList(studentId),
     enabled: !!studentId,
     staleTime: 5 * 60 * 1000,
@@ -21,7 +21,7 @@ export const useWishList = (studentId: string) => {
 
 export const useReviewUser = (studentId: string) => {
   return useQuery({
-    queryKey: ["studentId", studentId],
+    queryKey: ["useReviewUser", studentId],
     queryFn: () => studentAPI.getReviewUser(studentId),
     enabled: !!studentId,
     staleTime: 5 * 60 * 1000,

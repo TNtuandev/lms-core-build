@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import EnrolledCourseCard from "@/components/courses/enrolled-course-card";
 import Pagination from "@/components/ui/pagination";
 import { useWishList } from "@/hooks/queries/dashboard/useStudent";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import CourseCard from "@/components/courses/course-card";
+import { useRouter } from "next/navigation";
 
 function FavoritesPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -148,22 +149,14 @@ function FavoritesPage() {
   ];
   const user = useAuthStore.getState().user;
   const { data: wishListData } = useWishList(user?.id || "");
-  console.log(wishListData, "----wishListData");
+  const router = useRouter()
+  console.log(wishListData?.data, "----wishListData");
 
 
   // Calculate pagination
   const totalPages = Math.ceil(favoriteCourses.length / coursesPerPage);
   const startIndex = (currentPage - 1) * coursesPerPage;
   const endIndex = startIndex + coursesPerPage;
-  const currentCourses = favoriteCourses.slice(startIndex, endIndex);
-
-  const handleContinue = (courseId: number) => {
-    console.log("Continue course:", courseId);
-  };
-
-  const handleEdit = (courseId: number) => {
-    console.log("Edit course:", courseId);
-  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -171,26 +164,36 @@ function FavoritesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleCourseClick = (courseId: string) => {
+    router.push(`/course/${courseId}`);
+  };
+
+
   return (
     <div className="bg-white shadow h-max p-6 rounded-2xl">
       <h2 className="text-2xl font-semibold mb-6">Yêu thích</h2>
 
       {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentCourses.map((course) => (
-          <EnrolledCourseCard
+        {wishListData?.data?.map((course) => (
+          <div
             key={course.id}
-            imageUrl={course.imageUrl}
-            category={course.category}
-            courseName={course.courseName}
-            instructor={course.instructor}
-            lessonCount={course.lessonCount}
-            studentCount={course.studentCount}
-            progress={course.progress}
-            status={course.status}
-            onContinue={() => handleContinue(course.id)}
-            onEdit={() => handleEdit(course.id)}
-          />
+            className="cursor-pointer transition-transform hover:scale-[1.02]"
+            onClick={() => handleCourseClick(course.product.slug)}
+          >
+            <CourseCard
+              slug={course.product.slug}
+              gridNUmber={3}
+              title={course.product.title}
+              imageUrl={course.product.thumbnail}
+              category="Khóa học"
+              courseName={course.product.title}
+              instructor={`Giảng viên: ${"American Instructor"}`}
+              lessonCount={0}
+              badge={course.product.label}
+              studentCount={course.product.enrollmentCnt}
+            />
+          </div>
         ))}
       </div>
 

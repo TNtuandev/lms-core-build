@@ -12,7 +12,7 @@ export const studentAPI = {
     return data;
   },
 
-  getWishList: async (userId: string): Promise<IEnrollmentCourseWishListResponsive> => {
+  getWishList: async (userId: string): Promise<any> => {
     const { data } = await api.get(`/wishlists`, {
       params: {
         userId: userId,

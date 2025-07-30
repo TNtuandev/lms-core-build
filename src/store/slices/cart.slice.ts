@@ -92,7 +92,6 @@ export const useCartStore = create<CartState>()(
       setQrCodeUrl: (url: string) => set({ qrCodeUrl: url }),
       setCount: (count: number) => set({ count }),
       setListCart: (list: CartItem[]) => {
-        console.log("setListCart---", list);
         set({ listCart: [...list], count: list?.length });
       },
       pushToCart: (product: CartItem) =>

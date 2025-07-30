@@ -108,10 +108,10 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                 <div className="flex gap-2 items-center font-semibold">
                   <img
                     className="h-12 w-16 rounded-sm"
-                    src={transaction?.thumbnail}
+                    src={transaction?.product.thumbnail}
                     alt=""
                   />
-                  <div className="text-sm"> {transaction?.title}</div>
+                  <div className="text-sm"> {transaction?.product.title}</div>
                 </div>
                 <div className="py-3 px-4 font-semibold text-[#27272A] text-sm">
                   <div>

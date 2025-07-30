@@ -6,11 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import EnrolledCourseCard from "@/components/courses/enrolled-course-card";
 import { PlayCircle, MoreHorizontal } from "lucide-react";
+import {useGetEnrollments} from "@/hooks/queries/enrollments/useEnrollments";
+import {useRouter} from "next/navigation";
+import {Routes} from "@/lib/routes/routes";
 
 type TabType = "all" | "in-progress" | "completed";
 
 function EnrolledCoursesPage() {
   const [activeTab, setActiveTab] = useState<TabType>("all");
+
+  const { data } = useGetEnrollments();
+  const router = useRouter();
+
+
+  console.log("Enrolled courses data:", data);
+
 
   // Mock data for enrolled courses
   const enrolledCourses = [
@@ -66,11 +76,11 @@ function EnrolledCoursesPage() {
     return true;
   });
 
-  const handleContinue = (courseId: number) => {
-    console.log("Continue course:", courseId);
+  const handleContinue = (courseId: string) => {
+    router.push(`${Routes.course}/${courseId}`)
   };
 
-  const handleEdit = (courseId: number) => {
+  const handleEdit = (courseId: string) => {
     console.log("Edit course:", courseId);
   };
 
@@ -167,19 +177,19 @@ function EnrolledCoursesPage() {
 
       {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCourses.map((course) => (
+        {data?.map((course) => (
           <EnrolledCourseCard
             key={course.id}
-            imageUrl={course.imageUrl}
-            category={course.category}
-            courseName={course.courseName}
-            instructor={course.instructor}
-            lessonCount={course.lessonCount}
-            studentCount={course.studentCount}
-            progress={course.progress}
-            status={course.status}
-            onContinue={() => handleContinue(course.id)}
-            onEdit={() => handleEdit(course.id)}
+            imageUrl={course.product.thumbnail}
+            category={course?.product?.category || "Khóa học"}
+            courseName={course.product.title}
+            instructor={"Anh Tuấn, Quang Anh"}
+            lessonCount={course.product.course.totalCompletedLessons}
+            studentCount={course.product.enrollmentCnt}
+            progress={0}
+            status={'in-progress'}
+            onContinue={() => handleContinue(course.product.slug)}
+            onEdit={() => handleEdit(course.product.course.id)}
           />
         ))}
       </div>

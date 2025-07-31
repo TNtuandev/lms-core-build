@@ -136,7 +136,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
                 category="Khóa học"
                 courseName={course.title}
                 instructor={`Giảng viên: ${course?.owner.fullName}`}
-                lessonCount={course.totalLesion}
+                lessonCount={course.totalLesson}
                 studentCount={course.enrollmentCnt}
                 currentPrice={course.pricing.discounted ? course.pricing.discounted.toLocaleString() : course.pricing.regular.toLocaleString()}
                 originalPrice={course.pricing.discounted ? course.pricing.regular.toLocaleString() : ""}

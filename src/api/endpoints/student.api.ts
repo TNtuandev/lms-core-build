@@ -1,6 +1,9 @@
 import api from "@/api/api";
 import { LearnerProfile } from "@/api/types/intructor.type";
-import { ILessonAttemptResponsive, ILessonSubmissionResponsive } from "@/api/types/dashboard.type";
+import {
+  ILessonAttemptResponsive,
+  ILessonSubmissionResponsive
+} from "@/api/types/dashboard.type";
 
 export const studentAPI = {
   getStudentProfile: async (userId: string): Promise<LearnerProfile> => {

@@ -30,7 +30,7 @@ export default function EffectCardSwiper() {
             category="Khóa học"
             courseName={course.title}
             instructor={`Giảng viên: ${course?.owner.fullName}`}
-            lessonCount={course.totalLesion}
+            lessonCount={course.totalLesson}
             badge={course.label}
             studentCount={course.enrollmentCnt}
             currentPrice={

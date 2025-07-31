@@ -1,33 +1,32 @@
 "use client";
 
-import React, {useCallback, useMemo} from "react";
+import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, Trash } from "iconsax-react";
+import { Eye } from "iconsax-react";
 import dayjs from "dayjs";
 import { useGetOrders } from "@/hooks/queries/order/useOrder";
-import {OrderPayment} from "@/hooks/queries/order/order.type";
-import {formatCurrency} from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
-interface PurchaseOrder {
-  id: string;
-  courseName: string;
-  purchaseDate: string;
-  price: string;
-  status: "Thành công" | "Đang xử lý" | "Đang chờ" | "Đã hủy";
-}
+// interface PurchaseOrder {
+//   id: string;
+//   courseName: string;
+//   purchaseDate: string;
+//   price: string;
+//   status: "Thành công" | "Đang xử lý" | "Đang chờ" | "Đã hủy";
+// }
 
 function PurchaseHistoryPage() {
   const { data } = useGetOrders();
 
-  console.log("data---", data);
-
-  const totalPrice = (orderDetail: OrderPayment) => {
-    return orderDetail?.items?.reduce((total, item) => {
-      return (
-        total + (item?.discountedPrice * item?.quantity || 0)
-      );
-    }, 0);
-  }
+  // const totalPrice = (orderDetail: OrderPayment) => {
+  //   return orderDetail?.items?.reduce((total, item) => {
+  //     return (
+  //       total + (item?.discountedPrice * item?.quantity || 0)
+  //     );
+  //   }, 0);
+  // }
+  //
+  // console.log("data---", totalPrice);
 
   const handleEdit = (orderId: string) => {
     console.log("Edit order:", orderId);
@@ -37,24 +36,27 @@ function PurchaseHistoryPage() {
   //   console.log("Delete order:", orderId);
   // };
 
-  const renderNameStatusBadge = useCallback((status: 'pending' | 'completed' | 'failed') => {
-    switch (status) {
-      case "completed":
-        return "Thành công";
-      case "pending":
-        return "Đang chờ";
-      case "failed":
-        return "Thất bại";
-      default:
-        return ;
-    }
-  }, [])
+  const renderNameStatusBadge = useCallback(
+    (status: "pending" | "completed" | "failed") => {
+      switch (status) {
+        case "completed":
+          return "Thành công";
+        case "pending":
+          return "Đang chờ";
+        case "failed":
+          return "Thất bại";
+        default:
+          return;
+      }
+    },
+    [],
+  );
 
-  const renderStatusBadge = (status: 'pending' | 'completed' | 'failed') => {
+  const renderStatusBadge = (status: "pending" | "completed" | "failed") => {
     const statusConfig = {
-      "completed": "bg-green-100 text-green-800",
-      "pending": "bg-yellow-100 text-yellow-800",
-      "failed": "bg-red-100 text-red-800",
+      completed: "bg-green-100 text-green-800",
+      pending: "bg-yellow-100 text-yellow-800",
+      failed: "bg-red-100 text-red-800",
     };
 
     return (
@@ -103,19 +105,19 @@ function PurchaseHistoryPage() {
                 <td className="py-6 px-2">
                   {order.items.map((item, index) => (
                     <div key={index} className="text-gray-900 font-medium">
-                      {index+1}: {item.product.title}
+                      {index + 1}: {item?.product?.title}
                     </div>
                   ))}
                 </td>
                 <td className="py-6 px-2">
                   <div>
                     <div className="text-gray-900">
-                      {dayjs(order.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
+                      {dayjs(order?.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
                         "DD/MM/YYYY",
                       )}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {dayjs(order.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
+                      {dayjs(order?.createdAt, "YYYY-MM-DDTHH:mm:ssZ").format(
                         "HH:mm",
                       )}
                     </div>
@@ -123,11 +125,11 @@ function PurchaseHistoryPage() {
                 </td>
                 <td className="py-6 px-2">
                   <span className="text-gray-900 font-medium">
-                    {formatCurrency(order.payment.amount)}đ
+                    {formatCurrency(order?.payment?.amount)}đ
                   </span>
                 </td>
                 <td className="py-6 px-2 text-center">
-                  {renderStatusBadge(order.payment.status)}
+                  {renderStatusBadge(order?.payment?.status)}
                 </td>
                 <td className="py-6 px-2">
                   <div className="flex items-center justify-end gap-2">

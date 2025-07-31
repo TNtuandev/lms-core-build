@@ -180,16 +180,16 @@ function EnrolledCoursesPage() {
         {data?.map((course) => (
           <EnrolledCourseCard
             key={course.id}
-            imageUrl={course.product.thumbnail}
+            imageUrl={course.product?.thumbnail}
             category={course?.product?.category || "Khóa học"}
-            courseName={course.product.title}
+            courseName={course.product?.title}
             instructor={"Anh Tuấn, Quang Anh"}
-            lessonCount={course.product.course.totalCompletedLessons}
-            studentCount={course.product.enrollmentCnt}
+            lessonCount={course.product?.course?.totalCompletedLessons}
+            studentCount={course.product?.enrollmentCnt}
             progress={0}
             status={'in-progress'}
-            onContinue={() => handleContinue(course.product.slug)}
-            onEdit={() => handleEdit(course.product.course.id)}
+            onContinue={() => handleContinue(course?.product?.slug)}
+            onEdit={() => handleEdit(course?.product?.course?.id)}
           />
         ))}
       </div>

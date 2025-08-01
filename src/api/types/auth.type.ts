@@ -22,6 +22,12 @@ export interface VerifyEmailCredentials {
   code: string
 }
 
+export interface ChangePasswordCredentials {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+}
+
 export interface AuthResponse {
   user: User;
   accessToken: string;

@@ -16,6 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useChangePassword } from "@/hooks/queries/auth/useChangePassword";
 
 type TabType = "profile" | "security";
 
@@ -51,7 +52,9 @@ function SettingsPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
-  const [isPasswordUpdating, setIsPasswordUpdating] = useState(false);
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
+  
+  const { mutate: changePassword, isPending: isPasswordUpdating, error: passwordError } = useChangePassword();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
@@ -90,17 +93,24 @@ function SettingsPage() {
   };
 
   const onSecuritySubmit = async (data: SecurityFormData) => {
-    setIsPasswordUpdating(true);
-    try {
-      console.log("Update password:", data);
-      // Handle password update logic here
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      securityForm.reset(); // Reset form after successful update
-    } catch (error) {
-      console.error("Error updating password:", error);
-    } finally {
-      setIsPasswordUpdating(false);
-    }
+    // Clear any previous messages
+    setPasswordSuccessMessage("");
+    
+    changePassword({
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+      newPasswordConfirmation: data.confirmPassword,
+    }, {
+      onSuccess: () => {
+        securityForm.reset(); // Reset form after successful update
+        setPasswordSuccessMessage("Mật khẩu đã được cập nhật thành công!");
+        // Clear success message after 3 seconds
+        setTimeout(() => setPasswordSuccessMessage(""), 3000);
+      },
+      onError: (error) => {
+        console.error("Error updating password:", error);
+      },
+    });
   };
 
   return (
@@ -321,6 +331,19 @@ function SettingsPage() {
         <div className="space-y-6">
           <Form {...securityForm}>
             <form onSubmit={securityForm.handleSubmit(onSecuritySubmit)} className="space-y-6">
+              {/* Display API Error */}
+              {passwordError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                  {passwordError.message || "Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại."}
+                </div>
+              )}
+
+              {/* Display Success Message */}
+              {passwordSuccessMessage && (
+                <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
+                  {passwordSuccessMessage}
+                </div>
+              )}
               {/* Current Password */}
               <FormField
                 control={securityForm.control}

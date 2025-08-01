@@ -7,56 +7,37 @@ import { useAuthStore } from "@/store/slices/auth.slice";
 import { useReviewUser } from "@/hooks/queries/dashboard/useStudent";
 
 interface Review {
-  id: number;
+  id: string;
   courseName: string;
   rating: number;
   reviewCount: number;
-  status: "Good" | "Excellent" | "Average";
+  content: string;
+  title: string;
+  createdAt: string;
 }
 
 function ReviewsPage() {
-  // Mock data for user reviews
-  const reviews: Review[] = [
-    {
-      id: 1,
-      courseName: "Speaking Korean for Beginners",
-      rating: 4,
-      reviewCount: 9,
-      status: "Good",
-    },
-    {
-      id: 2,
-      courseName: "Introduction to Calculus",
-      rating: 4,
-      reviewCount: 9,
-      status: "Good",
-    },
-    {
-      id: 3,
-      courseName: "How to Write Your First Novel",
-      rating: 4,
-      reviewCount: 9,
-      status: "Good",
-    },
-    {
-      id: 4,
-      courseName: "How to Write Your First Novel",
-      rating: 4,
-      reviewCount: 9,
-      status: "Good",
-    },
-  ];
-
   const user = useAuthStore.getState().user;
   const { data: reviewUserData } = useReviewUser(user?.id || "");
 
-  console.log(reviewUserData);
+  // Map the API data to the component's expected format
+  const reviews: Review[] = reviewUserData?.data?.map((review: any) => ({
+    id: review.id,
+    courseName: review.course?.title || "Unknown Course",
+    rating: review.rating,
+    reviewCount: review.course?.ratingCnt || 0,
+    content: review.content,
+    title: review.title,
+    createdAt: review.createdAt,
+  })) || [];
 
-  const handleEdit = (reviewId: number) => {
+  console.log(reviewUserData?.data);
+
+  const handleEdit = (reviewId: string) => {
     console.log("Edit review:", reviewId);
   };
 
-  const handleDelete = (reviewId: number) => {
+  const handleDelete = (reviewId: string) => {
     console.log("Delete review:", reviewId);
   };
 
@@ -92,6 +73,9 @@ function ReviewsPage() {
               <th className="text-left py-4 px-2 text-gray-600 font-medium">
                 Đánh giá
               </th>
+              <th className="text-left py-4 px-2 text-gray-600 font-medium">
+                Nội dung
+              </th>
               <th className="text-right py-4 px-2"></th>
             </tr>
           </thead>
@@ -107,33 +91,42 @@ function ReviewsPage() {
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3">
                       {renderStars(review.rating)}
-                      <span className="text-sm text-gray-500">
-                        ({review.reviewCount} Đánh giá)
-                      </span>
+                      {/*<span className="text-sm text-gray-500">*/}
+                      {/*  ({review.reviewCount} Đánh giá)*/}
+                      {/*</span>*/}
                     </div>
-                    <div className="text-gray-700">{review.status}</div>
                   </div>
                 </td>
                 <td className="py-6 px-2">
-                  <div className="flex items-center justify-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(review.id)}
-                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                    >
-                      <Edit className="w-4 h-4" color="#155dfc" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(review.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" color="red" />
-                    </Button>
+                  <div className="text-gray-700 max-w-xs">
+                    {/*<div className="font-medium text-sm mb-1">*/}
+                    {/*  {review.title || "Không có tiêu đề"}*/}
+                    {/*</div>*/}
+                    <div className="text-sm text-gray-600 line-clamp-2">
+                      {review.content || "Không có nội dung"}
+                    </div>
                   </div>
                 </td>
+                {/*<td className="py-6 px-2">*/}
+                {/*  <div className="flex items-center justify-end">*/}
+                {/*    <Button*/}
+                {/*      variant="ghost"*/}
+                {/*      size="sm"*/}
+                {/*      onClick={() => handleEdit(review.id)}*/}
+                {/*      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"*/}
+                {/*    >*/}
+                {/*      <Edit className="w-4 h-4" color="#155dfc" />*/}
+                {/*    </Button>*/}
+                {/*    <Button*/}
+                {/*      variant="ghost"*/}
+                {/*      size="sm"*/}
+                {/*      onClick={() => handleDelete(review.id)}*/}
+                {/*      className="text-red-600 hover:text-red-700 hover:bg-red-50"*/}
+                {/*    >*/}
+                {/*      <Trash2 className="w-4 h-4" color="red" />*/}
+                {/*    </Button>*/}
+                {/*  </div>*/}
+                {/*</td>*/}
               </tr>
             ))}
           </tbody>

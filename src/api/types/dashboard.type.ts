@@ -1,5 +1,3 @@
-import { useWishList } from "@/hooks/queries/dashboard/useStudent";
-
 export interface ILessonAttempt {
   id: string;
   userId: string;

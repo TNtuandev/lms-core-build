@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import IconBookDashBoard from "../../../../public/icons/dashboard/IconBookDashBoard";
 import IconBookOrange from "../../../../public/icons/dashboard/IconBookOrange";
 import IconBookGreen from "../../../../public/icons/dashboard/IconBookGreen";
-import TableMyCourse from "@/components/dashboard/component/TableMyCourse";
+// import TableMyCourse from "@/components/dashboard/component/TableMyCourse";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useStudent } from "@/hooks/queries/dashboard/useStudent";
 
@@ -57,12 +57,12 @@ function DashboardPage() {
         </div>
       </div>
 
-      <div className="bg-white shadow h-max rounded-2xl mt-10">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold mb-6">Khoá học của tôi</h2>
-        </div>
-        <TableMyCourse />
-      </div>
+      {/*<div className="bg-white shadow h-max rounded-2xl mt-10">*/}
+      {/*  <div className="p-4 border-b border-gray-200">*/}
+      {/*    <h2 className="text-xl font-semibold mb-6">Khoá học của tôi</h2>*/}
+      {/*  </div>*/}
+      {/*  <TableMyCourse />*/}
+      {/*</div>*/}
     </>
   );
 }

@@ -177,19 +177,19 @@ function EnrolledCoursesPage() {
 
       {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.map((course) => (
+        {data?.map((item) => (
           <EnrolledCourseCard
-            key={course.id}
-            imageUrl={course.product?.thumbnail}
-            category={course?.product?.category || "Khóa học"}
-            courseName={course.product?.title}
+            key={item.course.id}
+            imageUrl={item.course?.thumbnail}
+            category={item.course.category.title || "Khóa học"}
+            courseName={item.course?.title}
             instructor={"Anh Tuấn, Quang Anh"}
-            lessonCount={course.product?.course?.totalCompletedLessons}
-            studentCount={course.product?.enrollmentCnt}
-            progress={0}
+            lessonCount={item.course?.totalLessons}
+            studentCount={item.course?.enrollmentCnt}
+            progress={item.course.totalCompletedLessons}
             status={'in-progress'}
-            onContinue={() => handleContinue(course?.product?.slug)}
-            onEdit={() => handleEdit(course?.product?.course?.id)}
+            onContinue={() => handleContinue(item.course?.slug)}
+            onEdit={() => handleEdit(item?.course?.id)}
           />
         ))}
       </div>

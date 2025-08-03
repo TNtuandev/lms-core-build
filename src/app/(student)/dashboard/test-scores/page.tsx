@@ -7,15 +7,21 @@ import {
   useSubmissionUser,
 } from "@/hooks/queries/dashboard/useStudent";
 import { formatDateToCustomString } from "@/until";
+import { useSubmissionTeacher } from "@/hooks/queries/dashboard/useTeacher";
 
 type TabType = "attempts" | "submission";
 
 function TestScoresPage() {
-  const user = useAuthStore.getState().user;
+  const { user, isTeacher } = useAuthStore.getState();
   const [activeTab, setActiveTab] = useState<TabType>("attempts");
 
-  const { data: attemptsData } = useAttemptsUser(user?.id || "");
-  const { data: submissionData } = useSubmissionUser(user?.id || "");
+  const { data: attemptsData } = useAttemptsUser(user?.id || "", !isTeacher);
+  const { data: submissionData } = useSubmissionUser(
+    user?.id || "",
+    !isTeacher,
+  );
+
+  console.log("attemptsData", attemptsData);
 
   const renderResultBadge = (result: "Đạt" | "Chưa đạt") => {
     const isPass = result === "Đạt";

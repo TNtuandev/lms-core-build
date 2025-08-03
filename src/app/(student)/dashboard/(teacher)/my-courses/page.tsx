@@ -46,9 +46,6 @@ function MyCoursePage() {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4">Khóa học của tôi</h2>
-          <Button className="text-white">
-            <Link href="/create-courses">Tạo khoá học mới</Link>
-          </Button>
         </div>
         <Tabs defaultValue={EStatusCourse.PUBLISHED} onValueChange={(value) => {
           setTabActive(value as EStatusCourse);

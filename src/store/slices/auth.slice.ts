@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { User } from "@/models/user.model";
+import { User, UserType } from "@/models/user.model";
 
 interface AuthState {
   user: User | null;
@@ -10,6 +10,7 @@ interface AuthState {
   setUserDraft: (user: User, token: string) => void;
   logout: () => void;
   updateUser: (data: Partial<User>) => void;
+  isTeacher?: boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -18,9 +19,15 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-
-      setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
-      setUserDraft: (user, token) => set({ user, token, isAuthenticated: !!token }),
+      setAuth: (user, token) =>
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isTeacher: user?.type === UserType.INSTRUCTOR,
+        }),
+      setUserDraft: (user, token) =>
+        set({ user, token, isAuthenticated: !!token }),
 
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
 
@@ -35,6 +42,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
+        isTeacher: state.isTeacher
       }),
       onRehydrateStorage: () => (state) => {
         if (state && state.token) {

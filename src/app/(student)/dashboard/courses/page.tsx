@@ -23,41 +23,6 @@ function EnrolledCoursesPage() {
 
 
   // Mock data for enrolled courses
-  const enrolledCourses = [
-    {
-      id: 1,
-      imageUrl: "/images/banner-sign-in.png",
-      category: "Khóa học Thiết kế",
-      courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
-      instructor: "Anh Tuấn, Quang Anh",
-      lessonCount: 12,
-      studentCount: 768,
-      progress: 80,
-      status: "in-progress" as const,
-    },
-    {
-      id: 2,
-      imageUrl: "/images/banner-sign-in.png",
-      category: "Khóa học Thiết kế",
-      courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
-      instructor: "Anh Tuấn, Quang Anh",
-      lessonCount: 12,
-      studentCount: 768,
-      progress: 80,
-      status: "in-progress" as const,
-    },
-    {
-      id: 3,
-      imageUrl: "/images/banner-sign-in.png",
-      category: "Khóa học Thiết kế",
-      courseName: "Thiết kế giao diện người dùng và trải nghiệm (UI/UX)",
-      instructor: "Anh Tuấn, Quang Anh",
-      lessonCount: 12,
-      studentCount: 768,
-      progress: 100,
-      status: "completed" as const,
-    },
-  ];
 
   // Current course for continue learning section
   const currentCourse = {
@@ -68,13 +33,6 @@ function EnrolledCoursesPage() {
     currentLesson: "Ý nghĩa của màu sắc trong thiết kế web",
     lessonDuration: "15 phút",
   };
-
-  const filteredCourses = enrolledCourses.filter(course => {
-    if (activeTab === "all") return true;
-    if (activeTab === "in-progress") return course.status === "in-progress";
-    if (activeTab === "completed") return course.status === "completed";
-    return true;
-  });
 
   const handleContinue = (courseId: string) => {
     router.push(`${Routes.course}/${courseId}`)
@@ -193,12 +151,6 @@ function EnrolledCoursesPage() {
           />
         ))}
       </div>
-
-      {filteredCourses.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Không có khóa học nào trong mục này.</p>
-        </div>
-      )}
     </div>
   );
 }

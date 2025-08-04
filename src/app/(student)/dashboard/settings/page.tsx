@@ -34,17 +34,19 @@ const profileSchema = z.object({
 });
 
 // Schema validation for Security
-const securitySchema = z.object({
-  currentPassword: z.string().min(1, "Mật khẩu cũ không được để trống"),
-  newPassword: z
-    .string()
-    .min(1, "Mật khẩu mới không được để trống")
-    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-  confirmPassword: z.string().min(1, "Xác nhận mật khẩu không được để trống"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Mật khẩu xác nhận không khớp",
-  path: ["confirmPassword"],
-});
+const securitySchema = z
+  .object({
+    currentPassword: z.string().min(1, "Mật khẩu cũ không được để trống"),
+    newPassword: z
+      .string()
+      .min(1, "Mật khẩu mới không được để trống")
+      .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+    confirmPassword: z.string().min(1, "Xác nhận mật khẩu không được để trống"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 type SecurityFormData = z.infer<typeof securitySchema>;
@@ -59,11 +61,19 @@ function SettingsPage() {
 
   const user = useAuthStore.getState().user;
 
-  console.log(user?.id, "----user?.id");
-
-  const { mutate: changePassword, isPending: isPasswordUpdating, error: passwordError } = useChangePassword();
-  const { data: userData, isLoading: isLoadingUser } = useGetUser(user?.id || "");
-  const { mutate: updateUser, isPending: isUpdatingUser, error: updateUserError } = useUpdateUser();
+  const {
+    mutate: changePassword,
+    isPending: isPasswordUpdating,
+    error: passwordError,
+  } = useChangePassword();
+  const { data: userData, isLoading: isLoadingUser } = useGetUser(
+    user?.id || "",
+  );
+  const {
+    mutate: updateUser,
+    isPending: isUpdatingUser,
+    error: updateUserError,
+  } = useUpdateUser();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
@@ -74,7 +84,7 @@ function SettingsPage() {
       username: "",
       phone: "",
       skills: "",
-      bio: ""
+      bio: "",
     },
   });
 
@@ -87,7 +97,7 @@ function SettingsPage() {
         username: userData.username || "",
         phone: userData.phoneNumber || "",
         skills: userData.skill || "",
-        bio: userData.bio || ""
+        bio: userData.bio || "",
       });
     }
   }, [userData, profileForm]);
@@ -98,53 +108,59 @@ function SettingsPage() {
     defaultValues: {
       currentPassword: "",
       newPassword: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
   });
 
   const onProfileSubmit = async (data: ProfileFormData) => {
     if (!user?.id) return;
 
-    updateUser({
-      id: user.id,
-      userData: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        username: data.username,
-        phoneNumber: data.phone,
-        skill: data.skills,
-        bio: data.bio
-      }
-    }, {
-      onSuccess: () => {
-        setProfileSuccessMessage("Thông tin đã được cập nhật thành công!");
-        setTimeout(() => setProfileSuccessMessage(""), 3000);
+    updateUser(
+      {
+        id: user.id,
+        userData: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          username: data.username,
+          phoneNumber: data.phone,
+          skill: data.skills,
+          bio: data.bio,
+        },
       },
-      onError: (error) => {
-        console.error("Error updating profile:", error);
+      {
+        onSuccess: () => {
+          setProfileSuccessMessage("Thông tin đã được cập nhật thành công!");
+          setTimeout(() => setProfileSuccessMessage(""), 3000);
+        },
+        onError: (error) => {
+          console.error("Error updating profile:", error);
+        },
       },
-    });
+    );
   };
 
   const onSecuritySubmit = async (data: SecurityFormData) => {
     // Clear any previous messages
     setPasswordSuccessMessage("");
-    
-    changePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-      newPasswordConfirmation: data.confirmPassword,
-    }, {
-      onSuccess: () => {
-        securityForm.reset(); // Reset form after successful update
-        setPasswordSuccessMessage("Mật khẩu đã được cập nhật thành công!");
-        // Clear success message after 3 seconds
-        setTimeout(() => setPasswordSuccessMessage(""), 3000);
+
+    changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        newPasswordConfirmation: data.confirmPassword,
       },
-      onError: (error) => {
-        console.error("Error updating password:", error);
+      {
+        onSuccess: () => {
+          securityForm.reset(); // Reset form after successful update
+          setPasswordSuccessMessage("Mật khẩu đã được cập nhật thành công!");
+          // Clear success message after 3 seconds
+          setTimeout(() => setPasswordSuccessMessage(""), 3000);
+        },
+        onError: (error) => {
+          console.error("Error updating password:", error);
+        },
       },
-    });
+    );
   };
 
   return (
@@ -191,7 +207,8 @@ function SettingsPage() {
           {/* Error State */}
           {updateUserError && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-              {updateUserError.message || "Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại."}
+              {updateUserError.message ||
+                "Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại."}
             </div>
           )}
 
@@ -204,16 +221,23 @@ function SettingsPage() {
           {/* Profile Banner */}
           <Card className="overflow-hidden">
             <div className="relative h-40 bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500">
-              <div className="absolute inset-0" style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                backgroundBlendMode: "overlay"
-              }}>
-                <div className="absolute inset-0" style={{
-                  background: "url('/images/abstract-bg.jpg')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  opacity: 0.3
-                }}></div>
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  backgroundBlendMode: "overlay",
+                }}
+              >
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: "url('/images/abstract-bg.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: 0.3,
+                  }}
+                ></div>
               </div>
 
               <div className="absolute bottom-4 left-4 flex items-center gap-4">
@@ -238,15 +262,18 @@ function SettingsPage() {
                 </div>
               </div>
 
-              <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm">
-                Sửa ảnh bìa
-              </button>
+              {/*<button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm">*/}
+              {/*  Sửa ảnh bìa*/}
+              {/*</button>*/}
             </div>
           </Card>
 
           {/* Profile Form */}
           <Form {...profileForm}>
-            <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
+            <form
+              onSubmit={profileForm.handleSubmit(onProfileSubmit)}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* First Name */}
                 <FormField
@@ -254,7 +281,9 @@ function SettingsPage() {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <label className="block text-sm font-medium text-gray-700">Tên</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Tên
+                      </label>
                       <FormControl>
                         <Input
                           placeholder="Chris"
@@ -274,7 +303,9 @@ function SettingsPage() {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <label className="block text-sm font-medium text-gray-700">Họ</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Họ
+                      </label>
                       <FormControl>
                         <Input
                           placeholder="Hemsworth"
@@ -288,15 +319,15 @@ function SettingsPage() {
                   )}
                 />
 
-
-
                 {/* Username */}
                 <FormField
                   control={profileForm.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <label className="block text-sm font-medium text-gray-700">Tên người dùng</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Tên người dùng
+                      </label>
                       <FormControl>
                         <Input
                           placeholder="chrishemsworth"
@@ -316,7 +347,9 @@ function SettingsPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <label className="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Số điện thoại
+                      </label>
                       <FormControl>
                         <Input
                           placeholder="+84 345226268"
@@ -336,7 +369,9 @@ function SettingsPage() {
                   name="skills"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700">Kỹ năng/Nghề nghiệp</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Kỹ năng/Nghề nghiệp
+                      </label>
                       <FormControl>
                         <Input
                           placeholder="Application Developer"
@@ -357,7 +392,9 @@ function SettingsPage() {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-gray-700">Giới thiệu</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Giới thiệu
+                    </label>
                     <FormControl>
                       <Textarea
                         className="border border-gray-200"
@@ -371,8 +408,6 @@ function SettingsPage() {
                   </FormItem>
                 )}
               />
-
-
 
               <div className="flex justify-end">
                 <Button
@@ -398,11 +433,15 @@ function SettingsPage() {
       {activeTab === "security" && (
         <div className="space-y-6">
           <Form {...securityForm}>
-            <form onSubmit={securityForm.handleSubmit(onSecuritySubmit)} className="space-y-6">
+            <form
+              onSubmit={securityForm.handleSubmit(onSecuritySubmit)}
+              className="space-y-6"
+            >
               {/* Display API Error */}
               {passwordError && (
                 <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {passwordError.message || "Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại."}
+                  {passwordError.message ||
+                    "Đã xảy ra lỗi khi cập nhật mật khẩu. Vui lòng thử lại."}
                 </div>
               )}
 
@@ -418,7 +457,9 @@ function SettingsPage() {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-gray-700">Mật khẩu cũ</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Mật khẩu cũ
+                    </label>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -430,7 +471,9 @@ function SettingsPage() {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          onClick={() =>
+                            setShowCurrentPassword(!showCurrentPassword)
+                          }
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                           disabled={isPasswordUpdating}
                         >
@@ -453,7 +496,9 @@ function SettingsPage() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-gray-700">Mật khẩu mới</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Mật khẩu mới
+                    </label>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -488,7 +533,9 @@ function SettingsPage() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-gray-700">Nhập lại mật khẩu mới</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Nhập lại mật khẩu mới
+                    </label>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -500,7 +547,9 @@ function SettingsPage() {
                         />
                         <button
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                           disabled={isPasswordUpdating}
                         >

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useChangePassword } from "@/hooks/queries/auth/useChangePassword";
+import { useGetUser } from "@/hooks/queries/auth/useGetUser";
+import { useUpdateUser } from "@/hooks/queries/auth/useUpdateUser";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 type TabType = "profile" | "security";
 
@@ -51,23 +54,43 @@ function SettingsPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
-  
+  const [profileSuccessMessage, setProfileSuccessMessage] = useState("");
+
+  const user = useAuthStore.getState().user;
+
+  console.log(user?.id, "----user?.id");
+
   const { mutate: changePassword, isPending: isPasswordUpdating, error: passwordError } = useChangePassword();
+  const { data: userData, isLoading: isLoadingUser } = useGetUser(user?.id || "");
+  const { mutate: updateUser, isPending: isUpdatingUser, error: updateUserError } = useUpdateUser();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: "Chris",
-      lastName: "Hemsworth",
-      username: "chrishemsworth",
-      phone: "+84 345226268",
-      skills: "Application Developer",
-      bio: "I'm the Front-End Developer for #Rainbow IT in Bangladesh, OR. I have serious passion for UI effects, animations and creating intuitive, dynamic user experiences."
+      firstName: "",
+      lastName: "",
+      username: "",
+      phone: "",
+      skills: "",
+      bio: ""
     },
   });
+
+  // Update form when user data is loaded
+  useEffect(() => {
+    if (userData) {
+      profileForm.reset({
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        username: userData.username || "",
+        phone: userData.phoneNumber || "",
+        skills: userData.skill || "",
+        bio: userData.bio || ""
+      });
+    }
+  }, [userData, profileForm]);
 
   // Security form setup
   const securityForm = useForm<SecurityFormData>({
@@ -80,16 +103,27 @@ function SettingsPage() {
   });
 
   const onProfileSubmit = async (data: ProfileFormData) => {
-    setIsProfileSaving(true);
-    try {
-      console.log("Save profile:", data);
-      // Handle profile save logic here
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    } catch (error) {
-      console.error("Error saving profile:", error);
-    } finally {
-      setIsProfileSaving(false);
-    }
+    if (!user?.id) return;
+
+    updateUser({
+      id: user.id,
+      userData: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        username: data.username,
+        phoneNumber: data.phone,
+        skill: data.skills,
+        bio: data.bio
+      }
+    }, {
+      onSuccess: () => {
+        setProfileSuccessMessage("Thông tin đã được cập nhật thành công!");
+        setTimeout(() => setProfileSuccessMessage(""), 3000);
+      },
+      onError: (error) => {
+        console.error("Error updating profile:", error);
+      },
+    });
   };
 
   const onSecuritySubmit = async (data: SecurityFormData) => {
@@ -146,6 +180,27 @@ function SettingsPage() {
       {/* Tab Content */}
       {activeTab === "profile" && (
         <div className="space-y-6">
+          {/* Loading State */}
+          {isLoadingUser && (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+              <span className="ml-2 text-gray-500">Đang tải thông tin...</span>
+            </div>
+          )}
+
+          {/* Error State */}
+          {updateUserError && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+              {updateUserError.message || "Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại."}
+            </div>
+          )}
+
+          {/* Success Message */}
+          {profileSuccessMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
+              {profileSuccessMessage}
+            </div>
+          )}
           {/* Profile Banner */}
           <Card className="overflow-hidden">
             <div className="relative h-40 bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500">
@@ -163,11 +218,20 @@ function SettingsPage() {
 
               <div className="absolute bottom-4 left-4 flex items-center gap-4">
                 <div className="relative">
-                  <img
-                    src="/images/banner-sign-in.png"
-                    alt="Profile"
-                    className="w-16 h-16 rounded-full border-4 border-white object-cover"
-                  />
+                  {isLoadingUser ? (
+                    <div className="w-16 h-16 rounded-full border-4 border-white bg-gray-200 animate-pulse flex items-center justify-center">
+                      <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+                    </div>
+                  ) : (
+                    <img
+                      src={userData?.avatarUrl || "/images/banner-sign-in.png"}
+                      alt="Profile"
+                      className="w-16 h-16 rounded-full border-4 border-white object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "/images/banner-sign-in.png";
+                      }}
+                    />
+                  )}
                   <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
                     <Camera className="w-3 h-3 text-gray-600" />
                   </button>
@@ -195,7 +259,7 @@ function SettingsPage() {
                         <Input
                           placeholder="Chris"
                           className="border border-gray-200"
-                          disabled={isProfileSaving}
+                          disabled={isUpdatingUser || isLoadingUser}
                           {...field}
                         />
                       </FormControl>
@@ -215,7 +279,7 @@ function SettingsPage() {
                         <Input
                           placeholder="Hemsworth"
                           className="border border-gray-200"
-                          disabled={isProfileSaving}
+                          disabled={isUpdatingUser || isLoadingUser}
                           {...field}
                         />
                       </FormControl>
@@ -223,6 +287,8 @@ function SettingsPage() {
                     </FormItem>
                   )}
                 />
+
+
 
                 {/* Username */}
                 <FormField
@@ -235,7 +301,7 @@ function SettingsPage() {
                         <Input
                           placeholder="chrishemsworth"
                           className="border border-gray-200"
-                          disabled={isProfileSaving}
+                          disabled={isUpdatingUser || isLoadingUser}
                           {...field}
                         />
                       </FormControl>
@@ -255,7 +321,7 @@ function SettingsPage() {
                         <Input
                           placeholder="+84 345226268"
                           className="border border-gray-200"
-                          disabled={isProfileSaving}
+                          disabled={isUpdatingUser || isLoadingUser}
                           {...field}
                         />
                       </FormControl>
@@ -275,7 +341,7 @@ function SettingsPage() {
                         <Input
                           placeholder="Application Developer"
                           className="border border-gray-200"
-                          disabled={isProfileSaving}
+                          disabled={isUpdatingUser || isLoadingUser}
                           {...field}
                         />
                       </FormControl>
@@ -297,7 +363,7 @@ function SettingsPage() {
                         className="border border-gray-200"
                         placeholder="Nhập giới thiệu về bản thân..."
                         rows={4}
-                        disabled={isProfileSaving}
+                        disabled={isUpdatingUser || isLoadingUser}
                         {...field}
                       />
                     </FormControl>
@@ -306,13 +372,15 @@ function SettingsPage() {
                 )}
               />
 
+
+
               <div className="flex justify-end">
                 <Button
                   type="submit"
-                  disabled={isProfileSaving}
+                  disabled={isUpdatingUser || isLoadingUser}
                   className="bg-gray-800 hover:bg-gray-700 text-white px-6"
                 >
-                  {isProfileSaving ? (
+                  {isUpdatingUser ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Đang lưu...

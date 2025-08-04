@@ -36,8 +36,16 @@ export interface AuthResponse {
 export interface User {
   id: string;
   email: string;
+  username: string;
+  fullName: string;
+  firstName: string;
+  lastName: string;
+  skill: string;
+  bio: string;
+  phoneNumber: string;
+  avatarUrl?: string;
+  coverPhotoUrl?: string;
+  status: string;
   isEmailVerified: boolean;
-  name: string;
-  avatar?: string;
   type: "learner" | "instructor" | "admin";
 }

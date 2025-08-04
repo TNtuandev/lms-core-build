@@ -55,4 +55,14 @@ export const authAPI = {
     const { data } = await api.get("/users/me");
     return data;
   },
+
+  getUserById: async (id: string): Promise<User> => {
+    const { data } = await api.get(`/users/${id}`);
+    return data;
+  },
+
+  updateUser: async (id: string, userData: Partial<User>): Promise<User> => {
+    const { data } = await api.post(`/users/${id}`, userData);
+    return data;
+  },
 };

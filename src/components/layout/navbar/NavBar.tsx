@@ -96,7 +96,6 @@ function Navbar() {
       {
         onSuccess: (res) => {
           if (res) {
-            console.log("Cart created successfully:", res);
             setCartId(res.id);
           }
           // setListCart(res.data);

@@ -31,15 +31,15 @@ function ReviewsPage() {
     createdAt: review.createdAt,
   })) || [];
 
-  console.log(reviewUserData?.data);
+  console.log(reviewUserData?.data, user);
 
-  const handleEdit = (reviewId: string) => {
-    console.log("Edit review:", reviewId);
-  };
-
-  const handleDelete = (reviewId: string) => {
-    console.log("Delete review:", reviewId);
-  };
+  // const handleEdit = (reviewId: string) => {
+  //   console.log("Edit review:", reviewId);
+  // };
+  //
+  // const handleDelete = (reviewId: string) => {
+  //   console.log("Delete review:", reviewId);
+  // };
 
   const renderStars = (rating: number) => {
     return (

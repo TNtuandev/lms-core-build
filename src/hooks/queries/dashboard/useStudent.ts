@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { studentAPI } from "@/api/endpoints/student.api";
 
-export const useStudent = (studentId: string) => {
+export const useStudent = (studentId: string, enabled?: boolean) => {
   return useQuery({
     queryKey: ["studentId", studentId],
     queryFn: () => studentAPI.getStudentProfile(studentId),
-    enabled: !!studentId,
+    enabled: enabled ?? !!studentId,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -28,20 +28,20 @@ export const useReviewUser = (studentId: string) => {
   });
 };
 
-export const useAttemptsUser = (studentId: string) => {
+export const useAttemptsUser = (studentId: string, enabled?: boolean) => {
   return useQuery({
     queryKey: ["attempts", studentId],
     queryFn: () => studentAPI.getAttemptsUser(studentId),
-    enabled: !!studentId,
+    enabled: enabled ?? !!studentId,
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useSubmissionUser = (studentId: string) => {
+export const useSubmissionUser = (studentId: string, enabled?: boolean) => {
   return useQuery({
     queryKey: ["Submission", studentId],
     queryFn: () => studentAPI.getSubmissionUser(studentId),
-    enabled: !!studentId,
+    enabled: enabled ?? !!studentId,
     staleTime: 5 * 60 * 1000,
   });
 };

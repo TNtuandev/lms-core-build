@@ -39,3 +39,29 @@ export interface LearnerProfile {
     _mobilePhone: string;
   };
 }
+
+export interface InstructorProfile {
+  data: {
+    id: string
+    userId: string
+    bio: string
+    cvUrl: string
+    expertise: string
+    ratingAverage: string
+    totalReviews: number
+    totalStudents: number
+    totalCourses: number
+    isVerified: boolean
+    auditInfo: AuditInfoInstructor
+
+    totalPrices: number
+    mobilePhone: string
+  }
+}
+
+export interface AuditInfoInstructor {
+  createdAt: string
+  updatedAt: string
+  deletedAt: any
+}
+

@@ -65,4 +65,14 @@ export const authAPI = {
     const { data } = await api.post(`/users/${id}`, userData);
     return data;
   },
+
+  uploadAvatar: async (avatarData: { avatarUrl: string; attachmentId: string }): Promise<any> => {
+    const { data } = await api.post("/users/upload-avatar", avatarData);
+    return data;
+  },
+
+  uploadCoverPhoto: async (coverData: { coverPhotoUrl: string; attachmentId: string }): Promise<any> => {
+    const { data } = await api.post("/users/upload-cover-photo", coverData);
+    return data;
+  },
 };

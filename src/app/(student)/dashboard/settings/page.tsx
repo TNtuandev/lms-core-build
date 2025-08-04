@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +19,9 @@ import {
 import { useChangePassword } from "@/hooks/queries/auth/useChangePassword";
 import { useGetUser } from "@/hooks/queries/auth/useGetUser";
 import { useUpdateUser } from "@/hooks/queries/auth/useUpdateUser";
+import { useUploadAvatar } from "@/hooks/queries/auth/useUploadAvatar";
+import { useUploadCoverPhoto } from "@/hooks/queries/auth/useUploadCoverPhoto";
+import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import { useAuthStore } from "@/store/slices/auth.slice";
 
 type TabType = "profile" | "security";
@@ -58,6 +61,12 @@ function SettingsPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
   const [profileSuccessMessage, setProfileSuccessMessage] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
+  const [uploadErrorMessage, setUploadErrorMessage] = useState("");
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const user = useAuthStore.getState().user;
 
@@ -74,6 +83,9 @@ function SettingsPage() {
     isPending: isUpdatingUser,
     error: updateUserError,
   } = useUpdateUser();
+  const { uploadFile } = useUploadFile();
+  const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
+  const { mutate: uploadCoverPhoto, isPending: isUploadingCover } = useUploadCoverPhoto();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
@@ -101,6 +113,63 @@ function SettingsPage() {
       });
     }
   }, [userData, profileForm]);
+
+  // Handle file upload functions
+  const handleUploadAvatar = (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        uploadAvatar({
+          avatarUrl: response.url,
+          attachmentId: response.id || response.attachmentId,
+        }, {
+          onSuccess: () => {
+            setUploadSuccessMessage("Avatar đã được cập nhật thành công!");
+            setTimeout(() => setUploadSuccessMessage(""), 3000);
+          },
+          onError: (error) => {
+            console.error("Error uploading avatar:", error);
+            setUploadErrorMessage("Đã xảy ra lỗi khi cập nhật avatar. Vui lòng thử lại.");
+            setTimeout(() => setUploadErrorMessage(""), 3000);
+          },
+        });
+      },
+      onError: (error) => {
+        console.error("Error uploading avatar:", error);
+        setUploadErrorMessage("Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.");
+        setTimeout(() => setUploadErrorMessage(""), 3000);
+      },
+    });
+  };
+
+  const handleUploadCoverPhoto = (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        uploadCoverPhoto({
+          coverPhotoUrl: response.url,
+          attachmentId: response.id || response.attachmentId,
+        }, {
+          onSuccess: () => {
+            setUploadSuccessMessage("Ảnh bìa đã được cập nhật thành công!");
+            setTimeout(() => setUploadSuccessMessage(""), 3000);
+          },
+          onError: (error) => {
+            console.error("Error uploading cover photo:", error);
+            setUploadErrorMessage("Đã xảy ra lỗi khi cập nhật ảnh bìa. Vui lòng thử lại.");
+            setTimeout(() => setUploadErrorMessage(""), 3000);
+          },
+        });
+      },
+      onError: (error) => {
+        console.error("Error uploading cover photo:", error);
+        setUploadErrorMessage("Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.");
+        setTimeout(() => setUploadErrorMessage(""), 3000);
+      },
+    });
+  };
 
   // Security form setup
   const securityForm = useForm<SecurityFormData>({
@@ -218,6 +287,20 @@ function SettingsPage() {
               {profileSuccessMessage}
             </div>
           )}
+
+          {/* Upload Success Message */}
+          {uploadSuccessMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
+              {uploadSuccessMessage}
+            </div>
+          )}
+
+          {/* Upload Error Message */}
+          {uploadErrorMessage && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+              {uploadErrorMessage}
+            </div>
+          )}
           {/* Profile Banner */}
           <Card className="overflow-hidden">
             <div className="relative h-40 bg-gradient-to-r from-purple-400 via-pink-500 to-orange-500">
@@ -256,15 +339,60 @@ function SettingsPage() {
                       }}
                     />
                   )}
-                  <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50">
-                    <Camera className="w-3 h-3 text-gray-600" />
+                  <button 
+                    type="button"
+                    className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
+                  >
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-3 h-3 text-gray-600 animate-spin" />
+                    ) : (
+                      <Camera className="w-3 h-3 text-gray-600" />
+                    )}
                   </button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={avatarInputRef}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleUploadAvatar(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
                 </div>
               </div>
 
-              {/*<button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm">*/}
-              {/*  Sửa ảnh bìa*/}
-              {/*</button>*/}
+              <button 
+                type="button"
+                className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={isUploadingCover}
+              >
+                {isUploadingCover ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang tải...
+                  </>
+                ) : (
+                  "Sửa ảnh bìa"
+                )}
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={coverInputRef}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    handleUploadCoverPhoto(file);
+                  }
+                }}
+                className="hidden"
+              />
             </div>
           </Card>
 

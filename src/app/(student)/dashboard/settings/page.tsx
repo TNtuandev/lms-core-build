@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Loader2, Eye, EyeOff } from "lucide-react";
+import { Camera, Eye, EyeOff, Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -61,8 +61,6 @@ function SettingsPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
   const [profileSuccessMessage, setProfileSuccessMessage] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
   const [uploadErrorMessage, setUploadErrorMessage] = useState("");
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -84,8 +82,10 @@ function SettingsPage() {
     error: updateUserError,
   } = useUpdateUser();
   const { uploadFile } = useUploadFile();
-  const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar();
-  const { mutate: uploadCoverPhoto, isPending: isUploadingCover } = useUploadCoverPhoto();
+  const { mutate: uploadAvatar, isPending: isUploadingAvatar } =
+    useUploadAvatar();
+  const { mutate: uploadCoverPhoto, isPending: isUploadingCover } =
+    useUploadCoverPhoto();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
@@ -120,24 +120,31 @@ function SettingsPage() {
     formData.append("file", file);
     uploadFile.mutate(formData, {
       onSuccess: (response) => {
-        uploadAvatar({
-          avatarUrl: response.url,
-          attachmentId: response.id || response.attachmentId,
-        }, {
-          onSuccess: () => {
-            setUploadSuccessMessage("Avatar đã được cập nhật thành công!");
-            setTimeout(() => setUploadSuccessMessage(""), 3000);
+        uploadAvatar(
+          {
+            avatarUrl: response.url,
+            attachmentId: response.id || response.attachmentId,
           },
-          onError: (error) => {
-            console.error("Error uploading avatar:", error);
-            setUploadErrorMessage("Đã xảy ra lỗi khi cập nhật avatar. Vui lòng thử lại.");
-            setTimeout(() => setUploadErrorMessage(""), 3000);
+          {
+            onSuccess: () => {
+              setUploadSuccessMessage("Avatar đã được cập nhật thành công!");
+              setTimeout(() => setUploadSuccessMessage(""), 3000);
+            },
+            onError: (error) => {
+              console.error("Error uploading avatar:", error);
+              setUploadErrorMessage(
+                "Đã xảy ra lỗi khi cập nhật avatar. Vui lòng thử lại.",
+              );
+              setTimeout(() => setUploadErrorMessage(""), 3000);
+            },
           },
-        });
+        );
       },
       onError: (error) => {
         console.error("Error uploading avatar:", error);
-        setUploadErrorMessage("Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.");
+        setUploadErrorMessage(
+          "Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.",
+        );
         setTimeout(() => setUploadErrorMessage(""), 3000);
       },
     });
@@ -148,24 +155,31 @@ function SettingsPage() {
     formData.append("file", file);
     uploadFile.mutate(formData, {
       onSuccess: (response) => {
-        uploadCoverPhoto({
-          coverPhotoUrl: response.url,
-          attachmentId: response.id || response.attachmentId,
-        }, {
-          onSuccess: () => {
-            setUploadSuccessMessage("Ảnh bìa đã được cập nhật thành công!");
-            setTimeout(() => setUploadSuccessMessage(""), 3000);
+        uploadCoverPhoto(
+          {
+            coverPhotoUrl: response.url,
+            attachmentId: response.id || response.attachmentId,
           },
-          onError: (error) => {
-            console.error("Error uploading cover photo:", error);
-            setUploadErrorMessage("Đã xảy ra lỗi khi cập nhật ảnh bìa. Vui lòng thử lại.");
-            setTimeout(() => setUploadErrorMessage(""), 3000);
+          {
+            onSuccess: () => {
+              setUploadSuccessMessage("Ảnh bìa đã được cập nhật thành công!");
+              setTimeout(() => setUploadSuccessMessage(""), 3000);
+            },
+            onError: (error) => {
+              console.error("Error uploading cover photo:", error);
+              setUploadErrorMessage(
+                "Đã xảy ra lỗi khi cập nhật ảnh bìa. Vui lòng thử lại.",
+              );
+              setTimeout(() => setUploadErrorMessage(""), 3000);
+            },
           },
-        });
+        );
       },
       onError: (error) => {
         console.error("Error uploading cover photo:", error);
-        setUploadErrorMessage("Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.");
+        setUploadErrorMessage(
+          "Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.",
+        );
         setTimeout(() => setUploadErrorMessage(""), 3000);
       },
     });
@@ -339,7 +353,7 @@ function SettingsPage() {
                       }}
                     />
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50"
                     onClick={() => avatarInputRef.current?.click()}
@@ -366,7 +380,7 @@ function SettingsPage() {
                 </div>
               </div>
 
-              <button 
+              <button
                 type="button"
                 className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm"
                 onClick={() => coverInputRef.current?.click()}

@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useReviewUser } from "@/hooks/queries/dashboard/useStudent";
 
@@ -21,15 +20,16 @@ function ReviewsPage() {
   const { data: reviewUserData } = useReviewUser(user?.id || "");
 
   // Map the API data to the component's expected format
-  const reviews: Review[] = reviewUserData?.data?.map((review: any) => ({
-    id: review.id,
-    courseName: review.course?.title || "Unknown Course",
-    rating: review.rating,
-    reviewCount: review.course?.ratingCnt || 0,
-    content: review.content,
-    title: review.title,
-    createdAt: review.createdAt,
-  })) || [];
+  const reviews: Review[] =
+    reviewUserData?.data?.map((review: any) => ({
+      id: review.id,
+      courseName: review.course?.title || "Unknown Course",
+      rating: review.rating,
+      reviewCount: review.course?.ratingCnt || 0,
+      content: review.content,
+      title: review.title,
+      createdAt: review.createdAt,
+    })) || [];
 
   console.log(reviewUserData?.data, user);
 
@@ -81,7 +81,10 @@ function ReviewsPage() {
           </thead>
           <tbody>
             {reviews.map((review) => (
-              <tr key={review.id} className="border-b border-dashed border-gray-100">
+              <tr
+                key={review.id}
+                className="border-b border-dashed border-gray-100"
+              >
                 <td className="py-6 px-2">
                   <div className="text-gray-900 font-medium">
                     {review.courseName}

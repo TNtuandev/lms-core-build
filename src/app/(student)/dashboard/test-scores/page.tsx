@@ -7,7 +7,6 @@ import {
   useSubmissionUser,
 } from "@/hooks/queries/dashboard/useStudent";
 import { formatDateToCustomString } from "@/until";
-import { useSubmissionTeacher } from "@/hooks/queries/dashboard/useTeacher";
 
 type TabType = "attempts" | "submission";
 

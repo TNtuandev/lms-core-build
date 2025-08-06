@@ -69,6 +69,9 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     formData.append("file", file);
     uploadFile.mutate(formData, {
       onSuccess: (response) => {
+
+        console.log("response---", response)
+
         field.onChange(response.url); // Assuming the API returns the file URL
       },
       onError: (error) => {

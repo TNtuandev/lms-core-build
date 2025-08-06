@@ -96,7 +96,7 @@ export const UploadCodeAssignment = ({
       form.reset({
         title: "",
         practiceType: "coding",
-        lang: "JAVA", // Default language
+        language: "JAVA", // Default language
         htmlContent: "",
         description: "",
         inputFile: undefined,
@@ -117,7 +117,7 @@ export const UploadCodeAssignment = ({
   console.log("UploadCodeAssignment render", form.formState.errors);
 
   const practiceType = form.watch("practiceType");
-  const lang = form.watch("lang");
+  const language = form.watch("language");
 
   const createPractice = useCreateLessonPractice(
     courseData?.id as string,
@@ -178,7 +178,7 @@ export const UploadCodeAssignment = ({
   };
 
   const acceptFiles = useMemo(() => {
-    switch (lang) {
+    switch (language) {
       case "C++":
         return ".cpp,.h";
       case "JAVA":
@@ -186,7 +186,7 @@ export const UploadCodeAssignment = ({
       default:
         return ".txt,.json"; // Default for other languages
     }
-  }, [lang])
+  }, [language])
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -278,7 +278,7 @@ export const UploadCodeAssignment = ({
                 {/*Ngôn ngữ*/}
                 <FormField
                   control={form.control}
-                  name="lang"
+                  name="language"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ngôn ngữ</FormLabel>

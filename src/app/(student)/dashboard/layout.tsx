@@ -15,7 +15,12 @@ import {
   User,
 } from "lucide-react";
 import IconBookWhite from "../../../../public/icons/IconBookWhite";
-import {DocumentText, MessageText, NotificationBing, Profile2User} from "iconsax-react";
+import {
+  DocumentText,
+  MessageText,
+  NotificationBing,
+  Profile2User,
+} from "iconsax-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useStudent } from "@/hooks/queries/dashboard/useStudent";
 import { UserType } from "@/models/user.model";
@@ -38,7 +43,6 @@ export default function DashboardLayout({
 
   const { data: teacherData } = useTeacher(user?.id || "", isTeacher);
   const { data: studentData } = useStudent(user?.id || "", !isTeacher);
-
 
   useEffect(() => {
     if (isTeacher) {
@@ -103,23 +107,30 @@ export default function DashboardLayout({
                 </h1>
                 {isTeacher ? (
                   <>
-                    {renderStars((learnerProfileData as InstructorProfile)?.data?.ratingAverage)}
+                    {renderStars(
+                      (learnerProfileData as InstructorProfile)?.data
+                        ?.ratingAverage,
+                    )}
                     <div className="flex items-center gap-2 text-white">
                       <div className="flex items-center mt-2 gap-2 text-white">
                         <IconBookWhite />
                         <span className="text-sm text-white">
-                        {(learnerProfileData as InstructorProfile)?.data
-                          ?.totalCourses}{" "}
+                          {
+                            (learnerProfileData as InstructorProfile)?.data
+                              ?.totalCourses
+                          }{" "}
                           Khóa học
-                      </span>
+                        </span>
                       </div>
                       <div className="flex items-center mt-2 gap-2 text-white">
                         <Profile2User size={20} color="white" />
                         <span className="text-sm text-white">
-                        {((learnerProfileData as InstructorProfile)?.data
-                          ?.totalStudents)}{" "}
+                          {
+                            (learnerProfileData as InstructorProfile)?.data
+                              ?.totalStudents
+                          }{" "}
                           Người học
-                      </span>
+                        </span>
                       </div>
                     </div>
                   </>
@@ -140,7 +151,7 @@ export default function DashboardLayout({
             </div>
             {isTeacher && (
               <Button className="text-white">
-                <Link href="/create-courses">Tạo khoá học mới</Link>
+                <Link href="/create-courses" className="text-white">Tạo khoá học mới</Link>
               </Button>
             )}
           </div>
@@ -198,53 +209,59 @@ export default function DashboardLayout({
                 </span>
               </Link>
 
-              <Link
-                href="/dashboard/courses"
-                className={`flex items-center px-3 py-3 ${
-                  isActive("/dashboard/courses")
-                    ? "text-blue-600 bg-[#2F57EF14]"
-                    : "text-gray-700 hover:bg-gray-50"
-                } rounded-lg`}
-              >
-                <Book
-                  className="w-5 h-5 mr-3"
-                  color={isActive("/dashboard/courses") ? "#155dfc" : "#364153"}
-                />
-                <span
-                  className={
+              {!isTeacher && (
+                <Link
+                  href="/dashboard/courses"
+                  className={`flex items-center px-3 py-3 ${
                     isActive("/dashboard/courses")
-                      ? "font-medium text-blue-600"
-                      : ""
-                  }
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                 >
-                  Khóa học đã đăng ký
-                </span>
-              </Link>
+                  <Book
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/courses") ? "#155dfc" : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/courses")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Khóa học đã đăng ký
+                  </span>
+                </Link>
+              )}
 
-              <Link
-                href="/dashboard/favorites"
-                className={`flex items-center px-3 py-3 ${
-                  isActive("/dashboard/favorites")
-                    ? "text-blue-600 bg-[#2F57EF14]"
-                    : "text-gray-700 hover:bg-gray-50"
-                } rounded-lg`}
-              >
-                <Heart
-                  className="w-5 h-5 mr-3"
-                  color={
-                    isActive("/dashboard/favorites") ? "#155dfc" : "#364153"
-                  }
-                />
-                <span
-                  className={
+              {!isTeacher && (
+                <Link
+                  href="/dashboard/favorites"
+                  className={`flex items-center px-3 py-3 ${
                     isActive("/dashboard/favorites")
-                      ? "font-medium text-blue-600"
-                      : ""
-                  }
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                 >
-                  Yêu thích
-                </span>
-              </Link>
+                  <Heart
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/favorites") ? "#155dfc" : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/favorites")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Yêu thích
+                  </span>
+                </Link>
+              )}
 
               <Link
                 href="/dashboard/reviews"
@@ -269,58 +286,63 @@ export default function DashboardLayout({
                 </span>
               </Link>
 
-              <Link
-                href="/dashboard/test-scores"
-                className={`flex items-center px-3 py-3 ${
-                  isActive("/dashboard/test-scores")
-                    ? "text-blue-600 bg-[#2F57EF14]"
-                    : "text-gray-700 hover:bg-gray-50"
-                } rounded-lg`}
-              >
-                <FileText
-                  className="w-5 h-5 mr-3"
-                  color={
-                    isActive("/dashboard/test-scores") ? "#155dfc" : "#364153"
-                  }
-                />
-                <span
-                  className={
+              {!isTeacher && (
+                <Link
+                  href="/dashboard/test-scores"
+                  className={`flex items-center px-3 py-3 ${
                     isActive("/dashboard/test-scores")
-                      ? "font-medium text-blue-600"
-                      : ""
-                  }
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                 >
-                  Điểm kiểm tra
-                </span>
-              </Link>
+                  <FileText
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/test-scores") ? "#155dfc" : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/test-scores")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Điểm kiểm tra
+                  </span>
+                </Link>
+              )}
 
-              <Link
-                href="/dashboard/purchase-history"
-                className={`flex items-center px-3 py-3 ${
-                  isActive("/dashboard/purchase-history")
-                    ? "text-blue-600 bg-[#2F57EF14]"
-                    : "text-gray-700 hover:bg-gray-50"
-                } rounded-lg`}
-              >
-                <History
-                  className="w-5 h-5 mr-3"
-                  color={
+              {!isTeacher && (
+                <Link
+                  href="/dashboard/purchase-history"
+                  className={`flex items-center px-3 py-3 ${
                     isActive("/dashboard/purchase-history")
-                      ? "#155dfc"
-                      : "#364153"
-                  }
-                />
-                <span
-                  className={
-                    isActive("/dashboard/purchase-history")
-                      ? "font-medium text-blue-600"
-                      : ""
-                  }
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
                 >
-                  Lịch sử mua hàng
-                </span>
-              </Link>
+                  <History
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/purchase-history")
+                        ? "#155dfc"
+                        : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/purchase-history")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Lịch sử mua hàng
+                  </span>
+                </Link>
+              )}
             </nav>
+
             {user?.type === UserType.INSTRUCTOR && (
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="text-sm font-medium uppercase text-gray-500 mb-4">

@@ -59,12 +59,12 @@ const quizSchema = z.object({
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  duration: z.number().optional().nullable(),
+  duration: z.number().gt(0, "Thời gian phải lớn hơn 0"),
   durationUnit: z.string().optional().nullable(),
   isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "show", "retry"]),
-  passingScore: z.number().optional().nullable(),
-  maxAttempts: z.number().optional().nullable(),
+  passingScore: z.number().gt(0, "Điểm đạt phải lớn hơn 0"),
+  maxAttempts: z.number().gt(0, "Số lần thử phải lớn hơn 0"),
   autoStart: z.boolean(),
   showQuestionCount: z.boolean(),
   questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
@@ -204,7 +204,7 @@ export const CreateQuizModal = ({
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
       deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      maxAttempts: 3,
+      maxAttempts: settingsForm.getValues().maxAttempts,
     } as any;
 
     if (isEdit) {

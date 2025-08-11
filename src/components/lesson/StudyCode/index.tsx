@@ -3,6 +3,7 @@ import { useSubmitPracticeCode } from "@/hooks/queries/course/useSubmitPractice"
 import { useSearchParams } from "next/navigation";
 import { CourseDetail } from "@/api/types/course.type";
 import { useQueryClient } from "@tanstack/react-query";
+import CodeBlock from "@/components/lesson/StudyCode/CodeBlock";
 
 interface ExerciseData {
   title: string;
@@ -84,11 +85,11 @@ export default function StudyCode({
   course?: CourseDetail;
   initValue?: any;
 }) {
-  const [currentCode, setCurrentCode] = useState(exercise.initialCode);
+  const [currentCode, setCurrentCode] = useState(initValue?.sampleContent ?? exercise.initialCode);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [activeTab, setActiveTab] = useState("noi-dung");
-  const [activeResultTab, setActiveResultTab] = useState("test-cases");
+  const [activeResultTab, setActiveResultTab] = useState("content");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [attemptCount, setAttemptCount] = useState(0);
 
@@ -104,6 +105,7 @@ export default function StudyCode({
       queryKey: ["PracticeTracking", course?.id, lessonId],
     });
   };
+
 
   const submitCode = useSubmitPracticeCode(
     course?.id as string,
@@ -153,22 +155,6 @@ export default function StudyCode({
         setTestResult(result);
         setIsRunning(false);
       }, 1000);
-    } else {
-      // Original C++ validation logic
-      setTimeout(() => {
-        const codeValidation = validateCppCode(currentCode);
-        const result: TestResult = {
-          success: codeValidation.isValid,
-          output: codeValidation.output,
-          error: codeValidation.error,
-          warnings: codeValidation.warnings,
-          testsPassed: codeValidation.testsPassed,
-          testsTotal: codeValidation.testsTotal,
-        };
-
-        setTestResult(result);
-        setIsRunning(false);
-      }, 1500);
     }
   }, [currentCode, exercise.language]);
 
@@ -240,81 +226,6 @@ export default function StudyCode({
     }
   }, [exercise.language, loadJavaCode]);
 
-  // Helper function to validate C++ code
-  const validateCppCode = (code: string) => {
-    const errors = [];
-    const warnings = [];
-    let testsPassed = 0;
-    const testsTotal = 3;
-
-    // Check basic C++ syntax
-    if (!code.includes("#ifndef") || !code.includes("#define")) {
-      errors.push("Thiếu header guards (#ifndef/#define)");
-    }
-
-    if (!code.includes("#include")) {
-      errors.push("Thiếu include statements");
-    }
-
-    // Check for required struct/class
-    if (!code.includes("struct Tester") && !code.includes("class Tester")) {
-      errors.push("Thiếu định nghĩa struct/class Tester");
-    }
-
-    // Check for virtual destructor
-    if (!code.includes("virtual ~Tester()")) {
-      errors.push("Thiếu virtual destructor");
-    }
-
-    // Check for reportResult method
-    if (!code.includes("reportResult")) {
-      errors.push("Thiếu method reportResult");
-    } else {
-      // Check method signature
-      if (
-        !code.includes(
-          "virtual void reportResult(const std::string& fileContent)",
-        )
-      ) {
-        warnings.push("Method signature có thể không chính xác");
-      } else {
-        testsPassed++;
-      }
-    }
-
-    // Check for proper method declaration
-    if (code.includes("= 0;")) {
-      testsPassed++;
-    } else {
-      warnings.push("Method nên là pure virtual (= 0)");
-    }
-
-    // Check for closing braces
-    const openBraces = (code.match(/\{/g) || []).length;
-    const closeBraces = (code.match(/\}/g) || []).length;
-    if (openBraces !== closeBraces) {
-      errors.push("Số lượng dấu ngoặc nhọn không khớp");
-    } else {
-      testsPassed++;
-    }
-
-    const isValid = errors.length === 0;
-    let output = `Không đặt: ${errors.length}, Đặt: ${testsPassed} trong ${testsTotal} bài kiểm tra`;
-
-    if (warnings.length > 0) {
-      output += `\nCảnh báo: ${warnings.length} warning(s)`;
-    }
-
-    return {
-      isValid,
-      output,
-      error: errors.length > 0 ? errors.join("; ") : undefined,
-      warnings: warnings.length > 0 ? warnings.join("; ") : undefined,
-      testsPassed,
-      testsTotal,
-    };
-  };
-
   const renderCodeEditor = () => {
     if (exercise.language === "java") {
       return (
@@ -353,23 +264,6 @@ export default function StudyCode({
             }`}
           >
             <span className="text-white">Nội dung</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("goi-y")}
-            className={`px-4 py-3 text-sm flex items-center space-x-2 border-b-2 transition-colors ${
-              activeTab === "goi-y"
-                ? "border-white text-white bg-[#1e1e1e]"
-                : "border-transparent text-gray-400 hover:text-white"
-            }`}
-          >
-            <span className="text-white">Gợi ý</span>
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
           </button>
           <button
             onClick={() => {
@@ -436,37 +330,14 @@ export default function StudyCode({
             </div>
           )}
 
-          {activeTab === "goi-y" && (
-            <div className="p-4">
-              <div className="text-sm text-white">
-                {attemptCount < 3 ? (
-                  <div>
-                    <p className="text-white">
-                      Gợi ý sẽ hiển thị sau khi bạn thử 3 lần.
-                    </p>
-                    <p className="text-white mt-2">
-                      Số lần thử: {attemptCount}/3
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-green-400">
-                      🔓 Gợi ý đã mở khóa:
-                    </h4>
-                    <div className="space-y-2">
-                      {initValue?.suggestion}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
           {activeTab === "dap-an" && (
             <div className="p-4">
               <p className="text-sm text-white">
                 Đáp án sẽ hiển thị sau khi hoàn thành bài tập.
               </p>
+              <div className="mt-4">
+                <CodeBlock code={initValue?.answerContent} language="java" />
+              </div>
             </div>
           )}
         </div>
@@ -491,16 +362,6 @@ export default function StudyCode({
             <div className="flex space-x-6">
               <h3 className="text-white font-medium">Kết quả</h3>
               <div className="flex space-x-4">
-                <button
-                  onClick={() => setActiveResultTab("test-cases")}
-                  className={`text-sm transition-colors ${
-                    activeResultTab === "test-cases"
-                      ? "text-white border-b border-white"
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  Các trường hợp thử
-                </button>
                 <button
                   onClick={() => setActiveResultTab("content")}
                   className={`text-sm transition-colors ${
@@ -529,46 +390,6 @@ export default function StudyCode({
             <div className="grid grid-cols-2 gap-4 h-full">
               {/* Left Column */}
               <div className="text-sm text-gray-300">
-                {activeResultTab === "test-cases" && (
-                  <div>
-                    <p className="text-white">
-                      Không đặt: 0, Đặt: 0 trong 0 bài kiểm tra
-                    </p>
-                    {testResult && (
-                      <div className="mt-2 space-y-2">
-                        <div
-                          className={`${testResult.success ? "text-green-400" : "text-red-400"}`}
-                        >
-                          {testResult.success
-                            ? "✓ Test thành công"
-                            : "✗ Test thất bại"}
-                        </div>
-
-                        <div className="text-gray-300">{testResult.output}</div>
-
-                        {testResult.testsPassed !== undefined &&
-                          testResult.testsTotal !== undefined && (
-                            <div className="text-blue-400">
-                              Tiến độ: {testResult.testsPassed}/
-                              {testResult.testsTotal} tests passed
-                            </div>
-                          )}
-
-                        {testResult.warnings && (
-                          <div className="text-yellow-400">
-                            ⚠️ Cảnh báo: {testResult.warnings}
-                          </div>
-                        )}
-
-                        {testResult.error && (
-                          <div className="text-red-400 mt-1">
-                            ❌ Lỗi: {testResult.error}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
                 {activeResultTab === "content" && (
                   <div>
                     <p className="text-white">Kết quả sẽ hiển thị ở đây...</p>

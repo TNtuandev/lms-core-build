@@ -237,13 +237,19 @@ export default function StudyCode({
     }
   }, [course?.id, lessonId, token]);
 
-  const handleSubmitCoding = () => {
+  const handleSubmitCoding = async () => {
     setIsRunning(true);
     setSubmissionResult(null);
     
+    console.log("Current code state before submit:", currentCode);
+    
+    // Use current code state directly since we're polling for updates
+    const codeToSubmit = currentCode;
+    console.log("Submitting code:", codeToSubmit);
+    
     submitCode.mutate(
       {
-        codeSnippet: currentCode,
+        codeSnippet: codeToSubmit,
         language: exercise.language?.toUpperCase(),
       },
       {
@@ -265,27 +271,6 @@ export default function StudyCode({
       },
     );
   };
-
-  const handleRunTest = useCallback(async () => {
-    setIsRunning(true);
-
-    if (exercise.language === "java") {
-      // For Java, trigger run in OneCompiler iframe
-      if (javaIframeRef.current) {
-        javaIframeRef.current.contentWindow?.postMessage(
-          {
-            eventType: "triggerRun",
-          },
-          "*",
-        );
-      }
-
-      // Reset running state after iframe execution
-      setTimeout(() => {
-        setIsRunning(false);
-      }, 1000);
-    }
-  }, [exercise.language]);
 
   // Load initial code into Java iframe
   const loadJavaCode = useCallback(() => {
@@ -330,22 +315,106 @@ export default function StudyCode({
     }
   }, [exercise.language, loadJavaCode]);
 
+  // Function to get current code from iframe before submission
+  const getCurrentCodeFromIframe = useCallback((): Promise<string> => {
+    return new Promise((resolve) => {
+      if (exercise.language === "java" && javaIframeRef.current) {
+        try {
+          // Try to access iframe content directly (may not work due to CORS)
+          const iframe = javaIframeRef.current;
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          
+          if (iframeDoc) {
+            // Look for code editor elements
+            const codeElements = iframeDoc.querySelectorAll('textarea, pre, code, [contenteditable="true"]');
+            for (const element of codeElements) {
+              const content = element.textContent || element.innerHTML;
+              if (content && content.includes('public class Main')) {
+                console.log("Found code in iframe:", content);
+                resolve(content);
+                return;
+              }
+            }
+          }
+        } catch (error) {
+          console.log("Cannot access iframe content due to CORS:", error);
+        }
+
+        // Fallback: use current state and try to get from OneCompiler via postMessage
+        javaIframeRef.current.contentWindow?.postMessage(
+          {
+            eventType: "getCode",
+            requestId: Date.now(),
+          },
+          "*",
+        );
+
+        // Listen for response with timeout
+        const handleCodeResponse = (event: MessageEvent) => {
+          if (event.data && event.data.eventType === "codeResponse") {
+            window.removeEventListener("message", handleCodeResponse);
+            if (event.data.files && event.data.files[0]) {
+              console.log("Got code from iframe response:", event.data.files[0].content);
+              resolve(event.data.files[0].content);
+            } else {
+              console.log("No code in response, using current state");
+              resolve(currentCode);
+            }
+          }
+        };
+
+        window.addEventListener("message", handleCodeResponse);
+        
+        // Timeout fallback - use current state
+        setTimeout(() => {
+          window.removeEventListener("message", handleCodeResponse);
+          console.log("Timeout getting code from iframe, using current state:", currentCode);
+          resolve(currentCode);
+        }, 500);
+      } else {
+        resolve(currentCode);
+      }
+    });
+  }, [exercise.language, currentCode]);
+
   useEffect(() => {
     // Listen for messages from OneCompiler iframe for Java
     const handleMessage = (event: MessageEvent) => {
-      console.log("Received message:", event.data);
+      console.log("Received message from iframe:", event.data);
 
+      // Handle code changes
       if (event.data && event.data.language === "java") {
         console.log("Java code changed:", event.data);
         if (event.data.files && event.data.files[0]) {
+          console.log("Updating currentCode with:", event.data.files[0].content);
           setCurrentCode(event.data.files[0].content);
         }
       }
 
-      // OneCompiler ready signal
-      if (event.data && event.data.eventType === "ready") {
-        console.log("OneCompiler is ready, loading code...");
-        setTimeout(loadJavaCode, 100);
+      // Handle different event types
+      if (event.data && event.data.eventType) {
+        switch (event.data.eventType) {
+          case "ready":
+            console.log("OneCompiler is ready, loading code...");
+            setTimeout(loadJavaCode, 100);
+            break;
+          case "codeChange":
+            console.log("Code change event:", event.data);
+            if (event.data.files && event.data.files[0]) {
+              console.log("Updating currentCode from codeChange:", event.data.files[0].content);
+              setCurrentCode(event.data.files[0].content);
+            }
+            break;
+          case "codeResponse":
+            console.log("Code response received:", event.data);
+            if (event.data.files && event.data.files[0]) {
+              console.log("Updating currentCode from response:", event.data.files[0].content);
+              setCurrentCode(event.data.files[0].content);
+            }
+            break;
+          default:
+            break;
+        }
       }
     };
 
@@ -354,6 +423,24 @@ export default function StudyCode({
       return () => window.removeEventListener("message", handleMessage);
     }
   }, [exercise.language, loadJavaCode]);
+
+  // Poll for code changes every 2 seconds to ensure we have the latest code
+  useEffect(() => {
+    if (exercise.language === "java" && javaIframeRef.current) {
+      const pollInterval = setInterval(() => {
+        // Request current code from iframe
+        javaIframeRef.current?.contentWindow?.postMessage(
+          {
+            eventType: "getCode",
+            requestId: Date.now(),
+          },
+          "*",
+        );
+      }, 2000);
+
+      return () => clearInterval(pollInterval);
+    }
+  }, [exercise.language]);
 
   // Cleanup SSE connection on component unmount
   useEffect(() => {

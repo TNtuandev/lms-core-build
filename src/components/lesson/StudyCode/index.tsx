@@ -315,68 +315,6 @@ export default function StudyCode({
     }
   }, [exercise.language, loadJavaCode]);
 
-  // Function to get current code from iframe before submission
-  const getCurrentCodeFromIframe = useCallback((): Promise<string> => {
-    return new Promise((resolve) => {
-      if (exercise.language === "java" && javaIframeRef.current) {
-        try {
-          // Try to access iframe content directly (may not work due to CORS)
-          const iframe = javaIframeRef.current;
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-          
-          if (iframeDoc) {
-            // Look for code editor elements
-            const codeElements = iframeDoc.querySelectorAll('textarea, pre, code, [contenteditable="true"]');
-            for (const element of codeElements) {
-              const content = element.textContent || element.innerHTML;
-              if (content && content.includes('public class Main')) {
-                console.log("Found code in iframe:", content);
-                resolve(content);
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          console.log("Cannot access iframe content due to CORS:", error);
-        }
-
-        // Fallback: use current state and try to get from OneCompiler via postMessage
-        javaIframeRef.current.contentWindow?.postMessage(
-          {
-            eventType: "getCode",
-            requestId: Date.now(),
-          },
-          "*",
-        );
-
-        // Listen for response with timeout
-        const handleCodeResponse = (event: MessageEvent) => {
-          if (event.data && event.data.eventType === "codeResponse") {
-            window.removeEventListener("message", handleCodeResponse);
-            if (event.data.files && event.data.files[0]) {
-              console.log("Got code from iframe response:", event.data.files[0].content);
-              resolve(event.data.files[0].content);
-            } else {
-              console.log("No code in response, using current state");
-              resolve(currentCode);
-            }
-          }
-        };
-
-        window.addEventListener("message", handleCodeResponse);
-        
-        // Timeout fallback - use current state
-        setTimeout(() => {
-          window.removeEventListener("message", handleCodeResponse);
-          console.log("Timeout getting code from iframe, using current state:", currentCode);
-          resolve(currentCode);
-        }, 500);
-      } else {
-        resolve(currentCode);
-      }
-    });
-  }, [exercise.language, currentCode]);
-
   useEffect(() => {
     // Listen for messages from OneCompiler iframe for Java
     const handleMessage = (event: MessageEvent) => {

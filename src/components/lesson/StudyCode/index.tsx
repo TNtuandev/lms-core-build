@@ -425,6 +425,16 @@ export default function StudyCode({
             <span className="text-white">Nội dung</span>
           </button>
           <button
+            onClick={() => setActiveTab("goi-y")}
+            className={`px-4 py-3 text-sm flex items-center space-x-2 border-b-2 transition-colors ${
+              activeTab === "goi-y"
+                ? "border-white text-white bg-[#1e1e1e]"
+                : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            <span className="text-white">Gợi ý</span>
+          </button>
+          <button
             onClick={() => {
               setActiveTab("dap-an");
             }}
@@ -486,6 +496,14 @@ export default function StudyCode({
                   dangerouslySetInnerHTML={{ __html: initValue?.htmlContent }}
                 />
               </div>
+            </div>
+          )}
+
+          {activeTab === "goi-y" && (
+            <div className="p-4">
+              <p className="text-sm text-white">
+                {initValue?.suggestion}
+              </p>
             </div>
           )}
 

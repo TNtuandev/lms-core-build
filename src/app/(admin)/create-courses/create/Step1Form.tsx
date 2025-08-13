@@ -49,7 +49,6 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     form.reset({
       title: initialData?.title || "",
       categoryId: initialData?.categoryId || "",
-      teacher: initialData?.teacher || "",
       slug: initialData?.slug || "",
       shortDescription: initialData?.shortDescription || "",
       thumbnail: initialData?.thumbnail || "",
@@ -102,13 +101,12 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   <Input
                     placeholder="VD: Khóa học thiết kế web"
                     className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    maxLength={30}
                     {...field}
                   />
                 </FormControl>
                 <p className="text-xs text-gray-500 flex items-center">
                   <Info className="w-3 h-3 mr-1" />
-                  Tiêu đề đã dài tối đa 30 ký tự
+                  Tiêu đề đã dài tối đa 255 ký tự
                 </p>
                 <FormMessage />
               </FormItem>
@@ -116,7 +114,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
           />
 
           {/* Danh mục & Giáo viên */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             {/* Danh mục */}
             <FormField
               control={form.control}
@@ -145,25 +143,25 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
               )}
             />
             {/* Giáo viên */}
-            <FormField
-              control={form.control}
-              name="teacher"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
-                    Giáo viên
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Nguyễn Anh Tuấn"
-                      className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/*<FormField*/}
+            {/*  control={form.control}*/}
+            {/*  name="teacher"*/}
+            {/*  render={({ field }) => (*/}
+            {/*    <FormItem>*/}
+            {/*      <FormLabel className="text-sm font-medium text-gray-700">*/}
+            {/*        Giáo viên*/}
+            {/*      </FormLabel>*/}
+            {/*      <FormControl>*/}
+            {/*        <Input*/}
+            {/*          placeholder="Nguyễn Anh Tuấn"*/}
+            {/*          className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"*/}
+            {/*          {...field}*/}
+            {/*        />*/}
+            {/*      </FormControl>*/}
+            {/*      <FormMessage />*/}
+            {/*    </FormItem>*/}
+            {/*  )}*/}
+            {/*/>*/}
           </div>
 
           {/* Slug Field */}

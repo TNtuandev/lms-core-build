@@ -69,8 +69,8 @@ export const uploadAssignmentSchema = z.object({
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),
-  // sampleData: z.string().optional(),
-  // answer: z.string().optional(),
+  sampleContent: z.string().optional(),
+  answerContent: z.string().optional(),
 });
 
 // Type definitions

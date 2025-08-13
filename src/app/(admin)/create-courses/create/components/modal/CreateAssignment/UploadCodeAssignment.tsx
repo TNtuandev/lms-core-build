@@ -40,6 +40,9 @@ import {
   useUpdateLessonPractice,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
+import CodeMirror from "@uiw/react-codemirror";
+import { java } from "@codemirror/lang-java";
+
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
@@ -78,8 +81,8 @@ export const UploadCodeAssignment = ({
       inputFile: undefined,
       outputFile: undefined,
       suggestion: "",
-      // sampleData: "",
-      // answer: "",
+      sampleContent: "",
+      answerContent: "",
       attachmentUrl: undefined,
       passingScore: undefined,
       duration: undefined,
@@ -102,8 +105,8 @@ export const UploadCodeAssignment = ({
         inputFile: undefined,
         outputFile: undefined,
         suggestion: "",
-        // sampleData: "",
-        // answer: "",
+        sampleContent: "",
+        answerContent: "",
         attachmentUrl: undefined,
         passingScore: undefined,
         duration: undefined,
@@ -180,9 +183,9 @@ export const UploadCodeAssignment = ({
   const acceptFiles = useMemo(() => {
     switch (language) {
       case "C++":
-        return ".cpp,.h";
+        return ".cpp,.h,.txt,.json";
       case "JAVA":
-        return ".java";
+        return ".java,.txt,.json";
       default:
         return ".txt,.json"; // Default for other languages
     }
@@ -483,48 +486,46 @@ export const UploadCodeAssignment = ({
                     </FormItem>
                   )}
                 />
-                {/* Dữ liệu mẫu */}
-                {/*<FormField*/}
-                {/*  control={form.control}*/}
-                {/*  name="sampleData"*/}
-                {/*  render={({ field }) => (*/}
-                {/*    <FormItem>*/}
-                {/*      <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>*/}
-                {/*      <FormControl>*/}
-                {/*        <CodeMirror*/}
-                {/*          value={field.value || ""}*/}
-                {/*          height="200px"*/}
-                {/*          extensions={[cpp()]}*/}
-                {/*          theme="light"*/}
-                {/*          onChange={field.onChange}*/}
-                {/*          basicSetup={{ lineNumbers: true }}*/}
-                {/*        />*/}
-                {/*      </FormControl>*/}
-                {/*      <FormMessage />*/}
-                {/*    </FormItem>*/}
-                {/*  )}*/}
-                {/*/>*/}
-                {/* Đáp án */}
-                {/*<FormField*/}
-                {/*  control={form.control}*/}
-                {/*  name="answer"*/}
-                {/*  render={({ field }) => (*/}
-                {/*    <FormItem>*/}
-                {/*      <FormLabel>Đáp án</FormLabel>*/}
-                {/*      <FormControl>*/}
-                {/*        <CodeMirror*/}
-                {/*          value={field.value || ""}*/}
-                {/*          height="200px"*/}
-                {/*          extensions={[cpp()]}*/}
-                {/*          theme="light"*/}
-                {/*          onChange={field.onChange}*/}
-                {/*          basicSetup={{ lineNumbers: true }}*/}
-                {/*        />*/}
-                {/*      </FormControl>*/}
-                {/*      <FormMessage />*/}
-                {/*    </FormItem>*/}
-                {/*  )}*/}
-                {/*/>*/}
+                <FormField
+                  control={form.control}
+                  name="sampleContent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>
+                      <FormControl>
+                        <CodeMirror
+                          value={field.value || ""}
+                          height="200px"
+                          extensions={[java()]}
+                          theme="light"
+                          onChange={field.onChange}
+                          basicSetup={{ lineNumbers: true }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="answerContent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Đáp án</FormLabel>
+                      <FormControl>
+                        <CodeMirror
+                          value={field.value || ""}
+                          height="200px"
+                          extensions={[java()]}
+                          theme="light"
+                          onChange={field.onChange}
+                          basicSetup={{ lineNumbers: true }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </>
             )}
 

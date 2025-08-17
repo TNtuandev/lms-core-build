@@ -30,6 +30,7 @@ import {
   useAddItemToCart,
   useRefetchCart,
 } from "@/hooks/queries/cart/useCartApi";
+import { useAuthStore } from "@/store/slices/auth.slice";
 
 // interface PageProps {
 //   params: {
@@ -42,6 +43,7 @@ export default function CourseDetailPage() {
   const params = useParams();
   const slug = params?.id as string;
   const { cartId } = useCartStore();
+  const { user } = useAuthStore.getState();
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
@@ -173,38 +175,46 @@ export default function CourseDetailPage() {
   };
 
   const handleCheckoutCourse = () => {
-    addToCart.mutate(
-      {
-        cartId,
-        data: {
-          productId: courseDetail.id,
-          quantity: 1,
+    if (user) {
+      addToCart.mutate(
+        {
+          cartId,
+          data: {
+            productId: courseDetail.id,
+            quantity: 1,
+          },
         },
-      },
-      {
-        onSuccess: () => {
-          refetchCart();
-          router.push(Routes.checkout);
+        {
+          onSuccess: () => {
+            refetchCart();
+            router.push(Routes.checkout);
+          },
         },
-      },
-    );
+      );
+    } else {
+      router.push(Routes.login);
+    }
   };
 
   const handlePushToCart = () => {
-    addToCart.mutate(
-      {
-        cartId,
-        data: {
-          productId: courseDetail.id,
-          quantity: 1,
+    if (user) {
+      addToCart.mutate(
+        {
+          cartId,
+          data: {
+            productId: courseDetail.id,
+            quantity: 1,
+          },
         },
-      },
-      {
-        onSuccess: () => {
-          refetchCart();
+        {
+          onSuccess: () => {
+            refetchCart();
+          },
         },
-      },
-    );
+      );
+    } else {
+      router.push(Routes.login);
+    }
   };
 
   const handleUpdateReview = (

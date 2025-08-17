@@ -70,7 +70,7 @@ function MyCoursePage() {
                         gridNUmber={4}
                         title={course.title}
                         imageUrl={course.thumbnail}
-                        category="Khóa học"
+                        category={course.category.title}
                         courseName={course.title}
                         instructor={`Giảng viên: ${course?.owner.fullName}`}
                         lessonCount={course.totalLesson}

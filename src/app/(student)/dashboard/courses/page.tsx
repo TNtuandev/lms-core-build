@@ -6,7 +6,7 @@ import { useGetEnrollments } from "@/hooks/queries/enrollments/useEnrollments";
 import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
 
-type TabType = "all" | "in-progress" | "completed";
+// type TabType = "all" | "in-progress" | "completed";
 
 function EnrolledCoursesPage() {
   // const [activeTab, setActiveTab] = useState<TabType>("all");

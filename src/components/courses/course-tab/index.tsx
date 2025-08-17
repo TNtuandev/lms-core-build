@@ -81,6 +81,8 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
   // Get courses to display (limit to 3 for preview)
   const displayCourses = courses.slice(0, 3);
 
+  console.log(displayCourses, "---displayCourses");
+
   return (
     <div className="flex flex-col gap-4">
       {/*tab render*/}
@@ -133,7 +135,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
                 badge={course.label}
                 title={course.title}
                 imageUrl={course.thumbnail}
-                category="Khóa học"
+                category={course.category.title}
                 courseName={course.title}
                 instructor={`Giảng viên: ${course?.owner.fullName}`}
                 lessonCount={course.totalLesson}

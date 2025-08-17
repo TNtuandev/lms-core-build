@@ -27,7 +27,7 @@ export default function EffectCardSwiper() {
             slug={course.slug}
             title={course.title}
             imageUrl={course.thumbnail}
-            category="Khóa học"
+            category={course.category.title}
             courseName={course.title}
             instructor={`Giảng viên: ${course?.owner.fullName}`}
             lessonCount={course.totalLesson}

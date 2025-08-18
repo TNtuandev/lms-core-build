@@ -2,6 +2,7 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CourseCard from "@/components/courses/course-card";
+import {Category} from "@/hooks/queries/enrollments/enrollment";
 
 interface RelatedCourse {
   id: string;
@@ -14,6 +15,7 @@ interface RelatedCourse {
     regularPrice: number;
     discountedPrice?: number;
     label?: string;
+    category: Category;
     owner: {
       fullName: string;
     };

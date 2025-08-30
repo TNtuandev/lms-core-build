@@ -13,8 +13,13 @@ import { useQuizStore } from "@/store/slices/lesson.slice";
 import ContentTab from "@/components/lesson/ContentTab";
 import StudyCode, { defaultJavaExercise } from "@/components/lesson/StudyCode";
 import { useSearchParams } from "next/navigation";
-import { useCourseBySlug, useModuleForUser } from "@/hooks/queries/course/useCourses";
+import {
+  useCourseBySlug,
+  useModuleForUser,
+} from "@/hooks/queries/course/useCourses";
 import { useGetLessonById } from "@/hooks/queries/course/useLessonCourse";
+import Image from "next/image";
+import AIHelperModal from "@/app/lesson/ModalChatbot";
 
 // Interface compatible with LessonSidebar
 interface SidebarLesson {
@@ -42,7 +47,7 @@ interface ExtendedLesson extends SidebarLesson {
   description: string;
   attachmentUrl: string | null;
   sampleImageUrl: string;
-  isCompleted: boolean
+  isCompleted: boolean;
 }
 
 export function LessonClient() {
@@ -68,6 +73,7 @@ export function LessonClient() {
   const [currentLesson, setCurrentLesson] = useState<ExtendedLesson | null>(
     null,
   );
+  const [isAIHelperOpen, setIsAIHelperOpen] = useState(false);
 
   // Map lesson type from BE to frontend
   const mapLessonType = (type: string) => {
@@ -119,7 +125,7 @@ export function LessonClient() {
                 attachmentUrl: lesson.attachmentUrl,
                 sampleImageUrl: lesson?.sampleImageUrl,
                 active: false,
-                isCompleted: lesson?.isCompleted
+                isCompleted: lesson?.isCompleted,
               };
 
               allLessonsData.push(extendedLesson);
@@ -131,7 +137,7 @@ export function LessonClient() {
                 duration: formatDuration(lesson.duration),
                 type: mapLessonType(lesson.type),
                 active: false,
-                isCompleted: lesson?.isCompleted
+                isCompleted: lesson?.isCompleted,
               };
             });
 
@@ -289,6 +295,19 @@ export function LessonClient() {
 
   return (
     <div className="flex relative">
+      <div
+        className="fixed bottom-10 right-4 z-50"
+        onClick={() => setIsAIHelperOpen(true)}
+      >
+        <Image
+          src="/chatbot.svg"
+          alt="Logo"
+          className="m-2 lg:block hidden"
+          width={88}
+          height={88}
+        />
+      </div>
+
       {/* Left Sidebar - luôn hiện ở desktop, toggle ở mobile */}
       {isSidebarVisible && (
         <div
@@ -367,6 +386,7 @@ export function LessonClient() {
           </>
         )}
       </div>
+      <AIHelperModal open={isAIHelperOpen} setOpen={setIsAIHelperOpen} />
     </div>
   );
 }

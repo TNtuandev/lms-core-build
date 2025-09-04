@@ -20,6 +20,7 @@ import {
   MessageText,
   NotificationBing,
   Profile2User,
+  Tag
 } from "iconsax-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useStudent } from "@/hooks/queries/dashboard/useStudent";
@@ -371,6 +372,33 @@ export default function DashboardLayout({
                     }
                   >
                     Khoá học của tôi
+                  </span>
+                </Link>
+
+                <Link
+                  href="/dashboard/category"
+                  className={`flex items-center px-3 py-3 ${
+                    isActive("/dashboard/category")
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
+                >
+                  <Tag
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/category")
+                        ? "#155dfc"
+                        : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/category")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Chủ đề bài học
                   </span>
                 </Link>
 

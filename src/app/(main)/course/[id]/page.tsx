@@ -31,7 +31,6 @@ import {
   useRefetchCart,
 } from "@/hooks/queries/cart/useCartApi";
 import { useAuthStore } from "@/store/slices/auth.slice";
-import Image from "next/image";
 
 // interface PageProps {
 //   params: {

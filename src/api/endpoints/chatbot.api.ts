@@ -1,11 +1,8 @@
 import axios from "axios";
 
 export const chatbotAPI = {
-  sendMessageSuggest: async (mess: string) => {
+  sendMessageSuggest: async (form: FormData) => {
     try {
-      const form = new FormData();
-      form.append('mess', mess);
-
       const res = await axios.post('/api/chatbot/suggest', form, {
         timeout: 30000,
       });

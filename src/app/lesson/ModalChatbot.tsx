@@ -49,6 +49,7 @@ export default function AIHelperModal({
         },
       ];
     });
+
     // TODO: send to your API
     const formData = new FormData();
     formData.append("mess", text);

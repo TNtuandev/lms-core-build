@@ -37,8 +37,7 @@ const setPasswordSchema = z.object({
 type SetPasswordFormData = z.infer<typeof setPasswordSchema>;
 
 function SetPasswordPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { mutate: login, isPending: isLoginPending, error } = useLogin();
+  const { error } = useLogin();
   const { mutate: confirmReset, isPending } = useConfirmResetPassword();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);

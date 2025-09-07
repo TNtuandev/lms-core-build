@@ -7,7 +7,7 @@ export const chatbotAPI = {
         timeout: 30000,
       });
 
-      return res.data.response;
+      return res.data.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         throw new Error(err.message || "Request failed")
@@ -22,7 +22,7 @@ export const chatbotAPI = {
         timeout: 30000,
       });
 
-      return res.data.response;
+      return res.data.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         throw new Error(err.message || "Request failed")

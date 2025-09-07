@@ -22,20 +22,24 @@ export default function AIHelperModal({
   setOpen: (open: boolean) => void;
 }) {
   const [value, setValue] = React.useState("");
+  const [typeMessage, setTypeMessage] = useState<"suggest" | "basic">("basic");
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  const { sendMessage } = useSendMessageChatbot();
+  const { sendMessageBasic } = useSendMessageChatbot();
 
   const questions = [
-    "Tóm tắt khóa học này",
-    "Tôi sẽ học được gì trong khóa học này",
-    "Khóa học này dành cho ai?",
+    {
+      label: "Câu hỏi toán học",
+      value: ''
+    }
   ];
 
   function handleAsk(q?: string) {
     const text = q ?? value;
     if (!text.trim()) return;
     // TODO: send to your API
-    sendMessage.mutate(text, {
+    const formData = new FormData();
+    formData.append("mess", text);
+    sendMessageBasic.mutate(formData, {
       onSuccess: (data) => {
         console.log("AI response:", data);
         // Scroll to bottom
@@ -56,7 +60,6 @@ export default function AIHelperModal({
     );
   }
 
-  console.log("sendMessage---", sendMessage.isPending, sendMessage.isError, sendMessage.isSuccess);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -118,7 +121,7 @@ export default function AIHelperModal({
               className="absolute right-4 bottom-4 h-9 w-9 rounded-xl "
               onClick={() => handleAsk()}
             >
-              {sendMessage.isPending ? (
+              {sendMessageBasic.isPending ? (
                 renderSpinner()
               ) : (
                 <Send2 color="white" size={20} />

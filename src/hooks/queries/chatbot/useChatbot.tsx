@@ -14,11 +14,11 @@ export const useGetMessageChatbot = (courseId: string) => {
 
 export const useSendMessageChatbot = () => {
   const sendMessageSuggest = useMutation({
-    mutationFn: (mess: string) => chatbotAPI.sendMessageSuggest(mess)
+    mutationFn: (mess: FormData) => chatbotAPI.sendMessageSuggest(mess)
   })
 
   const sendMessageBasic = useMutation({
-    mutationFn: (mess: string) => chatbotAPI.sendMessageBasic(mess)
+    mutationFn: (mess: FormData) => chatbotAPI.sendMessageBasic(mess)
   })
 
   return { sendMessageSuggest, sendMessageBasic }

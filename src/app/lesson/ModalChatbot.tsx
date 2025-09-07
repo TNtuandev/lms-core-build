@@ -177,7 +177,7 @@ export default function AIHelperModal({
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="Đặt một câu hỏi"
                 className="h-[100px] rounded-xl pr-16 resize-none flex items-start"
-                onKeyDown={(e) => {
+                onKeyPress={(e) => {
                   if (e.key === "Enter") {
                     // e.preventDefault();
                     handleAsk();

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, Suspense } from "react";
 import CourseCard from "@/components/courses/course-card";
 import { Search, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,7 +12,7 @@ import {
 import { useDebounce } from "@/hooks/useDebounce";
 import { useAuthContext } from "@/context/AuthProvider";
 
-function CourseCategoryPage() {
+function CourseCategoryPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
@@ -465,6 +465,14 @@ function CourseCategoryPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function CourseCategoryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CourseCategoryPageContent />
+    </Suspense>
   );
 }
 

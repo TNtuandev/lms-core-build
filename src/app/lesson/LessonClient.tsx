@@ -224,32 +224,6 @@ export function LessonClient() {
   };
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('mess', 'Mười người bạn đi xem phim, cùng ngồi một hàng ghế, chơi trò đổi chỗ cho nhau. Cho rằng một lần đổi chỗ mất hết một phút, hỏi thời gian họ đổi chỗ cho nhau là bao nhiêu?');
-
-    try {
-      const res = await fetch('https://42.96.5.195:9130/math/basic/server', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await res.json();
-
-      console.log("data----", data);
-    } catch (err) {
-      console.log("err---", err);
-    } finally {
-    }
-  };
-
-
   const selectLesson = (lesson: SidebarLesson) => {
     // Find the extended lesson data
     const extendedLesson = lessonsData.find((l) => l.id === lesson.id);

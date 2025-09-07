@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -22,29 +21,79 @@ export default function AIHelperModal({
   setOpen: (open: boolean) => void;
 }) {
   const [value, setValue] = React.useState("");
+  const [typeMessage, setTypeMessage] = useState("");
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  const { sendMessage } = useSendMessageChatbot();
+  const { sendMessageBasic, sendMessageSuggest } = useSendMessageChatbot();
+  const [listMessage, setListMessage] = useState<any>([]);
 
   const questions = [
-    "Tóm tắt khóa học này",
-    "Tôi sẽ học được gì trong khóa học này",
-    "Khóa học này dành cho ai?",
+    {
+      label: "Gợi ý, giải đáp câu hỏi toán học",
+      value: "basic",
+    },
+    {
+      label: "Gợi ý bài tập toán học",
+      value: "suggest",
+    },
   ];
 
   function handleAsk(q?: string) {
     const text = q ?? value;
     if (!text.trim()) return;
-    // TODO: send to your API
-    sendMessage.mutate(text, {
-      onSuccess: (data) => {
-        console.log("AI response:", data);
-        // Scroll to bottom
-        if (messageContainerRef.current) {
-          messageContainerRef.current.scrollTop =
-            messageContainerRef.current.scrollHeight;
-        }
-      },
+    setListMessage((prev: any) => {
+      return [
+        ...prev,
+        {
+          message: text,
+          isMe: true,
+        },
+      ];
     });
+    // TODO: send to your API
+    const formData = new FormData();
+    formData.append("mess", text);
+    if (typeMessage === "suggest") {
+      sendMessageSuggest.mutate(formData as any, {
+        onSuccess: (data) => {
+          console.log("AI response:", data);
+          // Scroll to bottom
+          setListMessage((prev: any) => {
+            return [
+              ...prev,
+              {
+                message: data,
+                isMe: false,
+              }
+            ]
+          });
+          if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop =
+              messageContainerRef.current.scrollHeight;
+          }
+        },
+      });
+    } else {
+      sendMessageBasic.mutate(formData as any, {
+        onSuccess: (data) => {
+          console.log("AI response:", data);
+          setListMessage((prev: any) => {
+            return [
+              ...prev,
+              {
+                message: data,
+                isMe: false,
+              }
+            ]
+          });
+          // Scroll to bottom
+          if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop =
+              messageContainerRef.current.scrollHeight;
+          }
+        },
+      });
+    }
+
     setValue("");
   }
 
@@ -54,9 +103,7 @@ export default function AIHelperModal({
         <div className="w-9 h-9 border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
-  }
-
-  console.log("sendMessage---", sendMessage.isPending, sendMessage.isError, sendMessage.isSuccess);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -85,46 +132,71 @@ export default function AIHelperModal({
           ref={messageContainerRef}
           className="px-5 py-4 space-y-3 h-[400px] overflow-y-auto"
         >
-          {questions.map((q) => (
-            <Button
-              key={q}
-              variant="outline"
-              className="w-full justify-start h-11 rounded-xl text-left"
-              onClick={() => handleAsk(q)}
-            >
-              {q}
-            </Button>
-          ))}
+          {!typeMessage &&
+            questions.map((q) => (
+              <Button
+                key={q.value}
+                variant="outline"
+                className="w-full justify-start h-11 rounded-xl text-left"
+                onClick={() => setTypeMessage(q.value)}
+              >
+                {q.label}
+              </Button>
+            ))}
+          {
+            listMessage.map((item: any, index: number) => (
+              <div key={index}>
+                <div
+                  key={index}
+                  className={`${
+                    item.isMe ? "justify-end" : "justify-start"
+                  } flex`}
+                >
+                  <div
+                    className={`${
+                      item.isMe
+                        ? "bg-[#4A76FE] text-white"
+                        : "bg-[#F3F4F6] text-black"
+                    } max-w-[70%] p-3 rounded-xl whitespace-pre-wrap break-words`}
+                  >
+                    {item.message}
+                  </div>
+                </div>
+              </div>
+            ))
+          }
         </div>
 
         {/* Footer input */}
         <div className="px-5 pb-5 pt-2">
-          <div className="relative">
-            <Textarea
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="Đặt một câu hỏi"
-              className="h-[100px] rounded-xl pr-16 resize-none flex items-start"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleAsk();
-                }
-              }}
-            />
-            <Button
-              type="button"
-              size="icon"
-              className="absolute right-4 bottom-4 h-9 w-9 rounded-xl "
-              onClick={() => handleAsk()}
-            >
-              {sendMessage.isPending ? (
-                renderSpinner()
-              ) : (
-                <Send2 color="white" size={20} />
-              )}
-            </Button>
-          </div>
+          {typeMessage && (
+            <div className="relative">
+              <Textarea
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="Đặt một câu hỏi"
+                className="h-[100px] rounded-xl pr-16 resize-none flex items-start"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    // e.preventDefault();
+                    handleAsk();
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                size="icon"
+                className="absolute right-4 bottom-4 h-9 w-9 rounded-xl "
+                onClick={() => handleAsk()}
+              >
+                {sendMessageBasic.isPending || sendMessageSuggest.isPending ? (
+                  renderSpinner()
+                ) : (
+                  <Send2 color="white" size={20} />
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

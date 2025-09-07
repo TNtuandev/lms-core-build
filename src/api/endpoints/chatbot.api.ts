@@ -1,18 +1,28 @@
 import axios from "axios";
 
 export const chatbotAPI = {
-  sendMessage: async (mess: string) => {
+  sendMessageSuggest: async (form: FormData) => {
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_CHATBOT_API_URL}/math/suggest`,
-        new URLSearchParams({ mess }), // axios tự động gửi đúng body
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      )
-      return res.data
+      const res = await axios.post('/api/chatbot/suggest', form, {
+        timeout: 30000,
+      });
+
+      return res.data.response;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        throw new Error(err.message || "Request failed")
+      }
+      throw err
+    }
+  },
+
+  sendMessageBasic: async (formData: FormData) => {
+    try {
+      const res = await axios.post('/api/chatbot/basic', formData, {
+        timeout: 30000,
+      });
+
+      return res.data.response;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         throw new Error(err.message || "Request failed")

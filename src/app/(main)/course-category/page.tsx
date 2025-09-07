@@ -18,8 +18,7 @@ function CourseCategoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("Nổi bật");
   const [filterOption, setFilterOption] = useState("Tất cả");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel[]>(
+  const [difficultyFilter] = useState<DifficultyLevel[]>(
     [],
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);

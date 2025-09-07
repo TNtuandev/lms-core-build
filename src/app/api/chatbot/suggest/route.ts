@@ -15,11 +15,12 @@ export async function POST(req: Request) {
     const text = await res.text();
     try {
       const jsonData = JSON.parse(text);
-      return NextResponse.json(JSON.parse(text), { data: jsonData.response });
+      return NextResponse.json({ data: jsonData.response }, { status: res.status });
     } catch {
       return NextResponse.json({ raw: text }, { status: res.status });
     }
-  } catch (e) {
+  } catch (error) {
+    console.log("error---", error);
     return NextResponse.json({ error: 'Proxy failed' }, { status: 502 });
   }
 }

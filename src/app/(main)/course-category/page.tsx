@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import CourseCard from "@/components/courses/course-card";
 import { Search, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { CourseTab } from "@/components/courses/course-tab";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCourses } from "@/hooks/queries/course/useCourses";
 import {
   CourseFilters,
@@ -11,9 +10,11 @@ import {
   SortOption,
 } from "@/api/types/course.type";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAuthContext } from "@/context/AuthProvider";
 
-function CoursePage() {
+function CourseCategoryPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("Nổi bật");
   const [filterOption, setFilterOption] = useState("Tất cả");
@@ -21,13 +22,15 @@ function CoursePage() {
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyLevel[]>(
     [],
   );
-  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const filterRef = useRef<HTMLDivElement>(null);
   const sortRef = useRef<HTMLDivElement>(null);
+
+  const { categories } = useAuthContext();
+
 
   // Debounce search query to avoid excessive API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -40,6 +43,11 @@ function CoursePage() {
     const filters: CourseFilters = {
       page: currentPage,
     };
+
+    const categorySlug = searchParams.get("category");
+    if (categorySlug) {
+      filters.category = [categorySlug];
+    }
 
     if (debouncedSearchQuery.trim()) {
       filters.search = debouncedSearchQuery.trim();
@@ -84,34 +92,11 @@ function CoursePage() {
     filterOption,
     difficultyFilter,
     currentPage,
+    searchParams,
   ]);
 
   // Fetch courses for the main filtered list
   const { data: coursesData, isLoading, error } = useCourses(apiFilters);
-
-  // Fetch courses for CourseTab with label filter
-  const courseTabFilters: CourseFilters = useMemo(() => {
-    const filters: CourseFilters = {
-      sort_by: SortOption.POPULAR,
-    };
-
-    if (selectedLabel) {
-      filters.label = [selectedLabel];
-    }
-
-    return filters;
-  }, [selectedLabel]);
-
-  const {
-    data: courseTabData,
-    isLoading: isLoadingCourseTab,
-    error: errorCourseTab,
-  } = useCourses(courseTabFilters);
-
-  // Handle label change from CourseTab
-  const handleLabelChange = (label: string | null) => {
-    setSelectedLabel(label);
-  };
 
   // Handle click outside to close dropdowns
   useEffect(() => {
@@ -173,7 +158,7 @@ function CoursePage() {
         <div className="flex flex-col items-center justify-center h-full">
           <div className="flex flex-col md:flex-row items-center md:gap-8">
             <div className="text-5xl font-bold text-[#212B36]">
-              Tất cả khoá học
+              {categories?.filter(it => it.id === searchParams.get("category"))?.[0]?.title || "Khám phá khoá học"}
             </div>
             <div className="mt-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
               🎉 {coursesData?.data?.length || 0} Khóa học
@@ -185,32 +170,15 @@ function CoursePage() {
           </p>
         </div>
       </div>
-      {/*course Start*/}
-      <div className="bg-white w-full px-4 md:px-20 md:py-20 py-14">
-        <div className="flex flex-col gap-4 justify-center items-center">
-          <div className="text-3xl font-bold text-[#212B36]">
-            Các khóa học giúp bạn bắt đầu
-          </div>
-          <div className="text-[#637381] mt-1">
-            Khám phá các khóa học từ các chuyên gia giàu kinh nghiệm thực tế.
-          </div>
-          <CourseTab
-            courses={courseTabData?.data || []}
-            isLoading={isLoadingCourseTab}
-            error={errorCourseTab}
-            onCourseClick={handleCourseClick}
-            onLabelChange={handleLabelChange}
-            activeLabel={selectedLabel}
-          />
-        </div>
-      </div>
+
+
       <div
         className="bg-[background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 232, 210, 0.15) 49.52%, rgba(205, 223, 255, 0.15) 100%);
 ] w-full px-4 md:px-20 md:py-20 py-14"
       >
         <div className="flex flex-col gap-4">
           <div className="text-3xl font-bold text-[#212B36]">
-            Tất cả khóa học
+            {categories?.filter(it => it.id === searchParams.get("category"))?.[0]?.title || "Khám phá khoá học"}
           </div>
           <div className="text-sm text-gray-500 mb-2">
             {coursesData?.meta?.total || 0} kết quả được tìm thấy
@@ -501,4 +469,4 @@ function CoursePage() {
   );
 }
 
-export default CoursePage;
+export default CourseCategoryPage;

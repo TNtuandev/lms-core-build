@@ -28,6 +28,12 @@ export interface ChangePasswordCredentials {
   newPasswordConfirmation: string;
 }
 
+export interface ConfirmResetPasswordCredentials {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
 export interface AuthResponse {
   user: User;
   accessToken: string;

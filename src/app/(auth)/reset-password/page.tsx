@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useConfirmResetPassword } from "@/hooks/queries/auth/useConfirmResetPassword";
 
 // Schema validation for Set Password
 const setPasswordSchema = z.object({
@@ -37,10 +38,13 @@ type SetPasswordFormData = z.infer<typeof setPasswordSchema>;
 
 function SetPasswordPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { mutate: login, isPending, error } = useLogin();
+  const { mutate: login, isPending: isLoginPending, error } = useLogin();
+  const { mutate: confirmReset, isPending } = useConfirmResetPassword();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
 
   const form = useForm<SetPasswordFormData>({
     resolver: zodResolver(setPasswordSchema),
@@ -59,7 +63,12 @@ function SetPasswordPage() {
   };
 
   const onSubmit = (data: SetPasswordFormData) => {
-    console.log(data, "----");
+    if (!token) return;
+    confirmReset({
+      token,
+      password: data.password,
+      passwordConfirmation: data.confirmPassword,
+    });
   };
 
   return (

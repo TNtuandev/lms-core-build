@@ -2,7 +2,7 @@ import {
   AuthResponse, ForgotPasswordCredentials,
   LoginCredentials, LoginGoogleCredentials,
   RegisterCredentials,
-  User, VerifyEmailCredentials, ChangePasswordCredentials
+  User, VerifyEmailCredentials, ChangePasswordCredentials, ConfirmResetPasswordCredentials
 } from "@/api/types/auth.type";
 import api from "@/api/api";
 
@@ -37,7 +37,7 @@ export const authAPI = {
     return data;
   },
 
-  confirmResetPassword: async (credentials: ForgotPasswordCredentials): Promise<AuthResponse> => {
+  confirmResetPassword: async (credentials: ConfirmResetPasswordCredentials): Promise<any> => {
     const { data } = await api.post("/auth/confirm-reset-password", credentials);
     return data;
   },

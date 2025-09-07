@@ -127,8 +127,8 @@ function Navbar() {
   };
 
   const handleNavigateToProduct = (category: ICategory) => {
-    console.log("----slug", category.slug);
     setSelectedCategory(category);
+    router.push(`/course-category?category=${category.id}`);
   };
 
   useEffect(() => {

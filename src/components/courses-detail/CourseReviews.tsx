@@ -14,10 +14,10 @@ interface Review {
   status: string;
   auditInfo: {
     createdAt: string;
-  }
+  };
   user: {
     fullName: string;
-  }
+  };
 }
 
 interface CourseReviewsProps {
@@ -155,80 +155,85 @@ export const CourseReviews: React.FC<CourseReviewsProps> = ({
       </div>
 
       {/* Featured Reviews */}
-      <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
-        <h3 className="text-xl font-bold mb-6">Đánh giá nổi bật</h3>
+      {reviewData?.data && reviewData.data.length > 0 && (
+        <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
+          <h3 className="text-xl font-bold mb-6">Đánh giá nổi bật</h3>
 
-        {reviewData?.data && reviewData.data.length > 0 ? (
-          <div className="space-y-3">
-            {(() => {
-              const reviewsToShow = showMoreReviews
-                ? reviewData.data.filter(
-                    (review) => review.status === "approved",
-                  )
-                : reviewData.data
-                    .filter((review) => review.status === "approved")
-                    .slice(0, 1);
+          {reviewData?.data && reviewData.data.length > 0 ? (
+            <div className="space-y-3">
+              {(() => {
+                const reviewsToShow = showMoreReviews
+                  ? reviewData.data.filter(
+                      (review) => review.status === "approved",
+                    )
+                  : reviewData.data
+                      .filter((review) => review.status === "approved")
+                      .slice(0, 1);
+                console.log(reviewData);
 
-              return reviewsToShow.map((review, index) => (
-                <div
-                  key={review.id}
-                  className={`${
-                    index < reviewsToShow.length - 1 && showMoreReviews
-                      ? "border-b border-dashed pb-3"
-                      : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0 bg-gray-200">
-                      {/* Placeholder for user avatar - you may need to fetch user data separately */}
-                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
-                        User
+                return reviewsToShow.map((review, index) => (
+                  <div
+                    key={review.id}
+                    className={`${
+                      index < reviewsToShow.length - 1 && showMoreReviews
+                        ? "border-b border-dashed pb-3"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-24 h-24 rounded-lg overflow-hidden relative flex-shrink-0 bg-gray-200">
+                        {/* Placeholder for user avatar - you may need to fetch user data separately */}
+                        <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+                          User
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-[#212B36]">
-                        {review.user.fullName}
-                      </h4>
-                      <div className="flex text-[#FFB145] mt-1">
-                        {renderStarRating(review.rating)}
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-[#212B36]">
+                          {review.user.fullName}
+                        </h4>
+                        <div className="flex text-[#FFB145] mt-1">
+                          {renderStarRating(review.rating)}
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {new Date(
+                            review?.createdAt,
+                          ).toLocaleDateString("vi-VN")}
+                        </div>
+                        {review.title && (
+                          <h5 className="font-medium text-[#212B36] mt-2">
+                            {review.title}
+                          </h5>
+                        )}
+                        <p className="text-gray-600 mt-2">{review.content}</p>
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {new Date(review?.auditInfo?.createdAt).toLocaleDateString("vi-VN")}
-                      </div>
-                      {review.title && (
-                        <h5 className="font-medium text-[#212B36] mt-2">
-                          {review.title}
-                        </h5>
-                      )}
-                      <p className="text-gray-600 mt-2">{review.content}</p>
                     </div>
                   </div>
-                </div>
-              ));
-            })()}
-          </div>
-        ) : (
-          <div className="text-center py-10">
-            <p className="text-gray-500">Chưa có đánh giá nào</p>
-          </div>
-        )}
-
-        {reviewData?.data &&
-          reviewData.data.filter((review) => review.status === "approved")
-            .length > 1 && (
-            <button
-              onClick={() => setShowMoreReviews(!showMoreReviews)}
-              className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
-            >
-              {showMoreReviews ? "Ẩn bớt" : "Hiển thị thêm"}
-              {!showMoreReviews ? (
-                <ArrowDown2 size="20" color="#2F57EF" />
-              ) : (
-                <ArrowUp2 size="20" color="#2F57EF" />
-              )}
-            </button>
+                ));
+              })()}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-gray-500">Chưa có đánh giá nào</p>
+            </div>
           )}
-      </div>
+
+          {reviewData?.data &&
+            reviewData.data.filter((review) => review.status === "approved")
+              .length > 1 && (
+              <button
+                onClick={() => setShowMoreReviews(!showMoreReviews)}
+                className="text-[#2F57EF] flex items-center gap-2 mt-6 font-medium"
+              >
+                {showMoreReviews ? "Ẩn bớt" : "Hiển thị thêm"}
+                {!showMoreReviews ? (
+                  <ArrowDown2 size="20" color="#2F57EF" />
+                ) : (
+                  <ArrowUp2 size="20" color="#2F57EF" />
+                )}
+              </button>
+            )}
+        </div>
+      )}
     </>
   );
 };

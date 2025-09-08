@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import {
   useAttemptsUser,
@@ -14,8 +15,8 @@ function TestScoresPage() {
   const { user, isTeacher } = useAuthStore.getState();
   const [activeTab, setActiveTab] = useState<TabType>("attempts");
 
-  const { data: attemptsData } = useAttemptsUser(user?.id || "", !isTeacher);
-  const { data: submissionData } = useSubmissionUser(
+  const { data: attemptsData, isLoading: isLoadingAttempts } = useAttemptsUser(user?.id || "", !isTeacher);
+  const { data: submissionData, isLoading: isLoadingSubmission } = useSubmissionUser(
     user?.id || "",
     !isTeacher,
   );
@@ -63,6 +64,12 @@ function TestScoresPage() {
       </div>
       {activeTab === "attempts" ? (
         <>
+          {isLoadingAttempts && (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="animate-spin text-gray-400" />
+              <span className="ml-2 text-gray-500">Đang tải điểm kiểm tra...</span>
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -129,6 +136,12 @@ function TestScoresPage() {
         </>
       ) : (
         <>
+          {isLoadingSubmission && (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="animate-spin text-gray-400" />
+              <span className="ml-2 text-gray-500">Đang tải bài tập...</span>
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

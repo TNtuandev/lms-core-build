@@ -29,7 +29,11 @@ function EnrolledCourseCard({
   onEdit,
 }: EnrolledCourseCardProps) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
+    <div
+      role="presentation"
+      onClick={status === "completed" ? onEdit : onContinue}
+      className="bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200"
+    >
       {/* Course Image */}
       <div className="relative">
         <img
@@ -42,7 +46,9 @@ function EnrolledCourseCard({
       {/* Card Content */}
       <div className="p-4">
         <div className="text-blue-600 text-sm mb-2">{category}</div>
-        <h4 className="font-semibold text-lg mb-2 line-clamp-2">{courseName}</h4>
+        <h4 className="font-semibold text-lg mb-2 line-clamp-2">
+          {courseName}
+        </h4>
         <div className="text-gray-600 text-sm mb-3">{instructor}</div>
 
         <div className="flex items-center gap-4 text-sm mb-4">
@@ -68,18 +74,18 @@ function EnrolledCourseCard({
         {/* Action Button */}
         <div className="flex justify-between items-center">
           {status === "completed" ? (
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={onEdit}
               className="text-gray-600 border-gray-300"
             >
               Chỉnh sửa
             </Button>
           ) : (
-            <Button 
-              variant="default" 
-              size="sm" 
+            <Button
+              variant="default"
+              size="sm"
               onClick={onContinue}
               className="bg-gray-800 hover:bg-gray-700 text-white"
             >
@@ -92,4 +98,4 @@ function EnrolledCourseCard({
   );
 }
 
-export default EnrolledCourseCard; 
+export default EnrolledCourseCard;

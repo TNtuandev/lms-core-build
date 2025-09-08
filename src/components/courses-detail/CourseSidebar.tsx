@@ -85,7 +85,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         </button>
         <button
           onClick={onCheckoutCourse}
-          className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer"
+          className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 hover:text-white transition cursor-pointer"
         >
           Mua ngay
         </button>

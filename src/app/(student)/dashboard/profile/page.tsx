@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,6 +25,12 @@ function ProfilePage() {
     <Card className="bg-white border-0 rounded-xl shadow-sm">
       <CardContent className="p-6">
         <h2 className="text-2xl font-semibold mb-6">Hồ sơ</h2>
+        {!data && !teacherData && (
+          <div className="flex items-center justify-center py-10">
+            <Loader2 className="animate-spin text-gray-400" />
+            <span className="ml-2 text-gray-500">Đang tải hồ sơ...</span>
+          </div>
+        )}
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
             <div className="space-y-2">

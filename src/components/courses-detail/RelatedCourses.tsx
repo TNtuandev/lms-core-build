@@ -37,6 +37,10 @@ export const RelatedCourses: React.FC<RelatedCoursesProps> = ({
 }) => {
   const router = useRouter();
 
+  if (relatedCoursesData?.data?.length === 0) {
+    return null
+  }
+
   return (
     <div className="bg-[background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 232, 210, 0.15) 49.52%, rgba(205, 223, 255, 0.15) 100%);] w-full px-4 md:px-20 md:py-20 py-14">
       <div className="flex flex-col gap-4">

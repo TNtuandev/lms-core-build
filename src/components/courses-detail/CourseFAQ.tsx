@@ -21,6 +21,10 @@ export const CourseFAQ: React.FC<CourseFAQProps> = ({
 }) => {
   const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
 
+  if (faqsData?.length === 0) {
+    return null
+  }
+
   return (
     <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
       <h3 className="text-xl font-bold mb-6">Câu hỏi thường gặp</h3>

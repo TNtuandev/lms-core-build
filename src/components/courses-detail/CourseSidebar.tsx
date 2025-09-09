@@ -22,12 +22,16 @@ interface CourseSidebarProps {
   };
   onCheckoutCourse: () => void;
   handlePushToCart: () => void;
+  handleLearn: () => void;
+  enrolled: boolean;
 }
 
 export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   courseDetail,
   onCheckoutCourse,
   handlePushToCart,
+  enrolled = false,
+  handleLearn,
 }) => {
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
@@ -77,22 +81,35 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
           )}
         </div>
 
-        <button
-          onClick={handlePushToCart}
-          className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
-        >
-          Thêm vào giỏ hàng
-        </button>
-        <button
-          onClick={onCheckoutCourse}
-          className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 hover:text-white transition cursor-pointer"
-        >
-          Mua ngay
-        </button>
-        <div className="flex gap-2 justify-center text-secondary mt-2 text-sm items-center">
-          <Backward5Seconds size="24" color="#637381" />
-          Đảm bảo hoàn tiền trong 30 ngày
-        </div>
+        {enrolled ? (
+          <>
+            <button
+              onClick={handleLearn}
+              className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
+            >
+              Vào học ngay
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={handlePushToCart}
+              className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
+            >
+              Thêm vào giỏ hàng
+            </button>
+            <button
+              onClick={onCheckoutCourse}
+              className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 hover:text-white transition cursor-pointer"
+            >
+              Mua ngay
+            </button>
+            <div className="flex gap-2 justify-center text-secondary mt-2 text-sm items-center">
+              <Backward5Seconds size="24" color="#637381" />
+              Đảm bảo hoàn tiền trong 30 ngày
+            </div>
+          </>
+        )}
 
         <div className="mt-6">
           <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">

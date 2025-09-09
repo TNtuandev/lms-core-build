@@ -8,6 +8,7 @@ export interface Enrollment {
   expiresAt: any
   user: User
   course: Course
+  completionRate: number
 }
 
 export interface User {

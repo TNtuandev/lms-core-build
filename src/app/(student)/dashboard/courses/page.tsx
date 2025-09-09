@@ -33,28 +33,33 @@ function EnrolledCoursesPage() {
       )}
 
       {error && (
-        <div className="text-center py-10 text-red-500">Không thể tải dữ liệu.</div>
+        <div className="text-center py-10 text-red-500">
+          Không thể tải dữ liệu.
+        </div>
       )}
 
-
       {/* Course Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.map((item) => (
-          <EnrolledCourseCard
-            key={item.course.id}
-            imageUrl={item.course?.thumbnail}
-            category={item.course.category.title || "Khóa học"}
-            courseName={item.course?.title}
-            instructor={"Anh Tuấn, Quang Anh"}
-            lessonCount={item.course?.totalLessons}
-            studentCount={item.course?.enrollmentCnt}
-            progress={item.course.totalCompletedLessons}
-            status={"in-progress"}
-            onContinue={() => handleContinue(item.course?.slug)}
-            onEdit={() => handleEdit(item?.course?.id)}
-          />
-        ))}
-      </div>
+      {data && data?.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {data?.map((item) => (
+            <EnrolledCourseCard
+              key={item.course.id}
+              imageUrl={item.course?.thumbnail}
+              category={item.course.category.title || "Khóa học"}
+              courseName={item.course?.title}
+              instructor={"Anh Tuấn, Quang Anh"}
+              lessonCount={item.course?.totalLessons}
+              studentCount={item.course?.enrollmentCnt}
+              progress={item.completionRate}
+              status={"in-progress"}
+              onContinue={() => handleContinue(item.course?.slug)}
+              onEdit={() => handleEdit(item?.course?.id)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center">Hiện bạn chưa đăng ký khoá học nào!</div>
+      )}
     </div>
   );
 }

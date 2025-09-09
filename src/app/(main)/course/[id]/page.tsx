@@ -6,6 +6,7 @@ import { Routes } from "@/lib/routes/routes";
 import { Loader2 } from "lucide-react";
 import {
   useCourseBySlug,
+  useEnrollmentsCheck,
   useFAQUser,
   useInstructorProfile,
   useModule,
@@ -31,6 +32,7 @@ import {
   useRefetchCart,
 } from "@/hooks/queries/cart/useCartApi";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import toast from "react-hot-toast";
 
 // interface PageProps {
 //   params: {
@@ -47,6 +49,9 @@ export default function CourseDetailPage() {
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
+  const { data: enrollmentsCheck } = useEnrollmentsCheck(
+    courseDetail?.id || "",
+  );
 
   // Initialize createReview hook with courseDetail.id for query invalidation
   const { createReview, isLoading: isCreatingReview } = useCreateReview(
@@ -217,6 +222,16 @@ export default function CourseDetailPage() {
     }
   };
 
+  const handleLearn = () => {
+    if (moduleData?.data && moduleData?.data?.length > 0) {
+      router.push(
+        `/lesson?course=${slug}&module=${moduleData?.data?.[0]?.id}&lesson=${moduleData?.data?.[0]?.lessons?.[0]?.id}`,
+      );
+    } else {
+      toast.error("Hiện chưa có bài học nào!");
+    }
+  };
+
   const handleUpdateReview = (
     rating: number,
     comment: string,
@@ -253,9 +268,11 @@ export default function CourseDetailPage() {
 
       {/* Sidebar */}
       <CourseSidebar
+        enrolled={enrollmentsCheck?.enrolled}
         courseDetail={courseDetail}
         onCheckoutCourse={handleCheckoutCourse}
         handlePushToCart={handlePushToCart}
+        handleLearn={handleLearn}
       />
 
       {/* Course Content */}
@@ -303,7 +320,11 @@ export default function CourseDetailPage() {
             </div>
 
             <div ref={contentRef}>
-              <CourseContent moduleData={moduleData} slug={slug} />
+              <CourseContent
+                enrolled={enrollmentsCheck?.enrolled}
+                moduleData={moduleData}
+                slug={slug}
+              />
             </div>
 
             <div ref={detailsRef}>

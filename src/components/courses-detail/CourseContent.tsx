@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowRight2 } from "iconsax-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import toast from "react-hot-toast";
 
 interface Module {
   title: string;
@@ -16,9 +17,10 @@ interface CourseContentProps {
     data?: Module[];
   };
   slug?: string;
+  enrolled: boolean
 }
 
-export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }) => {
+export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug, enrolled }) => {
   const router = useRouter();
   const user = useAuthStore.getState().user
 
@@ -34,9 +36,13 @@ export const CourseContent: React.FC<CourseContentProps> = ({ moduleData, slug }
               key={item.id}
               onClick={() => {
                 if (user) {
-                  router.push(
-                    `/lesson?course=${slug}&module=${item.id}&lesson=${item?.lessons?.[0]?.id}`,
-                  );
+                  if (enrolled) {
+                    router.push(
+                      `/lesson?course=${slug}&module=${item.id}&lesson=${item?.lessons?.[0]?.id}`,
+                    );
+                  } else {
+                    toast.error("Vui lòng mua khoá học để tiếp tục!");
+                  }
                 } else {
                   router.push('/login')
                 }

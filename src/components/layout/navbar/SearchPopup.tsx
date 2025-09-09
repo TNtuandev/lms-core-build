@@ -91,9 +91,6 @@ function SearchPopup({ open, setOpen }: ISearchProps) {
             </div>
           ) : coursesData?.data && coursesData.data.length > 0 ? (
             <div className="space-y-3">
-              <p className="text-sm text-gray-600 mb-3">
-                Tìm thấy {coursesData.meta.total} kết quả cho "{debouncedSearch}"
-              </p>
               {coursesData.data.map((course) => (
                 <div
                   key={course.id}

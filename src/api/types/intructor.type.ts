@@ -32,9 +32,9 @@ export interface LearnerProfile {
     _educationLevel: string | null;
     _interests: string | null;
     _gender: "male" | "female" | "other"; // assuming possible values
-    _totalCoursesEnrolled: number;
-    _totalCoursesInProgress: number;
-    _totalCoursesCompleted: number;
+    totalCoursesEnrolled: number;
+    totalCoursesInProgress: number;
+    totalCoursesCompleted: number;
     _auditInfo: AuditInfo;
     _mobilePhone: string;
   };

@@ -68,7 +68,7 @@ function DashboardPage() {
                   <div className="w-24 h-24 flex items-center justify-center bg-blue-100 rounded-xl mb-4">
                     <IconBookDashBoard />
                   </div>
-                  <h3 className="text-5xl font-bold text-blue-500">{learnerProfileData?.data._totalCoursesEnrolled}</h3>
+                  <h3 className="text-5xl font-bold text-blue-500">{learnerProfileData?.data.totalCoursesEnrolled}</h3>
                   <p className="mt-2 text-sm text-center">Khóa học đã đăng ký</p>
                 </CardContent>
               </Card>
@@ -79,7 +79,7 @@ function DashboardPage() {
                   <div className="w-24 h-24 flex items-center justify-center bg-amber-100 rounded-xl mb-4">
                     <IconBookOrange />
                   </div>
-                  <h3 className="text-5xl font-bold text-amber-500">{learnerProfileData?.data._totalCoursesInProgress}</h3>
+                  <h3 className="text-5xl font-bold text-amber-500">{learnerProfileData?.data.totalCoursesInProgress}</h3>
                   <p className="mt-2 text-sm text-center">Khóa học Đang học</p>
                 </CardContent>
               </Card>
@@ -90,7 +90,7 @@ function DashboardPage() {
                   <div className="w-24 h-24 flex items-center justify-center bg-green-100 rounded-xl mb-4">
                     <IconBookGreen />
                   </div>
-                  <h3 className="text-5xl font-bold text-green-500">{learnerProfileData?.data._totalCoursesCompleted}</h3>
+                  <h3 className="text-5xl font-bold text-green-500">{learnerProfileData?.data.totalCoursesCompleted}</h3>
                   <p className="mt-2 text-sm text-center">Khóa học Hoàn thành</p>
                 </CardContent>
               </Card>

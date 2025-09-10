@@ -143,7 +143,7 @@ export default function DashboardLayout({
                         ? (learnerProfileData as InstructorProfile)?.data
                             ?.totalCourses
                         : (learnerProfileData as LearnerProfile)?.data
-                            ?._totalCoursesEnrolled}{" "}
+                            ?.totalCoursesEnrolled}{" "}
                       Khóa học đã đăng ký
                     </span>
                   </div>

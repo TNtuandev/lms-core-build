@@ -23,6 +23,7 @@ import { useUploadAvatar } from "@/hooks/queries/auth/useUploadAvatar";
 import { useUploadCoverPhoto } from "@/hooks/queries/auth/useUploadCoverPhoto";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import { User } from "@/models/user.model";
 
 type TabType = "profile" | "security";
 
@@ -30,7 +31,7 @@ type TabType = "profile" | "security";
 const profileSchema = z.object({
   firstName: z.string().min(1, "Tên không được để trống"),
   lastName: z.string().min(1, "Họ không được để trống"),
-  username: z.string().min(1, "Tên người dùng không được để trống"),
+  fullName: z.string().min(1, "Tên người dùng không được để trống"),
   phone: z.string().min(1, "Số điện thoại không được để trống"),
   skills: z.string().min(1, "Kỹ năng không được để trống"),
   bio: z.string().optional(),
@@ -67,6 +68,7 @@ function SettingsPage() {
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const user = useAuthStore.getState().user;
+  const { updateUser: updateUserStore } = useAuthStore();
 
   const {
     mutate: changePassword,
@@ -93,7 +95,7 @@ function SettingsPage() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      username: "",
+      fullName: "",
       phone: "",
       skills: "",
       bio: "",
@@ -106,7 +108,7 @@ function SettingsPage() {
       profileForm.reset({
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
-        username: userData.username || "",
+        fullName: userData.fullName || "",
         phone: userData.phoneNumber || "",
         skills: userData.skill || "",
         bio: userData.bio || "",
@@ -204,14 +206,15 @@ function SettingsPage() {
         userData: {
           firstName: data.firstName,
           lastName: data.lastName,
-          username: data.username,
+          fullName: data.fullName,
           phoneNumber: data.phone,
           skill: data.skills,
           bio: data.bio,
         },
       },
       {
-        onSuccess: () => {
+        onSuccess: (res: any) => {
+          updateUserStore(res);
           setProfileSuccessMessage("Thông tin đã được cập nhật thành công!");
           setTimeout(() => setProfileSuccessMessage(""), 3000);
         },
@@ -464,7 +467,7 @@ function SettingsPage() {
                 {/* Username */}
                 <FormField
                   control={profileForm.control}
-                  name="username"
+                  name="fullName"
                   render={({ field }) => (
                     <FormItem>
                       <label className="block text-sm font-medium text-gray-700">

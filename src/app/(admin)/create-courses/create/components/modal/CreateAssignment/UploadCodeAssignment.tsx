@@ -193,15 +193,15 @@ export const UploadCodeAssignment = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] bg-white p-0 rounded-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="p-6 pb-4 border-b border-[#919EAB52] text-left">
-          <DialogTitle className="text-lg text-left font-medium text-gray-900">
+      <DialogContent className="w-[95vw] max-w-[95vw] sm:w-[90vw] sm:max-w-[90vw] md:w-[80vw] md:max-w-[80vw] lg:w-[70vw] lg:max-w-[70vw] xl:w-[60vw] xl:max-w-[60vw] bg-white p-0 rounded-lg max-h-[95vh] sm:max-h-[90vh] overflow-y-auto mx-2 sm:mx-4">
+        <DialogHeader className="p-4 sm:p-6 pb-4 border-b border-[#919EAB52] text-left">
+          <DialogTitle className="text-base sm:text-lg text-left font-medium text-gray-900">
             Thêm bài tập
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
-            className="p-6 space-y-5"
+            className="p-4 sm:p-6 space-y-4 sm:space-y-5"
             onSubmit={form.handleSubmit(handleSubmit)}
           >
             {/* Tiêu đề */}
@@ -313,23 +313,24 @@ export const UploadCodeAssignment = ({
                       </FormLabel>
                       <FormControl>
                         <div
-                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-4 sm:p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => inputDataInputRef.current?.click()}
                         >
                           {!field.value ? (
                             <div className="flex flex-col items-center">
-                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                                 <Image
-                                  width={64}
-                                  height={64}
+                                  width={48}
+                                  height={48}
+                                  className="sm:w-16 sm:h-16"
                                   alt="file"
                                   src="/images/upload.png"
                                 />
                               </div>
-                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              <h3 className="text-sm sm:text-lg font-medium text-gray-900 mb-2">
                                 Thả hoặc chọn tệp tin
                               </h3>
-                              <p className="text-sm text-gray-500 mb-4">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 px-2">
                                 Thả tệp tin vào đây hoặc nhấp để{" "}
                                 <span className="text-blue-600 hover:underline cursor-pointer">
                                   duyệt
@@ -339,13 +340,14 @@ export const UploadCodeAssignment = ({
                             </div>
                           ) : (
                             <div className="flex flex-col items-center">
-                              <p className="text-sm text-gray-500 mb-2">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-2 break-all px-2">
                                 {inputDataFile?.name}
                               </p>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 type="button"
+                                className="text-xs sm:text-sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setInputDataFile(null);
@@ -398,23 +400,24 @@ export const UploadCodeAssignment = ({
                       </FormLabel>
                       <FormControl>
                         <div
-                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-4 sm:p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => outputDataInputRef.current?.click()}
                         >
                           {!field.value ? (
                             <div className="flex flex-col items-center">
-                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                                 <Image
-                                  width={64}
-                                  height={64}
+                                  width={48}
+                                  height={48}
+                                  className="sm:w-16 sm:h-16"
                                   alt="file"
                                   src="/images/upload.png"
                                 />
                               </div>
-                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              <h3 className="text-sm sm:text-lg font-medium text-gray-900 mb-2">
                                 Thả hoặc chọn tệp tin
                               </h3>
-                              <p className="text-sm text-gray-500 mb-4">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 px-2">
                                 Thả tệp tin vào đây hoặc nhấp để{" "}
                                 <span className="text-blue-600 hover:underline cursor-pointer">
                                   duyệt
@@ -424,13 +427,14 @@ export const UploadCodeAssignment = ({
                             </div>
                           ) : (
                             <div className="flex flex-col items-center">
-                              <p className="text-sm text-gray-500 mb-2">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-2 break-all px-2">
                                 {outputDataFile?.name}
                               </p>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 type="button"
+                                className="text-xs sm:text-sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setOutputDataFile(null);
@@ -493,14 +497,17 @@ export const UploadCodeAssignment = ({
                     <FormItem>
                       <FormLabel>Dữ liệu mẫu (Tuỳ chọn)</FormLabel>
                       <FormControl>
-                        <CodeMirror
-                          value={field.value || ""}
-                          height="200px"
-                          extensions={[java()]}
-                          theme="light"
-                          onChange={field.onChange}
-                          basicSetup={{ lineNumbers: true }}
-                        />
+                        <div className="w-full overflow-x-auto">
+                          <CodeMirror
+                            value={field.value || ""}
+                            height="150px"
+                            extensions={[java()]}
+                            theme="light"
+                            onChange={field.onChange}
+                            basicSetup={{ lineNumbers: true }}
+                            className="text-xs sm:text-sm"
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -513,14 +520,17 @@ export const UploadCodeAssignment = ({
                     <FormItem>
                       <FormLabel>Đáp án</FormLabel>
                       <FormControl>
-                        <CodeMirror
-                          value={field.value || ""}
-                          height="200px"
-                          extensions={[java()]}
-                          theme="light"
-                          onChange={field.onChange}
-                          basicSetup={{ lineNumbers: true }}
-                        />
+                        <div className="w-full overflow-x-auto">
+                          <CodeMirror
+                            value={field.value || ""}
+                            height="150px"
+                            extensions={[java()]}
+                            theme="light"
+                            onChange={field.onChange}
+                            basicSetup={{ lineNumbers: true }}
+                            className="text-xs sm:text-sm"
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -543,23 +553,24 @@ export const UploadCodeAssignment = ({
                       </FormLabel>
                       <FormControl>
                         <div
-                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                          className="border-2 border-dashed bg-[#919EAB]/8 border-gray-300 rounded-lg p-4 sm:p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
                           onClick={() => attachmentInputRef.current?.click()}
                         >
                           {!field?.value ? (
                             <div className="flex flex-col items-center">
-                              <div className="w-16 h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-4">
+                              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#919EAB]/8 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                                 <Image
-                                  width={64}
-                                  height={64}
+                                  width={48}
+                                  height={48}
+                                  className="sm:w-16 sm:h-16"
                                   alt="file"
                                   src="/images/upload.png"
                                 />
                               </div>
-                              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                              <h3 className="text-sm sm:text-lg font-medium text-gray-900 mb-2">
                                 Thả hoặc chọn tệp tin
                               </h3>
-                              <p className="text-sm text-gray-500 mb-4">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 px-2">
                                 Thả tệp tin vào đây hoặc nhấp để{" "}
                                 <span className="text-blue-600 hover:underline cursor-pointer">
                                   duyệt
@@ -569,13 +580,14 @@ export const UploadCodeAssignment = ({
                             </div>
                           ) : (
                             <div className="flex flex-col items-center">
-                              <p className="text-sm text-gray-500 mb-2">
+                              <p className="text-xs sm:text-sm text-gray-500 mb-2 break-all px-2">
                                 {attachmentFile?.name}
                               </p>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 type="button"
+                                className="text-xs sm:text-sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setAttachmentFile(null);
@@ -664,11 +676,11 @@ export const UploadCodeAssignment = ({
               </>
             )}
 
-            <DialogFooter className="flex justify-end space-x-3 pt-4 border-t border-[#919EAB52]">
+            <DialogFooter className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-t border-[#919EAB52]">
               <Button
                 type="button"
                 size="sm"
-                className="bg-[#FFF1F1] hover:bg-[#FEE2E2] text-[#E53935]"
+                className="w-full sm:w-auto bg-[#FFF1F1] hover:bg-[#FEE2E2] text-[#E53935] text-xs sm:text-sm"
                 onClick={handleClose}
               >
                 Hủy bỏ
@@ -676,7 +688,7 @@ export const UploadCodeAssignment = ({
               <Button
                 type="submit"
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm"
               >
                 Thêm bài tập
               </Button>

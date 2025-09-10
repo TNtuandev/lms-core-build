@@ -25,11 +25,11 @@ import { Step1FormData, step1Schema } from "./schemas";
 import { z } from "zod";
 import { useCategory } from "@/hooks/queries/category/useCategory";
 import { Card } from "@/components/ui/card";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
-import { Select as SelectMode } from 'antd';
-
+import { Select as SelectMode } from "antd";
+import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -68,8 +68,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     formData.append("file", file);
     uploadFile.mutate(formData, {
       onSuccess: (response) => {
-
-        console.log("response---", response)
+        console.log("response---", response);
 
         field.onChange(response.url); // Assuming the API returns the file URL
       },
@@ -203,7 +202,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   <SelectMode
                     mode="tags"
                     size="large"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     placeholder="Tags Mode"
                     onChange={(value) => field.onChange(value)}
                     options={[]}
@@ -224,10 +223,10 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   Giới thiệu
                 </FormLabel>
                 <FormControl>
-                  <Textarea
+                  <CKEditorWrapper
+                    value={field.value}
+                    onChange={field.onChange}
                     placeholder="Giới thiệu"
-                    className="min-h-[120px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    {...field}
                   />
                 </FormControl>
                 <FormMessage />

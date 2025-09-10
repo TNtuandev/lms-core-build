@@ -303,7 +303,7 @@ export function LessonClient() {
         <Image
           src="/chatbot.svg"
           alt="Logo"
-          className="m-2 lg:block hidden"
+          className="m-2"
           width={88}
           height={88}
         />

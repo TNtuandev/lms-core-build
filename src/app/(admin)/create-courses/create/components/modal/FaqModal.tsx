@@ -19,8 +19,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCreateFAQ } from "@/hooks/queries/course/useFaqs";
+import {useCreateFAQ, useUpdateFAQ} from "@/hooks/queries/course/useFaqs";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import {FAQ} from "@/api/types/course.type";
+import {useEffect} from "react";
 
 // Schema validation cho form FAQ
 const faqSchema = z.object({
@@ -34,9 +36,10 @@ interface FaqModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  initData?: FAQ
 }
 
-export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
+export const FaqModal = ({ isOpen, onClose, initData }: FaqModalProps) => {
   const form = useForm<FaqFormData>({
     resolver: zodResolver(faqSchema),
     defaultValues: {
@@ -46,7 +49,15 @@ export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
   });
   const { courseData } = useCreateCourseContext();
 
+  useEffect(() => {
+    form.reset({
+      question: initData?.question || "",
+      answer: initData?.answer || "",
+    })
+  }, [initData]);
+
   const createFaq = useCreateFAQ(courseData?.id as string);
+  const updateFaq = useUpdateFAQ(courseData?.id as string, initData?.id as string);
 
   const handleClose = () => {
     form.reset();
@@ -54,8 +65,13 @@ export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
   };
 
   const handleSubmit = (value: FaqFormData) => {
-    createFaq.mutate(value);
     handleClose();
+    if(initData) {
+      updateFaq.mutate(value);
+      return;
+    }
+    createFaq.mutate(value);
+
   };
 
   return (
@@ -63,7 +79,7 @@ export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
       <DialogContent className="sm:max-w-[600px] bg-white p-0 rounded-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="p-6 pb-4 border-b border-[#919EAB52] text-left">
           <DialogTitle className="text-lg text-left font-medium text-gray-900">
-            Thêm câu hỏi thường gặp
+            {initData?.id ? "Chỉnh sửa câu hỏi thường gặp" : "Thêm câu hỏi thường gặp"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -115,7 +131,7 @@ export const FaqModal = ({ isOpen, onClose }: FaqModalProps) => {
                 Hủy
               </Button>
               <Button type="submit" className="text-white">
-                Thêm FAQ
+                {initData?.id ? "Chỉnh sửa" : "Thêm FAQ"}
               </Button>
             </DialogFooter>
           </form>

@@ -42,6 +42,7 @@ import {
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
+import './index.css'
 
 interface CreateLessonModalProps {
   isOpen: boolean;

@@ -11,6 +11,7 @@ import { useStudent } from "@/hooks/queries/dashboard/useStudent";
 import {useTeacher} from "@/hooks/queries/dashboard/useTeacher";
 import {MoneyRecive, Profile2User} from "iconsax-react";
 import {Book} from "lucide-react";
+import {formatCurrency} from "@/lib/utils";
 
 function DashboardPage() {
   const { isTeacher, user } = useAuthStore();
@@ -51,11 +52,11 @@ function DashboardPage() {
 
               {/* Card 3 */}
               <Card className="bg-[#919EAB14] border-0">
-                <CardContent className="flex flex-col items-center pt-6">
+                <CardContent className="flex flex-col items-center pt-6 break-all">
                   <div className="w-24 h-24 flex items-center justify-center bg-[#2F57EF29] rounded-xl mb-4">
                     <MoneyRecive size={24} color="#2F57EF" />
                   </div>
-                  <h3 className="text-5xl font-bold text-[#2F57EF]">{teacherData?.data.totalPrices ?? 0}</h3>
+                  <h3 className="text-5xl font-bold text-[#2F57EF]">{teacherData?.data.totalMoney ? formatCurrency(teacherData?.data.totalMoney) : 0}</h3>
                   <p className="mt-2 text-sm text-center">Tổng thu nhập (Triệu)</p>
                 </CardContent>
               </Card>

@@ -53,7 +53,7 @@ export interface InstructorProfile {
     totalCourses: number
     isVerified: boolean
     auditInfo: AuditInfoInstructor
-
+    totalMoney: number
     totalPrices: number
     mobilePhone: string
   }

@@ -31,7 +31,7 @@ import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import CourseFAQ from "@/app/(admin)/create-courses/create/components/CourseFAQ";
 import { useCourseCMSBySlug } from "@/hooks/queries/course/useCourses";
 import { useUpdateCourse } from "@/hooks/queries/course/useCreateCourse";
-import {useSearchParams} from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const STEP_SUBMIT_CREATE_COURSE = 5;
 
@@ -49,6 +49,8 @@ function CreateCourse() {
   const isEdit = Boolean(courseSlug);
 
   const { data: initialCourseData } = useCourseCMSBySlug(courseSlug as string);
+
+  console.log("initialCourseData---", initialCourseData);
 
   useEffect(() => {
     if (initialCourseData) {
@@ -221,7 +223,7 @@ function CreateCourse() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between flex-col md:flex-row items-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-8 md:w-[30%]">
-            Khóa học mới
+            {!initialCourseData ? "Khóa học mới" : "Chỉnh sửa khoá học"}
           </h1>
           <div className="flex items-center justify-center mb-4 w-[70%] relative">
             {/* Connecting Line Background */}
@@ -287,7 +289,10 @@ function CreateCourse() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3" style={{
+            boxShadow:
+              "0 0 2px 0 rgba(145, 158, 171, 0.20), 0 12px 24px -4px rgba(145, 158, 171, 0.12)",
+          }}>
             <Card className="p-6 bg-white shadow-sm border border-gray-200">
               <nav className="space-y-2">
                 {stepsList.map((item, index) => (
@@ -308,10 +313,15 @@ function CreateCourse() {
                       cursor: item.disabled ? "not-allowed" : "pointer",
                     }}
                   >
-                    <span className={
-                      `font-medium ${item.disabled ? "text-gray-400" : ""}`
-                    }>{item.label}</span>
-                    <ChevronRight color={item.disabled ? "gray" : "black"} className="w-4 h-4" />
+                    <span
+                      className={`font-medium ${item.disabled ? "text-gray-400" : ""}`}
+                    >
+                      {item.label}
+                    </span>
+                    <ChevronRight
+                      color={item.disabled ? "gray" : "black"}
+                      className="w-4 h-4"
+                    />
                   </div>
                 ))}
               </nav>
@@ -319,7 +329,13 @@ function CreateCourse() {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-9">
+          <div
+            className="lg:col-span-9"
+            style={{
+              boxShadow:
+                "0 0 2px 0 rgba(145, 158, 171, 0.20), 0 12px 24px -4px rgba(145, 158, 171, 0.12)",
+            }}
+          >
             {/* Form Card */}
             {renderStepScreen()}
           </div>

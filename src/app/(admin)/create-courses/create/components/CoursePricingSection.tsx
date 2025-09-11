@@ -56,6 +56,17 @@ export default function CoursePricingSection({
 
   const isFree = form.watch("isFree");
 
+  const formatCurrencyVND = (amount: number): string => {
+    return new Intl.NumberFormat("vi-VN", {
+      maximumFractionDigits: 0,
+    }).format(amount || 0);
+  };
+
+  const parseVNDToNumber = (input: string): number => {
+    const digitsOnly = input.replace(/[^\d]/g, "");
+    return digitsOnly ? Number(digitsOnly) : 0;
+  };
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -106,17 +117,15 @@ export default function CoursePricingSection({
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                            đ
-                          </span>
                           <Input
                             placeholder="0"
-                            type="number"
-                            className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
+                            type="text"
+                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            name={field.name}
+                            ref={field.ref}
+                            value={formatCurrencyVND(field.value || 0)}
+                            onChange={(e) => field.onChange(parseVNDToNumber(e.target.value))}
+                            onBlur={(e) => field.onChange(parseVNDToNumber(e.target.value))}
                           />
                         </div>
                       </FormControl>
@@ -135,17 +144,15 @@ export default function CoursePricingSection({
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                            đ
-                          </span>
                           <Input
                             placeholder="0"
-                            type="number"
-                            className="h-10 pl-8 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
+                            type="text"
+                            className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            name={field.name}
+                            ref={field.ref}
+                            value={formatCurrencyVND(field.value || 0)}
+                            onChange={(e) => field.onChange(parseVNDToNumber(e.target.value))}
+                            onBlur={(e) => field.onChange(parseVNDToNumber(e.target.value))}
                           />
                         </div>
                       </FormControl>

@@ -50,6 +50,8 @@ function CreateCourse() {
 
   const { data: initialCourseData } = useCourseCMSBySlug(courseSlug as string);
 
+  console.log("initialCourseData---", initialCourseData);
+
   useEffect(() => {
     if (initialCourseData) {
       setFormData({
@@ -221,7 +223,7 @@ function CreateCourse() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between flex-col md:flex-row items-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-8 md:w-[30%]">
-            {initialCourseData ? "Khóa học mới" : "Chỉnh sửa khoá học"}
+            {!initialCourseData ? "Khóa học mới" : "Chỉnh sửa khoá học"}
           </h1>
           <div className="flex items-center justify-center mb-4 w-[70%] relative">
             {/* Connecting Line Background */}

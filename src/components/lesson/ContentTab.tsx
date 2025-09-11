@@ -492,22 +492,6 @@ export default function ContentTab(props: ContentTabProps) {
       case "download":
         return (
           <div>
-            {dataLesson?.videoUrl && (
-              <div
-                onClick={() => {
-                  const cleanTitle = dataLesson?.title?.replace(/[^\w\s-]/g, '') || "Video_Bai_Giang";
-                  const fileName = `${cleanTitle}.mp4`;
-                  autoDownload(dataLesson.videoUrl, fileName);
-                }}
-                role="presentation"
-                className="flex cursor-pointer items-center gap-2 mb-2 hover:bg-gray-50 p-2 rounded-lg transition-colors"
-              >
-                <IconDownload />
-                <div className="text-[#1D7BF5] hover:text-[#1557C3]">
-                  📹 {dataLesson?.title || "Video bài giảng"} <span className="text-gray-500 text-sm">(.mp4)</span>
-                </div>
-              </div>
-            )}
             {dataLesson?.attachmentUrl && (
               <div
                 onClick={() => {

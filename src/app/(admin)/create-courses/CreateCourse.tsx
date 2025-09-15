@@ -50,8 +50,6 @@ function CreateCourse() {
 
   const { data: initialCourseData } = useCourseCMSBySlug(courseSlug as string);
 
-  console.log("initialCourseData---", initialCourseData);
-
   useEffect(() => {
     if (initialCourseData) {
       setFormData({
@@ -62,6 +60,9 @@ function CreateCourse() {
       setCurrentStep(1);
     }
   }, [initialCourseData]);
+
+  console.log("formData---", formData);
+
 
   const handleStepNext = (data: any) => {
     const finalData = { ...formData, ...data };

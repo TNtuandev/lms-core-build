@@ -18,7 +18,7 @@ import {
   videoIntroSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import Image from "next/image";
@@ -46,19 +46,29 @@ export default function VideoIntroSection({
   initialData,
 }: VideoIntroSectionProps) {
   const [isExpanded, setIsExpand] = useState(true);
-  // const [type, setTypeSource] = useState(typeSource[0].value);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const defaultValues: any = useMemo(() => ({
+    previewVideo: initialData?.previewVideo || "",
+    previewImg: initialData?.previewImg || "",
+  }), [initialData]);
   const form = useForm<VideoIntroFormData>({
     resolver: zodResolver(videoIntroSchema),
+    defaultValues
   });
 
   useEffect(() => {
-    form.reset({
-      previewVideo: initialData?.previewVideo || "",
-      previewImg: initialData?.previewImg || "",
+    if (!initialData) return;
+
+    const currentValues: any = form.getValues();
+    const needsUpdate = Object.keys(defaultValues).some(key => {
+      return currentValues[key] !== defaultValues[key];
     });
-  }, [initialData]);
+
+    if (needsUpdate) {
+      console.log("Init data Thay đổi--- Updating form");
+      form.reset(defaultValues);
+    }
+  }, [initialData, defaultValues, form]);
 
   const onSubmit = (data: VideoIntroFormData) => {
     // Call onNext to pass data back to parent component

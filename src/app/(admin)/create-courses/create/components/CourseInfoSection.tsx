@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -37,21 +37,31 @@ export default function CourseInfoSection({
   initialData,
 }: CourseInfoSectionProps) {
   const [infoExpanded, setInfoExpanded] = useState(true);
-
+  const defaultValues: any = useMemo(() => ({
+    requirements: initialData?.requirements || "",
+    hourCourse: initialData?.hourCourse || 0,
+    learningOutcomes: initialData?.learningOutcomes || "",
+    minutesCourse: initialData?.minutesCourse || 0,
+    description: initialData?.description || "",
+    label: initialData?.label || "",
+  }), [initialData]);
   const form = useForm<InfoFormData>({
     resolver: zodResolver(infoCourseSchema),
+    defaultValues
   });
 
   useEffect(() => {
-    form.reset({
-      requirements: initialData?.requirements || "",
-      hourCourse: initialData?.hourCourse || 0,
-      learningOutcomes: initialData?.learningOutcomes || "",
-      minutesCourse: initialData?.minutesCourse || 0,
-      description: initialData?.description || "",
-      label: initialData?.label || "",
-    })
-  }, [initialData]);
+    if (!initialData) return;
+
+    const currentValues: any = form.getValues();
+    const needsUpdate = Object.keys(defaultValues).some(key => {
+      return currentValues[key] !== defaultValues[key];
+    });
+
+    if (needsUpdate) {
+      form.reset(defaultValues);
+    }
+  }, [initialData, defaultValues, form]);
 
   const onSubmit = (data: InfoFormData) => {
     // Call onNext to pass data back to parent component

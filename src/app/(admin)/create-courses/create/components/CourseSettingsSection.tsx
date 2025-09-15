@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -41,21 +41,32 @@ export default function CourseSettingsSection({
   initialData,
 }: CourseSettingsSectionProps) {
   const [courseSettingsExpanded, setCourseSettingsExpanded] = useState(true);
+  const defaultValues: any = useMemo(() => ({
+    difficulty: initialData?.difficulty || "",
+    isPublic: initialData?.isPublic || false,
+    enableQA: initialData?.enableQA || true,
+    enableDrip: initialData?.enableDrip || true,
+  }), [initialData]);
 
   const form = useForm<SettingCourseFormData>({
     resolver: zodResolver(settingCourseSchema),
+    defaultValues
   });
 
   const [studentCount, setStudentCount] = useState(100);
 
   useEffect(() => {
-    form.reset({
-      difficulty: initialData?.difficulty || "",
-      isPublic: initialData?.isPublic || false,
-      enableQA: initialData?.enableQA || true,
-      enableDrip: initialData?.enableDrip || true,
-    })
-  }, []);
+    if (!initialData) return;
+    const currentValues: any = form.getValues();
+    const needsUpdate = Object.keys(defaultValues).some(key => {
+      return currentValues[key] !== defaultValues[key];
+    });
+
+    if (needsUpdate) {
+      console.log("Init data Thay đổi--- Updating form");
+      form.reset(defaultValues);
+    }
+  }, [initialData, defaultValues, form]);
 
   const onSubmit = (data: SettingCourseFormData) => {
     // Call onNext to pass data back to parent component

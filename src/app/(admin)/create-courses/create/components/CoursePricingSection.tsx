@@ -16,7 +16,7 @@ import {
   PricingCourseFormData,
   pricingCourseSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 
@@ -31,22 +31,29 @@ export default function CoursePricingSection({
   onBack,
   initialData,
 }: CoursePricingSectionProps) {
+
+  const defaultValues: any = useMemo(() => ({
+    regularPrice: initialData?.regularPrice || 0,
+    discountedPrice: initialData?.discountedPrice || 0,
+    isFree: initialData?.isFree,
+  }), [initialData]);
+
   const form = useForm<PricingCourseFormData>({
     resolver: zodResolver(pricingCourseSchema),
-    defaultValues: {
-      regularPrice: initialData?.regularPrice || 0,
-      discountedPrice: initialData?.discountedPrice || 0,
-      isFree: initialData?.isFree,
-    },
+    defaultValues,
   });
 
+
   useEffect(() => {
-    form.reset({
-      regularPrice: initialData?.regularPrice || 0,
-      discountedPrice: initialData?.discountedPrice || 0,
-      isFree: initialData?.isFree,
+    if (!initialData) return;
+    const currentValues: any = form.getValues();
+    const needsUpdate = Object.keys(defaultValues).some(key => {
+      return currentValues[key] !== defaultValues[key];
     });
-  }, [initialData]);
+    if (needsUpdate) {
+      form.reset(defaultValues);
+    }
+  }, [initialData, defaultValues, form]);
 
   const onSubmit = (data: PricingCourseFormData) => {
     // Call onNext to pass data back to parent component

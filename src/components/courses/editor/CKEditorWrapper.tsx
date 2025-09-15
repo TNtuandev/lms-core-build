@@ -70,7 +70,6 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
 
-        console.log("CKEditor loaded successfully");
         setIsLoaded(true);
         setError(null);
       } catch (err) {

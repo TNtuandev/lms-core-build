@@ -25,18 +25,18 @@ interface AuditInfo {
 
 export interface LearnerProfile {
   data: {
-    _id: string;
-    _userId: string;
-    _bio: string | null;
-    _dateOfBirth: string | null;
-    _educationLevel: string | null;
-    _interests: string | null;
-    _gender: "male" | "female" | "other"; // assuming possible values
+    id: string;
+    userId: string;
+    bio: string | null;
+    dateOfBirth: string | null;
+    educationLevel: string | null;
+    interests: string | null;
+    gender: "male" | "female" | "other"; // assuming possible values
     totalCoursesEnrolled: number;
     totalCoursesInProgress: number;
     totalCoursesCompleted: number;
-    _auditInfo: AuditInfo;
-    _mobilePhone: string;
+    auditInfo: AuditInfo;
+    mobilePhone: string;
   };
 }
 

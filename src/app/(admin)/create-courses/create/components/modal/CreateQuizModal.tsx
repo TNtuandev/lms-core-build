@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -45,6 +44,7 @@ import {
   useUpdateLessonQuiz,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
+import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 
 interface CreateQuizModalProps {
   isOpen: boolean;
@@ -315,7 +315,11 @@ export const CreateQuizModal = ({
                     <FormItem>
                       <FormLabel>Tóm tắt</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Tóm tắt" {...field} />
+                        <CKEditorWrapper
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Tóm tắt"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

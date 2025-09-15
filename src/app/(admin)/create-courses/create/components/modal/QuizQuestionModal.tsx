@@ -410,7 +410,11 @@ export default function QuizQuestionModal({
                 <FormItem>
                   <FormLabel>Giải thích đáp án đúng</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Viết gì đó..." {...field} />
+                    <CKEditorWrapper
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      placeholder="Viết gì đó..."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -424,7 +428,11 @@ export default function QuizQuestionModal({
                 <FormItem>
                   <FormLabel>Gợi ý đáp án sai</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Viết gì đó..." {...field} />
+                    <CKEditorWrapper
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      placeholder="Viết gì đó..."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

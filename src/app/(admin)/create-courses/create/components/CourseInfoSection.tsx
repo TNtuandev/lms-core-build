@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -23,6 +23,7 @@ import { InfoCircle } from "iconsax-react";
 import { COURSE_LABELS } from "@/api/utils/course";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 
 interface CourseInfoSectionProps {
   onNext: (data: InfoFormData) => void;
@@ -87,10 +88,10 @@ export default function CourseInfoSection({
                       Mô tả ngắn
                     </FormLabel>
                     <FormControl>
-                      <Textarea
+                      <CKEditorWrapper
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="Viết mô tả ngắn gọn về khóa học..."
-                        className="min-h-[80px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -108,10 +109,10 @@ export default function CourseInfoSection({
                       Yêu cầu
                     </FormLabel>
                     <FormControl>
-                      <Textarea
+                      <CKEditorWrapper
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="Yêu cầu"
-                        className="min-h-[80px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -129,10 +130,10 @@ export default function CourseInfoSection({
                       Kết quả học tập
                     </FormLabel>
                     <FormControl>
-                      <Textarea
+                      <CKEditorWrapper
+                        value={field.value}
+                        onChange={field.onChange}
                         placeholder="Kết quả học tập"
-                        className="min-h-[80px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        {...field}
                       />
                     </FormControl>
                     <p className="text-xs text-gray-500 flex items-center mt-1">

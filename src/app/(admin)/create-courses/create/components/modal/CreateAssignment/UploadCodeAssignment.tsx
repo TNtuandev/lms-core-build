@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -18,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 import {
   Select,
@@ -42,7 +41,6 @@ import {
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import CodeMirror from "@uiw/react-codemirror";
 import { java } from "@codemirror/lang-java";
-
 
 interface UploadCodeAssignmentProps {
   isOpen: boolean;
@@ -189,7 +187,7 @@ export const UploadCodeAssignment = ({
       default:
         return ".txt,.json"; // Default for other languages
     }
-  }, [language])
+  }, [language]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -268,7 +266,11 @@ export const UploadCodeAssignment = ({
                 <FormItem>
                   <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Mô tả chi tiết" {...field} />
+                    <CKEditorWrapper
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Mô tả chi tiết"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -286,15 +288,16 @@ export const UploadCodeAssignment = ({
                     <FormItem>
                       <FormLabel>Ngôn ngữ</FormLabel>
                       <FormControl>
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger className="h-12">
                             <SelectValue placeholder="Ngôn ngữ" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="C++">C++</SelectItem>
-                            <SelectItem value="JAVA">
-                              JAVA
-                            </SelectItem>
+                            <SelectItem value="JAVA">JAVA</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -484,7 +487,11 @@ export const UploadCodeAssignment = ({
                     <FormItem>
                       <FormLabel>Gợi ý</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Gợi ý" {...field} />
+                        <CKEditorWrapper
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          placeholder="Gợi ý"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

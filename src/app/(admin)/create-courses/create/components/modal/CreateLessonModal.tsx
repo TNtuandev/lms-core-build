@@ -256,7 +256,11 @@ export const CreateLessonModal = ({
                 <FormItem>
                   <FormLabel>Tóm tắt</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Tóm tắt" {...field} />
+                    <CKEditorWrapper
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Tóm tắt"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

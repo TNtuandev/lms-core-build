@@ -2,6 +2,7 @@ import React from "react";
 import IconClock from "../../../public/icons/IconClock";
 import IconPrize from "../../../public/icons/IconPrize";
 import IconUser from "../../../public/icons/IconUser";
+import he from "he";
 
 interface CourseHeaderProps {
   courseDetail: {
@@ -14,6 +15,7 @@ interface CourseHeaderProps {
     enrollmentCnt: number;
     owner: { fullName: string };
     updatedAt: string;
+    shortDescription: string;
   };
   reviewSummaryData?: any
 }
@@ -29,7 +31,11 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ courseDetail, review
           {courseDetail.title}
         </div>
         <p className="text-gray-600 mb-2 md:w-[60%] w-full">
-          {courseDetail.description}
+          {courseDetail.shortDescription && (
+            <div
+              dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.shortDescription) }}
+            />
+          )}
         </p>
         <div className="my-4 flex flex-wrap items-center gap-4">
           <div className="mt-2 w-max flex items-center gap-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">

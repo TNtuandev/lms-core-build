@@ -28,13 +28,16 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         <h3 className="text-xl font-bold mb-6">Mô tả</h3>
         <div className={`space-y-4`}>
           <p>{courseDetail.description}</p>
-          {courseDetail.learningOutcomes && (
-            <div>
-              <h4 className="font-semibold mb-2">Kết quả học tập:</h4>
-              <p>{courseDetail.learningOutcomes}</p>
-            </div>
-          )}
         </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
+        {courseDetail.learningOutcomes && (
+          <div>
+            <h4 className="text-xl font-bold mb-6">Kết quả học tập:</h4>
+            <p>{courseDetail.learningOutcomes}</p>
+          </div>
+        )}
       </div>
     </>
   );

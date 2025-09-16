@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
 // import { Button } from "@/components/ui/button";
 // import { Eye } from "iconsax-react";
 import dayjs from "dayjs";
 import { useGetOrders } from "@/hooks/queries/order/useOrder";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { CloseCircle, TickCircle } from "iconsax-react";
 
 // interface PurchaseOrder {
 //   id: string;
@@ -16,58 +17,16 @@ import { Loader2 } from "lucide-react";
 //   status: "Thành công" | "Đang xử lý" | "Đang chờ" | "Đã hủy";
 // }
 
-function PurchaseHistoryPage() {
+function PurchaseApprovePage() {
   const { data, isLoading, error } = useGetOrders();
 
-  // const totalPrice = (orderDetail: OrderPayment) => {
-  //   return orderDetail?.items?.reduce((total, item) => {
-  //     return (
-  //       total + (item?.discountedPrice * item?.quantity || 0)
-  //     );
-  //   }, 0);
-  // }
-  //
-  // console.log("data---", totalPrice);
-  //
-  // const handleEdit = (orderId: string) => {
-  //   console.log("Edit order:", orderId);
-  // };
+  const handleAccept = () => {
+    console.log("handleAccept");
+  }
 
-  // const handleDelete = (orderId: string) => {
-  //   console.log("Delete order:", orderId);
-  // };
-
-  const renderNameStatusBadge = useCallback(
-    (status: "pending" | "completed" | "failed") => {
-      switch (status) {
-        case "completed":
-          return "Thành công";
-        case "pending":
-          return "Đang chờ";
-        case "failed":
-          return "Thất bại";
-        default:
-          return;
-      }
-    },
-    [],
-  );
-
-  const renderStatusBadge = (status: "pending" | "completed" | "failed") => {
-    const statusConfig = {
-      completed: "bg-green-100 text-green-800",
-      pending: "bg-yellow-100 text-yellow-800",
-      failed: "bg-red-100 text-red-800",
-    };
-
-    return (
-      <span
-        className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[status]}`}
-      >
-        {renderNameStatusBadge(status)}
-      </span>
-    );
-  };
+  const handleReject = () => {
+    console.log("handleReject");
+  }
 
   return (
     <div className="bg-white shadow h-max p-6 rounded-2xl">
@@ -105,7 +64,7 @@ function PurchaseHistoryPage() {
                 Giá
               </th>
               <th className="text-center py-4 px-2 text-gray-600 font-medium">
-                Hành động
+                Trạng thái
               </th>
               <th className="text-right py-4 px-2"></th>
             </tr>
@@ -144,8 +103,14 @@ function PurchaseHistoryPage() {
                     {formatCurrency(order?.payment?.amount)}đ
                   </span>
                 </td>
-                <td className="py-6 px-2 text-center">
-                  {renderStatusBadge(order?.payment?.status)}
+                <td className="py-6 px-2 text-center flex items-center gap-4 justify-center">
+                  <div className="cursor-pointer" onClick={handleAccept}>
+                    <TickCircle size="32" color="#2F57EF" />
+                  </div>
+
+                  <div className="cursor-pointer" onClick={handleReject}>
+                    <CloseCircle size="32" color="red" />
+                  </div>
                 </td>
                 {/*<td className="py-6 px-2">*/}
                 {/*  <div className="flex items-center justify-end gap-2">*/}
@@ -176,11 +141,11 @@ function PurchaseHistoryPage() {
       {/* Empty State */}
       {data?.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">Bạn chưa đăng ký khóa học nào.</p>
+          <p className="text-gray-500">Chưa có khóa học nào chờ phê duyệt</p>
         </div>
       )}
     </div>
   );
 }
 
-export default PurchaseHistoryPage;
+export default PurchaseApprovePage;

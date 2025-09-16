@@ -476,6 +476,32 @@ export default function DashboardLayout({
                     Bài tập
                   </span>
                 </Link>
+                <Link
+                  href="/dashboard/purchase-approve"
+                  className={`flex items-center px-3 py-3 ${
+                    isActive("/dashboard/purchase-approve")
+                      ? "text-blue-600 bg-[#2F57EF14]"
+                      : "text-gray-700 hover:bg-gray-50"
+                  } rounded-lg`}
+                >
+                  <History
+                    className="w-5 h-5 mr-3"
+                    color={
+                      isActive("/dashboard/purchase-approve")
+                        ? "#155dfc"
+                        : "#364153"
+                    }
+                  />
+                  <span
+                    className={
+                      isActive("/dashboard/purchase-approve")
+                        ? "font-medium text-blue-600"
+                        : ""
+                    }
+                  >
+                    Phê duyệt thanh toán
+                  </span>
+                </Link>
               </div>
             )}
 

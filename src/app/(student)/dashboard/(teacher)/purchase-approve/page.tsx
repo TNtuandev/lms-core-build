@@ -30,13 +30,13 @@ function PurchaseApprovePage() {
 
   return (
     <div className="bg-white shadow h-max p-6 rounded-2xl">
-      <h2 className="text-2xl font-semibold mb-6">Lịch sử mua hàng</h2>
+      <h2 className="text-2xl font-semibold mb-6">Phê duyệt đơn hàng</h2>
 
       {isLoading && (
         <div className="flex items-center justify-center py-10">
           <Loader2 className="animate-spin text-gray-400" />
           <span className="ml-2 text-gray-500">
-            Đang tải lịch sử mua hàng...
+            Đang tải đơn hàng...
           </span>
         </div>
       )}

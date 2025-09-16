@@ -9,9 +9,24 @@ export const orderAPI = {
     return res;
   },
 
+  approvedOrder: async (orderId: string): Promise<any> => {
+    const { data: res } = await api.post(`/payments/manual/confirm/${orderId}`);
+    return res;
+  },
+
+  rejectOrder: async (orderId: string): Promise<any> => {
+    const { data: res } = await api.post(`/payments/manual/cancel/${orderId}`);
+    return res;
+  },
+
   // Lấy danh sách orders
   getOrders: async (): Promise<OrderPayment[]> => {
     const { data: res } = await api.get(`/orders`);
+    return _.orderBy(res, ['createdAt'], ['desc']);
+  },
+
+  getOrdersTeacher: async (): Promise<OrderPayment[]> => {
+    const { data: res } = await api.get(`/cms/orders`);
     return _.orderBy(res, ['createdAt'], ['desc']);
   },
 

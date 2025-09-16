@@ -56,7 +56,7 @@ export default function CheckoutStepOneDesktop({
     orderCart.mutate(
       {
         cartId,
-        paymentMethod: "momo",
+        paymentMethod: "manual",
       },
       {
         onSuccess: (data) => {

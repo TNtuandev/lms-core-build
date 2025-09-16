@@ -1,32 +1,62 @@
 "use client";
 
-import React from "react";
-// import { Button } from "@/components/ui/button";
-// import { Eye } from "iconsax-react";
+import React, { useCallback } from "react";
 import dayjs from "dayjs";
-import { useGetOrders } from "@/hooks/queries/order/useOrder";
+import {
+  useApprovedOrder,
+  useGetOrdersTeacher,
+  useRejectOrder,
+} from "@/hooks/queries/order/useOrder";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { CloseCircle, TickCircle } from "iconsax-react";
 
-// interface PurchaseOrder {
-//   id: string;
-//   courseName: string;
-//   purchaseDate: string;
-//   price: string;
-//   status: "Thành công" | "Đang xử lý" | "Đang chờ" | "Đã hủy";
-// }
-
 function PurchaseApprovePage() {
-  const { data, isLoading, error } = useGetOrders();
+  const { data, isLoading, error } = useGetOrdersTeacher();
+  const apprevedCart = useApprovedOrder();
+  const rejectOrder = useRejectOrder();
 
-  const handleAccept = () => {
-    console.log("handleAccept");
-  }
+  const handleAccept = (orderID: string) => {
+    console.log("handleAccept", orderID);
+    apprevedCart.mutate(orderID);
+  };
 
-  const handleReject = () => {
-    console.log("handleReject");
-  }
+  const handleReject = (orderID: string) => {
+    rejectOrder.mutate(orderID);
+    console.log("handleReject", orderID);
+  };
+
+  const renderNameStatusBadge = useCallback(
+    (status: "pending" | "completed" | "failed") => {
+      switch (status) {
+        case "completed":
+          return "Thành công";
+        case "pending":
+          return "Đang chờ";
+        case "failed":
+          return "Thất bại";
+        default:
+          return;
+      }
+    },
+    [],
+  );
+
+  const renderStatusBadge = (status: "pending" | "completed" | "failed") => {
+    const statusConfig = {
+      completed: "bg-green-100 text-green-800",
+      pending: "bg-yellow-100 text-yellow-800",
+      failed: "bg-red-100 text-red-800",
+    };
+
+    return (
+      <span
+        className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[status]}`}
+      >
+        {renderNameStatusBadge(status)}
+      </span>
+    );
+  };
 
   return (
     <div className="bg-white shadow h-max p-6 rounded-2xl">
@@ -35,9 +65,7 @@ function PurchaseApprovePage() {
       {isLoading && (
         <div className="flex items-center justify-center py-10">
           <Loader2 className="animate-spin text-gray-400" />
-          <span className="ml-2 text-gray-500">
-            Đang tải đơn hàng...
-          </span>
+          <span className="ml-2 text-gray-500">Đang tải đơn hàng...</span>
         </div>
       )}
 
@@ -66,7 +94,6 @@ function PurchaseApprovePage() {
               <th className="text-center py-4 px-2 text-gray-600 font-medium">
                 Trạng thái
               </th>
-              <th className="text-right py-4 px-2"></th>
             </tr>
           </thead>
           <tbody>
@@ -104,34 +131,25 @@ function PurchaseApprovePage() {
                   </span>
                 </td>
                 <td className="py-6 px-2 text-center flex items-center gap-4 justify-center">
-                  <div className="cursor-pointer" onClick={handleAccept}>
-                    <TickCircle size="32" color="#2F57EF" />
-                  </div>
-
-                  <div className="cursor-pointer" onClick={handleReject}>
-                    <CloseCircle size="32" color="red" />
-                  </div>
+                  {order?.payment?.status !== "pending" ? (
+                    renderStatusBadge(order?.payment?.status)
+                  ) : (
+                    <div className="py-6 px-2 text-center flex items-center gap-4 justify-center">
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => handleAccept(order.id)}
+                      >
+                        <TickCircle size="32" color="#2F57EF" />
+                      </div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => handleReject(order.id)}
+                      >
+                        <CloseCircle size="32" color="red" />
+                      </div>
+                    </div>
+                  )}
                 </td>
-                {/*<td className="py-6 px-2">*/}
-                {/*  <div className="flex items-center justify-end gap-2">*/}
-                {/*    /!*<Button*!/*/}
-                {/*    /!*  variant="ghost"*!/*/}
-                {/*    /!*  size="sm"*!/*/}
-                {/*    /!*  onClick={() => handleEdit(order.id)}*!/*/}
-                {/*    /!*  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*  <Eye size="20" color="#2F57EF" />*!/*/}
-                {/*    /!*</Button>*!/*/}
-                {/*    /!*<Button*!/*/}
-                {/*    /!*  variant="ghost"*!/*/}
-                {/*    /!*  size="sm"*!/*/}
-                {/*    /!*  onClick={() => handleDelete(order.id)}*!/*/}
-                {/*    /!*  className="text-red-600 hover:text-red-700 hover:bg-red-50"*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*  <Trash size={20} color="#F44336" />*!/*/}
-                {/*    /!*</Button>*!/*/}
-                {/*  </div>*/}
-                {/*</td>*/}
               </tr>
             ))}
           </tbody>

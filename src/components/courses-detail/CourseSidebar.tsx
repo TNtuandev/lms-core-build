@@ -66,20 +66,24 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
             {courseDetail.enrollmentCnt} học viên
           </div>
         </div>
-
-        <div className="flex items-center mb-6">
-          <div className="text-2xl font-bold text-[#2F57EF]">
-            {(
-              courseDetail.discountedPrice || courseDetail.regularPrice
-            ).toLocaleString()}
-            đ
-          </div>
-          {courseDetail.discountedPrice && (
-            <div className="ml-2 text-gray-500 line-through text-sm">
-              {courseDetail.regularPrice.toLocaleString()}đ
+        {courseDetail.discountedPrice === 0 &&
+        courseDetail.regularPrice === 0 ? (
+          <div className="text-2xl font-bold text-[#2F57EF] mb-6">Miễn phí</div>
+        ) : (
+          <div className="flex items-center mb-6">
+            <div className="text-2xl font-bold text-[#2F57EF]">
+              {(
+                courseDetail.discountedPrice || courseDetail.regularPrice
+              ).toLocaleString()}
+              đ
             </div>
-          )}
-        </div>
+            {courseDetail.discountedPrice && (
+              <div className="ml-2 text-gray-500 line-through text-sm">
+                {courseDetail.regularPrice.toLocaleString()}đ
+              </div>
+            )}
+          </div>
+        )}
 
         {enrolled ? (
           <>

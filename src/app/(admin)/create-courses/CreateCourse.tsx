@@ -94,6 +94,7 @@ function CreateCourse() {
       requirements: data.requirements,
       slug: data.slug,
       label: data.label,
+      isFree: data.isFree,
       thumbnail: data.thumbnail,
       shortDescription: data.shortDescription,
       categoryId: data.categoryId,

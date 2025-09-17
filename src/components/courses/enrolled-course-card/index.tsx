@@ -2,6 +2,9 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Book, Users } from "lucide-react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
 
 interface EnrolledCourseCardProps {
   imageUrl: string;
@@ -12,8 +15,8 @@ interface EnrolledCourseCardProps {
   studentCount: number;
   progress: number;
   status: "in-progress" | "completed";
-  onContinue?: () => void;
   onEdit?: () => void;
+  slug: string;
 }
 
 function EnrolledCourseCard({
@@ -25,13 +28,27 @@ function EnrolledCourseCard({
   studentCount,
   progress,
   status,
-  onContinue,
   onEdit,
+  slug,
 }: EnrolledCourseCardProps) {
+  const router = useRouter();
+  const { data: courseDetail } = useCourseBySlug(slug);
+  const { data: moduleData } = useModule(courseDetail?.id || "");
+
+  const handleLearn = () => {
+    if (moduleData?.data && moduleData?.data?.length > 0) {
+      router.push(
+        `/lesson?course=${slug}&module=${moduleData?.data?.[0]?.id}&lesson=${moduleData?.data?.[0]?.lessons?.[0]?.id}`,
+      );
+    } else {
+      toast.error("Hiện chưa có bài học nào!");
+    }
+  };
+
   return (
     <div
       role="presentation"
-      onClick={status === "completed" ? onEdit : onContinue}
+      onClick={handleLearn}
       className="bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200"
     >
       {/* Course Image */}
@@ -86,7 +103,7 @@ function EnrolledCourseCard({
             <Button
               variant="default"
               size="sm"
-              onClick={onContinue}
+              onClick={handleLearn}
               className="bg-gray-800 hover:bg-gray-700 text-white"
             >
               Tiếp tục

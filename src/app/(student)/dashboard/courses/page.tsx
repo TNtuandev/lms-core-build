@@ -3,19 +3,10 @@
 import React from "react";
 import EnrolledCourseCard from "@/components/courses/enrolled-course-card";
 import { useGetEnrollments } from "@/hooks/queries/enrollments/useEnrollments";
-import { useRouter } from "next/navigation";
-import { Routes } from "@/lib/routes/routes";
 import { Loader2 } from "lucide-react";
-
-// type TabType = "all" | "in-progress" | "completed";
 
 function EnrolledCoursesPage() {
   const { data, isLoading, error } = useGetEnrollments();
-  const router = useRouter();
-
-  const handleContinue = (courseId: string) => {
-    router.push(`${Routes.course}/${courseId}`);
-  };
 
   const handleEdit = (courseId: string) => {
     console.log("Edit course:", courseId);
@@ -47,13 +38,13 @@ function EnrolledCoursesPage() {
               imageUrl={item.course?.thumbnail}
               category={item.course.category.title || "Khóa học"}
               courseName={item.course?.title}
-              instructor={"Anh Tuấn, Quang Anh"}
+              instructor={item.course?.owner?.fullName}
               lessonCount={item.course?.totalLessons}
               studentCount={item.course?.enrollmentCnt}
               progress={item.completionRate}
               status={"in-progress"}
-              onContinue={() => handleContinue(item.course?.slug)}
               onEdit={() => handleEdit(item?.course?.id)}
+              slug={item.course?.slug}
             />
           ))}
         </div>

@@ -36,7 +36,7 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
   return (
-    <div className="lg:w-1/4 block md:absolute right-[5%] top-[20%] h-full">
+    <div className="lg:w-1/4 block md:fixed right-[5%] top-[10%] h-full">
       <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
         <div className="w-full h-[250px] relative rounded-lg overflow-hidden mb-8">
           <Image

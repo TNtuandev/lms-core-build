@@ -266,7 +266,6 @@ export default function CourseDetailPage() {
         reviewSummaryData={reviewSummaryData}
       />
 
-      {/* Sidebar */}
       <CourseSidebar
         enrolled={enrollmentsCheck?.enrolled}
         courseDetail={courseDetail}
@@ -274,6 +273,7 @@ export default function CourseDetailPage() {
         handlePushToCart={handlePushToCart}
         handleLearn={handleLearn}
       />
+
 
       {/* Course Content */}
       <div className="container mx-auto px-4 py-8">

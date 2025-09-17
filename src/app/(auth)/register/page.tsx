@@ -62,13 +62,16 @@ function RegisterPage() {
       fullName: data.name.trim(),
       email: data.email.trim(),
       password: data.password,
-      passwordConfirmation: data.password
-    }
-    setUserDraft({
-      id: "",
-      name: data.name.trim(),
-      email: data.email.trim(),
-    } as any, "")
+      passwordConfirmation: data.password,
+    };
+    setUserDraft(
+      {
+        id: "",
+        name: data.name.trim(),
+        email: data.email.trim(),
+      } as any,
+      "",
+    );
     register(dataToRegister);
   };
 
@@ -78,17 +81,17 @@ function RegisterPage() {
         // Google login success - call our API with access token
         loginGoogle({
           accessToken: response.access_token,
-          idToken: '',
+          idToken: "",
         });
       } catch (error) {
-        console.error('Error processing Google login:', error);
+        console.error("Error processing Google login:", error);
       }
     },
     onError: (error) => {
-      console.error('Google login error:', error);
+      console.error("Google login error:", error);
     },
-    scope: 'openid profile email',
-    flow: 'implicit',
+    scope: "openid profile email",
+    flow: "implicit",
   });
 
   const handleGoogleLogin = () => {
@@ -126,13 +129,15 @@ function RegisterPage() {
               Bắt đầu hoàn toàn miễn phí
             </h1>
             <div className="flex justify-center gap-2 text-sm sm:text-base text-[#212B36]">
-              <span>Bạn đã có tài khoản?</span>
-              <span
-                role="presentation"
-                className="text-[#2F57EF] cursor-pointer hover:underline font-medium"
-                onClick={() => router.push("/login")}
-              >
-                Đăng nhập
+              <span>
+                Bạn đã có tài khoản?{" "}
+                <span
+                  role="presentation"
+                  className="text-[#2F57EF] cursor-pointer hover:underline font-medium"
+                  onClick={() => router.push("/login")}
+                >
+                  Đăng nhập
+                </span>
               </span>
             </div>
           </div>
@@ -259,7 +264,9 @@ function RegisterPage() {
           </Form>
 
           {/* Divider */}
-          <div className="text-center text-[#637381] text-sm my-5 sm:my-6">Hoặc</div>
+          <div className="text-center text-[#637381] text-sm my-5 sm:my-6">
+            Hoặc
+          </div>
 
           {/* Google Register Button */}
           <Button

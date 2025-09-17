@@ -57,24 +57,23 @@ function LoginPage() {
     login(data);
   };
 
-
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
       try {
         // Google login success - call our API with access token
         loginGoogle({
           accessToken: response.access_token,
-          idToken: '',
+          idToken: "",
         });
       } catch (error) {
-        console.error('Error processing Google login:', error);
+        console.error("Error processing Google login:", error);
       }
     },
     onError: (error) => {
-      console.error('Google login error:', error);
+      console.error("Google login error:", error);
     },
-    scope: 'openid profile email',
-    flow: 'implicit',
+    scope: "openid profile email",
+    flow: "implicit",
   });
 
   const handleGoogleLogin = () => {
@@ -112,12 +111,14 @@ function LoginPage() {
               Chào mừng bạn trở lại
             </h1>
             <div className="flex justify-center gap-2 text-sm sm:text-base text-[#212B36]">
-              <span>Bạn chưa phải là thành viên?</span>
-              <span
-                className="text-[#2F57EF] cursor-pointer hover:underline font-medium"
-                onClick={() => router.push("/register")}
-              >
-                Đăng ký
+              <span>
+                Bạn chưa phải là thành viên?{" "}
+                <span
+                  className="text-[#2F57EF] cursor-pointer w-max hover:underline font-medium"
+                  onClick={() => router.push("/register")}
+                >
+                  Đăng ký
+                </span>
               </span>
             </div>
           </div>

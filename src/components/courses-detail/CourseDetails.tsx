@@ -1,4 +1,5 @@
 import React from "react";
+import he from "he";
 
 interface CourseDetailsProps {
   courseDetail: {
@@ -18,7 +19,11 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         <h3 className="text-xl font-bold mb-6">Yêu cầu</h3>
         <div className="space-y-2">
           <div>
-            &#8226; {courseDetail.requirements || "Không có yêu cầu đặc biệt"}
+            {courseDetail?.requirements && (
+              <div
+                dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.requirements) }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -27,16 +32,20 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
       <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
         <h3 className="text-xl font-bold mb-6">Mô tả</h3>
         <div className={`space-y-4`}>
-          <p>{courseDetail.description}</p>
+          {courseDetail?.description && (
+            <div
+              dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.description) }}
+            />
+          )}
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
-        {courseDetail.learningOutcomes && (
-          <div>
-            <h4 className="text-xl font-bold mb-6">Kết quả học tập:</h4>
-            <p>{courseDetail.learningOutcomes}</p>
-          </div>
+        <h4 className="text-xl font-bold mb-6">Kết quả học tập:</h4>
+        {courseDetail?.learningOutcomes && (
+          <div
+            dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.learningOutcomes) }}
+          />
         )}
       </div>
     </>

@@ -281,7 +281,7 @@ export default function CourseDetailPage() {
           {/* Main Content */}
           <div className="lg:w-2/3">
             {/* Tabs */}
-            <div className="flex flex-wrap gap-2 mb-8 bg-white py-4">
+            <div className="sticky top-[64px] lg:top-[72px] z-40 flex flex-wrap gap-2 mb-8 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 py-4">
               <button
                 className={`px-8 py-3 font-medium rounded-full ${activeTab === "overview" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("overview")}

@@ -57,23 +57,24 @@ function LoginPage() {
     login(data);
   };
 
+
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
       try {
         // Google login success - call our API with access token
         loginGoogle({
           accessToken: response.access_token,
-          idToken: "",
+          idToken: '',
         });
       } catch (error) {
-        console.error("Error processing Google login:", error);
+        console.error('Error processing Google login:', error);
       }
     },
     onError: (error) => {
-      console.error("Google login error:", error);
+      console.error('Google login error:', error);
     },
-    scope: "openid profile email",
-    flow: "implicit",
+    scope: 'openid profile email',
+    flow: 'implicit',
   });
 
   const handleGoogleLogin = () => {
@@ -87,7 +88,7 @@ function LoginPage() {
   return (
     <div className="flex w-full min-h-screen flex-col lg:flex-row">
       {/* Banner Image - Hidden on mobile, visible on large screens */}
-      <div className="hidden lg:block lg:w-[70%] xl:w-[75%]">
+      <div className="hidden lg:block lg:w-[50%] xl:w-[60%]">
         <Image
           src={bannerSignIn}
           alt="banner"
@@ -96,13 +97,13 @@ function LoginPage() {
       </div>
 
       {/* Login Form Section */}
-      <div className="flex flex-col justify-center items-center w-full lg:w-[30%] xl:w-[25%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
+      <div className="flex flex-col justify-center items-center w-full lg:w-[50%] xl:w-[40%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
         {/* Logo */}
         <div className="w-full max-w-md mx-auto">
           <Image
             src={logoMini}
             alt="logmini"
-            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
+            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-10 w-auto"
           />
 
           {/* Welcome Text */}
@@ -111,14 +112,12 @@ function LoginPage() {
               Chào mừng bạn trở lại
             </h1>
             <div className="flex justify-center gap-2 text-sm sm:text-base text-[#212B36]">
-              <span>
-                Bạn chưa phải là thành viên?{" "}
-                <span
-                  className="text-[#2F57EF] cursor-pointer w-max hover:underline font-medium"
-                  onClick={() => router.push("/register")}
-                >
-                  Đăng ký
-                </span>
+              <span>Bạn chưa phải là thành viên?</span>
+              <span
+                className="text-[#16A1FF] cursor-pointer hover:underline font-medium"
+                onClick={() => router.push("/register")}
+              >
+                Đăng ký
               </span>
             </div>
           </div>
@@ -206,7 +205,7 @@ function LoginPage() {
               <Button
                 type="submit"
                 disabled={isPending || isPendingGoogle}
-                className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors"
+                className="font-semibold text-white bg-[#16A1FF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors"
               >
                 {isPending || isPendingGoogle ? (
                   <>

@@ -138,7 +138,7 @@ const LessonSidebar: React.FC<LessonSidebarProps> = ({
                               lesson.active || false,
                             )}
                           </div>
-                          <p className={`text-sm ${lesson.active ? "text-[#2F57EF]" : ""}`}>
+                          <p className={`text-sm ${lesson.active ? "text-[#16A1FF]" : ""}`}>
                             {lesson.title}
                           </p>
                         </div>

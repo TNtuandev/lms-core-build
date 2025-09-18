@@ -84,13 +84,13 @@ export const CourseInstructor: React.FC<CourseInstructorProps> = ({
         {instructorProfileData?.data?.bio && (
           <button
             onClick={() => setShowFullBio(!showFullBio)}
-            className="text-[#2F57EF] flex items-center gap-2 mt-4 font-medium"
+            className="text-[#16A1FF] flex items-center gap-2 mt-4 font-medium"
           >
             Hiển thị thêm
             {!showFullBio ? (
-              <ArrowDown2 size="20" color="#2F57EF" />
+              <ArrowDown2 size="20" color="#16A1FF" />
             ) : (
-              <ArrowUp2 size="20" color="#2F57EF" />
+              <ArrowUp2 size="20" color="#16A1FF" />
             )}
           </button>
         )}

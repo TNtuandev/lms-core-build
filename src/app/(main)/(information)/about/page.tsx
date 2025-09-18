@@ -21,7 +21,7 @@ function AboutPage() {
         />
         <div className="absolute md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full inset-0 flex flex-col items-center justify-center">
           <div className="w-full lg:w-3/4 flex flex-col items-center justify-center text-center px-4 text-white">
-            <div className="text-secondary-main text-center font-bold text-base lg:text-xl">
+            <div className="text-[#DC7CFD] text-center font-bold text-base lg:text-xl">
               Tầm nhìn của chúng tôi
             </div>
             <div className="text-white text-lg lg:text-3xl font-bold text-center pt-4">
@@ -30,7 +30,7 @@ function AboutPage() {
             </div>
             <Button
               variant="default"
-              className="mt-8 text-center  bg-primary-main h-10 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+              className="mt-8 text-center  bg-[#16A1FF] h-10 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
             >
               <span className="mr-2 text-white">Xem thêm về chúng tôi</span>
               <ArrowRight size="24" color="white" />
@@ -65,16 +65,16 @@ function AboutPage() {
             />
           </div>
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
-            <div className="bg-gradient-to-r from-[#2F57EF] to-[#FFB145] bg-clip-text text-transparent w-fit text-lg font-semibold">
+            <div className="bg-gradient-to-r from-[#16A1FF] to-[#B966E7]  bg-clip-text text-transparent w-fit text-lg font-semibold">
               Hiểu về chúng tôi
             </div>
             <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
-              Tìm hiểu về nền tảng học tập Amerian Study
+              Tìm hiểu về nền tảng học tập Algoki
             </div>
             <div className="text-secondary">
-              Amerian Study là nền tảng học tập trực tuyến hiện đại, mang đến
+              Algoki là nền tảng học tập trực tuyến hiện đại, mang đến
               trải nghiệm giáo dục linh hoạt và hiệu quả cho học sinh ở mọi lứa
-              tuổi. Với triết lý &#34;học mọi lúc, mọi nơi&#34;, Amerian Study nổi bật
+              tuổi. Với triết lý &#34;học mọi lúc, mọi nơi&#34;, Algoki nổi bật
               với những tính năng sau:
             </div>
             <div className="grid grid-cols-1 w-5/6 pt-8 gap-8">
@@ -91,7 +91,7 @@ function AboutPage() {
               ))}
               <Button
                 variant="default"
-                className="text-center w-fit bg-primary-main h-12 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+                className="text-center w-fit bg-[#16A1FF] h-12 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
               >
                 <span className="mr-2 text-white font-bold">
                   Học ngay hôm nay
@@ -104,21 +104,21 @@ function AboutPage() {
 
         <div id="selection-3" className="flex gap-8 lg:gap-16 lg:flex-row flex-col">
           <div className="lg:w-1/2 flex flex-col justify-center">
-            <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
+            <div className="bg-gradient-to-r from-[#16A1FF] to-[#B966E7] bg-clip-text text-transparent w-fit text-lg font-semibold">
               Chúng tôi làm việc thế nào
             </div>
             <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
               Xây dựng sự nghiệp và nâng cao cuộc sống của bạn
             </div>
             <div className="text-secondary">
-              Tại Amerian Study, chúng tôi kết hợp công nghệ hiện đại, phương
+              Tại Algoki, chúng tôi kết hợp công nghệ hiện đại, phương
               pháp giảng dạy tiên tiến và sự tận tâm của đội ngũ giảng viên để
               mang đến trải nghiệm học tập linh hoạt, cá nhân hóa và hiệu quả
               cho từng học viên.
             </div>
             <Button
               variant="default"
-              className="text-center w-fit mt-8 bg-primary-main h-12 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+              className="text-center w-fit mt-8 bg-[#16A1FF] h-12 shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
             >
               <span className="mr-2 text-white font-bold">
                 Học ngay hôm nay
@@ -137,7 +137,7 @@ function AboutPage() {
 
         <div id="selection-4" className="flex flex-col lg:flex-row gap-5 lg:gap-10">
           <div className="w-full lg:w-1/4 flex flex-col justify-center">
-            <div className="bg-gradient-to-r from-primary-main to-secondary-main bg-clip-text text-transparent w-fit text-lg font-semibold">
+            <div className="bg-gradient-to-r from-[#16A1FF] to-[#B966E7]  bg-clip-text text-transparent w-fit text-lg font-semibold">
               Nhận xét và đánh giá
             </div>
             <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
@@ -170,7 +170,7 @@ function AboutPage() {
                   </svg>
                 </div>
                 <div className="flex gap-4 items-center">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-r from-primary-main to-secondary-main p-0.25">
+                  <div className="h-16 w-16 rounded-full bg-gradient-to-r from-[#16A1FF] to-[#B966E7]  p-0.25">
                     <Image
                       src="/images/about/avatar_1.jpg"
                       alt="Avatar"

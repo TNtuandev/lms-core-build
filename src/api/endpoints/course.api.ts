@@ -47,11 +47,6 @@ export const courseAPI = {
     return data;
   },
 
-  enrollmentsCheck: async (id: string): Promise<any> => {
-    const { data } = await api.get(`/enrollments/check/${id}`);
-    return data;
-  },
-
   getCoursesCMS: async (filters?: CourseFilters): Promise<CoursesResponse> => {
     const params = new URLSearchParams();
 

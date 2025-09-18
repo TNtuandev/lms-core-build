@@ -178,7 +178,7 @@ export default function CheckoutStepFinalDesktop({ cartData }: ICheckoutStep) {
                   <span className="font-semibold">03363826286</span>
                 </span>
                 <span>
-                  Tên: <span className="font-semibold">Amerian Study</span>
+                  Tên: <span className="font-semibold">Algoki </span>
                 </span>
                 <span>
                   Số tiền: <span className="font-semibold">{formatCurrency(totalPrice)}đ</span>

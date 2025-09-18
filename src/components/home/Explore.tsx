@@ -1,47 +1,71 @@
-import { Title } from "@/components/common/Title";
-import { ArrowRight, Designtools } from "iconsax-react";
-import { Button } from "@/components/ui/button";
-import { clsx } from "clsx";
-import { EXPLORE } from "@/contants/home";
+"use client";
+
+import Image from "next/image";
+import { Row, Col } from "antd";
+import React from "react";
 
 export function Explore() {
   return (
-    <div className="flex flex-col items-center">
-      <Title
-        label="Khám Phá"
-        title="Học cùng chúng tôi ở bất cứ đâu"
-        subTitle="Giáo dục trực tuyến đã giúp giáo dục chất lượng dễ tiếp cận hơn với nhiều đối tượng học viên hơn. Nó xóa bỏ các rào cản như giới hạn địa lý."
-      />
-      <div className="grid lg:grid-cols-3 grid-cols-1 gap-6 lg:gap-8 mt-8 w-full">
-        {
-          EXPLORE.map((item) => (
-            <div key={item.id}
-                 style={{borderColor: `${item.color}1F`}}
-                 className="box-shadow-hover cursor-pointer py-8 px-12 border-[1px] rounded-2xl flex flex-col items-center">
-              <div
-                style={{backgroundColor: `${item.color}1F`,}}
-                className={clsx("rounded-2xl p-4 flex items-center justify-center")}>
-                <Designtools
-                  size="32"
-                  color={item.color}
-                />
-              </div>
-              <div className="text-2xl font-bold mt-4">
-                {item.title}
-              </div>
-              <div className="text-center text-sm mt-6 ">
-                {item.subTitle}
-              </div>
-              <div className="flex-grow"/>
-              <Button
-                style={{color: item.color}}
-                variant="ghost" className={clsx("mt-4 font-bold justify-self-end")}>
-                {item.buttonLabel} <ArrowRight size={20} color={item.color}/>
-              </Button>
+    <section className="bg-white mb-20 md:mb-[120px]">
+      <div className="container mx-auto px-6 lg:px-20">
+        <div className="text-center lg:text-left mb-16 space-y-2">
+          <h2 className="text-2xl lg:text-5xl font-bold">
+            <span className="bg-gradient-to-r from-[#6D5DFB] to-[#2CD4D9] text-transparent bg-clip-text">
+              Khám Phá Thế Giới Lập Trình
+            </span>
+          </h2>
+          <h3 className="text-2xl lg:text-5xl font-extrabold text-[#0E0F1C] mb-4">
+            Cùng Algoki!
+          </h3>
+          <p className="max-w-2xl mt-4">
+            Chúng tôi không chỉ dạy bạn cách viết code, mà còn giúp bạn hiểu sâu
+            sắc về cách tư duy như một lập trình viên, giải quyết vấn đề và sáng
+            tạo không giới hạn.
+          </p>
+        </div>
+
+        <Row gutter={[32, 32]}>
+          <Col xs={24} md={12}>
+            <div className="bg-[#F7F8FA] rounded-2xl p-8 space-y-4 shadow-sm h-full">
+              <h4 className="text-3xl font-bold text-[#0E0F1C]">
+                Bắt Đầu Từ Số 0, Trở Thành Anh Hùng Code
+              </h4>
+              <p className="text-base text-gray-600 mb-10">
+                Lộ trình học lập trình của Algoki được thiết kế để đưa bạn từ
+                những khái niệm cơ bản nhất đến việc xây dựng các ứng dụng phức
+                tạp.
+              </p>
+              <Image
+                src="/images/home/code-screen-2.png"
+                alt="Java Code Example"
+                width={600}
+                height={300}
+                className="w-full rounded-xl shadow-md"
+              />
             </div>
-          ))
-        }
+          </Col>
+
+          <Col xs={24} md={12}>
+            <div className="bg-[#F7F8FA] rounded-2xl p-8 space-y-4 shadow-sm h-full">
+              <Image
+                src="/images/home/code-screen-3.png"
+                alt="Java Code Example 2"
+                width={600}
+                height={300}
+                className="w-full rounded-xl shadow-md mb-10"
+              />
+              <h4 className="text-3xl font-bold text-[#0E0F1C]">
+                Học Mà Chơi, Chơi Mà Học Với Dự Án Thực Tế
+              </h4>
+              <p className="text-base text-gray-600">
+                Tại Algoki, bạn sẽ được thử sức với các dự án lập trình thực tế,
+                từ việc tạo ra những trò chơi vui nhộn đến những chương trình
+                thú vị và khác biệt.
+              </p>
+            </div>
+          </Col>
+        </Row>
       </div>
-    </div>
+    </section>
   );
 }

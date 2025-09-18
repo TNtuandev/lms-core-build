@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -24,11 +25,11 @@ import { Step1FormData, step1Schema } from "./schemas";
 import { z } from "zod";
 import { useCategory } from "@/hooks/queries/category/useCategory";
 import { Card } from "@/components/ui/card";
-import React, { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
-import { Select as SelectMode } from "antd";
-import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
+import { Select as SelectMode } from 'antd';
+
 
 interface Step1FormProps {
   onNext: (data: Step1FormData) => void;
@@ -38,45 +39,26 @@ interface Step1FormProps {
 
 export default function Step1Form({ onNext, initialData }: Step1FormProps) {
   const { data: categories } = useCategory();
-
-  console.log("categories---", categories);
-
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Memoize defaultValues để tránh tạo object mới mỗi lần render
-  const defaultValues: any = useMemo(() => ({
-    title: initialData?.title || "",
-    categoryId: initialData?.categoryId || "",
-    slug: initialData?.slug || "",
-    shortDescription: initialData?.shortDescription || "",
-    thumbnail: initialData?.thumbnail || "",
-    overview: initialData?.overview || [],
-  }), [initialData]);
 
   const form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
-    defaultValues, // Set defaultValues ngay từ đầu
   });
 
-  // Chỉ reset form khi initialData thật sự thay đổi và khác với current values
   useEffect(() => {
-    if (!initialData) return;
-
-    const currentValues: any = form.getValues();
-    const needsUpdate = Object.keys(defaultValues).some(key => {
-      return currentValues[key] !== defaultValues[key];
+    form.reset({
+      title: initialData?.title || "",
+      categoryId: initialData?.categoryId || "",
+      teacher: initialData?.teacher || "",
+      slug: initialData?.slug || "",
+      shortDescription: initialData?.shortDescription || "",
+      thumbnail: initialData?.thumbnail || "",
+      overview: initialData?.overview || [],
     });
-
-    if (needsUpdate) {
-      console.log("Init data Thay đổi--- Updating form");
-      form.reset(defaultValues);
-    }
-  }, [initialData, defaultValues, form]);
-
-  console.log("Value Step 1", form.getValues());
+  }, [initialData]);
 
   const onSubmit = (data: Step1FormData) => {
-    console.log("Submitted data:", data);
+    console.log(";Submitted data:", data);
     onNext(data as any);
   };
 
@@ -87,8 +69,10 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
     formData.append("file", file);
     uploadFile.mutate(formData, {
       onSuccess: (response) => {
-        console.log("response---", response);
-        field.onChange(response.url);
+
+        console.log("response---", response)
+
+        field.onChange(response.url); // Assuming the API returns the file URL
       },
       onError: (error) => {
         console.error("Error uploading file:", error);
@@ -103,6 +87,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Chi tiết</h2>
         </div>
 
+        {/* Step 1 Form */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Title Field */}
           <FormField
@@ -117,20 +102,22 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   <Input
                     placeholder="VD: Khóa học thiết kế web"
                     className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    maxLength={30}
                     {...field}
                   />
                 </FormControl>
                 <p className="text-xs text-gray-500 flex items-center">
                   <Info className="w-3 h-3 mr-1" />
-                  Tiêu đề đã dài tối đa 255 ký tự
+                  Tiêu đề đã dài tối đa 30 ký tự
                 </p>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Danh mục */}
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+          {/* Danh mục & Giáo viên */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Danh mục */}
             <FormField
               control={form.control}
               name="categoryId"
@@ -140,10 +127,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                     Danh mục
                   </FormLabel>
                   <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || ""} // Đảm bảo value không bị undefined
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Danh mục" />
                       </SelectTrigger>
@@ -155,6 +139,26 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                         ))}
                       </SelectContent>
                     </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Giáo viên */}
+            <FormField
+              control={form.control}
+              name="teacher"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Giáo viên
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Nguyễn Anh Tuấn"
+                      className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,7 +185,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                 <p className="text-xs text-gray-500">
                   Xem trước:{" "}
                   <span className="text-blue-600">
-                    https://kicaacademy.com/{field.value || "khoa-hoc-moi"}
+                    https://example.com/{field.value || "khoa-hoc-moi"}
                   </span>
                 </p>
                 <FormMessage />
@@ -201,9 +205,8 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   <SelectMode
                     mode="tags"
                     size="large"
-                    style={{ width: "100%" }}
+                    style={{ width: '100%' }}
                     placeholder="Tags Mode"
-                    value={field.value || []} // Đảm bảo value không bị undefined
                     onChange={(value) => field.onChange(value)}
                     options={[]}
                   />
@@ -223,10 +226,10 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                   Giới thiệu
                 </FormLabel>
                 <FormControl>
-                  <CKEditorWrapper
-                    value={field.value || ""} // Đảm bảo value không bị undefined
-                    onChange={field.onChange}
+                  <Textarea
                     placeholder="Giới thiệu"
+                    className="min-h-[120px] border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -235,6 +238,37 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
           />
 
           {/* Thumbnail Upload */}
+          {/*<FormField*/}
+          {/*  control={form.control}*/}
+          {/*  name="thumbnail"*/}
+          {/*  render={({ field }) => (*/}
+          {/*    <FormItem>*/}
+          {/*      <FormLabel className="text-sm font-medium text-gray-700">*/}
+          {/*        Thêm URL Thumbnail của bạn*/}
+          {/*      </FormLabel>*/}
+          {/*      <FormControl>*/}
+          {/*        <Input*/}
+          {/*          placeholder="Thêm URL Thumbnail của bạn"*/}
+          {/*          className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"*/}
+          {/*          {...field}*/}
+          {/*        />*/}
+          {/*      </FormControl>*/}
+          {/*      <p className="text-xs text-gray-500 flex items-center">*/}
+          {/*        <InfoCircle*/}
+          {/*          size={16}*/}
+          {/*          color="#637381"*/}
+          {/*          variant="Bold"*/}
+          {/*          className="mr-1"*/}
+          {/*        />*/}
+          {/*        Ví dụ:{" "}*/}
+          {/*        <a className="text-blue-500">*/}
+          {/*          https://www.youtube.com/watch?v=yourvideoid*/}
+          {/*        </a>*/}
+          {/*      </p>*/}
+          {/*      <FormMessage />*/}
+          {/*    </FormItem>*/}
+          {/*  )}*/}
+          {/*/>*/}
           <FormField
             control={form.control}
             name="thumbnail"
@@ -284,7 +318,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            field.onChange("");
+                            field.onChange(null);
                             if (inputRef.current) {
                               inputRef.current.value = "";
                             }
@@ -325,7 +359,7 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
               type="button"
               variant="outline"
               className="px-8 border-[#919EAB52]/32 text-primary-contrastText"
-              onClick={() => form.reset(defaultValues)} // Reset về defaultValues thay vì form.reset()
+              onClick={() => form.reset()}
             >
               Hủy bỏ
             </Button>
@@ -337,6 +371,8 @@ export default function Step1Form({ onNext, initialData }: Step1FormProps) {
             </Button>
           </div>
         </form>
+
+        {/* Step 2 Form */}
       </Card>
     </Form>
   );

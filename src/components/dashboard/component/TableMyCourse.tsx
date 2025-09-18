@@ -32,7 +32,7 @@ const TableMyCourse = () => {
       render: () => (
         <div className="flex gap-4">
           <div>
-            <Edit2 size={24} color="#2F57EF"/>
+            <Edit2 size={24} color="#16A1FF"/>
           </div>
           <div>
             <Trash2 size={24} color="#F44336"/>

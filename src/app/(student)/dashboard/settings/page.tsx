@@ -20,9 +20,9 @@ import { useChangePassword } from "@/hooks/queries/auth/useChangePassword";
 import { useGetUser } from "@/hooks/queries/auth/useGetUser";
 import { useUpdateUser } from "@/hooks/queries/auth/useUpdateUser";
 import { useUploadAvatar } from "@/hooks/queries/auth/useUploadAvatar";
+import { useUploadCoverPhoto } from "@/hooks/queries/auth/useUploadCoverPhoto";
 import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
 import { useAuthStore } from "@/store/slices/auth.slice";
-import { useQueryClient } from "@tanstack/react-query";
 
 type TabType = "profile" | "security";
 
@@ -64,18 +64,16 @@ function SettingsPage() {
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
   const [uploadErrorMessage, setUploadErrorMessage] = useState("");
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  // const coverInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const user = useAuthStore.getState().user;
-  const { updateUser: updateUserStore } = useAuthStore();
-  const queryClient = useQueryClient()
 
   const {
     mutate: changePassword,
     isPending: isPasswordUpdating,
     error: passwordError,
   } = useChangePassword();
-  const { data: userData, isLoading: isLoadingUser, refetch } = useGetUser(
+  const { data: userData, isLoading: isLoadingUser } = useGetUser(
     user?.id || "",
   );
   const {
@@ -86,8 +84,8 @@ function SettingsPage() {
   const { uploadFile } = useUploadFile();
   const { mutate: uploadAvatar, isPending: isUploadingAvatar } =
     useUploadAvatar();
-  // const { mutate: uploadCoverPhoto, isPending: isUploadingCover } =
-  //   useUploadCoverPhoto();
+  const { mutate: uploadCoverPhoto, isPending: isUploadingCover } =
+    useUploadCoverPhoto();
 
   // Profile form setup
   const profileForm = useForm<ProfileFormData>({
@@ -129,10 +127,6 @@ function SettingsPage() {
           },
           {
             onSuccess: () => {
-              refetch()
-              updateUserStore({...user, avatarUrl: response.url});
-              queryClient.invalidateQueries({ queryKey: ['studentId', user?.id] })
-              queryClient.invalidateQueries({ queryKey: ['teacherId', user?.id] })
               setUploadSuccessMessage("Avatar đã được cập nhật thành công!");
               setTimeout(() => setUploadSuccessMessage(""), 3000);
             },
@@ -156,40 +150,40 @@ function SettingsPage() {
     });
   };
 
-  // const handleUploadCoverPhoto = (file: File) => {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   uploadFile.mutate(formData, {
-  //     onSuccess: (response) => {
-  //       uploadCoverPhoto(
-  //         {
-  //           coverPhotoUrl: response.url,
-  //           attachmentId: response.id || response.attachmentId,
-  //         },
-  //         {
-  //           onSuccess: () => {
-  //             setUploadSuccessMessage("Ảnh bìa đã được cập nhật thành công!");
-  //             setTimeout(() => setUploadSuccessMessage(""), 3000);
-  //           },
-  //           onError: (error) => {
-  //             console.error("Error uploading cover photo:", error);
-  //             setUploadErrorMessage(
-  //               "Đã xảy ra lỗi khi cập nhật ảnh bìa. Vui lòng thử lại.",
-  //             );
-  //             setTimeout(() => setUploadErrorMessage(""), 3000);
-  //           },
-  //         },
-  //       );
-  //     },
-  //     onError: (error) => {
-  //       console.error("Error uploading cover photo:", error);
-  //       setUploadErrorMessage(
-  //         "Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.",
-  //       );
-  //       setTimeout(() => setUploadErrorMessage(""), 3000);
-  //     },
-  //   });
-  // };
+  const handleUploadCoverPhoto = (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    uploadFile.mutate(formData, {
+      onSuccess: (response) => {
+        uploadCoverPhoto(
+          {
+            coverPhotoUrl: response.url,
+            attachmentId: response.id || response.attachmentId,
+          },
+          {
+            onSuccess: () => {
+              setUploadSuccessMessage("Ảnh bìa đã được cập nhật thành công!");
+              setTimeout(() => setUploadSuccessMessage(""), 3000);
+            },
+            onError: (error) => {
+              console.error("Error uploading cover photo:", error);
+              setUploadErrorMessage(
+                "Đã xảy ra lỗi khi cập nhật ảnh bìa. Vui lòng thử lại.",
+              );
+              setTimeout(() => setUploadErrorMessage(""), 3000);
+            },
+          },
+        );
+      },
+      onError: (error) => {
+        console.error("Error uploading cover photo:", error);
+        setUploadErrorMessage(
+          "Đã xảy ra lỗi khi tải file lên. Vui lòng thử lại.",
+        );
+        setTimeout(() => setUploadErrorMessage(""), 3000);
+      },
+    });
+  };
 
   // Security form setup
   const securityForm = useForm<SecurityFormData>({
@@ -211,15 +205,13 @@ function SettingsPage() {
           firstName: data.firstName,
           lastName: data.lastName,
           username: data.username,
-          fullName: `${data.firstName} ${data.lastName}`,
           phoneNumber: data.phone,
           skill: data.skills,
           bio: data.bio,
         },
       },
       {
-        onSuccess: (res: any) => {
-          updateUserStore(res);
+        onSuccess: () => {
           setProfileSuccessMessage("Thông tin đã được cập nhật thành công!");
           setTimeout(() => setProfileSuccessMessage(""), 3000);
         },
@@ -388,33 +380,33 @@ function SettingsPage() {
                 </div>
               </div>
 
-              {/*<button*/}
-              {/*  type="button"*/}
-              {/*  className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm"*/}
-              {/*  onClick={() => coverInputRef.current?.click()}*/}
-              {/*  disabled={isUploadingCover}*/}
-              {/*>*/}
-              {/*  {isUploadingCover ? (*/}
-              {/*    <>*/}
-              {/*      <Loader2 className="w-4 h-4 mr-2 animate-spin" />*/}
-              {/*      Đang tải...*/}
-              {/*    </>*/}
-              {/*  ) : (*/}
-              {/*    "Sửa ảnh bìa"*/}
-              {/*  )}*/}
-              {/*</button>*/}
-              {/*<input*/}
-              {/*  type="file"*/}
-              {/*  accept="image/*"*/}
-              {/*  ref={coverInputRef}*/}
-              {/*  onChange={(e) => {*/}
-              {/*    const file = e.target.files?.[0];*/}
-              {/*    if (file) {*/}
-              {/*      handleUploadCoverPhoto(file);*/}
-              {/*    }*/}
-              {/*  }}*/}
-              {/*  className="hidden"*/}
-              {/*/>*/}
+              <button
+                type="button"
+                className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={isUploadingCover}
+              >
+                {isUploadingCover ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang tải...
+                  </>
+                ) : (
+                  "Sửa ảnh bìa"
+                )}
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={coverInputRef}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    handleUploadCoverPhoto(file);
+                  }
+                }}
+                className="hidden"
+              />
             </div>
           </Card>
 

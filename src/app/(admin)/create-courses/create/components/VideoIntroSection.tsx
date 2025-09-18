@@ -9,6 +9,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import { InfoCircle } from "iconsax-react";
@@ -18,21 +25,21 @@ import {
   videoIntroSchema,
 } from "@/app/(admin)/create-courses/create/schemas";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUploadFile } from "@/hooks/queries/course/useUploadFile";
+import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
 import Image from "next/image";
 
-// const typeSource = [
-//   {
-//     value: "Hình ảnh",
-//     label: "Hình ảnh",
-//   },
-//   {
-//     value: "Video",
-//     label: "Video",
-//   },
-// ];
+const typeSource = [
+  {
+    value: "Hình ảnh",
+    label: "Hình ảnh",
+  },
+  {
+    value: "Video",
+    label: "Video",
+  },
+];
 
 interface VideoIntroSectionProps {
   onNext: (data: VideoIntroFormData) => void;
@@ -46,29 +53,19 @@ export default function VideoIntroSection({
   initialData,
 }: VideoIntroSectionProps) {
   const [isExpanded, setIsExpand] = useState(true);
+  const [type, setTypeSource] = useState(typeSource[0].value);
   const inputRef = useRef<HTMLInputElement>(null);
-  const defaultValues: any = useMemo(() => ({
-    previewVideo: initialData?.previewVideo || "",
-    previewImg: initialData?.previewImg || "",
-  }), [initialData]);
+
   const form = useForm<VideoIntroFormData>({
     resolver: zodResolver(videoIntroSchema),
-    defaultValues
   });
 
   useEffect(() => {
-    if (!initialData) return;
-
-    const currentValues: any = form.getValues();
-    const needsUpdate = Object.keys(defaultValues).some(key => {
-      return currentValues[key] !== defaultValues[key];
-    });
-
-    if (needsUpdate) {
-      console.log("Init data Thay đổi--- Updating form");
-      form.reset(defaultValues);
-    }
-  }, [initialData, defaultValues, form]);
+    form.reset({
+      previewVideo: initialData?.previewVideo || "",
+      previewImg: initialData?.previewImg || "",
+    })
+  }, [initialData]);
 
   const onSubmit = (data: VideoIntroFormData) => {
     // Call onNext to pass data back to parent component
@@ -88,8 +85,8 @@ export default function VideoIntroSection({
       onError: (error) => {
         console.error("Error uploading file:", error);
       },
-    });
-  };
+    })
+  }
 
   return (
     <FormProvider {...form}>
@@ -111,31 +108,31 @@ export default function VideoIntroSection({
 
           {isExpanded && (
             <div className="p-4 border-t border-t-gray-300 space-y-4">
-              {/*<FormItem>*/}
-              {/*  <FormLabel className="text-sm font-medium text-gray-700">*/}
-              {/*    Loại*/}
-              {/*  </FormLabel>*/}
-              {/*  <Select*/}
-              {/*    onValueChange={(value) => setTypeSource(value)}*/}
-              {/*    defaultValue={type}*/}
-              {/*  >*/}
-              {/*    <FormControl>*/}
-              {/*      <SelectTrigger className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500">*/}
-              {/*        <SelectValue placeholder="Youtube" />*/}
-              {/*      </SelectTrigger>*/}
-              {/*    </FormControl>*/}
-              {/*    <SelectContent>*/}
-              {/*      {typeSource.map((item) => {*/}
-              {/*        return (*/}
-              {/*          <SelectItem key={item.value} value={item.value}>*/}
-              {/*            {item.label}*/}
-              {/*          </SelectItem>*/}
-              {/*        );*/}
-              {/*      })}*/}
-              {/*    </SelectContent>*/}
-              {/*  </Select>*/}
-              {/*  <FormMessage />*/}
-              {/*</FormItem>*/}
+              <FormItem>
+                <FormLabel className="text-sm font-medium text-gray-700">
+                  Loại
+                </FormLabel>
+                <Select
+                  onValueChange={(value) => setTypeSource(value)}
+                  defaultValue={type}
+                >
+                  <FormControl>
+                    <SelectTrigger className="h-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                      <SelectValue placeholder="Youtube" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {typeSource.map((item) => {
+                      return (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
 
               <FormField
                 control={form.control}
@@ -198,8 +195,8 @@ export default function VideoIntroSection({
                             <p className="text-sm text-gray-500 mb-4">
                               Thả tệp tin vào đây hoặc nhấp để{" "}
                               <span className="text-blue-600 hover:underline cursor-pointer">
-                                duyệt
-                              </span>{" "}
+                          duyệt
+                        </span>{" "}
                               từ máy tính
                             </p>
                           </div>
@@ -244,9 +241,9 @@ export default function VideoIntroSection({
                       </div>
                     </FormControl>
                     <p className="text-xs text-gray-500">
-                      <span className="font-medium">Kích thước:</span> 700x430
-                      pixel, <span className="font-medium">Hỗ trợ tệp:</span>{" "}
-                      JPG, JPEG, PNG, GIF, WEBP
+                      <span className="font-medium">Kích thước:</span> 700x430 pixel,{" "}
+                      <span className="font-medium">Hỗ trợ tệp:</span> JPG, JPEG, PNG,
+                      GIF, WEBP
                     </p>
                     <FormMessage />
                   </FormItem>

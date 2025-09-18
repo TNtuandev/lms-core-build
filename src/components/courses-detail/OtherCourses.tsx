@@ -45,7 +45,7 @@ export const OtherCourses: React.FC<OtherCoursesProps> = ({
         <div className="flex items-center justify-between">
           <div className="md:text-3xl text-sm font-bold text-[#212B36]">
             Khóa học khác của{" "}
-            <span className="text-[#2F57EF]">
+            <span className="text-[#16A1FF]">
               {instructorName}
             </span>
           </div>
@@ -65,7 +65,7 @@ export const OtherCourses: React.FC<OtherCoursesProps> = ({
         <div className="flex items-center justify-between">
           <div className="md:text-3xl text-sm font-bold text-[#212B36]">
             Khóa học khác của{" "}
-            <span className="text-[#2F57EF]">
+            <span className="text-[#16A1FF]">
               {instructorName}
             </span>
           </div>
@@ -93,7 +93,7 @@ export const OtherCourses: React.FC<OtherCoursesProps> = ({
       <div className="flex items-center justify-between">
         <div className="md:text-3xl text-sm font-bold text-[#212B36]">
           Khóa học khác của{" "}
-          <span className="text-[#2F57EF]">
+          <span className="text-[#16A1FF]">
             {instructorName}
           </span>
         </div>
@@ -120,7 +120,7 @@ export const OtherCourses: React.FC<OtherCoursesProps> = ({
               gridNUmber={2}
               title={course.title}
               imageUrl={course.thumbnail}
-              category={course.category.title}
+              category="Khóa học"
               courseName={course.title}
               instructor={course.owner.fullName}
               lessonCount={course.totalLesson}

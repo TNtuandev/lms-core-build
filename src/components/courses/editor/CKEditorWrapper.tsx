@@ -70,6 +70,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
           ckeditorReact.CKEditor as unknown as CKEditorComponent;
         ClassicEditorRef.current = classicEditor.default;
 
+        console.log("CKEditor loaded successfully");
         setIsLoaded(true);
         setError(null);
       } catch (err) {
@@ -114,7 +115,7 @@ const CKEditorWrapper: React.FC<CKEditorWrapperProps> = ({
 
   if (!isClient) {
     return (
-      <div className="border border-gray-300 rounded-lg p-4 text-center">
+      <div className="border border-gray-300 rounded p-4 text-center">
         <p className="text-sm text-gray-600">Đang khởi tạo...</p>
       </div>
     );

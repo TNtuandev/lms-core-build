@@ -4,6 +4,7 @@ import { z } from "zod";
 export const step1Schema = z.object({
   title: z.string().min(1, "Tiêu đề không được để trống"),
   categoryId: z.string().min(1, "Danh mục không được để trống"),
+  teacher: z.string().min(1, "Giáo viên không được để trống"),
   slug: z.string().min(1, "Liên kết cố định không được để trống"),
   shortDescription: z.string().min(1, "Giới thiệu không được để trống"),
   thumbnail: z.any().optional(),
@@ -68,8 +69,8 @@ export const uploadAssignmentSchema = z.object({
   inputFile: z.any().optional(),
   outputFile: z.any().optional(),
   suggestion: z.string().optional(),
-  sampleContent: z.string().optional(),
-  answerContent: z.string().optional(),
+  // sampleData: z.string().optional(),
+  // answer: z.string().optional(),
 });
 
 // Type definitions

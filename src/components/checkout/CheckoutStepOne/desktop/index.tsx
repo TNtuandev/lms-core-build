@@ -4,14 +4,10 @@ import { useRouter } from "next/navigation";
 import { Routes } from "@/lib/routes/routes";
 import { CartItem, useCartStore } from "@/store/slices/cart.slice";
 import { formatCurrency } from "@/lib/utils";
-import { Add, Trash } from "iconsax-react";
+import { Trash } from "iconsax-react";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  useRefetchCart,
-  useRemoveCartItem,
-  useUpdateCartItem,
-} from "@/hooks/queries/cart/useCartApi";
+import {useRefetchCart, useRemoveCartItem} from "@/hooks/queries/cart/useCartApi";
 import { useCreateOrder } from "@/hooks/queries/order/useOrder";
 
 interface ICheckoutStepOneDesktopProps {
@@ -25,7 +21,6 @@ export default function CheckoutStepOneDesktop({
   const { setQrCodeUrl, setOrderId, setVoucher, cartId } =
     useCartStore();
   const { refetchCart } = useRefetchCart();
-  const updateCart = useUpdateCartItem()
   const router = useRouter();
   const [selectedVoucher] = useState<string | null>(null);
 
@@ -56,7 +51,7 @@ export default function CheckoutStepOneDesktop({
     orderCart.mutate(
       {
         cartId,
-        paymentMethod: "manual",
+        paymentMethod: "momo",
       },
       {
         onSuccess: (data) => {
@@ -91,28 +86,6 @@ export default function CheckoutStepOneDesktop({
     }
     return totalPrice;
   }, [voucher, totalPrice]);
-
-  const updateCartQuantity = (item: any, type: "ADD" | "SUB") => {
-    if (type === 'SUB' && item.quantity === 1) {
-      handleDeleteItem(item.id)
-      return;
-    }
-
-    updateCart.mutate(
-        {
-          cartId,
-          cartItemId: item.id,
-          data: {
-            quantity: type ==="ADD" ? item.quantity + 1 : item.quantity - 1,
-          },
-        },
-        {
-          onSuccess: () => {
-            refetchCart();
-          },
-        },
-      );
-  }
 
   return (
     <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto flex lg:gap-10 w-full lg:flex-row flex-col gap-6 px-6">
@@ -150,48 +123,18 @@ export default function CheckoutStepOneDesktop({
                     <td className="py-3 px-4 font-semibold text-sm">
                       <div>
                         <div>
-                          {formatCurrency(
-                            transaction?.product.course.discountedPrice,
-                          )}
-                          đ
+                          {formatCurrency(transaction?.product.course.discountedPrice)}đ
                         </div>
                         <div className="font-normal text-[#71717B] line-through">
-                          {formatCurrency(
-                            transaction?.product.course.regularPrice,
-                          )}
-                          đ
+                          {formatCurrency(transaction?.product.course.regularPrice)}đ
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="items-center flex gap-2">
-                        <div className="cursor-pointer" onClick={() => updateCartQuantity(transaction, "SUB")}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="#000000"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            id="minus"
-                            className="icon glyph"
-                          >
-                            <path d="M19,13H5a1,1,0,0,1,0-2H19a1,1,0,0,1,0,2Z" />
-                          </svg>
-                        </div>
-                        <div className="font-semibold text-center text-sm">
-                          {transaction?.quantity}
-                        </div>
-                        <div className="cursor-pointer" onClick={() => updateCartQuantity(transaction, "ADD")}>
-                          <Add size="18" color="black" />
-                        </div>
-                      </div>
+                    <td className="py-3 px-4 font-semibold text-center text-sm">
+                      {transaction?.quantity}
                     </td>
                     <td className="py-3 px-4 font-semibold text-primary-main text-sm">
-                      {formatCurrency(
-                        transaction?.product.course.discountedPrice *
-                          transaction?.quantity,
-                      )}
-                      đ
+                      {formatCurrency(transaction?.product.course.discountedPrice * transaction?.quantity)}đ
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button
@@ -232,10 +175,9 @@ export default function CheckoutStepOneDesktop({
           </div>
           <div className="flex flex-col mt-[16px]">
             <Button
-              className="text-white px-4 py-2 rounded-lg"
+              className="text-white px-4 py-2 rounded-lg !bg-[#16A1FF]"
               onClick={handleOrder}
             >
-
               Thanh toán
             </Button>
           </div>
@@ -248,7 +190,7 @@ export default function CheckoutStepOneDesktop({
               <Input className="h-10 flex-1" placeholder="Mã khuyến mại" />
               <Button
                 variant="default"
-                className="h-10 px-4 rounded-xl text-white"
+                className="h-10 px-4 rounded-xl text-white !bg-[#16A1FF]"
               >
                 Áp dụng
               </Button>

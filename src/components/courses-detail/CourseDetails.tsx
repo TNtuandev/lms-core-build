@@ -1,5 +1,5 @@
-import React from "react";
-import he from "he";
+import React, { useState, useRef, useEffect } from "react";
+import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 
 interface CourseDetailsProps {
   courseDetail: {
@@ -9,9 +9,39 @@ interface CourseDetailsProps {
   };
 }
 
-export const CourseDetails: React.FC<CourseDetailsProps> = ({
-  courseDetail,
-}) => {
+export const CourseDetails: React.FC<CourseDetailsProps> = ({ courseDetail }) => {
+  const [showFullDesc, setShowFullDesc] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (contentRef.current) {
+        const element = contentRef.current;
+        // Create a temporary element to measure full height
+        const tempElement = element.cloneNode(true) as HTMLDivElement;
+        tempElement.style.position = 'absolute';
+        tempElement.style.visibility = 'hidden';
+        tempElement.style.height = 'auto';
+        tempElement.style.maxHeight = 'none';
+        tempElement.classList.remove('line-clamp-3');
+        
+        document.body.appendChild(tempElement);
+        const fullHeight = tempElement.scrollHeight;
+        document.body.removeChild(tempElement);
+        
+        // Check if content is overflowing when clamped
+        const clampedHeight = element.scrollHeight;
+        setIsOverflowing(fullHeight > clampedHeight);
+      }
+    };
+
+    checkOverflow();
+    // Re-check on window resize
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [courseDetail.description, courseDetail.learningOutcomes]);
+
   return (
     <>
       {/* Requirements Section */}
@@ -19,11 +49,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         <h3 className="text-xl font-bold mb-6">Yêu cầu</h3>
         <div className="space-y-2">
           <div>
-            {courseDetail?.requirements && (
-              <div
-                dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.requirements) }}
-              />
-            )}
+            &#8226;{" "}
+            {courseDetail.requirements || "Không có yêu cầu đặc biệt"}
           </div>
         </div>
       </div>
@@ -31,23 +58,32 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
       {/* Description Section */}
       <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
         <h3 className="text-xl font-bold mb-6">Mô tả</h3>
-        <div className={`space-y-4`}>
-          {courseDetail?.description && (
-            <div
-              dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.description) }}
-            />
+        <div
+          ref={contentRef}
+          className={`space-y-4 ${!showFullDesc ? "line-clamp-3" : ""}`}
+        >
+          <p>{courseDetail.description}</p>
+          {courseDetail.learningOutcomes && (
+            <div>
+              <h4 className="font-semibold mb-2">Kết quả học tập:</h4>
+              <p>{courseDetail.learningOutcomes}</p>
+            </div>
           )}
         </div>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
-        <h4 className="text-xl font-bold mb-6">Kết quả học tập:</h4>
-        {courseDetail?.learningOutcomes && (
-          <div
-            dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.learningOutcomes) }}
-          />
+        {isOverflowing && (
+          <button
+            onClick={() => setShowFullDesc(!showFullDesc)}
+            className="text-[#16A1FF] flex items-center gap-2 mt-4 font-medium"
+          >
+            {showFullDesc ? "Ẩn bớt" : "Hiển thị thêm"}
+            {!showFullDesc ? (
+              <ArrowDown2 size="20" color="#16A1FF" />
+            ) : (
+              <ArrowUp2 size="20" color="#16A1FF" />
+            )}
+          </button>
         )}
       </div>
     </>
   );
-};
+}; 

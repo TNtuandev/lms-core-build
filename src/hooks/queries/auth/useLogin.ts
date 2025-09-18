@@ -5,7 +5,6 @@ import { LoginCredentials, LoginGoogleCredentials } from "@/api/types/auth.type"
 import { authAPI } from "@/api/endpoints/auth.api";
 import { useMe } from "@/hooks/queries/auth/useMe";
 import { useGetOtp } from "@/hooks/queries/auth/useGetOtp";
-import toast from "react-hot-toast";
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -21,7 +20,6 @@ export const useLogin = () => {
         if (pis?.data) {
           setAuth(pis.data as any, data?.accessToken);
           if (pis.data.isEmailVerified) {
-            toast.success("Đăng nhập thành công!");
             router.push("/dashboard");
           } else {
             getOtp({email: pis.data.email});
@@ -46,7 +44,6 @@ export const useLoginGoogleMain = () => {
         if (pis?.data) {
           setAuth(pis.data as any, data?.accessToken);
           if (pis.data.isEmailVerified) {
-            toast.success("Đăng nhập thành công!");
             router.push("/dashboard");
           } else {
             getOtp({email: pis.data.email});

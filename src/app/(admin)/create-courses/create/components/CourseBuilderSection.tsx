@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Add, Edit, HambergerMenu, Trash } from "iconsax-react";
-import { ChevronDown, Import, Upload } from "lucide-react";
+import { Add, Edit, HambergerMenu, ImportCurve, Trash } from "iconsax-react";
+import { ChevronDown, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddChapterModal from "./modal/AddChapterModal";
 import { CreateLessonModal } from "@/app/(admin)/create-courses/create/components/modal/CreateLessonModal";
@@ -11,10 +11,7 @@ import { CreateQuizModal } from "@/app/(admin)/create-courses/create/components/
 import { UploadCodeAssignment } from "./modal/CreateAssignment/UploadCodeAssignment";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import { IModule, useModules } from "@/hooks/queries/course/useModuleCourse";
-import {
-  useDraftLesson,
-  usePublishLesson,
-} from "@/hooks/queries/course/useLessonCourse";
+import {usePublishLesson} from "@/hooks/queries/course/useLessonCourse";
 
 export default function CourseBuilderSection() {
   const [isExpandedChapters, setIsExpandedChapters] = useState<boolean>(true);
@@ -26,43 +23,51 @@ export default function CourseBuilderSection() {
   const [chapters, setChapters] = useState<IModule[]>([]);
   const { courseData, setModuleSelected, setLessonSelected } =
     useCreateCourseContext();
-  const [publishLessonParams, setPublishLessonParams] = useState<{
-    courseId: string;
-    moduleId: string;
-    lessonId: string;
-  } | null>(null);
-
-  const publishLessonMutation = usePublishLesson(() => {
-    refetchChapters();
-  });
-
-  const draftLessonMutation = useDraftLesson(() => {
-    refetchChapters();
-  });
+  const [publishLessonParams, setPublishLessonParams] = useState<{courseId: string, moduleId: string, lessonId: string} | null>(null);
+  const publishLessonMutation = usePublishLesson(
+    publishLessonParams?.courseId || "",
+    publishLessonParams?.moduleId || "",
+    publishLessonParams?.lessonId || "",
+    () => {
+      refetchChapters();
+      setPublishLessonParams(null);
+    }
+  );
 
   const { data: initialChapters, refetch: refetchChapters } = useModules(
     courseData?.id as string,
   );
+
 
   useEffect(() => {
     if (initialChapters) {
       setChapters((prevState) => {
         // If prevState is empty, initialize with initialChapters
         return initialChapters.data.map((c) => {
-          const findNodeModuleConfig = prevState.find(
-            (item) => item.id === c.id,
-          );
+          const findNodeModuleConfig = prevState.find((item) => item.id === c.id);
           return {
             id: c.id,
             title: c.title,
             shortDescription: c.shortDescription,
             isExpanded: findNodeModuleConfig?.isExpanded ?? false,
             lessons: c.lessons,
-          };
+          }
         });
       });
     }
   }, [initialChapters]);
+
+  useEffect(() => {
+    if (
+      publishLessonParams &&
+      publishLessonParams.courseId &&
+      publishLessonParams.moduleId &&
+      publishLessonParams.lessonId
+    ) {
+      publishLessonMutation.mutate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publishLessonParams]);
 
   const toggleChapter = (chapterId: string) => {
     setChapters(
@@ -76,17 +81,7 @@ export default function CourseBuilderSection() {
 
   const handlePublishLesson = (chapter: IModule, lesson: any) => {
     if (!courseData?.id || !chapter?.id || !lesson?.id) return;
-
-    if (lesson.status === "PUBLISHED") {
-      draftLessonMutation.mutate({
-        courseId: courseData.id,
-        moduleId: chapter.id,
-        lessonId: lesson.id,
-      });
-      return;
-    }
-
-    publishLessonMutation.mutate({
+    setPublishLessonParams({
       courseId: courseData.id,
       moduleId: chapter.id,
       lessonId: lesson.id,
@@ -220,29 +215,16 @@ export default function CourseBuilderSection() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            title={
-                              lesson?.status === "PUBLISHED"
-                                ? "Draft"
-                                : "Pulished"
-                            }
                             className="h-8 w-8"
                             onClick={() => {
                               handlePublishLesson(chapter, lesson);
                             }}
                           >
-                            {lesson?.status === "PUBLISHED" ? (
-                              <Import
-                                size={16}
-                                color="#637381"
-                                className="h-4 w-4"
-                              />
-                            ) : (
-                              <Upload
-                                size={16}
-                                color="#637381"
-                                className="h-4 w-4"
-                              />
-                            )}
+                            <Upload
+                              size={16}
+                              color={lesson?.status === "PUBLISHED" ? "#16A1FF" : "#637381"}
+                              className="h-4 w-4"
+                            />
                           </Button>
                           <Button
                             type="button"
@@ -275,7 +257,7 @@ export default function CourseBuilderSection() {
                       >
                         <Add
                           size={20}
-                          color="#2F57EF"
+                          color="#16A1FF"
                           className="w-4 h-4 mr-1"
                         />
                         Bài học
@@ -293,7 +275,7 @@ export default function CourseBuilderSection() {
                       >
                         <Add
                           size={20}
-                          color="#2F57EF"
+                          color="#16A1FF"
                           className="w-4 h-4 mr-1"
                         />
                         Bài kiểm tra
@@ -311,25 +293,25 @@ export default function CourseBuilderSection() {
                       >
                         <Add
                           size={20}
-                          color="#2F57EF"
+                          color="#16A1FF"
                           className="w-4 h-4 mr-1"
                         />
                         Bài tập
                       </Button>
                     </div>
-                    {/*<Button*/}
-                    {/*  className="border-primary-main/48"*/}
-                    {/*  size="sm"*/}
-                    {/*  type="button"*/}
-                    {/*  variant="outline"*/}
-                    {/*>*/}
-                    {/*  <ImportCurve*/}
-                    {/*    size={20}*/}
-                    {/*    color="#2F57EF"*/}
-                    {/*    className="w-4 h-4 mr-2"*/}
-                    {/*  />*/}
-                    {/*  Nhập bài kiểm tra*/}
-                    {/*</Button>*/}
+                    <Button
+                      className="border-primary-main/48"
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      <ImportCurve
+                        size={20}
+                        color="#16A1FF"
+                        className="w-4 h-4 mr-2"
+                      />
+                      Nhập bài kiểm tra
+                    </Button>
                   </div>
                 </div>
               )}

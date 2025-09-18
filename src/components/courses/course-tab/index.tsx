@@ -81,8 +81,6 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
   // Get courses to display (limit to 3 for preview)
   const displayCourses = courses.slice(0, 3);
 
-  console.log(displayCourses, "---displayCourses");
-
   return (
     <div className="flex flex-col gap-4">
       {/*tab render*/}
@@ -93,7 +91,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
             onClick={() => handleTabClick(tab)}
             className={`cursor-pointer relative flex flex-col items-center justify-center min-w-[120px] px-8 py-4 rounded-full transition-all ${
               getActiveTabId() === tab.id
-                ? "bg-[#2F57EF] text-white"
+                ? "bg-[#16A1FF] text-white"
                 : "bg-white text-[#637381] border border-gray-200 hover:bg-gray-50"
             }`}
           >
@@ -135,7 +133,7 @@ export function CourseTab({ courses = [], isLoading = false, error = null, onCou
                 badge={course.label}
                 title={course.title}
                 imageUrl={course.thumbnail}
-                category={course.category.title}
+                category="Khóa học"
                 courseName={course.title}
                 instructor={`Giảng viên: ${course?.owner.fullName}`}
                 lessonCount={course.totalLesson}

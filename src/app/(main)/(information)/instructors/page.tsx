@@ -12,7 +12,7 @@ function InstructorListPage() {
         label="Trang chủ"
         subLabel="Giảng viên"
       />
-      <div className="bg-gradient-to-br from-primary-light  to-primary-main">
+      <div className="bg-gradient-to-br from-primary-light  to-[#16A1FF]">
         <div className="py-12 lg:py-32 px-6 md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full flex flex-col items-center justify-center h-full">
           <div className="font-semibold text-white text-lg">
             Giảng viên của chúng tôi

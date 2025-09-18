@@ -1,39 +1,38 @@
 "use client";
 
 import React from "react";
-import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/store/slices/auth.slice";
+import { useQueryClient } from "@tanstack/react-query";
+import { InstructorProfile, LearnerProfile } from "@/api/types/intructor.type";
 import { formatDateToCustomString } from "@/until";
-import { useTeacher } from "@/hooks/queries/dashboard/useTeacher";
-import { useStudent } from "@/hooks/queries/dashboard/useStudent";
 
 function ProfilePage() {
-  const { user, isTeacher } = useAuthStore.getState();
-  const { data } = useStudent(user?.id || "", !isTeacher);
+  const { user } = useAuthStore.getState();
+  const queryClient = useQueryClient();
+  const data: LearnerProfile | undefined = queryClient.getQueryData([
+    "studentId",
+    user?.id,
+  ]);
 
-
-  const { data: teacherData } = useTeacher(user?.id || "");
+  const teacherData: InstructorProfile | undefined = queryClient.getQueryData([
+    "teacherId",
+    user?.id,
+  ]);
 
   return (
     <Card className="bg-white border-0 rounded-xl shadow-sm">
       <CardContent className="p-6">
         <h2 className="text-2xl font-semibold mb-6">Hồ sơ</h2>
-        {!data && !teacherData && (
-          <div className="flex items-center justify-center py-10">
-            <Loader2 className="animate-spin text-gray-400" />
-            <span className="ml-2 text-gray-500">Đang tải hồ sơ...</span>
-          </div>
-        )}
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
             <div className="space-y-2">
               <label className="block text-gray-500">Ngày đăng ký</label>
               <div className="text-gray-800 font-medium">
-                {data?.data?.auditInfo?.createdAt ||
+                {data?.data?._auditInfo?._createdAt ||
                 teacherData?.data?.auditInfo?.createdAt
                   ? formatDateToCustomString(
-                      data?.data?.auditInfo?.createdAt ??
+                      data?.data?._auditInfo?._createdAt ??
                         (teacherData?.data?.auditInfo?.createdAt as string),
                     )
                   : "Chưa có thông tin"}
@@ -58,7 +57,7 @@ function ProfilePage() {
             <div className="space-y-2">
               <label className="block text-gray-500">Số điện thoại</label>
               <div className="text-gray-800 font-medium">
-                {teacherData?.data.mobilePhone ?? data?.data?.mobilePhone ?? "Chưa có thông tin"}
+                {teacherData?.data.mobilePhone ?? data?.data?._mobilePhone ?? "Chưa có thông tin"}
               </div>
             </div>
 
@@ -72,7 +71,7 @@ function ProfilePage() {
             <div className="space-y-2 sm:col-span-2">
               <label className="block text-gray-500">Giới thiệu</label>
               <div className="text-gray-800">
-                {teacherData?.data?.bio ?? data?.data?.bio ?? "Chưa có thông tin"}
+                {teacherData?.data?.bio ?? data?.data?._bio ?? "Chưa có thông tin"}
               </div>
             </div>
           </div>

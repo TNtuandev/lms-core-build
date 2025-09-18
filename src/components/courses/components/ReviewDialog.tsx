@@ -117,7 +117,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
             </Button>
           </DialogClose>
           <Button
-            className="bg-primary font-semibold w-fit h-9 rounded-[10px] bg-[#212B36] text-white hover:bg-[#2F57EF] transition-colors duration-300 disabled:opacity-50"
+            className="bg-primary font-semibold w-fit h-9 rounded-[10px] bg-[#212B36] text-white hover:bg-[#16A1FF] transition-colors duration-300 disabled:opacity-50"
             onClick={handleSubmit}
             disabled={!comment.trim() || isLoading}
           >

@@ -78,7 +78,7 @@ export default function ItemQuiz({
             handleStartQuiz();
           }}
           role="presentation"
-          className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max gap-1 flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
+          className="bg-[#16A1FF] cursor-pointer px-4 py-2 h-max gap-1 flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
         >
           {dataTracking?.totalAttempt > 0 ? "Thử lại" : "Bắt đầu"}
           {dataTracking?.totalAttempt > 0 ? (

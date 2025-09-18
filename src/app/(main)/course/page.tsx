@@ -169,19 +169,19 @@ function CoursePage() {
   return (
     <div>
       {/*header*/}
-      <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] h-[300px] w-full">
+      <div className="bg-gradient-to-r from-[#f8f9ff] via-[#efedfd] to-[#e6f9fb] h-[300px] w-full">
         <div className="flex flex-col items-center justify-center h-full">
           <div className="flex flex-col md:flex-row items-center md:gap-8">
             <div className="text-5xl font-bold text-[#212B36]">
-              Tất cả khoá học
+              Khóa học thiết kế
             </div>
-            <div className="mt-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
+            <div className="mt-2 md:mt-0 font-light text-[#16A1FF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
               🎉 {coursesData?.data?.length || 0} Khóa học
             </div>
           </div>
           <p className="text-[#212B36] mt-2">
-            Trang chủ {">  "}{" "}
-            <span className="text-gray-400 ml-2">Khám phá khoá học</span>
+            Trang chủ {">"}{" "}
+            <span className="text-gray-400">Khóa học thiết kế</span>
           </p>
         </div>
       </div>
@@ -210,7 +210,7 @@ function CoursePage() {
       >
         <div className="flex flex-col gap-4">
           <div className="text-3xl font-bold text-[#212B36]">
-            Tất cả khóa học
+            Tất cả khóa học Thiết kế
           </div>
           <div className="text-sm text-gray-500 mb-2">
             {coursesData?.meta?.total || 0} kết quả được tìm thấy
@@ -224,7 +224,7 @@ function CoursePage() {
                 placeholder="Tìm kiếm..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 py-2.5 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#2F57EF] focus:border-[#2F57EF]"
+                className="pl-10 pr-10 py-2.5 w-full rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#16A1FF] focus:border-[#2F57EF]"
               />
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -411,7 +411,7 @@ function CoursePage() {
                       gridNUmber={4}
                       title={course.title}
                       imageUrl={course.thumbnail}
-                      category={course.category.title}
+                      category="Khóa học"
                       courseName={course.title}
                       instructor={`Giảng viên: ${course?.owner.fullName}`}
                       lessonCount={course.totalLesson}
@@ -470,7 +470,7 @@ function CoursePage() {
                           onClick={() => setCurrentPage(page)}
                           className={`px-4 py-2 border border-gray-200 rounded-lg ${
                             page === currentPage
-                              ? "bg-[#2F57EF] text-white"
+                              ? "bg-[#16A1FF] text-white"
                               : "hover:bg-gray-50"
                           }`}
                         >

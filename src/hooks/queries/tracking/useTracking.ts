@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { trackingAPI } from "@/api/endpoints/tracking.api";
-import { courseKeys } from "../course/useCourses";
 import toast from "react-hot-toast";
 
 export const useTrackingQuiz = (courseId: string, lessonId: string) => {
@@ -41,17 +40,10 @@ export const useCreateAttemptsQuiz = (courseId: string, lessonId: string) => {
 };
 
 export const useSubmitQuiz = (courseId: string, lessonId: string, attemptId: string) => {
-  const queryClient = useQueryClient();
-  
   return useMutation({
     mutationFn: (data: any) => trackingAPI.submitQuizAttempts(courseId, lessonId, attemptId, data),
     onSuccess: () => {
       toast.success("Submit quiz thành công!");
-      
-      // Invalidate and refetch useModuleForUser
-      queryClient.invalidateQueries({
-        queryKey: courseKeys.modulesForUser(courseId)
-      });
     },
   });
 };

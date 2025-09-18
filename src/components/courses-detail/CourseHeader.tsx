@@ -2,7 +2,6 @@ import React from "react";
 import IconClock from "../../../public/icons/IconClock";
 import IconPrize from "../../../public/icons/IconPrize";
 import IconUser from "../../../public/icons/IconUser";
-import he from "he";
 
 interface CourseHeaderProps {
   courseDetail: {
@@ -15,30 +14,25 @@ interface CourseHeaderProps {
     enrollmentCnt: number;
     owner: { fullName: string };
     updatedAt: string;
-    shortDescription: string;
   };
   reviewSummaryData?: any
 }
 
 export const CourseHeader: React.FC<CourseHeaderProps> = ({ courseDetail, reviewSummaryData }) => {
   return (
-    <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full py-12 md:py-20 md:mt-20 h-max">
+    <div className="bg-gradient-to-r from-[#f8f9ff] via-[#efedfd] to-[#e6f9fb] w-full py-12 md:py-20 md:mt-20 h-max">
       <div className="container mx-auto px-4 py-8 h-full flex flex-col justify-end w-full">
-        <div className="text-[#2F57EF] mb-2 md:w-[50%] w-full">
+        <div className="text-[#16A1FF] mb-2 md:w-[50%] w-full">
           {courseDetail.category.title}
         </div>
         <div className="text-4xl font-bold text-[#212B36] mb-4 md:w-[50%] w-full">
           {courseDetail.title}
         </div>
         <p className="text-gray-600 mb-2 md:w-[60%] w-full">
-          {courseDetail.shortDescription && (
-            <div
-              dangerouslySetInnerHTML={{ __html: he.decode(courseDetail.shortDescription) }}
-            />
-          )}
+          {courseDetail.description}
         </p>
         <div className="my-4 flex flex-wrap items-center gap-4">
-          <div className="mt-2 w-max flex items-center gap-2 md:mt-0 font-light text-[#2F57EF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
+          <div className="mt-2 w-max flex items-center gap-2 md:mt-0 font-light text-[#16A1FF] border bg-[#D14EA81F] border-white px-4 py-2 rounded-full">
             <IconPrize /> {courseDetail.label || "Bestseller"}
           </div>
           <div className="flex flex-wrap items-center gap-2">

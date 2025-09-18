@@ -66,12 +66,7 @@ export interface Course {
   enrollmentCnt: number;
   status: EStatusCourse;
   discountedPrice: number,
-  regularPrice: number,
-  category: {
-    id: string;
-    title: string;
-    slug: string;
-  }
+  regularPrice: number
 }
 
 export interface CourseDetail {

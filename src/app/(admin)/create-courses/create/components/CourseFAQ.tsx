@@ -6,21 +6,18 @@ import { Add, Edit, HambergerMenu, Trash } from "iconsax-react";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
-import { useDeleteFAQ, useFAQs } from "@/hooks/queries/course/useFaqs";
+import { useFAQs } from "@/hooks/queries/course/useFaqs";
 import { FAQ } from "@/api/types/course.type";
 import { FaqModal } from "@/app/(admin)/create-courses/create/components/modal/FaqModal";
 
 export default function CourseFAQ() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
-  const [selectedFaq, setSelectedFaq] = useState<FAQ>();
   const [isOpenFaqModal, setIsOpenFaqModal] = useState(false);
   const { courseData } = useCreateCourseContext();
 
   const { data: initialFaqs, refetch: refetchFaqs } = useFAQs(
     courseData?.id as string,
   );
-
-  const deleteItemFaq = useDeleteFAQ(courseData?.id as string);
 
   // const deleteFaq = useDeleteFAQ()
 
@@ -49,16 +46,19 @@ export default function CourseFAQ() {
 
   const addNewFaq = () => {
     setIsOpenFaqModal(true);
-    setSelectedFaq(undefined);
   };
 
   const deleteFaq = (faqId: string) => {
-    deleteItemFaq.mutate(faqId, {
-      onSuccess: () => {
-        setFaqs(faqs.filter((faq) => faq.id !== faqId));
-      },
-    });
+    setFaqs(faqs.filter((faq) => faq.id !== faqId));
     // deleteFaq.mutate({ courseId: courseData?.id as string, faqId });
+  };
+
+  const editFaqQuestion = (faqId: string, newQuestion: string) => {
+    setFaqs(
+      faqs?.map((faq) =>
+        faq.id === faqId ? { ...faq, question: newQuestion } : faq,
+      ),
+    );
   };
 
   return (
@@ -97,8 +97,11 @@ export default function CourseFAQ() {
                   size="icon"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedFaq(faq);
-                    setIsOpenFaqModal(true);
+                    const newQuestion = prompt(
+                      "Nhập câu hỏi mới:",
+                      faq.question,
+                    );
+                    if (newQuestion) editFaqQuestion(faq.id, newQuestion);
                   }}
                   className="h-8 w-8"
                 >
@@ -153,7 +156,6 @@ export default function CourseFAQ() {
         </div>
       </div>
       <FaqModal
-        initData={selectedFaq}
         isOpen={isOpenFaqModal}
         onClose={() => setIsOpenFaqModal(false)}
         onSubmit={handleSubmit}

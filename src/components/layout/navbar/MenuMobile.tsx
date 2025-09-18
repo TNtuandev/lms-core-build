@@ -168,7 +168,7 @@ export const MenuMobile = () => {
           <Image
             src="/images/logo.png"
             alt="Logo"
-            width={127}
+            width={137}
             height={40}
             onClick={handleNavigateToHome}
           />

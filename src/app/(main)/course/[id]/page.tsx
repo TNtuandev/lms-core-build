@@ -6,7 +6,6 @@ import { Routes } from "@/lib/routes/routes";
 import { Loader2 } from "lucide-react";
 import {
   useCourseBySlug,
-  useEnrollmentsCheck,
   useFAQUser,
   useInstructorProfile,
   useModule,
@@ -31,8 +30,6 @@ import {
   useAddItemToCart,
   useRefetchCart,
 } from "@/hooks/queries/cart/useCartApi";
-import { useAuthStore } from "@/store/slices/auth.slice";
-import toast from "react-hot-toast";
 
 // interface PageProps {
 //   params: {
@@ -45,13 +42,9 @@ export default function CourseDetailPage() {
   const params = useParams();
   const slug = params?.id as string;
   const { cartId } = useCartStore();
-  const { user } = useAuthStore.getState();
 
   // Fetch course data by slug
   const { data: courseDetail, isLoading, error } = useCourseBySlug(slug);
-  const { data: enrollmentsCheck } = useEnrollmentsCheck(
-    courseDetail?.id || "",
-  );
 
   // Initialize createReview hook with courseDetail.id for query invalidation
   const { createReview, isLoading: isCreatingReview } = useCreateReview(
@@ -180,56 +173,38 @@ export default function CourseDetailPage() {
   };
 
   const handleCheckoutCourse = () => {
-    if (user) {
-      addToCart.mutate(
-        {
-          cartId,
-          data: {
-            productId: courseDetail.id,
-            quantity: 1,
-          },
+    addToCart.mutate(
+      {
+        cartId,
+        data: {
+          productId: courseDetail.id,
+          quantity: 1,
         },
-        {
-          onSuccess: () => {
-            refetchCart();
-            router.push(Routes.checkout);
-          },
+      },
+      {
+        onSuccess: () => {
+          refetchCart();
+          router.push(Routes.checkout);
         },
-      );
-    } else {
-      router.push(Routes.login);
-    }
+      },
+    );
   };
 
   const handlePushToCart = () => {
-    if (user) {
-      addToCart.mutate(
-        {
-          cartId,
-          data: {
-            productId: courseDetail.id,
-            quantity: 1,
-          },
+    addToCart.mutate(
+      {
+        cartId,
+        data: {
+          productId: courseDetail.id,
+          quantity: 1,
         },
-        {
-          onSuccess: () => {
-            refetchCart();
-          },
+      },
+      {
+        onSuccess: () => {
+          refetchCart();
         },
-      );
-    } else {
-      router.push(Routes.login);
-    }
-  };
-
-  const handleLearn = () => {
-    if (moduleData?.data && moduleData?.data?.length > 0) {
-      router.push(
-        `/lesson?course=${slug}&module=${moduleData?.data?.[0]?.id}&lesson=${moduleData?.data?.[0]?.lessons?.[0]?.id}`,
-      );
-    } else {
-      toast.error("Hiện chưa có bài học nào!");
-    }
+      },
+    );
   };
 
   const handleUpdateReview = (
@@ -266,14 +241,12 @@ export default function CourseDetailPage() {
         reviewSummaryData={reviewSummaryData}
       />
 
+      {/* Sidebar */}
       <CourseSidebar
-        enrolled={enrollmentsCheck?.enrolled}
         courseDetail={courseDetail}
         onCheckoutCourse={handleCheckoutCourse}
         handlePushToCart={handlePushToCart}
-        handleLearn={handleLearn}
       />
-
 
       {/* Course Content */}
       <div className="container mx-auto px-4 py-8">
@@ -281,33 +254,33 @@ export default function CourseDetailPage() {
           {/* Main Content */}
           <div className="lg:w-2/3">
             {/* Tabs */}
-            <div className="sticky top-[64px] lg:top-[72px] z-40 flex flex-wrap gap-2 mb-8 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 py-4">
+            <div className="flex flex-wrap gap-2 mb-8 bg-white py-4">
               <button
-                className={`px-8 py-3 font-medium rounded-full ${activeTab === "overview" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
+                className={`px-8 py-3 font-medium rounded-full ${activeTab === "overview" ? "bg-[#16A1FF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("overview")}
               >
                 Tổng quan
               </button>
               <button
-                className={`px-8 py-3 font-medium rounded-full ${activeTab === "content" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
+                className={`px-8 py-3 font-medium rounded-full ${activeTab === "content" ? "bg-[#16A1FF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("content")}
               >
                 Nội dung
               </button>
               <button
-                className={`px-8 py-3 font-medium rounded-full ${activeTab === "details" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
+                className={`px-8 py-3 font-medium rounded-full ${activeTab === "details" ? "bg-[#16A1FF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("details")}
               >
                 Chi tiết
               </button>
               <button
-                className={`px-8 py-3 font-medium rounded-full ${activeTab === "instructor" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
+                className={`px-8 py-3 font-medium rounded-full ${activeTab === "instructor" ? "bg-[#16A1FF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("instructor")}
               >
                 Người hướng dẫn
               </button>
               <button
-                className={`px-8 py-3 font-medium rounded-full ${activeTab === "reviews" ? "bg-[#2F57EF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
+                className={`px-8 py-3 font-medium rounded-full ${activeTab === "reviews" ? "bg-[#16A1FF] text-white" : "bg-[#F4F6F8] text-gray-500 hover:bg-gray-200"}`}
                 onClick={() => scrollToSection("reviews")}
               >
                 Đánh giá
@@ -320,11 +293,7 @@ export default function CourseDetailPage() {
             </div>
 
             <div ref={contentRef}>
-              <CourseContent
-                enrolled={enrollmentsCheck?.enrolled}
-                moduleData={moduleData}
-                slug={slug}
-              />
+              <CourseContent moduleData={moduleData} slug={slug} />
             </div>
 
             <div ref={detailsRef}>

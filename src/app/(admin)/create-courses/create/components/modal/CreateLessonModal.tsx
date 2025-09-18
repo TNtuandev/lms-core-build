@@ -42,7 +42,6 @@ import {
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
 import {useUploadFile} from "@/hooks/queries/course/useUploadFile";
-import './index.css'
 
 interface CreateLessonModalProps {
   isOpen: boolean;
@@ -256,11 +255,7 @@ export const CreateLessonModal = ({
                 <FormItem>
                   <FormLabel>Tóm tắt</FormLabel>
                   <FormControl>
-                    <CKEditorWrapper
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Tóm tắt"
-                    />
+                    <Textarea placeholder="Tóm tắt" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

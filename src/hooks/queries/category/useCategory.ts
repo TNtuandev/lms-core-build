@@ -19,7 +19,7 @@ export const useCategory = (params?: IParamsRequest) => {
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: ICreateCategoryRequest) => categoryAPI.createCategory(data),
     onSuccess: () => {
@@ -34,9 +34,9 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: IUpdateCategoryRequest }) => 
+    mutationFn: ({ id, data }: { id: string; data: IUpdateCategoryRequest }) =>
       categoryAPI.updateCategory(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
@@ -50,7 +50,7 @@ export const useUpdateCategory = () => {
 
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => categoryAPI.deleteCategory(id),
     onSuccess: () => {

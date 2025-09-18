@@ -21,10 +21,6 @@ export const CourseFAQ: React.FC<CourseFAQProps> = ({
 }) => {
   const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
 
-  if (faqsData?.length === 0) {
-    return null
-  }
-
   return (
     <div className="bg-white p-6 rounded-lg border shadow border-gray-100 mb-8">
       <h3 className="text-xl font-bold mb-6">Câu hỏi thường gặp</h3>
@@ -62,7 +58,7 @@ export const CourseFAQ: React.FC<CourseFAQProps> = ({
             >
               <div className="flex items-center flex-shink-0 justify-between bg-[#F4F6F8] px-3 py-2 rounded">
                 <div
-                  className={`font-semibold ${activeQuestion === faq.id ? "text-[#2F57EF]" : ""}`}
+                  className={`font-semibold ${activeQuestion === faq.id ? "text-[#16A1FF]" : ""}`}
                 >
                   {faq.question}
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useConfirmResetPassword } from "@/hooks/queries/auth/useConfirmResetPassword";
 
 // Schema validation for Set Password
 const setPasswordSchema = z.object({
@@ -37,19 +36,11 @@ const setPasswordSchema = z.object({
 type SetPasswordFormData = z.infer<typeof setPasswordSchema>;
 
 function SetPasswordPage() {
-  const { error } = useLogin();
-  const { mutate: confirmReset, isPending } = useConfirmResetPassword();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { mutate: login, isPending, error } = useLogin();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      setToken(params.get("token"));
-    }
-  }, []);
 
   const form = useForm<SetPasswordFormData>({
     resolver: zodResolver(setPasswordSchema),
@@ -68,18 +59,13 @@ function SetPasswordPage() {
   };
 
   const onSubmit = (data: SetPasswordFormData) => {
-    if (!token) return;
-    confirmReset({
-      token,
-      password: data.password,
-      passwordConfirmation: data.confirmPassword,
-    });
+    console.log(data, "----");
   };
 
   return (
     <div className="flex w-full min-h-screen flex-col lg:flex-row">
       {/* Banner Image - Hidden on mobile, visible on large screens */}
-      <div className="hidden lg:block lg:w-[70%] xl:w-[75%]">
+      <div className="hidden lg:block lg:w-[50%] xl:w-[60%]">
         <Image
           src={bannerSignIn}
           alt="banner"
@@ -88,15 +74,15 @@ function SetPasswordPage() {
       </div>
 
       {/* Set Password Form Section */}
-      <div className="flex flex-col justify-center items-center w-full lg:w-[30%] xl:w-[25%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
+      <div className="flex flex-col justify-center items-center w-full lg:w-[50%] xl:w-[40%] px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-8 lg:py-0 min-h-screen">
         {/* Content Container */}
         <div className="w-full max-w-md mx-auto">
           <Image
             src={logoMini}
             alt="logmini"
-            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-12 w-auto sm:h-14 md:h-16 lg:h-14 xl:h-16"
+            className="mx-auto mb-8 sm:mb-10 md:mb-12 h-10 w-auto"
           />
-          
+
           {/* Title and Description */}
           <div className="text-center mb-8 sm:mb-10">
             <h1 className="text-[#212B36] font-semibold text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mb-4 sm:mb-6">
@@ -193,7 +179,7 @@ function SetPasswordPage() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="font-semibold text-white bg-[#2F57EF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors mt-6"
+                className="font-semibold text-white bg-[#16A1FF] hover:bg-[#254bdc] disabled:bg-gray-400 disabled:cursor-not-allowed rounded-xl w-full h-11 sm:h-12 text-sm sm:text-base transition-colors mt-6"
               >
                 {isPending ? (
                   <>
@@ -207,11 +193,10 @@ function SetPasswordPage() {
             </form>
           </Form>
 
-
           {/* Back to Login Button */}
           <button
             onClick={() => router.push("/login")}
-            className="mt-6 sm:mt-8 text-sm sm:text-base text-[#637381] hover:text-[#2F57EF] cursor-pointer flex items-center justify-center gap-2 w-full transition-colors"
+            className="mt-6 sm:mt-8 text-sm sm:text-base text-[#637381] hover:text-[#16A1FF] cursor-pointer flex items-center justify-center gap-2 w-full transition-colors"
             disabled={isPending}
           >
             <span>←</span>

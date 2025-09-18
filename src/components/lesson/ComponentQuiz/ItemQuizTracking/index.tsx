@@ -73,7 +73,7 @@ export default function ItemQuizTracking({ changeTab, type, data, dataCourse, se
               handleStartQuiz()
             }}
             role="presentation"
-            className="bg-[#2F57EF] cursor-pointer px-4 py-2 h-max flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
+            className="bg-[#16A1FF] cursor-pointer px-4 py-2 h-max flex-shrink-0 flex rounded-xl text-white text-sm font-semibold"
           >
             Bắt đầu
             <ArrowRight size="20" color="#fff" />

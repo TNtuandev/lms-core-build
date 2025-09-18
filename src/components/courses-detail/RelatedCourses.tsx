@@ -2,7 +2,6 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CourseCard from "@/components/courses/course-card";
-import {Category} from "@/hooks/queries/enrollments/enrollment";
 
 interface RelatedCourse {
   id: string;
@@ -15,7 +14,6 @@ interface RelatedCourse {
     regularPrice: number;
     discountedPrice?: number;
     label?: string;
-    category: Category;
     owner: {
       fullName: string;
     };
@@ -36,10 +34,6 @@ export const RelatedCourses: React.FC<RelatedCoursesProps> = ({
   errorRelated,
 }) => {
   const router = useRouter();
-
-  if (relatedCoursesData?.data?.length === 0) {
-    return null
-  }
 
   return (
     <div className="bg-[background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 232, 210, 0.15) 49.52%, rgba(205, 223, 255, 0.15) 100%);] w-full px-4 md:px-20 md:py-20 py-14">
@@ -80,7 +74,7 @@ export const RelatedCourses: React.FC<RelatedCoursesProps> = ({
                     gridNUmber={4}
                     title={course?.title}
                     imageUrl={course?.thumbnail}
-                    category={course.category.title}
+                    category="Khóa học"
                     courseName={course?.title}
                     instructor={`Giảng viên: ${course?.owner?.fullName}`}
                     lessonCount={course?.totalLessons}

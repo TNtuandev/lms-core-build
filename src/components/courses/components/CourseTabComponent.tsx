@@ -1,10 +1,10 @@
 "use client";
 
-import {CourseTab} from "@/components/courses/course-tab";
+import { CourseTab } from "@/components/courses/course-tab";
 import React, { useMemo, useState } from "react";
-import {useCourses} from "@/hooks/queries/course";
+import { useCourses } from "@/hooks/queries/course";
 import { CourseFilters, SortOption } from "@/api/types/course.type";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function CourseTabComponent() {
   const router = useRouter();
@@ -43,5 +43,5 @@ export default function CourseTabComponent() {
       onLabelChange={handleLabelChange}
       activeLabel={selectedLabel}
     />
-  )
+  );
 }

@@ -496,12 +496,12 @@ export default function QuizStep2({dataLesson, dataTracking, dataCourse, attempt
                   <span className="font-semibold text-base text-gray-900 select-none">
                     {idx + 1}.
                   </span>
-                  <span className="font-medium text-base text-gray-900 max-w-[80%]">
+                  <span className="font-medium text-base text-gray-900">
                     {question.content}
                   </span>
-                  <div className="text-sm text-gray-500 ml-auto w-max">
+                  <span className="text-sm text-gray-500 ml-auto">
                     ({question.points} điểm)
-                  </div>
+                  </span>
                 </div>
 
                 {/* Description */}

@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -44,7 +45,6 @@ import {
   useUpdateLessonQuiz,
 } from "@/hooks/queries/course/useLessonCourse";
 import { useCreateCourseContext } from "@/context/CreateCourseProvider";
-import CKEditorWrapper from "@/components/courses/editor/CKEditorWrapper";
 
 interface CreateQuizModalProps {
   isOpen: boolean;
@@ -59,12 +59,12 @@ const quizSchema = z.object({
 type QuizFormData = z.infer<typeof quizSchema>;
 
 const settingsSchema = z.object({
-  duration: z.number().gt(0, "Thời gian phải lớn hơn 0"),
+  duration: z.number().optional().nullable(),
   durationUnit: z.string().optional().nullable(),
   isViewTimeLimit: z.boolean(),
   feedbackMode: z.enum(["default", "show", "retry"]),
-  passingScore: z.number().gt(0, "Điểm đạt phải lớn hơn 0"),
-  maxAttempts: z.number().gt(0, "Số lần thử phải lớn hơn 0"),
+  passingScore: z.number().optional().nullable(),
+  maxAttempts: z.number().optional().nullable(),
   autoStart: z.boolean(),
   showQuestionCount: z.boolean(),
   questionLayout: z.enum(["random", "categorized", "ascending", "descending"]),
@@ -204,7 +204,7 @@ export const CreateQuizModal = ({
       questions: questions,
       passingScore: Number(settingsForm.getValues().passingScore),
       deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      maxAttempts: settingsForm.getValues().maxAttempts,
+      maxAttempts: 3,
     } as any;
 
     if (isEdit) {
@@ -315,11 +315,7 @@ export const CreateQuizModal = ({
                     <FormItem>
                       <FormLabel>Tóm tắt</FormLabel>
                       <FormControl>
-                        <CKEditorWrapper
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Tóm tắt"
-                        />
+                        <Textarea placeholder="Tóm tắt" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

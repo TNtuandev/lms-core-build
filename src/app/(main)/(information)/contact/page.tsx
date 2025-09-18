@@ -82,8 +82,8 @@ function ContactPage() {
             <Image
               src="/images/contact/img.png"
               alt="Girl"
-              width={1000}
-              height={1000}
+              width={560}
+              height={630}
               className="w-full h-full object-cover rounded-2xl"
             />
           </div>

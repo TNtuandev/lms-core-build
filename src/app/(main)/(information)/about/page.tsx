@@ -17,11 +17,11 @@ function AboutPage() {
         <img
           src="/images/about/banner.png"
           alt="Hero Image"
-          className="w-full lg:h-auto h-[400px] object-cover"
+          className="w-full lg:h-auto h-[600px] object-cover"
         />
         <div className="absolute md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto w-full inset-0 flex flex-col items-center justify-center">
           <div className="w-full lg:w-3/4 flex flex-col items-center justify-center text-center px-4 text-white">
-            <div className="text-secondary-main text-center font-bold text-base lg:text-xl">
+            <div className="text-[#00D2DD] text-center font-bold text-base lg:text-xl">
               Tầm nhìn của chúng tôi
             </div>
             <div className="text-white text-lg lg:text-3xl font-bold text-center pt-4">
@@ -69,12 +69,12 @@ function AboutPage() {
               Hiểu về chúng tôi
             </div>
             <div className="text-2xl leading-9 lg:text-3xl lg:leading-12 font-bold pb-2">
-              Tìm hiểu về nền tảng học tập Amerian Study
+              Tìm hiểu về nền tảng học tập Brainsploit
             </div>
             <div className="text-secondary">
-              Amerian Study là nền tảng học tập trực tuyến hiện đại, mang đến
+              Brainsploit là nền tảng học tập trực tuyến hiện đại, mang đến
               trải nghiệm giáo dục linh hoạt và hiệu quả cho học sinh ở mọi lứa
-              tuổi. Với triết lý &#34;học mọi lúc, mọi nơi&#34;, Amerian Study nổi bật
+              tuổi. Với triết lý &#34;học mọi lúc, mọi nơi&#34;, Brainsploit nổi bật
               với những tính năng sau:
             </div>
             <div className="grid grid-cols-1 w-5/6 pt-8 gap-8">
@@ -111,7 +111,7 @@ function AboutPage() {
               Xây dựng sự nghiệp và nâng cao cuộc sống của bạn
             </div>
             <div className="text-secondary">
-              Tại Amerian Study, chúng tôi kết hợp công nghệ hiện đại, phương
+              Tại Brainsploit, chúng tôi kết hợp công nghệ hiện đại, phương
               pháp giảng dạy tiên tiến và sự tận tâm của đội ngũ giảng viên để
               mang đến trải nghiệm học tập linh hoạt, cá nhân hóa và hiệu quả
               cho từng học viên.

@@ -9,7 +9,6 @@ export const courseKeys = {
   list: (filters?: CourseFilters) => [...courseKeys.lists(), filters] as const,
   details: () => [...courseKeys.all, "detail"] as const,
   detail: (id: string) => [...courseKeys.details(), id] as const,
-  enrollmentCheck: (id: string) => [...courseKeys.all, id, "enrollmentCheck"] as const,
   related: (courseId: string) => [...courseKeys.all, "related", courseId] as const,
   faqs: (courseId: string) => [...courseKeys.all, "faqs", courseId] as const,
   faqsUser: (courseId: string) => [...courseKeys.all, "faqsUser", courseId] as const,
@@ -52,15 +51,6 @@ export const useCourseBySlug = (slug: string) => {
     queryKey: courseKeys.detail(slug),
     queryFn: () => courseAPI.getCourseBySlug(slug),
     enabled: !!slug,
-    staleTime: 5 * 60 * 1000,
-  });
-};
-
-export const useEnrollmentsCheck = (id: string) => {
-  return useQuery({
-    queryKey: courseKeys.enrollmentCheck(id),
-    queryFn: () => courseAPI.enrollmentsCheck(id),
-    enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
 };

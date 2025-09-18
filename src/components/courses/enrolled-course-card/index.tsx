@@ -2,9 +2,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Book, Users } from "lucide-react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useCourseBySlug, useModule } from "@/hooks/queries/course/useCourses";
 
 interface EnrolledCourseCardProps {
   imageUrl: string;
@@ -15,8 +12,8 @@ interface EnrolledCourseCardProps {
   studentCount: number;
   progress: number;
   status: "in-progress" | "completed";
+  onContinue?: () => void;
   onEdit?: () => void;
-  slug: string;
 }
 
 function EnrolledCourseCard({
@@ -28,29 +25,11 @@ function EnrolledCourseCard({
   studentCount,
   progress,
   status,
+  onContinue,
   onEdit,
-  slug,
 }: EnrolledCourseCardProps) {
-  const router = useRouter();
-  const { data: courseDetail } = useCourseBySlug(slug);
-  const { data: moduleData } = useModule(courseDetail?.id || "");
-
-  const handleLearn = () => {
-    if (moduleData?.data && moduleData?.data?.length > 0) {
-      router.push(
-        `/lesson?course=${slug}&module=${moduleData?.data?.[0]?.id}&lesson=${moduleData?.data?.[0]?.lessons?.[0]?.id}`,
-      );
-    } else {
-      toast.error("Hiện chưa có bài học nào!");
-    }
-  };
-
   return (
-    <div
-      role="presentation"
-      onClick={handleLearn}
-      className="bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200"
-    >
+    <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
       {/* Course Image */}
       <div className="relative">
         <img
@@ -63,9 +42,7 @@ function EnrolledCourseCard({
       {/* Card Content */}
       <div className="p-4">
         <div className="text-blue-600 text-sm mb-2">{category}</div>
-        <h4 className="font-semibold text-lg mb-2 line-clamp-2">
-          {courseName}
-        </h4>
+        <h4 className="font-semibold text-lg mb-2 line-clamp-2">{courseName}</h4>
         <div className="text-gray-600 text-sm mb-3">{instructor}</div>
 
         <div className="flex items-center gap-4 text-sm mb-4">
@@ -91,19 +68,19 @@ function EnrolledCourseCard({
         {/* Action Button */}
         <div className="flex justify-between items-center">
           {status === "completed" ? (
-            <Button
-              variant="outline"
-              size="sm"
+            <Button 
+              variant="outline" 
+              size="sm" 
               onClick={onEdit}
               className="text-gray-600 border-gray-300"
             >
               Chỉnh sửa
             </Button>
           ) : (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleLearn}
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={onContinue}
               className="bg-gray-800 hover:bg-gray-700 text-white"
             >
               Tiếp tục
@@ -115,4 +92,4 @@ function EnrolledCourseCard({
   );
 }
 
-export default EnrolledCourseCard;
+export default EnrolledCourseCard; 

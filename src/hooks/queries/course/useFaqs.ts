@@ -37,10 +37,10 @@ export const useUpdateFAQ = (courseId: string, faqId: string, onSuccessCallback?
   });
 };
 
-export const useDeleteFAQ = (courseId: string, onSuccessCallback?: (data: any) => void) => {
+export const useDeleteFAQ = (courseId: string, faqId: string, onSuccessCallback?: (data: any) => void) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (faqId: string) => courseAPI.deleteFAQ(courseId, faqId),
+    mutationFn: () => courseAPI.deleteFAQ(courseId, faqId),
     onSuccess: (data) => {
       toast.success("Xóa FAQ thành công!");
       queryClient.invalidateQueries({ queryKey: ["courses", "faqs", courseId] });

@@ -25,18 +25,18 @@ interface AuditInfo {
 
 export interface LearnerProfile {
   data: {
-    id: string;
-    userId: string;
-    bio: string | null;
-    dateOfBirth: string | null;
-    educationLevel: string | null;
-    interests: string | null;
-    gender: "male" | "female" | "other"; // assuming possible values
-    totalCoursesEnrolled: number;
-    totalCoursesInProgress: number;
-    totalCoursesCompleted: number;
-    auditInfo: AuditInfo;
-    mobilePhone: string;
+    _id: string;
+    _userId: string;
+    _bio: string | null;
+    _dateOfBirth: string | null;
+    _educationLevel: string | null;
+    _interests: string | null;
+    _gender: "male" | "female" | "other"; // assuming possible values
+    _totalCoursesEnrolled: number;
+    _totalCoursesInProgress: number;
+    _totalCoursesCompleted: number;
+    _auditInfo: AuditInfo;
+    _mobilePhone: string;
   };
 }
 
@@ -53,7 +53,7 @@ export interface InstructorProfile {
     totalCourses: number
     isVerified: boolean
     auditInfo: AuditInfoInstructor
-    totalMoney: number
+
     totalPrices: number
     mobilePhone: string
   }

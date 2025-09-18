@@ -127,8 +127,8 @@ function Navbar() {
   };
 
   const handleNavigateToProduct = (category: ICategory) => {
+    console.log("----slug", category.slug);
     setSelectedCategory(category);
-    router.push(`/course-category?category=${category.id}`);
   };
 
   useEffect(() => {
@@ -163,25 +163,25 @@ function Navbar() {
               onClick={navigateToFlashSale}
               className="cursor-pointer flex-row flex gap-1 items-center"
             >
-              <span className="text-white lg:text-lg text-base font-semibold py-1 px-2.5 bg-tertiary-main rounded-[10px]">
+              <span className="text-white lg:text-lg text-base font-semibold py-1 px-2.5 bg-[#00D2DD] rounded-[10px]">
                 Hot
               </span>
               <span className="lg:text-base text-white text-xs pl-4">
                 Nhanh tay nhận ưu đãi đến{" "}
-                <span className="text-secondary-main"> 20%</span>
+                <span className="text-[#00D2DD]"> 20%</span>
               </span>
             </div>
             <div className="flex gap-2 items-center pl-6">
               <span className="text-sm font-semibold text-white">
                 KẾT THÚC TRONG
               </span>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-[#6A67F4] font-semibold">
                 {String(hours).padStart(2, "0")}
               </div>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-[#6A67F4] font-semibold">
                 {String(minutes).padStart(2, "0")}
               </div>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-[#6A67F4] font-semibold">
                 {String(seconds).padStart(2, "0")}
               </div>
             </div>
@@ -206,10 +206,10 @@ function Navbar() {
               <MenuMobile />
 
               <Image
-                src="/images/logo.png"
-                alt="Logo"
-                width={127}
-                height={33}
+                src="/images/icon-logo.png"
+                alt="Logo icon"
+                width={40}
+                height={40}
                 onClick={handleNavigateToHome}
                 className="cursor-pointer block lg:hidden"
               />
@@ -217,8 +217,8 @@ function Navbar() {
               <Image
                 src="/images/logo.png"
                 alt="Logo"
-                width={182}
-                height={48}
+                width={161}
+                height={40}
                 onClick={handleNavigateToHome}
                 className="cursor-pointer hidden lg:block"
               />
@@ -325,8 +325,8 @@ function Navbar() {
                       variant="default"
                       className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
                     >
-                      <Link href={Routes.login} className="text-white">
-                        Bắt đầu miễn phí
+                      <Link href={Routes.registration} className="text-white">
+                        Đăng ký
                       </Link>
                     </Button>
                   </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Loader2 } from "lucide-react";
 import { Star } from "lucide-react";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useReviewUser } from "@/hooks/queries/dashboard/useStudent";
@@ -18,7 +17,7 @@ interface Review {
 
 function ReviewsPage() {
   const user = useAuthStore.getState().user;
-  const { data: reviewUserData, isLoading } = useReviewUser(user?.id || "");
+  const { data: reviewUserData } = useReviewUser(user?.id || "");
 
   // Map the API data to the component's expected format
   const reviews: Review[] =
@@ -63,13 +62,6 @@ function ReviewsPage() {
   return (
     <div className="bg-white shadow h-max p-6 rounded-2xl">
       <h2 className="text-2xl font-semibold mb-6">Đánh giá</h2>
-
-      {isLoading && (
-        <div className="flex items-center justify-center py-10">
-          <Loader2 className="animate-spin text-gray-400" />
-          <span className="ml-2 text-gray-500">Đang tải đánh giá...</span>
-        </div>
-      )}
 
       <div className="overflow-x-auto">
         <table className="w-full">

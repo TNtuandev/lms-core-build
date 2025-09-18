@@ -8,10 +8,9 @@ import IconBookGreen from "../../../../public/icons/dashboard/IconBookGreen";
 // import TableMyCourse from "@/components/dashboard/component/TableMyCourse";
 import { useAuthStore } from "@/store/slices/auth.slice";
 import { useStudent } from "@/hooks/queries/dashboard/useStudent";
-import { useTeacher } from "@/hooks/queries/dashboard/useTeacher";
-import { MoneyRecive, Profile2User } from "iconsax-react";
-import { Book } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import {useTeacher} from "@/hooks/queries/dashboard/useTeacher";
+import {MoneyRecive, Profile2User} from "iconsax-react";
+import {Book} from "lucide-react";
 
 function DashboardPage() {
   const { isTeacher, user } = useAuthStore();
@@ -26,93 +25,78 @@ function DashboardPage() {
         </div>
 
         {/* Statistics Cards */}
-        {isTeacher ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-4 pt-6">
-            {/* Card 1 */}
-            <Card className="bg-[#919EAB14] border-0">
-              <CardContent className="flex flex-col items-center pt-6">
-                <div className="w-24 h-24 flex items-center justify-center bg-[#F4433629] rounded-xl mb-4">
-                  <Profile2User size={24} color="#F44336" />
-                </div>
-                <h3 className="text-5xl font-bold text-red-500">
-                  {teacherData?.data.totalStudents}
-                </h3>
-                <p className="mt-2 text-sm text-center">Tổng số học viên</p>
-              </CardContent>
-            </Card>
+        { isTeacher ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-4 pt-6">
+              {/* Card 1 */}
+              <Card className="bg-[#919EAB14] border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-[#F4433629] rounded-xl mb-4">
+                    <Profile2User size={24} color="#F44336" />
+                  </div>
+                  <h3 className="text-5xl font-bold text-red-500">{teacherData?.data.totalStudents}</h3>
+                  <p className="mt-2 text-sm text-center">Tổng số học viên</p>
+                </CardContent>
+              </Card>
 
-            {/* Card 2 */}
-            <Card className="bg-[#919EAB14] border-0">
-              <CardContent className="flex flex-col items-center pt-6">
-                <div className="w-24 h-24 flex items-center justify-center bg-[#D14EA829] rounded-xl mb-4">
-                  <Book size={24} color="#D14EA8" />
-                </div>
-                <h3 className="text-5xl font-bold text-[#D14EA8]">
-                  {teacherData?.data.totalCourses}
-                </h3>
-                <p className="mt-2 text-sm text-center">Tổng khóa học</p>
-              </CardContent>
-            </Card>
+              {/* Card 2 */}
+              <Card className="bg-[#919EAB14] border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-[#D14EA829] rounded-xl mb-4">
+                    <Book size={24} color="#D14EA8" />
+                  </div>
+                  <h3 className="text-5xl font-bold text-[#D14EA8]">{teacherData?.data.totalCourses}</h3>
+                  <p className="mt-2 text-sm text-center">Tổng khóa học</p>
+                </CardContent>
+              </Card>
 
-            {/* Card 3 */}
-            <Card className="bg-[#919EAB14] border-0">
-              <CardContent className="flex flex-col items-center pt-6 break-all h-full">
-                <div className="w-24 h-24 flex items-center justify-center bg-[#2F57EF29] rounded-xl mb-4">
-                  <MoneyRecive size={24} color="#2F57EF" />
-                </div>
-                <div className="flex-1 text-3xl font-bold text-[#2F57EF]">
-                  {teacherData?.data.totalMoney
-                    ? formatCurrency(teacherData?.data.totalMoney)
-                    : 0}
-                </div>
-                <p className="mt-2 text-sm text-center">
-                  Tổng thu nhập (Triệu)
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-4 pt-6">
-            {/* Card 1 */}
-            <Card className="bg-blue-50 border-0">
-              <CardContent className="flex flex-col items-center pt-6">
-                <div className="w-24 h-24 flex items-center justify-center bg-blue-100 rounded-xl mb-4">
-                  <IconBookDashBoard />
-                </div>
-                <h3 className="text-5xl font-bold text-blue-500">
-                  {learnerProfileData?.data.totalCoursesEnrolled}
-                </h3>
-                <p className="mt-2 text-sm text-center">Khóa học đã đăng ký</p>
-              </CardContent>
-            </Card>
+              {/* Card 3 */}
+              <Card className="bg-[#919EAB14] border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-[#2F57EF29] rounded-xl mb-4">
+                    <MoneyRecive size={24} color="#2F57EF" />
+                  </div>
+                  <h3 className="text-5xl font-bold text-[#2F57EF]">{teacherData?.data.totalPrices ?? 0}</h3>
+                  <p className="mt-2 text-sm text-center">Tổng thu nhập (Triệu)</p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 pb-4 pt-6">
+              {/* Card 1 */}
+              <Card className="bg-blue-50 border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-blue-100 rounded-xl mb-4">
+                    <IconBookDashBoard />
+                  </div>
+                  <h3 className="text-5xl font-bold text-blue-500">{learnerProfileData?.data._totalCoursesEnrolled}</h3>
+                  <p className="mt-2 text-sm text-center">Khóa học đã đăng ký</p>
+                </CardContent>
+              </Card>
 
-            {/* Card 2 */}
-            <Card className="bg-amber-50 border-0">
-              <CardContent className="flex flex-col items-center pt-6">
-                <div className="w-24 h-24 flex items-center justify-center bg-amber-100 rounded-xl mb-4">
-                  <IconBookOrange />
-                </div>
-                <h3 className="text-5xl font-bold text-amber-500">
-                  {learnerProfileData?.data.totalCoursesInProgress}
-                </h3>
-                <p className="mt-2 text-sm text-center">Khóa học Đang học</p>
-              </CardContent>
-            </Card>
+              {/* Card 2 */}
+              <Card className="bg-amber-50 border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-amber-100 rounded-xl mb-4">
+                    <IconBookOrange />
+                  </div>
+                  <h3 className="text-5xl font-bold text-amber-500">{learnerProfileData?.data._totalCoursesInProgress}</h3>
+                  <p className="mt-2 text-sm text-center">Khóa học Đang học</p>
+                </CardContent>
+              </Card>
 
-            {/* Card 3 */}
-            <Card className="bg-green-50 border-0">
-              <CardContent className="flex flex-col items-center pt-6">
-                <div className="w-24 h-24 flex items-center justify-center bg-green-100 rounded-xl mb-4">
-                  <IconBookGreen />
-                </div>
-                <h3 className="text-5xl font-bold text-green-500">
-                  {learnerProfileData?.data.totalCoursesCompleted}
-                </h3>
-                <p className="mt-2 text-sm text-center">Khóa học Hoàn thành</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              {/* Card 3 */}
+              <Card className="bg-green-50 border-0">
+                <CardContent className="flex flex-col items-center pt-6">
+                  <div className="w-24 h-24 flex items-center justify-center bg-green-100 rounded-xl mb-4">
+                    <IconBookGreen />
+                  </div>
+                  <h3 className="text-5xl font-bold text-green-500">{learnerProfileData?.data._totalCoursesCompleted}</h3>
+                  <p className="mt-2 text-sm text-center">Khóa học Hoàn thành</p>
+                </CardContent>
+              </Card>
+            </div>
+          )
+        }
       </div>
 
       {/*<div className="bg-white shadow h-max rounded-2xl mt-10">*/}

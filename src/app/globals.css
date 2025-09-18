@@ -6,24 +6,24 @@
 :root {
     --primary-50: #FAFCFF;
     --secondary-50: #FFFDFB;
-    --secondary-100: #FFE8D2;
+    --secondary-100: #D3FBFF;
     --secondary-200: #FFD7AC;
-    --secondary-300: #FFC887;
+    --secondary-300: #10F0FC;
     --secondary-400: #FFBC65;
-    --secondary-500: #FFB145;
+    --secondary-500: #00D2DD;
     --secondary-600: #FF9820;
-    --secondary-700: #F97207;
+    --secondary-700: #007385;
     --secondary-800: #DD4E02;
-    --secondary-900: #B73206;
-    --primary-100: #CDDFFF;
+    --secondary-900: #007385;
+    --primary-100: #E0E0FD;
     --primary-200: #A2BFFF;
-    --primary-300: #7A9EFC;
+    --primary-300: #A7A6F9;
     --primary-400: #537BF7;
-    --primary-500: #2F57EF;
+    --primary-500: #6A67F4;
     --primary-600: #1440DF;
-    --primary-700: #002CBF;
+    --primary-700: #271EDE;
     --primary-800: #001C9F;
-    --primary-900: #001080;
+    --primary-900: #0B0763;
     --tertiary-50: #FFFBFE;
     --tertiary-100: #F8D6F2;
     --tertiary-200: #F1B1E3;
@@ -102,14 +102,40 @@
     }
 
     .box-shadow-page {
-        box-shadow:
-            /* Shadow 1: soft/color */
-                0px 12px 24px -4px rgba(153, 158, 171, 0.12),
-
-                    /* Shadow 2: hard/color */
-                0px 0px 2px 0px rgba(153, 158, 171, 0.20);
+        box-shadow: /* Shadow 1: soft/color */ 0px 12px 24px -4px rgba(153, 158, 171, 0.12),
+            /* Shadow 2: hard/color */ 0px 0px 2px 0px rgba(153, 158, 171, 0.20);
     }
 
+}
+
+.custom-rate .ant-rate-star-full .anticon path,
+.custom-rate .ant-rate-star-half .anticon path {
+    fill: #facc15 !important; /* Vàng */
+}
+
+.custom-rate .ant-rate-star-zero .anticon path {
+    fill: #d1d5db !important; /* Xám Tailwind: gray-300 */
+}
+
+.see-all-course-button path {
+    color: #2f57ef !important;
+}
+
+.home-send-email-button path {
+    color: white !important;
+}
+
+.footer-icon path {
+    color: #00D2DD !important;
+}
+
+.swiper-pagination-bullet {
+    background-color: rgba(106, 103, 244, 0.48) !important;
+    opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #6A67F4 !important;
 }
 
 

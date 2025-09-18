@@ -81,7 +81,7 @@ function CourseCard({
         {/* Badge */}
         {badge && (
           <div
-            className={`absolute top-4 right-4 ${getBadgeColor()} text-white text-xs font-bold px-2 py-1 rounded`}
+            className={`absolute top-4 left-4 ${getBadgeColor()} text-white text-xs font-bold px-2 py-1 rounded`}
           >
             {badge}
           </div>
@@ -90,10 +90,8 @@ function CourseCard({
 
       {/* Card Content */}
       <div className="p-4 bg-white">
-        <div className="text-blue-600 text-sm mb-2">{category}</div>
-        <h4 className="font-semibold text-lg mb-2 truncate w-full">
-          {courseName}
-        </h4>
+        <div className="text-[#6A67F4] text-sm mb-2">{category}</div>
+        <h4 className="font-semibold text-lg mb-2 truncate w-full">{courseName}</h4>
         <div className="text-gray-600 text-sm mb-2">{instructor}</div>
 
         <div className="flex items-center gap-4 text-sm mb-3">
@@ -110,22 +108,17 @@ function CourseCard({
             {studentCount} Người học
           </div>
         </div>
-        {Number(currentPrice || 0) === 0 && Number(originalPrice || 0) === 0 ? (
-          <div className="text-lg font-medium mb-2">Miễn phí</div>
-        ) : (
-          <div className="flex items-center">
-            {currentPrice && (
-              <span className="text-lg font-medium mr-2">{currentPrice}₫</span>
-            )}
+        <div className="flex items-center">
+          {currentPrice && (
+            <span className="text-lg font-medium mr-2">{currentPrice}₫</span>
+          )}
 
-            {originalPrice && (
-              <span className="text-gray-400 line-through text-sm">
-                {originalPrice}₫
-              </span>
-            )}
-          </div>
-        )}
-
+          {originalPrice && (
+            <span className="text-gray-400 line-through text-sm">
+              {originalPrice}₫
+            </span>
+          )}
+        </div>
         {user?.user?.type === "instructor" && (
           <Button
             onClick={(event) => onNavigateEditCourse(event)}

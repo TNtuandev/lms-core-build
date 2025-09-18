@@ -68,9 +68,7 @@ export interface Course {
   discountedPrice: number,
   regularPrice: number,
   category: {
-    id: string;
     title: string;
-    slug: string;
   }
 }
 

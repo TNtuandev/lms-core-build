@@ -22,21 +22,17 @@ interface CourseSidebarProps {
   };
   onCheckoutCourse: () => void;
   handlePushToCart: () => void;
-  handleLearn: () => void;
-  enrolled: boolean;
 }
 
 export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   courseDetail,
   onCheckoutCourse,
   handlePushToCart,
-  enrolled = false,
-  handleLearn,
 }) => {
   const [showMoreCardProduct, setShowMoreCardProduct] = useState(false);
 
   return (
-    <div className="lg:w-1/4 block md:fixed right-[5%] top-[10%] h-full">
+    <div className="lg:w-1/4 block md:absolute right-[5%] top-[20%] h-full">
       <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
         <div className="w-full h-[250px] relative rounded-lg overflow-hidden mb-8">
           <Image
@@ -66,54 +62,37 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
             {courseDetail.enrollmentCnt} học viên
           </div>
         </div>
-        {courseDetail.discountedPrice === 0 &&
-        courseDetail.regularPrice === 0 ? (
-          <div className="text-2xl font-bold text-[#2F57EF] mb-6">Miễn phí</div>
-        ) : (
-          <div className="flex items-center mb-6">
-            <div className="text-2xl font-bold text-[#2F57EF]">
-              {(
-                courseDetail.discountedPrice || courseDetail.regularPrice
-              ).toLocaleString()}
-              đ
-            </div>
-            {courseDetail.discountedPrice && (
-              <div className="ml-2 text-gray-500 line-through text-sm">
-                {courseDetail.regularPrice.toLocaleString()}đ
-              </div>
-            )}
-          </div>
-        )}
 
-        {enrolled ? (
-          <>
-            <button
-              onClick={handleLearn}
-              className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
-            >
-              Vào học ngay
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={handlePushToCart}
-              className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
-            >
-              Thêm vào giỏ hàng
-            </button>
-            <button
-              onClick={onCheckoutCourse}
-              className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 hover:text-white transition cursor-pointer"
-            >
-              Mua ngay
-            </button>
-            <div className="flex gap-2 justify-center text-secondary mt-2 text-sm items-center">
-              <Backward5Seconds size="24" color="#637381" />
-              Đảm bảo hoàn tiền trong 30 ngày
+        <div className="flex items-center mb-6">
+          <div className="text-2xl font-bold text-[#2F57EF]">
+            {(
+              courseDetail.discountedPrice || courseDetail.regularPrice
+            ).toLocaleString()}
+            đ
+          </div>
+          {courseDetail.discountedPrice && (
+            <div className="ml-2 text-gray-500 line-through text-sm">
+              {courseDetail.regularPrice.toLocaleString()}đ
             </div>
-          </>
-        )}
+          )}
+        </div>
+
+        <button
+          onClick={handlePushToCart}
+          className="bg-[#2F57EF] text-white w-full py-3 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer"
+        >
+          Thêm vào giỏ hàng
+        </button>
+        <button
+          onClick={onCheckoutCourse}
+          className="bg-white border border-[#919EAB52] mt-2 text-primary w-full py-3 rounded-lg font-bold hover:bg-blue-700 transition cursor-pointer"
+        >
+          Mua ngay
+        </button>
+        <div className="flex gap-2 justify-center text-secondary mt-2 text-sm items-center">
+          <Backward5Seconds size="24" color="#637381" />
+          Đảm bảo hoàn tiền trong 30 ngày
+        </div>
 
         <div className="mt-6">
           <div className="flex items-center justify-between gap-2 border-b pb-2 border-dashed border-b-gray-200 mb-4">

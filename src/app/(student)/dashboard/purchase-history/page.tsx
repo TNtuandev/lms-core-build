@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useCallback } from "react";
-// import { Button } from "@/components/ui/button";
-// import { Eye } from "iconsax-react";
+import { Button } from "@/components/ui/button";
+import { Eye } from "iconsax-react";
 import dayjs from "dayjs";
 import { useGetOrders } from "@/hooks/queries/order/useOrder";
 import { formatCurrency } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
 
 // interface PurchaseOrder {
 //   id: string;
@@ -17,7 +16,7 @@ import { Loader2 } from "lucide-react";
 // }
 
 function PurchaseHistoryPage() {
-  const { data, isLoading, error } = useGetOrders();
+  const { data } = useGetOrders();
 
   // const totalPrice = (orderDetail: OrderPayment) => {
   //   return orderDetail?.items?.reduce((total, item) => {
@@ -28,10 +27,10 @@ function PurchaseHistoryPage() {
   // }
   //
   // console.log("data---", totalPrice);
-  //
-  // const handleEdit = (orderId: string) => {
-  //   console.log("Edit order:", orderId);
-  // };
+
+  const handleEdit = (orderId: string) => {
+    console.log("Edit order:", orderId);
+  };
 
   // const handleDelete = (orderId: string) => {
   //   console.log("Delete order:", orderId);
@@ -73,21 +72,6 @@ function PurchaseHistoryPage() {
     <div className="bg-white shadow h-max p-6 rounded-2xl">
       <h2 className="text-2xl font-semibold mb-6">Lịch sử mua hàng</h2>
 
-      {isLoading && (
-        <div className="flex items-center justify-center py-10">
-          <Loader2 className="animate-spin text-gray-400" />
-          <span className="ml-2 text-gray-500">
-            Đang tải lịch sử mua hàng...
-          </span>
-        </div>
-      )}
-
-      {error && (
-        <div className="text-center py-10 text-red-500">
-          Không thể tải dữ liệu.
-        </div>
-      )}
-
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -105,7 +89,7 @@ function PurchaseHistoryPage() {
                 Giá
               </th>
               <th className="text-center py-4 px-2 text-gray-600 font-medium">
-                Hành động
+                Trạng thái
               </th>
               <th className="text-right py-4 px-2"></th>
             </tr>
@@ -147,26 +131,26 @@ function PurchaseHistoryPage() {
                 <td className="py-6 px-2 text-center">
                   {renderStatusBadge(order?.payment?.status)}
                 </td>
-                {/*<td className="py-6 px-2">*/}
-                {/*  <div className="flex items-center justify-end gap-2">*/}
-                {/*    /!*<Button*!/*/}
-                {/*    /!*  variant="ghost"*!/*/}
-                {/*    /!*  size="sm"*!/*/}
-                {/*    /!*  onClick={() => handleEdit(order.id)}*!/*/}
-                {/*    /!*  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*  <Eye size="20" color="#2F57EF" />*!/*/}
-                {/*    /!*</Button>*!/*/}
-                {/*    /!*<Button*!/*/}
-                {/*    /!*  variant="ghost"*!/*/}
-                {/*    /!*  size="sm"*!/*/}
-                {/*    /!*  onClick={() => handleDelete(order.id)}*!/*/}
-                {/*    /!*  className="text-red-600 hover:text-red-700 hover:bg-red-50"*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*  <Trash size={20} color="#F44336" />*!/*/}
-                {/*    /!*</Button>*!/*/}
-                {/*  </div>*/}
-                {/*</td>*/}
+                <td className="py-6 px-2">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(order.id)}
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    >
+                      <Eye size="20" color="#2F57EF" />
+                    </Button>
+                    {/*<Button*/}
+                    {/*  variant="ghost"*/}
+                    {/*  size="sm"*/}
+                    {/*  onClick={() => handleDelete(order.id)}*/}
+                    {/*  className="text-red-600 hover:text-red-700 hover:bg-red-50"*/}
+                    {/*>*/}
+                    {/*  <Trash size={20} color="#F44336" />*/}
+                    {/*</Button>*/}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -176,7 +160,7 @@ function PurchaseHistoryPage() {
       {/* Empty State */}
       {data?.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">Bạn chưa đăng ký khóa học nào.</p>
+          <p className="text-gray-500">Chưa có lịch sử mua hàng nào.</p>
         </div>
       )}
     </div>

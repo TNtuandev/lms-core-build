@@ -261,9 +261,9 @@ export const MenuMobile = () => {
             </Button>
             <Button
               variant="default"
-              className="bg-primary-main h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
+              className="bg-[#6A67F4] h-10  shadow-md hover:shadow-xl hover:shadow-primary-main/20 transition-shadow duration-300 text-white px-4 py-1.5 rounded-[10px]"
             >
-              <Link href={Routes.login}>Bắt đầu miễn phí</Link>
+              <Link href={Routes.registration}>Đăng ký</Link>
             </Button>
           </DrawerFooter>
         )}

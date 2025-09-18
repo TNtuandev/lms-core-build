@@ -78,7 +78,7 @@ export default function DashboardLayout({
   return (
     <div className="mb-20">
       {/* Colorful Banner/Header */}
-      <div className="bg-[linear-gradient(92.2deg,rgba(47,87,239,0.2)_0%,rgba(255,177,69,0.2)_100.43%)] w-full h-[300px] relative"></div>
+      <div className="bg-gradient-to-r from-[#f8f9ff] via-[#efedfd] to-[#e6f9fb] w-full h-[300px] relative"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[160px] relative z-10">
         {/* Profile Info Section */}
@@ -143,7 +143,7 @@ export default function DashboardLayout({
                         ? (learnerProfileData as InstructorProfile)?.data
                             ?.totalCourses
                         : (learnerProfileData as LearnerProfile)?.data
-                            ?.totalCoursesEnrolled}{" "}
+                            ?._totalCoursesEnrolled}{" "}
                       Khóa học đã đăng ký
                     </span>
                   </div>
@@ -474,32 +474,6 @@ export default function DashboardLayout({
                     }
                   >
                     Bài tập
-                  </span>
-                </Link>
-                <Link
-                  href="/dashboard/purchase-approve"
-                  className={`flex items-center px-3 py-3 ${
-                    isActive("/dashboard/purchase-approve")
-                      ? "text-blue-600 bg-[#2F57EF14]"
-                      : "text-gray-700 hover:bg-gray-50"
-                  } rounded-lg`}
-                >
-                  <History
-                    className="w-5 h-5 mr-3"
-                    color={
-                      isActive("/dashboard/purchase-approve")
-                        ? "#155dfc"
-                        : "#364153"
-                    }
-                  />
-                  <span
-                    className={
-                      isActive("/dashboard/purchase-approve")
-                        ? "font-medium text-blue-600"
-                        : ""
-                    }
-                  >
-                    Phê duyệt thanh toán
                   </span>
                 </Link>
               </div>

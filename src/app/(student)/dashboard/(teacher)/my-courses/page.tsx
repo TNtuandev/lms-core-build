@@ -37,7 +37,7 @@ function MyCoursePage() {
   }, [currentPage, tabActive]);
   const { data: coursesData, isLoading } = useCoursesCMS(apiFilters);
 
-  console.log("coursesData----", coursesData);
+  console.log("coursesData----", coursesData)
 
   return (
     <div className="p-6 bg-[#f9f6ff] min-h-screen">
@@ -45,16 +45,15 @@ function MyCoursePage() {
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold mb-4">Khóa học của tôi</h2>
         </div>
-        <Tabs
-          defaultValue={EStatusCourse.PUBLISHED}
-          onValueChange={(value) => {
-            setTabActive(value as EStatusCourse);
-          }}
-          className="w-full"
-        >
+        <Tabs defaultValue={EStatusCourse.PUBLISHED} onValueChange={(value) => {
+          setTabActive(value as EStatusCourse);
+        }} className="w-full">
           <TabsList className="mb-6">
             {TABS.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+              >
                 {tab.label}
               </TabsTrigger>
             ))}
@@ -62,33 +61,32 @@ function MyCoursePage() {
           {TABS.map((tab) => (
             <TabsContent key={tab.value} value={tab.value}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {!isLoading &&
-                  coursesData?.data.map((course, idx) => (
-                    <div key={idx} className="flex flex-col h-full">
-                      <CourseCard
-                        slug={course.slug}
-                        gridNUmber={4}
-                        title={course.title}
-                        imageUrl={course.thumbnail}
-                        category={course.category.title}
-                        courseName={course.title}
-                        instructor={`Giảng viên: ${course?.owner.fullName}`}
-                        lessonCount={course.totalLesson}
-                        badge={course.label}
-                        studentCount={course.enrollmentCnt}
-                        currentPrice={
-                          course.discountedPrice
-                            ? course.discountedPrice.toLocaleString()
-                            : course.regularPrice.toLocaleString()
-                        }
-                        originalPrice={
-                          course?.discountedPrice
-                            ? course.regularPrice.toLocaleString()
-                            : ""
-                        }
-                      />
-                    </div>
-                  ))}
+                {!isLoading && coursesData?.data.map((course, idx) => (
+                  <div key={idx} className="flex flex-col h-full">
+                    <CourseCard
+                      slug={course.slug}
+                      gridNUmber={4}
+                      title={course.title}
+                      imageUrl={course.thumbnail}
+                      category="Khóa học"
+                      courseName={course.title}
+                      instructor={`Giảng viên: ${course?.owner.fullName}`}
+                      lessonCount={course.totalLesson}
+                      badge={course.label}
+                      studentCount={course.enrollmentCnt}
+                      currentPrice={
+                        course.discountedPrice
+                          ? course.discountedPrice.toLocaleString()
+                          : course.regularPrice.toLocaleString()
+                      }
+                      originalPrice={
+                        course?.discountedPrice
+                          ? course.regularPrice.toLocaleString()
+                          : ""
+                      }
+                    />
+                  </div>
+                ))}
               </div>
             </TabsContent>
           ))}

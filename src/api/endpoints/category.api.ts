@@ -31,7 +31,10 @@ export const categoryAPI = {
     return response.data;
   },
 
-  updateCategory: async (id: string, data: IUpdateCategoryRequest): Promise<ICategory> => {
+  updateCategory: async (
+    id: string,
+    data: IUpdateCategoryRequest,
+  ): Promise<ICategory> => {
     const response = await api.patch(`/cms/categories/${id}`, data);
     return response.data;
   },

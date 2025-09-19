@@ -66,7 +66,7 @@ function DashboardPage() {
                     : 0}
                 </div>
                 <p className="mt-2 text-sm text-center">
-                  Tổng thu nhập (Triệu)
+                  Tổng thu nhập (VNĐ)
                 </p>
               </CardContent>
             </Card>

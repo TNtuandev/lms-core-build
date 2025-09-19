@@ -208,8 +208,8 @@ function Navbar() {
               <Image
                 src="/images/logo.png"
                 alt="Logo"
-                width={127}
-                height={33}
+                width={129}
+                height={40}
                 onClick={handleNavigateToHome}
                 className="cursor-pointer block lg:hidden"
               />
@@ -217,8 +217,8 @@ function Navbar() {
               <Image
                 src="/images/logo.png"
                 alt="Logo"
-                width={182}
-                height={48}
+                width={129}
+                height={40}
                 onClick={handleNavigateToHome}
                 className="cursor-pointer hidden lg:block"
               />

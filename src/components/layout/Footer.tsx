@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Routes } from "@/lib/routes/routes";
+import { Information } from "@/config/information";
 
 function Footer() {
   return (
@@ -50,7 +51,7 @@ function Footer() {
             <div className="text-xl font-semibold">Liên hệ với chúng tôi</div>
             <div className="md:mt-6">
               <div className="text-xs text-zinc-400">Gọi cho chúng tôi</div>
-              <Link href="tel:+84 345 622 999" className="text-lg font-semibold">+84 345 622 999</Link>
+              <Link href="tel:+84 345 622 999" className="text-lg font-semibold">{Information.phone}</Link>
             </div>
             <div className="flex gap-2 items-center">
               <svg
@@ -65,7 +66,7 @@ function Footer() {
                   fill="#D2A96E"
                 />
               </svg>
-              <div>demo@amerianstudy.cc</div>
+              <div>{Information.email}</div>
             </div>
             <div className="flex gap-2 items-center">
               <svg
@@ -80,7 +81,7 @@ function Footer() {
                   fill="#D2A96E"
                 />
               </svg>
-              <div>Yên Hòa, Cầu Giấy, Hà Nội</div>
+              <div>{Information.address}</div>
             </div>
           </div>
         </div>

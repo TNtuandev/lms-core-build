@@ -3,11 +3,12 @@
 import {
   Drawer,
   DrawerContent,
-  DrawerFooter, DrawerTitle,
+  DrawerFooter,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ArrowLeft2, ArrowRight2, HambergerMenu } from "iconsax-react";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Routes } from "@/lib/routes/routes";
@@ -160,10 +161,8 @@ export const MenuMobile = () => {
           color="#637381"
         />
       </DrawerTrigger>
-      <DrawerContent  className="w-[300px] bg-white justify-between">
-        <DrawerTitle className="sr-only">
-          menu
-        </DrawerTitle>
+      <DrawerContent className="w-[300px] bg-white justify-between">
+        <DrawerTitle className="sr-only">menu</DrawerTitle>
         <div className="cursor-pointer p-4 w-full">
           <Image
             src="/images/logo.png"
@@ -208,7 +207,8 @@ export const MenuMobile = () => {
             {isAuthenticated && (
               <Button
                 onClick={navigateToProfile}
-                className="bg-[#919EAB]/8 h-[60px] px-2.5 gap-3 w-full justify-between items-center rounded-[10px]">
+                className="bg-[#919EAB]/8 h-[60px] px-2.5 gap-3 w-full justify-between items-center rounded-[10px]"
+              >
                 <Image
                   src={"/images/banner-sign-in.png"} // Đường dẫn đến avatar
                   alt="Avatar"
@@ -221,7 +221,7 @@ export const MenuMobile = () => {
                     Chris Hemsworth
                   </span>
                   <span className="text-secondary text-xs leading-[18px]">
-                    demo@americanstudy.cc
+                    demo@vuihochoa.cc
                   </span>
                 </div>
                 <div>

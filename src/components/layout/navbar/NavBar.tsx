@@ -28,7 +28,7 @@ function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, categories } = useAuthContext();
-  const { count: countCart, setListCart, setCartId } = useCartStore();
+  const { setListCart, setCartId } = useCartStore();
   const [timeLeft, setTimeLeft] = useState(3300);
   const [isFlashSale, setIsFlashSale] = useState(pathname === Routes.home);
   const [openSearch, setOpenSearch] = useState(false);
@@ -127,8 +127,8 @@ function Navbar() {
   };
 
   const handleNavigateToProduct = (category: ICategory) => {
+    console.log("----slug", category.slug);
     setSelectedCategory(category);
-    router.push(`/course-category?category=${category.id}`);
   };
 
   useEffect(() => {
@@ -151,37 +151,37 @@ function Navbar() {
   return (
     <div className="">
       {isFlashSale && (
-        <motion.div className="bg-gray-900 relative">
+        <motion.div className="bg-[#0034A4] relative">
           <div
             onClick={() => setIsFlashSale(false)}
             className="cursor-pointer p-2 absolute right-2 lg:top-[50%] lg:translate-y-[-50%] top-2"
           >
             <CloseCircle size="20" color="#FFFFFF" />
           </div>
-          <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto lg:flex-row flex-col flex items-center justify-center px-6 py-2">
+          <div className="md:max-w-3xl max-w-sm lg:max-w-5xl xl:max-w-7xl mx-auto lg:flex-row flex-col flex items-center justify-between px-6 py-2">
             <div
               onClick={navigateToFlashSale}
               className="cursor-pointer flex-row flex gap-1 items-center"
             >
-              <span className="text-white lg:text-lg text-base font-semibold py-1 px-2.5 bg-tertiary-main rounded-[10px]">
-                Hot
+              <span className="text-[#82FFCE] lg:text-lg text-base font-semibold rounded-[10px]">
+                HOT
               </span>
               <span className="lg:text-base text-white text-xs pl-4">
                 Nhanh tay nhận ưu đãi đến{" "}
-                <span className="text-secondary-main"> 20%</span>
+                <span className="text-[#82FFCE]"> 20%</span>
               </span>
             </div>
             <div className="flex gap-2 items-center pl-6">
               <span className="text-sm font-semibold text-white">
                 KẾT THÚC TRONG
               </span>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-[#919EAB14] rounded-lg p-1.5 text-xl text-[#FF9800] font-semibold">
                 {String(hours).padStart(2, "0")}
               </div>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-[#919EAB14] rounded-lg p-1.5 text-xl text-[#FF9800] font-semibold">
                 {String(minutes).padStart(2, "0")}
               </div>
-              <div className="h-8 w-10 flex items-center justify-center bg-zinc-800 rounded-lg p-1.5 text-xl text-tertiary-light font-semibold">
+              <div className="h-8 w-10 flex items-center justify-center bg-[#919EAB14] rounded-lg p-1.5 text-xl text-[#FF9800] font-semibold">
                 {String(seconds).padStart(2, "0")}
               </div>
             </div>
@@ -286,7 +286,7 @@ function Navbar() {
                   {/*<Button size="lg" type="button" variant="ghost">*/}
                   {/*  <Heart size="24" color="#71717B" />*/}
                   {/*</Button>*/}
-                  <NotificationBadge label={countCart.toString()}>
+                  <NotificationBadge label={"1"}>
                     <Button
                       style={{ padding: 8 }}
                       size="lg"

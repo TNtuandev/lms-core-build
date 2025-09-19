@@ -1,94 +1,65 @@
 "use client";
 
-import { ArrowRight } from "iconsax-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import {useRouter} from "next/navigation";
-import {Routes} from "@/lib/routes/routes";
+import React from "react";
+import IconArrowRightTop from "../../../public/icons/home/IconArrowRightTop";
+import IconLike from "../../../public/icons/home/IconLike";
 
 export function WhyUsSection() {
-  const router = useRouter();
-
-  const navigateToTeacher = () => {
-    router.push(Routes.instructors);
-  };
-
   return (
-    <div>
-      <div className="flex gap-4 lg:gap-8 lg:flex-row flex-col">
-        <div className="text-3xl leading-11 text-center lg:text-start lg:text-5xl lg:leading-16 font-bold">
-          Tại sao chúng tôi khác biệt với những nền tảng khác?
-        </div>
-        <div className="flex flex-col items-center lg:items-start lg:justify-between py-3">
-          <div className="text-secondary text-center lg:text-start">
-            Chúng tôi có những giáo viên chuyên nghiệp. Chúng tôi có những tính
-            năng tuyệt vời hơn bất kỳ nền tảng nào khác
-          </div>
-          <button className="mt-4 font-bold justify-self-center lg:justify-self-end text-primary-main w-fit flex items-center gap-2">
-            Xem thêm về chúng tôi <ArrowRight size={20} color="#2F57EF" />
-          </button>
-        </div>
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 justify-center items-center lg:items-start px-4 sm:px-6 lg:px-8 py-8 lg:py-16">
+      <div className="flex-shrink-0 order-2 lg:order-1">
+        <Image
+          className="max-w-full h-auto w-full lg:max-w-none"
+          src="/images/home/banner_difference.png"
+          alt="banner"
+          height={600}
+          width={600}
+          priority
+        />
       </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-8 lg:gap-8 mt-12">
-
-        <div className="lg:col-span-2 rounded-2xl">
-          <Image src="/images/home/img_6.png" alt="HS" width={400} height={400} />
+      <div className="order-1 lg:order-2 text-center lg:text-left max-w-2xl lg:max-w-none">
+        <div className="text-[#1959FF] font-bold text-lg sm:text-xl">
+          ĐIỂM KHÁC BIỆT
         </div>
-
-        <div className="lg:col-span-4 rounded-2xl px-10 py-8 bg-primary-main/8 flex flex-col">
-          <div className="text-primary-main font-bold text-3xl">Học Từ Mọi Nơi</div>
-          <div className="mt-2 flex-1">Giáo dục trực tuyến đã trở nên phổ biến và quan trọng hơn trong những năm gần đây, đặc biệt là với những tiến bộ về công nghệ và khả năng tiếp cận Internet ngày càng cao.</div>
-          <Button variant="default" className="mt-5 w-fit text-warning-dark bg-warning-dark/16 h-9 hover:bg-warning-dark/32 rounded-[10px]">
-            Xem ngay <ArrowRight size={20} color="#F57C00" />
-          </Button>
+        <div className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mt-3">
+          Điểm Khác Biệt
+          <br /> của Chúng Tôi với
+          <br /> Những Nền Tảng
+          <br /> Khác?
         </div>
-
-        <div className="lg:col-span-2 rounded-2xl relative lg:overflow-hidden">
-          <Image
-            src="/images/home/img_7.png" // thay bằng đúng path ảnh của bạn
-            alt="Giảng viên"
-            width={500}
-            height={400}
-            className="object-cover"
-          />
-          <div className="absolute inset-0 p-8 text-white flex flex-col justify-between">
-            <h3 className="text-4xl font-bold leading-12 text-white">
-              Giảng viên <br /> giàu kinh <br /> nghiệm
-            </h3>
-            <Button onClick={navigateToTeacher} className="h-9 text-white w-fit bg-white/12 hover:bg-white/20 rounded-[10px]">
-              Xem ngay <ArrowRight size={20} color="white" />
-            </Button>
+        <div className="mt-4 text-secondary text-sm sm:text-base lg:text-base">
+          Không chỉ kiến thức, bé còn rèn kỹ năng mềm,
+          <br className="hidden sm:block" /> tư duy sáng tạo và lòng yêu khoa
+          học.
+        </div>
+        <div className="flex items-center justify-center lg:justify-start gap-4 mt-6">
+          <div className="flex">
+            <IconArrowRightTop />
+            <IconLike />
           </div>
-        </div>
-
-        <div className="lg:col-span-5 rounded-2xl lg:overflow-hidden relative min-h-[400px] lg:min-h-auto">
-          <Image
-            src="/images/home/img_8.png" // thay bằng đúng path ảnh của bạn
-            alt="Giảng viên"
-            fill
-            className="object-cover w-full h-full rounded-2xl"
-          />
-          <div className="absolute inset-0 p-8 text-white flex flex-col justify-between">
-            <h3 className="text-4xl font-bold leading-12 text-white">
-              Các Lớp Học Linh Hoạt
-            </h3>
-            <div className="mt-2 lg:flex-1 text-white">
-              Giáo dục trực tuyến đã trở nên phổ biến và quan trọng hơn trong những năm gần đây, đặc biệt là với những tiến bộ về công nghệ và khả năng tiếp cận Internet ngày càng cao.
+          <div>
+            <div className="text-primary text-base sm:text-lg">
+              Đăng ký miễn phí
             </div>
-            <Button className="h-9 mt-5 text-white w-fit bg-white/12 hover:bg-white/20">
-              Xem ngay <ArrowRight size={20} color="white" />
-            </Button>
+            <div className="text-secondary text-base sm:text-lg">
+              Ngay hôm nay
+            </div>
           </div>
         </div>
-
-        <div className="lg:col-span-3 rounded-2xl">
-          <Image
-            src="/images/home/img_9.png" // thay bằng đúng path ảnh của bạn
-            alt="Giảng viên"
-            width={1000}
-            height={300}
-            className="h-full"
-          />
+        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-6">
+          <div className="flex flex-col items-center bg-[#82FFCE] p-4 sm:p-6 w-full sm:w-40 lg:w-3xs rounded-3xl lg:rounded-[40px]">
+            <div className="text-2xl sm:text-3xl font-bold">26K+</div>
+            <div className="text-sm sm:text-base text-center">
+              Giáo Trình Riêng
+            </div>
+          </div>
+          <div className="flex flex-col items-center bg-[#F4F6F8] p-4 sm:p-6 w-full sm:w-40 lg:w-3xs rounded-3xl lg:rounded-[40px]">
+            <div className="text-2xl sm:text-3xl font-bold">1000+</div>
+            <div className="text-sm sm:text-base text-center">
+              Giáo Viên Chuyên Môn
+            </div>
+          </div>
         </div>
       </div>
     </div>

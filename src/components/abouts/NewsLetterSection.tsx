@@ -34,7 +34,7 @@ export default function NewsletterSection() {
         <div className="lg:bg-white bg-transparent rounded-xl lg:w-fit p-2 flex flex-col md:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
           <input
             type="email"
-            placeholder="Vd: amerianstudy@gmail.com"
+            placeholder="Vd: vuihochoa@gmail.com"
             className="w-full md:w-[350px] px-4 py-3 rounded-lg bg-white text-primary-contrastText placeholder-gray-400 focus:outline-none"
           />
           <Button
